@@ -7,11 +7,18 @@ fetch('daily_clue_progression.json')
     container.innerHTML = '';
     summaryContainer.innerHTML = '';
 
-    const lastEntry = data[data.length - 1];
+    // Find latest completed entry
+    let latestCompletedTotal = 0;
+    for (let i = data.length - 1; i >= 0; i--) {
+      if (data[i].status) {
+        latestCompletedTotal = data[i].total_clues;
+        break;
+      }
+    }
 
     const totalDisplay = document.createElement('div');
     totalDisplay.className = 'alert alert-info fw-bold text-center';
-    totalDisplay.textContent = `Total Clues Completed: ${lastEntry.total_clues} / 2350`;
+    totalDisplay.textContent = `Total Clues Completed: ${latestCompletedTotal} / 2350`;
 
     summaryContainer.appendChild(totalDisplay);
 
