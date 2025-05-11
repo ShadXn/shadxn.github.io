@@ -83,26 +83,16 @@ updateClogTotals();
 function updateClogEstimates() {
   const { totalWithClue, totalWithoutClue } = updateClogTotals();
 
-  // Optional: add additional estimated clue clog contribution if needed
-  const clueEstimates = {
-    "easy-casket": 6,
-    "medium-casket": 9,
-    "hard-casket": 12,
-    "elite-casket": 6,
-    "master-casket": 3
-  };
-
-  let clueBonus = 0;
-  for (const id in clueEstimates) {
-    const cell = document.getElementById(id);
-    if (cell) {
-      clueBonus += clueEstimates[id];
-    }
-  }
-
   const currentLog = parseInt(document.getElementById("clog-current").textContent) || 0;
-  const estimatedFinalTotal = currentLog + totalWithoutClue + clueBonus;
+  const clueEstimateTotal = 249;
 
+  const storedClueItems = totalWithClue - totalWithoutClue;
+  const clueGainEstimate = clueEstimateTotal - storedClueItems;
+
+  const estimatedFinalTotal = currentLog + totalWithoutClue + clueGainEstimate;
+
+  document.getElementById("clogs-no-clue").textContent = totalWithoutClue;
+  document.getElementById("clogs-with-clue").textContent = clueEstimateTotal;
   document.getElementById("clogs-total").textContent = estimatedFinalTotal;
 }
 
