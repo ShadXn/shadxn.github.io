@@ -11,7 +11,7 @@
   {
     "date": "2025-05-03",
     "target": 50,
-    "done_today": 0,
+    "done_today": 50,
     "status": true,
     "counter": 2,
     "clues_left": 1850,
@@ -20,7 +20,7 @@
   {
     "date": "2025-05-04",
     "target": 50,
-    "done_today": 0,
+    "done_today": 50,
     "status": true,
     "counter": 3,
     "clues_left": 1800,
@@ -29,7 +29,7 @@
   {
     "date": "2025-05-05",
     "target": 50,
-    "done_today": 0,
+    "done_today": 50,
     "status": true,
     "counter": 4,
     "clues_left": 1750,
@@ -38,7 +38,7 @@
   {
     "date": "2025-05-06",
     "target": 50,
-    "done_today": 0,
+    "done_today": 50,
     "status": true,
     "counter": 5,
     "clues_left": 1700,
