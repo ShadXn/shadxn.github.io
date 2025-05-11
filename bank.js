@@ -52,3 +52,28 @@ document.querySelectorAll("table tbody tr").forEach(row => {
 });
 
 document.getElementById("hours-left").textContent = totalHours;
+
+function updateClogTotals() {
+  let totalWithClue = 0;
+  let totalWithoutClue = 0;
+
+  const rows = document.querySelectorAll("table tbody tr");
+
+  rows.forEach(row => {
+    const taskName = row.cells[1]?.textContent || "";
+    const clogCell = row.cells[2]; // Clog Items column
+
+    if (!clogCell) return;
+
+    const value = parseInt(clogCell.textContent) || 0;
+    const isClue = taskName.toLowerCase().includes("clue");
+
+    totalWithClue += value;
+    if (!isClue) totalWithoutClue += value;
+  });
+
+  document.getElementById("clogs-no-clue").textContent = totalWithoutClue;
+  document.getElementById("clogs-with-clue").textContent = totalWithClue;
+}
+
+updateClogTotals();
