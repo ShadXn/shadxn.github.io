@@ -3,15 +3,13 @@ fetch('bank.txt')
   .then(text => {
     const lines = text.trim().split('\n');
     const headers = lines[0].split('\t');
-    const casketNames = [
-      "Reward casket (easy)",
-      "Reward casket (medium)",
-      "Reward casket (hard)",
-      "Reward casket (elite)",
-      "Reward casket (master)"
-    ];
-
-    const list = document.getElementById('casket-list');
+    const casketTargets = {
+      "Reward casket (easy)": { id: "easy-casket", max: 1000 },
+      "Reward casket (medium)": { id: "medium-casket", max: 1000 },
+      "Reward casket (hard)": { id: "hard-casket", max: 300 },
+      "Reward casket (elite)": { id: "elite-casket", max: 50 },
+      "Reward casket (master)": { id: "master-casket", max: 50 }
+    };
 
     lines.slice(1).forEach(line => {
       const parts = line.split('\t');
@@ -21,10 +19,13 @@ fetch('bank.txt')
         item_quantity: parts[2]
       };
 
-      if (casketNames.includes(item.item_name)) {
-        const li = document.createElement('li');
-        li.textContent = `${item.item_name}: ${item.item_quantity} (ID: ${item.item_id})`;
-        list.appendChild(li);
+      const target = casketTargets[item.item_name];
+      if (target) {
+        // Update table cell with current/target
+        const cell = document.getElementById(target.id);
+        if (cell) {
+          cell.textContent = `${item.item_quantity}/${target.max}`;
+        }
       }
     });
   })
