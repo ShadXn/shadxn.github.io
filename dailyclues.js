@@ -9,7 +9,7 @@ const summaryContainer = document.getElementById('daily-clue-summary');
 
 toggleBtn.addEventListener('click', () => {
   showCompleted = !showCompleted;
-  toggleBtn.textContent = showCompleted ? 'Hide Completed' : 'Show Completed';
+  toggleBtn.textContent = showCompleted ? 'Hide Completed Days' : 'Show Completed Days';
   renderCards(); // re-render with updated toggle state
 });
 
