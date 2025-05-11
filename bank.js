@@ -74,51 +74,35 @@ function updateClogTotals() {
 
   document.getElementById("clogs-no-clue").textContent = totalWithoutClue;
   document.getElementById("clogs-with-clue").textContent = totalWithClue;
+
+  return { totalWithClue, totalWithoutClue };
 }
 
 updateClogTotals();
 
 function updateClogEstimates() {
-  let totalClogsWithClues = 0;
-  let totalClogsNoClues = 0;
-  const clueContribution = 0; // We'll read actual clue values from table
+  const { totalWithClue, totalWithoutClue } = updateClogTotals();
 
-  const clueCasketCellIDs = [
-    "easy-casket",
-    "medium-casket",
-    "hard-casket",
-    "elite-casket",
-    "master-casket"
-  ];
+  // Optional: add additional estimated clue clog contribution if needed
+  const clueEstimates = {
+    "easy-casket": 6,
+    "medium-casket": 9,
+    "hard-casket": 12,
+    "elite-casket": 6,
+    "master-casket": 3
+  };
 
-  const rows = document.querySelectorAll("table tbody tr");
-
-  rows.forEach(row => {
-    const task = row.cells[1]?.textContent || "";
-    const clogCell = row.cells[2];
-    if (!clogCell) return;
-
-    const clogCount = parseInt(clogCell.textContent) || 0;
-    totalClogsWithClues += clogCount;
-
-    if (!task.toLowerCase().includes("clue")) {
-      totalClogsNoClues += clogCount;
+  let clueBonus = 0;
+  for (const id in clueEstimates) {
+    const cell = document.getElementById(id);
+    if (cell) {
+      clueBonus += clueEstimates[id];
     }
-  });
-
-  // Add clue slot estimates
-  let clueTotal = 0;
-  clueCasketCellIDs.forEach(id => {
-    if (document.getElementById(id)) {
-      clueTotal += clueEstimates[id] || 0;
-    }
-  });
+  }
 
   const currentLog = parseInt(document.getElementById("clog-current").textContent) || 0;
-  const estimatedFinalTotal = currentLog + totalClogsNoClues + clueTotal;
+  const estimatedFinalTotal = currentLog + totalWithoutClue + clueBonus;
 
-  document.getElementById("clogs-no-clue").textContent = totalClogsNoClues;
-  document.getElementById("clogs-with-clue").textContent = totalClogsWithClues + clueTotal;
   document.getElementById("clogs-total").textContent = estimatedFinalTotal;
 }
 
