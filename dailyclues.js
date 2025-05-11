@@ -1,5 +1,6 @@
-const today = new Date().toISOString().split('T')[0]; // e.g. "2025-05-11"
-const url = `daily_clue_progression.json?v=${today}`; // changes daily
+const now = new Date();
+const cacheKey = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}-${now.getHours()}`;
+const url = `daily_clue_progression.json?v=${cacheKey}`; // changes every hour
 
 fetch(url)
   .then(response => response.json())
