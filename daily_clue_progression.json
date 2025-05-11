@@ -48,7 +48,7 @@
     "date": "2025-05-07",
     "target": 50,
     "done_today": 0,
-    "status": false,
+    "status": true,
     "counter": 6,
     "clues_left": 1650,
     "total_clues": 700
@@ -57,28 +57,28 @@
     "date": "2025-05-08",
     "target": 50,
     "done_today": 0,
-    "status": false,
+    "status": true,
     "counter": 7,
-    "clues_left": 1600,
-    "total_clues": 750
+    "clues_left": 1650,
+    "total_clues": 700
   },
   {
     "date": "2025-05-09",
     "target": 50,
     "done_today": 0,
-    "status": false,
+    "status": true,
     "counter": 8,
-    "clues_left": 1550,
-    "total_clues": 800
+    "clues_left": 1650,
+    "total_clues": 700
   },
   {
     "date": "2025-05-10",
     "target": 50,
     "done_today": 0,
-    "status": false,
+    "status": true,
     "counter": 9,
-    "clues_left": 1500,
-    "total_clues": 850
+    "clues_left": 1650,
+    "total_clues": 700
   },
   {
     "date": "2025-05-11",
@@ -86,8 +86,8 @@
     "done_today": 0,
     "status": false,
     "counter": 10,
-    "clues_left": 1450,
-    "total_clues": 900
+    "clues_left": 1650,
+    "total_clues": 700
   },
   {
     "date": "2025-05-12",
