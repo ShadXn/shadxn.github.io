@@ -83,16 +83,25 @@ updateClogTotals();
 function updateClogEstimates() {
   const { totalWithClue, totalWithoutClue } = updateClogTotals();
 
+  let estimatedClueTotal = 0;
+
+  // Loop through all rows to sum data-estimate on clue rows
+  const rows = document.querySelectorAll("table tbody tr");
+
+  rows.forEach(row => {
+    const taskName = row.cells[1]?.textContent.toLowerCase() || "";
+    const clogCell = row.cells[2];
+
+    if (!clogCell || !taskName.includes("clue")) return;
+
+    const estimate = parseInt(clogCell.getAttribute("data-estimate")) || 0;
+    estimatedClueTotal += estimate;
+  });
+
   const currentLog = parseInt(document.getElementById("clog-current").textContent) || 0;
-  const clueEstimateTotal = 249;
-
-  const storedClueItems = totalWithClue - totalWithoutClue;
-  const clueGainEstimate = clueEstimateTotal - storedClueItems;
-
+  const clueGainEstimate = estimatedClueTotal - (totalWithClue - totalWithoutClue);
   const estimatedFinalTotal = currentLog + totalWithoutClue + clueGainEstimate;
 
-  document.getElementById("clogs-no-clue").textContent = totalWithoutClue;
-  document.getElementById("clogs-with-clue").textContent = clueEstimateTotal;
   document.getElementById("clogs-total").textContent = estimatedFinalTotal;
 }
 
