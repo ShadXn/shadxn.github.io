@@ -9,7 +9,7 @@ fetch('daily_clue_progression.json')
     
     const totalDisplay = document.createElement('div');
     totalDisplay.className = 'alert alert-info fw-bold text-center';
-    totalDisplay.textContent = `Total Clues Completed: ${lastEntry.total_clues_done}`;
+    totalDisplay.textContent = `Total Clues Completed: ${lastEntry.total_clues_done} / 2350`;
     
     totalWrapper.appendChild(totalDisplay);
     container.prepend(totalWrapper);
