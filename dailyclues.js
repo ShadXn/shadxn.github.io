@@ -4,11 +4,16 @@ fetch('daily_clue_progression.json')
     const container = document.getElementById('daily-clue-container');
     container.innerHTML = '';
 
-    const lastEntry = data[data.length - 1];
+    const totalWrapper = document.createElement('div');
+    totalWrapper.className = 'col-12'; // full-width column
+    
     const totalDisplay = document.createElement('div');
     totalDisplay.className = 'alert alert-info fw-bold text-center';
     totalDisplay.textContent = `Total Clues Completed: ${lastEntry.total_clues_done}`;
-    container.prepend(totalDisplay);
+    
+    totalWrapper.appendChild(totalDisplay);
+    container.prepend(totalWrapper);
+    
 
     data.forEach(entry => {
       const card = document.createElement('div');
@@ -26,7 +31,7 @@ fetch('daily_clue_progression.json')
         <p class="card-text mb-1">Done Today: ${entry.done_today}</p>
         <p class="card-text mb-1">Clues Left: ${entry.clues_left}</p>
         <p class="card-text mb-1">Counter: ${entry.counter}</p>
-        <p class="card-text mb-1"><strong>Total Clues Done:</strong> ${entry.total_clues_done}</p>
+        <p class="card-text mb-1"><strong>Total Clues Done:</strong> ${entry.total_clues}</p>
         <span class="badge ${entry.status ? 'bg-success' : 'bg-secondary'}">
           ${entry.status ? 'Completed' : 'Incomplete'}
         </span>
