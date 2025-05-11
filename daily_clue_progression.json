@@ -2,7 +2,7 @@
   {
     "date": "2025-05-02",
     "target": 50,
-    "done_today": 0,
+    "done_today": 50,
     "status": true,
     "counter": 1,
     "clues_left": 1900,
