@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Reward Caskets</title>
+</head>
+<body>
+  <h1>Reward Caskets</h1>
+  <ul id="casket-list"></ul>
+
+  <script>
+    fetch('https://shadxn.github.io/data/reward_caskets.json')
+      .then(response => response.json())
+      .then(data => {
+        const list = document.getElementById('casket-list');
+        data.forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = `${item.item_name}: ${item.item_quantity} (ID: ${item.item_id})`;
+          list.appendChild(li);
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching JSON:', error);
+      });
+  </script>
+</body>
+</html>
