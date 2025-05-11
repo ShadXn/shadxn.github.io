@@ -93,11 +93,11 @@ function updateClogEstimates() {
 
   // Optional: define expected clog slots per clue tier (adjust if needed)
   const clueEstimates = {
-    "easy-casket": 6,
-    "medium-casket": 9,
-    "hard-casket": 12,
-    "elite-casket": 6,
-    "master-casket": 3
+    "easy-casket": 70,
+    "medium-casket": 55,
+    "hard-casket": 15,
+    "elite-casket": 5,
+    "master-casket": 0
   };
 
   const rows = document.querySelectorAll("table tbody tr");
