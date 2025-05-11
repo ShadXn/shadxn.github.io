@@ -1,4 +1,7 @@
-fetch('daily_clue_progression.json')
+const today = new Date().toISOString().split('T')[0]; // e.g. "2025-05-11"
+const url = `daily_clue_progression.json?v=${today}`; // changes daily
+
+fetch(url)
   .then(response => response.json())
   .then(data => {
     const container = document.getElementById('daily-clue-container');
