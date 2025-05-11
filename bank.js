@@ -32,3 +32,23 @@ fetch('bank.txt')
   .catch(err => {
     console.error("Failed to load bank.txt", err);
   });
+
+  // After processing caskets...
+
+// Calculate remaining hours
+let totalHours = 0;
+document.querySelectorAll("table tbody tr").forEach(row => {
+  const statusCell = row.cells[2];
+  const hourCell = row.cells[0];
+  
+  if (statusCell && hourCell) {
+    const isIncomplete = statusCell.textContent.includes("❌");
+    const hours = parseFloat(hourCell.textContent) || 0;
+    
+    if (isIncomplete && hours > 0) {
+      totalHours += hours;
+    }
+  }
+});
+
+document.getElementById("hours-left").textContent = totalHours;
