@@ -56,6 +56,7 @@ document.getElementById("hours-left").textContent = totalHours;
 function updateClogTotals() {
   let totalWithClue = 0;
   let totalWithoutClue = 0;
+  let estimatedClueTotal = 0;
 
   const rows = document.querySelectorAll("table tbody tr");
 
@@ -69,30 +70,32 @@ function updateClogTotals() {
     const isClue = taskName.toLowerCase().includes("clue");
 
     totalWithClue += value;
-    if (!isClue) totalWithoutClue += value;
+    if (!isClue) {
+      totalWithoutClue += value;
+    } else {
+      // Assume clue estimates are placed in Clog Items for clue rows
+      estimatedClueTotal += parseInt(clogCell.getAttribute("data-estimate")) || value;
+    }
   });
 
+  // Update display
   document.getElementById("clogs-no-clue").textContent = totalWithoutClue;
-  document.getElementById("clogs-with-clue").textContent = totalWithClue;
+  document.getElementById("clogs-with-clue").textContent = totalWithClue + (estimatedClueTotal - totalWithClue);
 
-  return { totalWithClue, totalWithoutClue };
+  return { totalWithClue, totalWithoutClue, estimatedClueTotal };
 }
 
 updateClogTotals();
 
 function updateClogEstimates() {
-  const { totalWithClue, totalWithoutClue } = updateClogTotals();
+  const { totalWithClue, totalWithoutClue, estimatedClueTotal } = updateClogTotals();
 
   const currentLog = parseInt(document.getElementById("clog-current").textContent) || 0;
-  const clueEstimateTotal = 249;
-
   const storedClueItems = totalWithClue - totalWithoutClue;
-  const clueGainEstimate = clueEstimateTotal - storedClueItems;
+  const clueGainEstimate = estimatedClueTotal - storedClueItems;
 
   const estimatedFinalTotal = currentLog + totalWithoutClue + clueGainEstimate;
 
-  document.getElementById("clogs-no-clue").textContent = totalWithoutClue;
-  document.getElementById("clogs-with-clue").textContent = clueEstimateTotal;
   document.getElementById("clogs-total").textContent = estimatedFinalTotal;
 }
 
