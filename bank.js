@@ -99,8 +99,9 @@ function updateClogEstimates() {
   });
 
   const currentLog = parseInt(document.getElementById("clog-current").textContent) || 0;
-  const clueGainEstimate = estimatedClueTotal - (totalWithClue - totalWithoutClue);
-  const estimatedFinalTotal = currentLog + totalWithoutClue + clueGainEstimate;
+
+  // ✅ Just add everything up directly
+  const estimatedFinalTotal = currentLog + totalWithoutClue + estimatedClueTotal;
 
   document.getElementById("clogs-total").textContent = estimatedFinalTotal;
 }
