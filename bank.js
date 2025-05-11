@@ -8,7 +8,7 @@ fetch('bank.txt')
       "Reward casket (medium)": { id: "medium-casket", max: 1000 },
       "Reward casket (hard)": { id: "hard-casket", max: 300 },
       "Reward casket (elite)": { id: "elite-casket", max: 50 },
-      "Reward casket (master)": { id: "master-casket", max: 50 }
+      "Reward casket (master)": { id: "master-casket", max: 0}
     };
 
     lines.slice(1).forEach(line => {
