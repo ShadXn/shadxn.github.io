@@ -7,14 +7,16 @@ fetch('daily_clue_progression.json')
     const lastEntry = data[data.length - 1];
 
     const totalWrapper = document.createElement('div');
-    totalWrapper.className = 'col-12';
-
+    totalWrapper.className = 'col-12'; // Full-width inside the row
+    
     const totalDisplay = document.createElement('div');
     totalDisplay.className = 'alert alert-info fw-bold text-center';
     totalDisplay.textContent = `Total Clues Completed: ${lastEntry.total_clues} / 2350`;
-
+    
     totalWrapper.appendChild(totalDisplay);
-    container.prepend(totalWrapper);
+    
+    // ✅ Append as the first element *inside* the row
+    container.appendChild(totalWrapper);    
 
     data.forEach(entry => {
       const card = document.createElement('div');
