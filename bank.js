@@ -38,7 +38,7 @@ fetch('bank.txt')
 // Calculate remaining hours
 let totalHours = 0;
 document.querySelectorAll("table tbody tr").forEach(row => {
-  const statusCell = row.cells[2];
+  const statusCell = row.cells[3];
   const hourCell = row.cells[0];
   
   if (statusCell && hourCell) {
