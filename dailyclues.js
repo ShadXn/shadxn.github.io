@@ -2,30 +2,25 @@ fetch('daily_clue_progression.json')
   .then(response => response.json())
   .then(data => {
     const container = document.getElementById('daily-clue-container');
+    const summaryContainer = document.getElementById('daily-clue-summary');
+
     container.innerHTML = '';
+    summaryContainer.innerHTML = '';
 
     const lastEntry = data[data.length - 1];
 
-    const totalWrapper = document.createElement('div');
-    totalWrapper.className = 'col-12'; // Full-width inside the row
-    
     const totalDisplay = document.createElement('div');
     totalDisplay.className = 'alert alert-info fw-bold text-center';
     totalDisplay.textContent = `Total Clues Completed: ${lastEntry.total_clues} / 2350`;
-    
-    totalWrapper.appendChild(totalDisplay);
-    
-    // ✅ Append as the first element *inside* the row
-    container.appendChild(totalWrapper);    
+
+    summaryContainer.appendChild(totalDisplay);
 
     data.forEach(entry => {
       const card = document.createElement('div');
       card.className = 'col';
 
       const cardInner = document.createElement('div');
-      cardInner.className = `card shadow-sm border ${
-        entry.status ? 'border-success' : 'border-warning'
-      }`;
+      cardInner.className = `card shadow-sm border ${entry.status ? 'border-success' : 'border-warning'}`;
 
       cardInner.innerHTML = `
         <div class="card-body">
