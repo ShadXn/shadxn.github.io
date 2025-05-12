@@ -83,8 +83,8 @@
   {
     "date": "2025-05-11",
     "target": 50,
-    "done_today": 0,
-    "status": false,
+    "done_today": 50,
+    "status": true,
     "counter": 10,
     "clues_left": 1650,
     "total_clues": 700

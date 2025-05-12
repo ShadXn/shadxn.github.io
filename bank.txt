@@ -17,7 +17,7 @@ Item id	Item name	Item quantity
 2359	Mithril bar	28290
 2361	Adamantite bar	5924
 2363	Runite bar	448
-2357	Gold bar	4551
+2357	Gold bar	4631
 2355	Silver bar	4707
 2976	Sickle mould	1
 9434	Bolt mould	1
@@ -47,7 +47,7 @@ Item id	Item name	Item quantity
 29920	Costume needle	1
 401	Seaweed	5496
 960	Plank	1741
-8778	Oak plank	9513
+8778	Oak plank	9581
 8780	Teak plank	1808
 8782	Mahogany plank	960
 1761	Soft clay	4948
@@ -72,13 +72,13 @@ Item id	Item name	Item quantity
 21341	Unidentified minerals	43
 12012	Golden nugget	39
 13573	Dynamite	1494
-1783	Bucket of sand	12908
+1783	Bucket of sand	12992
 2568	Ring of forging	29
 9625	Crystal saw	1
-1775	Molten glass	74519
-10980	Empty light orb	76525
-1785	Glassblowing pipe	13
-1391	Battlestaff	113
+1775	Molten glass	71775
+10980	Empty light orb	79296
+1785	Glassblowing pipe	14
+1391	Battlestaff	3
 6289	Snakeskin	1062
 9080	Suqah hide	3
 2505	Blue dragon leather	4
@@ -108,7 +108,7 @@ Item id	Item name	Item quantity
 9143	Adamant bolts	1055
 1759	Ball of wool	987
 21338	Amethyst bolt tips	150
-571	Water orb	3663
+571	Water orb	3550
 567	Unpowered orb	21692
 21905	Dragon bolts	431
 9381	Runite bolts (unf)	520
@@ -116,7 +116,6 @@ Item id	Item name	Item quantity
 13241	Infernal axe	1
 6739	Dragon axe	10
 1353	Steel axe	9
-29309	Huntsman's kit	1
 946	Knife	29
 590	Tinderbox	20
 8790	Bolt of cloth	13
@@ -182,7 +181,7 @@ Item id	Item name	Item quantity
 25580	Tackle box	1
 25584	Open fish barrel	1
 775	Cooking gauntlets	1
-314	Feather	55758
+314	Feather	56049
 1891	Cake	405
 321	Raw anchovies	200
 345	Raw herring	22
@@ -205,7 +204,7 @@ Item id	Item name	Item quantity
 1935	Jug	5127
 397	Sea turtle	8
 11936	Dark crab	119
-391	Manta ray	1703
+391	Manta ray	1700
 379	Lobster	586
 373	Swordfish	2869
 7946	Monkfish	185
@@ -224,9 +223,9 @@ Item id	Item name	Item quantity
 5291	Guam seed	184
 5292	Marrentill seed	215
 5293	Tarromin seed	184
-5294	Harralander seed	117
+5294	Harralander seed	118
 5295	Ranarr seed	186
-5297	Irit seed	237
+5297	Irit seed	238
 5298	Avantoe seed	181
 5300	Snapdragon seed	202
 5296	Toadflax seed	373
@@ -234,7 +233,7 @@ Item id	Item name	Item quantity
 5301	Cadantine seed	115
 5302	Lantadyme seed	159
 5303	Dwarf weed seed	97
-5304	Torstol seed	194
+5304	Torstol seed	195
 5309	Yanillian seed	1874
 5311	Wildblood seed	210
 22875	Hespori seed	28
@@ -320,10 +319,10 @@ Item id	Item name	Item quantity
 203	Grimy tarromin	2244
 205	Grimy harralander	4502
 207	Grimy ranarr weed	931
-209	Grimy irit leaf	1975
+209	Grimy irit leaf	2011
 211	Grimy avantoe	1310
 213	Grimy kwuarm	1349
-215	Grimy cadantine	1143
+215	Grimy cadantine	1187
 2485	Grimy lantadyme	1210
 217	Grimy dwarf weed	1791
 219	Grimy torstol	186
@@ -364,7 +363,7 @@ Item id	Item name	Item quantity
 229	Vial	2660
 19662	Botanical pie	5
 12934	Zulrah's scales	25742
-1939	Swamp tar	46217
+1939	Swamp tar	46698
 11994	Lava scale shard	10
 2452	Antifire potion(4)	1129
 5951	Antidote++ (unf)	31
@@ -377,7 +376,7 @@ Item id	Item name	Item quantity
 22209	Extended super antifire(4)	41
 29784	Araxyte venom sack	960
 9735	Desert goat horn	300
-22446	Vial of blood	10
+22446	Vial of blood	108
 3030	Super restore(1)	18
 3028	Super restore(2)	9
 3026	Super restore(3)	24
@@ -464,7 +463,6 @@ Item id	Item name	Item quantity
 989	Crystal key	6
 985	Tooth half of key	5
 987	Loop half of key	24
-4446	Steel key ring	1
 19525	Kruk monkey greegree	1
 11061	Ancient mace	1
 1931	Pot	1090
@@ -489,11 +487,6 @@ Item id	Item name	Item quantity
 9040	Gold seal	454
 24774	Blood pint	892
 9778	Thieving cape(t)	1
-13579	Graceful hood	1
-13583	Graceful top	1
-13587	Graceful gloves	1
-13589	Graceful boots	1
-13585	Graceful legs	1
 21143	Dodgy necklace	24
 24709	Hallowed crystal shard	19
 24740	Strange old lockpick (full)	12
@@ -626,7 +619,7 @@ Item id	Item name	Item quantity
 1373	Rune battleaxe	14
 868	Rune knife	115
 817	Rune dart(p)	88
-1185	Rune sq shield	34
+1185	Rune sq shield	35
 1073	Adamant platelegs	11
 1111	Adamant chainbody	5
 1123	Adamant platebody	18
@@ -645,7 +638,7 @@ Item id	Item name	Item quantity
 1407	Mystic earth staff	17
 1397	Air battlestaff	12
 1393	Fire battlestaff	1
-1395	Water battlestaff	163
+1395	Water battlestaff	276
 1405	Mystic air staff	41
 9245	Onyx bolts (e)	37
 1401	Mystic fire staff	16
@@ -672,6 +665,7 @@ Item id	Item name	Item quantity
 2366	Shield left half	3
 25419	Urium remains	108
 6733	Archers ring	1
+29039	Blue moon tassets	1
 29041	Blue moon helm	1
 29037	Blue moon chestplate	1
 28988	Blue moon spear	1
@@ -703,6 +697,7 @@ Item id	Item name	Item quantity
 19677	Ancient shard	57
 24777	Blood shard	8
 4155	Enchanted gem	20
+11212	Dragon arrow	2210
 7208	Wild pie	113
 19685	Dark totem	10
 19679	Dark totem base	3
@@ -753,29 +748,27 @@ Item id	Item name	Item quantity
 24621	Blighted vengeance sack	2720
 25844	Orange egg sac	1
 13457	Ensouled minotaur head	46
-995	Coins	11724550
-9790	Construct. cape(t)	2
+995	Coins	11729548
+9790	Construct. cape(t)	1
 9811	Farming cape(t)	1
-563	Law rune	55056
-556	Air rune	434471
-554	Fire rune	142447
+563	Law rune	39056
+556	Air rune	419015
+554	Fire rune	157907
 555	Water rune	119599
 557	Earth rune	250231
 559	Body rune	48686
 558	Mind rune	291663
 562	Chaos rune	192639
-560	Death rune	32612
-565	Blood rune	24502
-561	Nature rune	104241
-564	Cosmic rune	47798
-566	Soul rune	31303
+560	Death rune	17103
+565	Blood rune	36232
+561	Nature rune	88241
+564	Cosmic rune	59744
+566	Soul rune	43303
 9075	Astral rune	4643
-27281	Divine rune pouch	1
-952	Spade	53
+952	Spade	52
 19564	Royal seed pod	16
-13069	Achievement diary cape (t)	1
 13128	Explorer's ring 4	19
-13124	Ardougne cloak 4	21
+13124	Ardougne cloak 4	20
 22947	Rada's blessing 4	23
 22400	Drakan's medallion	21
 21276	Skull sceptre (i)	1
@@ -783,7 +776,6 @@ Item id	Item name	Item quantity
 13115	Morytania legs 4	1
 21389	Master scroll book	2
 4251	Ectophial	1
-25818	Book of the dead	1
 13136	Desert amulet 4	1
 26948	Pharaoh's sceptre	1
 29275	Perfected quetzal whistle	1
@@ -797,9 +789,7 @@ Item id	Item name	Item quantity
 23946	Eternal teleport crystal	2
 13111	Wilderness sword 4	23
 13144	Western banner 4	1
-30638	Giantsoul amulet	1
 29090	Calcified moth	24
-26818	Ring of the elements	1
 21146	Necklace of passage(5)	92
 21149	Necklace of passage(4)	3
 20714	Tome of fire	1
@@ -815,24 +805,28 @@ Item id	Item name	Item quantity
 9470	Gnome scarf	1
 3144	Cooked karambwan	15853
 385	Shark	1162
-12695	Super combat potion(4)	117
+12695	Super combat potion(4)	114
 23685	Divine super combat potion(4)	19
-2444	Ranging potion(4)	842
+2444	Ranging potion(4)	841
 23733	Divine ranging potion(4)	17
 2436	Super attack(4)	2595
 2440	Super strength(4)	739
 2434	Prayer potion(4)	531
-3024	Super restore(4)	1301
+3024	Super restore(4)	1292
 11951	Extended antifire(4)	3
 12625	Stamina potion(4)	1981
-6685	Saradomin brew(4)	713
+6685	Saradomin brew(4)	705
 10925	Sanfew serum(4)	128
-7462	Barrows gloves	2
-11832	Bandos chestplate	1
+7462	Barrows gloves	3
+29801	Amulet of rancour	1
+24271	Neitiznot faceguard	1
+11832	Bandos chestplate	2
 29045	Blood moon tassets	1
 11840	Dragon boots	1
-26770	Berserker ring (i)	1
-12954	Dragon defender	1
+6570	Fire cape	1
+26770	Berserker ring (i)	2
+12954	Dragon defender	2
+25874	Blade of saeldor (c)	1
 5698	Dragon dagger(p++)	32
 26219	Osmumten's fang	1
 25979	Keris partisan	1
@@ -913,8 +907,8 @@ Item id	Item name	Item quantity
 10348	3rd age platebody	1
 28869	Hunters' sunlight crossbow	1
 10826	Neitiznot shield	1
-20546	Reward casket (easy)	243
-20545	Reward casket (medium)	210
+20546	Reward casket (easy)	284
+20545	Reward casket (medium)	217
 20544	Reward casket (hard)	149
 20543	Reward casket (elite)	50
 19836	Reward casket (master)	2
@@ -932,6 +926,7 @@ Item id	Item name	Item quantity
 26467	Void knight gloves (or)	1
 26469	Elite void top (or)	1
 22954	Devout boots	1
+29806	Aranea boots	1
 4153	Granite maul	3
 10288	Rune helm (h2)	1
 3842	Unholy book	23
@@ -953,7 +948,7 @@ Item id	Item name	Item quantity
 20220	Holy blessing	1
 21326	Amethyst arrow	3187
 1033	Zamorak monk bottom	1
-10588	Salve amulet (e)	206
+10588	Salve amulet (e)	204
 10587	Tarn's diary	1
 25916	Dragon hunter crossbow (t)	1
 26782	Salve amulet(ei)	1
@@ -995,3 +990,4 @@ Item id	Item name	Item quantity
 11814	Saradomin hilt	1
 19933	Saradomin d'hide boots	1
 12612	Book of darkness	15
+2550	Ring of recoil	3
