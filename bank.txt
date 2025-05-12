@@ -907,8 +907,8 @@ Item id	Item name	Item quantity
 10348	3rd age platebody	1
 28869	Hunters' sunlight crossbow	1
 10826	Neitiznot shield	1
-20546	Reward casket (easy)	284
-20545	Reward casket (medium)	247
+20546	Reward casket (easy)	316
+20545	Reward casket (medium)	262
 20544	Reward casket (hard)	149
 20543	Reward casket (elite)	50
 19836	Reward casket (master)	2
