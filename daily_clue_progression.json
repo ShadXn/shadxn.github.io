@@ -92,11 +92,11 @@
   {
     "date": "2025-05-12",
     "target": 50,
-    "done_today": 30,
+    "done_today": 75,
     "status": false,
     "counter": 11,
-    "clues_left": 1620,
-    "total_clues": 730
+    "clues_left": 1573,
+    "total_clues": 777
   },
   {
     "date": "2025-05-13",
