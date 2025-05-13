@@ -94,15 +94,8 @@ function renderCards() {
         </div>
 
         <div class="d-flex justify-content-between">
-          <p class="card-text mb-1"><strong>Target:</strong> ${entry.target} clues</p>
-          <p class="card-text mb-1"><strong>Done Today:</strong> ${doneToday}</p>
-        </div>
-
-        <hr class="my-2">
-
-        <div class="d-flex justify-content-between">
-          <p class="card-text mb-1"><strong>Total Done:</strong> ${runningTotal}</p>
-          <p class="card-text mb-1"><strong>Left:</strong> ${remaining}</p>
+          <p class="card-text mb-1"><strong>Daily Clue Target:</strong> ${entry.target} clues</p>
+          <p class="card-text mb-1"><strong>Clues Done Today:</strong> ${doneToday}</p>
         </div>
 
         ${showBreakdown ? `
@@ -112,8 +105,16 @@ function renderCards() {
           <span class="badge bg-light text-dark">Medium: ${entry.done_medium}</span>
           <span class="badge bg-light text-dark">Hard: ${entry.done_hard}</span>
         </div>
-        <p class="card-text mb-1">Counter: ${entry.counter}</p>
         ` : ''}
+
+        <hr class="my-2">
+
+        <div class="d-flex justify-content-between">
+          <p class="card-text mb-1"><strong>Total Clues Done:</strong> ${runningTotal}</p>
+          <p class="card-text mb-1"><strong>Clues Left:</strong> ${remaining}</p>
+        </div>
+
+        ${showBreakdown ? `<p class="card-text mb-1">Day Counter: ${entry.counter}</p>` : ''}
       </div>
     `;
 
