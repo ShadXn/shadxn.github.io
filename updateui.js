@@ -36,27 +36,29 @@
 //   // After processing caskets...
 
 // Calculate remaining hours
-// Safely read total hours from existing LMS + Chompy + clue hours
-const lmsHours = parseInt(document.getElementById("lms-hours")?.textContent || "0", 10);
-const chompyHours = parseInt(document.getElementById("chompy-hours")?.textContent || "0", 10);
+function updateTotalHours() {
+  let totalHours = 0;
 
-let clueHours = 0;
-document.querySelectorAll("table tbody tr").forEach(row => {
-  const statusCell = row.cells[3];
-  const taskName = row.cells[1]?.textContent?.toLowerCase() || "";
-  const hourCell = row.cells[0];
+  document.querySelectorAll("table tbody tr").forEach(row => {
+    const hourCell = row.cells[0];
+    const raw = hourCell?.textContent?.trim();
 
-  const isClue = taskName.includes("clue");
-  const isIncomplete = statusCell?.textContent.includes("❌");
+    if (raw) {
+      const value = parseFloat(raw);
+      if (!isNaN(value)) {
+        totalHours += value;
+      }
+    }
+  });
 
-  if (isIncomplete && isClue) {
-    const raw = parseFloat(hourCell?.textContent) || 0;
-    clueHours += raw;
+  const hoursLeftCell = document.getElementById("hours-left");
+  if (hoursLeftCell) {
+    hoursLeftCell.textContent = totalHours;
   }
-});
+}
 
-const totalHours = lmsHours + chompyHours + clueHours;
-document.getElementById("hours-left").textContent = totalHours;
+// Call this after the page has rendered
+updateTotalHours();
 
 function updateClogTotals() {
   let totalWithClue = 0;
