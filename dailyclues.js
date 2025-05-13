@@ -63,17 +63,18 @@ fetch(url)
       done_elite: entry.done_elite || 0
     }));
 
-    // Get LMS and Chompy values from the HTML directly
+    // Get LMS and Chompy values from HTML safely
+    const lmsProgressRaw = document.getElementById("lms-progress")?.textContent || "0/0";
+    const chompyProgressRaw = document.getElementById("chompy-progress")?.textContent || "0/0";
+
+    const [lmsCurrent, lmsTotal] = lmsProgressRaw.split("/").map(x => parseInt(x) || 0);
+    const [chompyCurrent, chompyTotal] = chompyProgressRaw.split("/").map(x => parseInt(x) || 0);
+
+    const lmsHours = ((lmsTotal - lmsCurrent) * extraDurations.lms) / 60;
+    const chompyHours = ((chompyTotal - chompyCurrent) * extraDurations.chompy) / 60;
+
     const lmsCell = document.getElementById("lms-hours");
     const chompyCell = document.getElementById("chompy-hours");
-    const lmsProgress = document.querySelector("td:contains('LMS')").nextElementSibling?.textContent || "0";
-    const chompyProgress = document.querySelector("td:contains('Chompy Bird Hunting')").nextElementSibling?.textContent || "0";
-
-    const lmsPoints = parseInt(lmsProgress.split("/")[1] || 0) - parseInt(lmsProgress.split("/")[0] || 0);
-    const chompyKills = parseInt(chompyProgress.split("/")[1] || 0) - parseInt(chompyProgress.split("/")[0] || 0);
-
-    const lmsHours = (lmsPoints * extraDurations.lms) / 60;
-    const chompyHours = (chompyKills * extraDurations.chompy) / 60;
 
     if (lmsCell) lmsCell.textContent = lmsHours.toFixed(2);
     if (chompyCell) chompyCell.textContent = chompyHours.toFixed(2);
@@ -123,7 +124,7 @@ function renderCards() {
     document.getElementById("easy-casket").textContent = `${startingClueCount.easy + completed.easy}/1000`;
     document.getElementById("medium-casket").textContent = `${startingClueCount.medium + completed.medium}/1000`;
     document.getElementById("hard-casket").textContent = `${startingClueCount.hard + completed.hard}/300`;
-    document.getElementById("elite-casket").textContent = `50/50`;
+    document.getElementById("elite-casket").textContent = `${startingClueCount.elite + completed.elite}/50`;
     document.getElementById("master-casket").textContent = `0/0`;
   
   let runningTotal = startingClueCount.easy + startingClueCount.medium + startingClueCount.hard;
