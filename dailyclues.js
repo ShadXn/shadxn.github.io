@@ -80,6 +80,11 @@ fetch(url)
     if (chompyCell) chompyCell.textContent = Math.round(chompyHours);    
 
     renderCards();
+
+    // ✅ Update total hours after everything is rendered
+    if (typeof updateTotalHours === 'function') {
+      updateTotalHours();
+    }
   })
   .catch(err => {
     console.error('Failed to load daily_clue_progression.json', err);
