@@ -78,35 +78,25 @@ function renderCards() {
     cardInner.className = `card shadow-sm border ${entry.status ? 'border-success' : 'border-warning'}`;
 
     cardInner.innerHTML = `
-    <div class="card-body">
-      <h5 class="card-title">${entry.date}</h5>
-      <p class="card-text mb-1">
-        <strong>Target:</strong> ${entry.target} clues &nbsp;|&nbsp; 
-        <strong>Done Today:</strong> ${doneToday}
-      </p>
-      <p class="card-text mb-1">
-        <strong>Total Done:</strong> ${runningTotal} &nbsp;|&nbsp; 
-        <strong>Left:</strong> ${remaining}
-      </p>
-      <p class="card-text mb-2">Counter: ${entry.counter}</p>
-  
-      <button class="btn btn-sm btn-outline-secondary mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#details-${entry.counter}">
-        Show Breakdown
-      </button>
-  
-      <div class="collapse" id="details-${entry.counter}">
-        <div class="d-flex gap-2 flex-wrap">
+      <div class="card-body position-relative">
+        <h5 class="card-title">${entry.date}</h5>
+        <p class="card-text mb-1"><strong>Target:</strong> ${entry.target} clues</p>
+        <p class="card-text mb-1"><strong>Done Today:</strong> ${doneToday}</p>
+        <hr>
+        <div class="d-flex gap-2 mb-2">
           <span class="badge bg-light text-dark">Easy: ${entry.done_easy}</span>
           <span class="badge bg-light text-dark">Medium: ${entry.done_medium}</span>
           <span class="badge bg-light text-dark">Hard: ${entry.done_hard}</span>
         </div>
+        <hr>
+        <p class="card-text mb-1"><strong>Total Done:</strong> ${runningTotal}</p>
+        <p class="card-text mb-1"><strong>Left:</strong> ${remaining}</p>
+        <p class="card-text mb-1">Counter: ${entry.counter}</p>
+        <span class="badge ${entry.status ? 'bg-success' : 'bg-secondary'}">
+          ${entry.status ? 'Completed' : 'Incomplete'}
+        </span>
       </div>
-  
-      <span class="badge ${entry.status ? 'bg-success' : 'bg-secondary'} mt-2">
-        ${entry.status ? 'Completed' : 'Incomplete'}
-      </span>
-    </div>
-  `;  
+    `;
 
     card.appendChild(cardInner);
     container.appendChild(card);
