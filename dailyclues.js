@@ -48,7 +48,8 @@ fetch(url)
       ...entry,
       done_easy: entry.done_easy || 0,
       done_medium: entry.done_medium || 0,
-      done_hard: entry.done_hard || 0
+      done_hard: entry.done_hard || 0,
+      done_elite: entry.done_elite || 0
     }));
     renderCards();
   })
@@ -60,13 +61,14 @@ function renderCards() {
   container.innerHTML = '';
   summaryContainer.innerHTML = '';
 
-  let completed = { easy: 0, medium: 0, hard: 0 };
+  let completed = { easy: 0, medium: 0, hard: 0, elite: 0 };
 
   clueData.forEach(entry => {
     if (entry.status) {
       completed.easy += entry.done_easy;
       completed.medium += entry.done_medium;
       completed.hard += entry.done_hard;
+      completed.elite += entry.done_elite;
     }
   });
 
@@ -93,7 +95,7 @@ function renderCards() {
   let runningTotal = startingClueCount.easy + startingClueCount.medium + startingClueCount.hard;
 
   clueData.forEach(entry => {
-    const doneToday = entry.done_easy + entry.done_medium + entry.done_hard;
+    const doneToday = entry.done_easy + entry.done_medium + entry.done_hard + entry.done_elite;
 
     const tempRunningTotal = runningTotal + doneToday;
     const remaining = totalTargetClues - tempRunningTotal;
@@ -128,6 +130,7 @@ function renderCards() {
           <span class="badge bg-light text-dark">Easy: ${entry.done_easy}</span>
           <span class="badge bg-light text-dark">Medium: ${entry.done_medium}</span>
           <span class="badge bg-light text-dark">Hard: ${entry.done_hard}</span>
+          <span class="badge bg-light text-dark">Elite: ${entry.done_elite}</span>
         </div>
         ` : ''}
 
