@@ -40,20 +40,18 @@ function updateTotalHours() {
   let totalHours = 0;
 
   document.querySelectorAll("table tbody tr").forEach(row => {
-    const hourCell = row.cells[0];
-    const raw = hourCell?.textContent?.trim();
+    const cell = row.cells[0];
+    if (!cell) return;
 
-    if (raw) {
-      const value = parseFloat(raw);
-      if (!isNaN(value)) {
-        totalHours += value;
-      }
+    const value = parseFloat(cell.textContent.trim());
+    if (!isNaN(value)) {
+      totalHours += value;
     }
   });
 
   const hoursLeftCell = document.getElementById("hours-left");
   if (hoursLeftCell) {
-    hoursLeftCell.textContent = totalHours;
+    hoursLeftCell.textContent = Math.round(totalHours);
   }
 }
 
