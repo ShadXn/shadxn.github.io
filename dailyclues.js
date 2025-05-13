@@ -78,32 +78,23 @@ function renderCards() {
     cardInner.className = `card shadow-sm border ${entry.status ? 'border-success' : 'border-warning'}`;
 
     cardInner.innerHTML = `
-    <div class="card-body">
-      <h5 class="card-title mb-3">${entry.date}</h5>
-  
-      <div class="mb-2">
-        <strong>Target:</strong> ${entry.target} clues |
-        <strong>Done Today:</strong> ${doneToday}
+      <div class="card-body">
+        <h5 class="card-title">${entry.date}</h5>
+        <p class="card-text mb-1"><strong>Target:</strong> ${entry.target} clues</p>
+        <p class="card-text mb-1"><strong>Done Today:</strong> ${doneToday}</p>
+        <div class="d-flex gap-2 mb-2">
+          <span class="badge bg-light text-dark">Easy: ${entry.done_easy}</span>
+          <span class="badge bg-light text-dark">Medium: ${entry.done_medium}</span>
+          <span class="badge bg-light text-dark">Hard: ${entry.done_hard}</span>
+        </div>
+        <p class="card-text mb-1"><strong>Total Clues Done:</strong> ${runningTotal}</p>
+        <p class="card-text mb-1"><strong>Clues Left:</strong> ${remaining}</p>
+        <p class="card-text mb-1">Counter: ${entry.counter}</p>
+        <span class="badge ${entry.status ? 'bg-success' : 'bg-secondary'}">
+          ${entry.status ? 'Completed' : 'Incomplete'}
+        </span>
       </div>
-  
-      <div class="mb-2">
-        <span class="badge bg-light text-dark me-1">Easy: ${entry.done_easy}</span>
-        <span class="badge bg-light text-dark me-1">Medium: ${entry.done_medium}</span>
-        <span class="badge bg-light text-dark">Hard: ${entry.done_hard}</span>
-      </div>
-  
-      <div class="mb-2 text-muted">
-        Total Clues Done: <strong>${runningTotal}</strong> |
-        Clues Left: <strong>${remaining}</strong>
-      </div>
-  
-      <div class="mb-2 text-muted">Counter: ${entry.counter}</div>
-  
-      <span class="badge ${entry.status ? 'bg-success' : 'bg-secondary'}">
-        ${entry.status ? 'Completed' : 'Incomplete'}
-      </span>
-    </div>
-  `;  
+    `;
 
     card.appendChild(cardInner);
     container.appendChild(card);
