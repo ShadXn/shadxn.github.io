@@ -11,9 +11,9 @@ const summaryContainer = document.getElementById('daily-clue-summary');
 
 let clueData = [];
 const startingClueCount = {
-  easy: 0,
-  medium: 0,
-  hard: 0,
+  easy: 200,
+  medium: 150,
+  hard: 120,
   elite: 50
 };
 
