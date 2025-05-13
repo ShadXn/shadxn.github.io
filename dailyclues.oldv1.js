@@ -3,9 +3,7 @@ const cacheKey = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}-${
 const url = `daily_clue_progression.json?v=${cacheKey}`; // changes hourly
 
 let showCompleted = false;
-let showBreakdown = false;
 const toggleBtn = document.getElementById('toggle-completed-btn');
-const breakdownBtn = document.getElementById('toggle-breakdown-btn');
 const container = document.getElementById('daily-clue-container');
 const summaryContainer = document.getElementById('daily-clue-summary');
 
@@ -16,6 +14,7 @@ const startingClueCount = {
   hard: 450
 };
 
+// Toggle show/hide completed days
 if (toggleBtn) {
   toggleBtn.addEventListener('click', () => {
     showCompleted = !showCompleted;
@@ -24,17 +23,10 @@ if (toggleBtn) {
   });
 }
 
-if (breakdownBtn) {
-  breakdownBtn.addEventListener('click', () => {
-    showBreakdown = !showBreakdown;
-    breakdownBtn.textContent = showBreakdown ? 'Hide More Info' : 'Show More Info';
-    renderCards();
-  });
-}
-
 fetch(url)
   .then(response => response.json())
   .then(data => {
+    // Ensure each entry has the new clue fields
     clueData = data.map(entry => ({
       ...entry,
       done_easy: entry.done_easy || 0,
@@ -53,6 +45,7 @@ function renderCards() {
 
   let completed = { easy: 0, medium: 0, hard: 0 };
 
+  // Sum clues from completed entries
   clueData.forEach(entry => {
     if (entry.status) {
       completed.easy += entry.done_easy;
@@ -85,37 +78,41 @@ function renderCards() {
     cardInner.className = `card shadow-sm border ${entry.status ? 'border-success' : 'border-warning'}`;
 
     cardInner.innerHTML = `
-      <div class="card-body position-relative">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <h5 class="card-title mb-0">${entry.date}</h5>
-          <span class="badge ${entry.status ? 'bg-success' : 'bg-secondary'}">
-            ${entry.status ? 'Completed' : 'Incomplete'}
-          </span>
-        </div>
+    <div class="card-body position-relative">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="card-title mb-0">${entry.date}</h5>
+        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#details-${entry.counter}">
+          Show Clue Types
+        </button>
+      </div>
+  
+      <div class="d-flex justify-content-between">
+        <p class="card-text mb-1"><strong>Target:</strong> ${entry.target} clues</p>
+        <p class="card-text mb-1"><strong>Done Today:</strong> ${doneToday}</p>
+      </div>
 
-        <div class="d-flex justify-content-between">
-          <p class="card-text mb-1"><strong>Target:</strong> ${entry.target} clues</p>
-          <p class="card-text mb-1"><strong>Done Today:</strong> ${doneToday}</p>
-        </div>
-
-        <hr class="my-2">
-
-        <div class="d-flex justify-content-between">
-          <p class="card-text mb-1"><strong>Total Done:</strong> ${runningTotal}</p>
-          <p class="card-text mb-1"><strong>Left:</strong> ${remaining}</p>
-        </div>
-
-        ${showBreakdown ? `
-        <hr class="my-2">
-        <div class="d-flex gap-2 flex-wrap mb-2">
+      <div class="collapse mb-2" id="details-${entry.counter}">
+        <div class="d-flex gap-2 flex-wrap">
           <span class="badge bg-light text-dark">Easy: ${entry.done_easy}</span>
           <span class="badge bg-light text-dark">Medium: ${entry.done_medium}</span>
           <span class="badge bg-light text-dark">Hard: ${entry.done_hard}</span>
         </div>
-        <p class="card-text mb-1">Counter: ${entry.counter}</p>
-        ` : ''}
       </div>
-    `;
+  
+      <hr class="my-2">
+      
+      <div class="d-flex justify-content-between">
+        <p class="card-text mb-1"><strong>Total Done:</strong> ${runningTotal}</p>
+        <p class="card-text mb-1"><strong>Left:</strong> ${remaining}</p>
+      </div>
+  
+      <p class="card-text mb-1">Counter: ${entry.counter}</p>
+  
+      <span class="badge ${entry.status ? 'bg-success' : 'bg-secondary'}">
+        ${entry.status ? 'Completed' : 'Incomplete'}
+      </span>
+    </div>
+  `;  
 
     card.appendChild(cardInner);
     container.appendChild(card);
