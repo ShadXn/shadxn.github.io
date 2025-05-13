@@ -33,7 +33,7 @@ const clueDurations = {
 
 const extraDurations = {
   lms: 8,         // minutes per LMS point (example)
-  chompy: 0.5     // minutes per Chompy bird kill
+  chompy: 0.35     // minutes per Chompy bird kill
 };
 
 if (toggleBtn) {
@@ -76,8 +76,8 @@ fetch(url)
     const lmsCell = document.getElementById("lms-hours");
     const chompyCell = document.getElementById("chompy-hours");
 
-    if (lmsCell) lmsCell.textContent = lmsHours.toFixed(2);
-    if (chompyCell) chompyCell.textContent = chompyHours.toFixed(2);
+    if (lmsCell) lmsCell.textContent = Math.round(lmsHours);
+    if (chompyCell) chompyCell.textContent = Math.round(chompyHours);    
 
     renderCards();
   })
