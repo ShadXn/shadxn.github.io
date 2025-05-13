@@ -78,25 +78,39 @@ function renderCards() {
     cardInner.className = `card shadow-sm border ${entry.status ? 'border-success' : 'border-warning'}`;
 
     cardInner.innerHTML = `
-      <div class="card-body position-relative">
-        <h5 class="card-title">${entry.date}</h5>
-        <p class="card-text mb-1"><strong>Target:</strong> ${entry.target} clues</p>
-        <p class="card-text mb-1"><strong>Done Today:</strong> ${doneToday}</p>
-        <hr>
-        <div class="d-flex gap-2 mb-2">
+    <div class="card-body position-relative">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="card-title mb-0">${entry.date}</h5>
+        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#details-${entry.counter}">
+          Show Clue Types
+        </button>
+      </div>
+  
+      <p class="card-text mb-1"><strong>Target:</strong> ${entry.target} clues</p>
+      <p class="card-text mb-1"><strong>Done Today:</strong> ${doneToday}</p>
+  
+      <div class="collapse mb-2" id="details-${entry.counter}">
+        <div class="d-flex gap-2 flex-wrap">
           <span class="badge bg-light text-dark">Easy: ${entry.done_easy}</span>
           <span class="badge bg-light text-dark">Medium: ${entry.done_medium}</span>
           <span class="badge bg-light text-dark">Hard: ${entry.done_hard}</span>
         </div>
-        <hr>
+      </div>
+  
+      <hr class="my-2">
+      
+      <div class="d-flex justify-content-between">
         <p class="card-text mb-1"><strong>Total Done:</strong> ${runningTotal}</p>
         <p class="card-text mb-1"><strong>Left:</strong> ${remaining}</p>
-        <p class="card-text mb-1">Counter: ${entry.counter}</p>
-        <span class="badge ${entry.status ? 'bg-success' : 'bg-secondary'}">
-          ${entry.status ? 'Completed' : 'Incomplete'}
-        </span>
       </div>
-    `;
+  
+      <p class="card-text mb-1">Counter: ${entry.counter}</p>
+  
+      <span class="badge ${entry.status ? 'bg-success' : 'bg-secondary'}">
+        ${entry.status ? 'Completed' : 'Incomplete'}
+      </span>
+    </div>
+  `;  
 
     card.appendChild(cardInner);
     container.appendChild(card);
