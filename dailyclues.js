@@ -79,7 +79,7 @@ function renderCards() {
 
   const totalDisplay2 = document.createElement('div');
   totalDisplay2.className = 'alert alert-info fw-bold text-center';
-  totalDisplay2.textContent = `Total Clues Left: ${cluesLeft} / 2350 (${clueTargets.easy - completed.easy} Easy | ${clueTargets.medium - completed.medium} Medium | ${clueTargets.hard - completed.hard} Hard)`;
+  totalDisplay2.textContent = `Total Clues Left: ${cluesLeft} (${clueTargets.easy - completed.easy} Easy | ${clueTargets.medium - completed.medium} Medium | ${clueTargets.hard - completed.hard} Hard)`;
 
   summaryContainer.appendChild(totalDisplay1);
   summaryContainer.appendChild(totalDisplay2);
