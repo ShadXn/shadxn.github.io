@@ -60,10 +60,24 @@ fetch(url)
       done_easy: entry.done_easy || 0,
       done_medium: entry.done_medium || 0,
       done_hard: entry.done_hard || 0,
-      done_elite: entry.done_elite || 0,
-      lms_points: entry.lms_points || 0,
-      chompy_kills: entry.chompy_kills || 0
+      done_elite: entry.done_elite || 0
     }));
+
+    // Get LMS and Chompy values from the HTML directly
+    const lmsCell = document.getElementById("lms-hours");
+    const chompyCell = document.getElementById("chompy-hours");
+    const lmsProgress = document.querySelector("td:contains('LMS')").nextElementSibling?.textContent || "0";
+    const chompyProgress = document.querySelector("td:contains('Chompy Bird Hunting')").nextElementSibling?.textContent || "0";
+
+    const lmsPoints = parseInt(lmsProgress.split("/")[1] || 0) - parseInt(lmsProgress.split("/")[0] || 0);
+    const chompyKills = parseInt(chompyProgress.split("/")[1] || 0) - parseInt(chompyProgress.split("/")[0] || 0);
+
+    const lmsHours = (lmsPoints * extraDurations.lms) / 60;
+    const chompyHours = (chompyKills * extraDurations.chompy) / 60;
+
+    if (lmsCell) lmsCell.textContent = lmsHours.toFixed(2);
+    if (chompyCell) chompyCell.textContent = chompyHours.toFixed(2);
+
     renderCards();
   })
   .catch(err => {
@@ -112,33 +126,6 @@ function renderCards() {
     document.getElementById("elite-casket").textContent = `50/50`;
     document.getElementById("master-casket").textContent = `0/0`;
   
-    const hoursLeft = clueData
-    .filter(e => !e.status)
-    .reduce((sum, e) => sum + (
-      (e.done_easy * clueDurations.easy) +
-      (e.done_medium * clueDurations.medium) +
-      (e.done_hard * clueDurations.hard) +
-      (e.lms_points * extraDurations.lms) +
-      (e.chompy_kills * extraDurations.chompy)
-    ), 0) / 60;
-  
-    document.getElementById("hours-left").textContent = hoursLeft.toFixed(2);
-
-    const lmsHours = clueData
-    .filter(e => !e.status)
-    .reduce((sum, e) => sum + (e.lms_points * extraDurations.lms), 0) / 60;
-  
-    const chompyHours = clueData
-      .filter(e => !e.status)
-      .reduce((sum, e) => sum + (e.chompy_kills * extraDurations.chompy), 0) / 60;
-    
-    const lmsCell = document.getElementById("lms-hours");
-    const chompyCell = document.getElementById("chompy-hours");
-    
-    if (lmsCell) lmsCell.textContent = lmsHours.toFixed(2);
-    if (chompyCell) chompyCell.textContent = chompyHours.toFixed(2);  
-
-
   let runningTotal = startingClueCount.easy + startingClueCount.medium + startingClueCount.hard;
 
   clueData.forEach(entry => {
@@ -146,9 +133,7 @@ function renderCards() {
 
     const timeMinutes = (entry.done_easy * clueDurations.easy) +
                         (entry.done_medium * clueDurations.medium) +
-                        (entry.done_hard * clueDurations.hard) +
-                        (entry.lms_points * extraDurations.lms) +
-                        (entry.chompy_kills * extraDurations.chompy);
+                        (entry.done_hard * clueDurations.hard);
     const timeHours = (timeMinutes / 60).toFixed(2);
 
     const tempRunningTotal = runningTotal + doneToday;
