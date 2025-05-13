@@ -113,8 +113,8 @@
     "date": "2025-05-13",
     "target": 50,
     "done_easy": 0,
-    "done_medium": 0,
-    "done_hard": 0,
+    "done_medium": 32,
+    "done_hard": 2,
     "done_elite": 0,
     "status": false,
     "counter": 12
