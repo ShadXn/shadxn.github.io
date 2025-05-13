@@ -60,7 +60,9 @@ fetch(url)
       done_easy: entry.done_easy || 0,
       done_medium: entry.done_medium || 0,
       done_hard: entry.done_hard || 0,
-      done_elite: entry.done_elite || 0
+      done_elite: entry.done_elite || 0,
+      lms_points: entry.lms_points || 0,
+      chompy_kills: entry.chompy_kills || 0
     }));
     renderCards();
   })
@@ -125,16 +127,16 @@ function renderCards() {
     const lmsHours = clueData
     .filter(e => !e.status)
     .reduce((sum, e) => sum + (e.lms_points * extraDurations.lms), 0) / 60;
-
+  
     const chompyHours = clueData
       .filter(e => !e.status)
       .reduce((sum, e) => sum + (e.chompy_kills * extraDurations.chompy), 0) / 60;
-
+    
     const lmsCell = document.getElementById("lms-hours");
     const chompyCell = document.getElementById("chompy-hours");
-
+    
     if (lmsCell) lmsCell.textContent = lmsHours.toFixed(2);
-    if (chompyCell) chompyCell.textContent = chompyHours.toFixed(2);
+    if (chompyCell) chompyCell.textContent = chompyHours.toFixed(2);  
 
 
   let runningTotal = startingClueCount.easy + startingClueCount.medium + startingClueCount.hard;
