@@ -143,7 +143,7 @@ function renderCards() {
     const doneToday = entry.done_easy + entry.done_medium + entry.done_hard + entry.done_elite;
   
     // Use target value **only** if no progress made that day
-    const countToday = doneToday > 0 ? doneToday : entry.target || 0;
+    const countToday = (doneToday > 0 || entry.status) ? doneToday : entry.target || 0;
   
     runningTotal += countToday;
     const remaining = totalTargetClues - runningTotal;
