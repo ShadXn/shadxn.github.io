@@ -199,8 +199,3 @@ function renderCards() {
     container.appendChild(card);
   });
 }
-
-// At the very end of dailyclues.js
-if (typeof updateTotalHours === 'function') {
-  updateTotalHours(); // Now runs *after* table is rendered
-}
