@@ -140,11 +140,6 @@ function renderCards() {
   clueData.forEach(entry => {
     const doneToday = entry.done_easy + entry.done_medium + entry.done_hard + entry.done_elite;
 
-    const timeMinutes = (entry.done_easy * clueDurations.easy) +
-                        (entry.done_medium * clueDurations.medium) +
-                        (entry.done_hard * clueDurations.hard);
-    const timeHours = (timeMinutes / 60).toFixed(2);
-
     let runningTotal = startingClueCount.easy + startingClueCount.medium + startingClueCount.hard + startingClueCount.elite;
 
     runningTotal += doneToday;
