@@ -138,17 +138,18 @@ function renderCards() {
 
   
   let runningTotal = startingClueCount.easy + startingClueCount.medium + startingClueCount.hard + startingClueCount.elite;
-  let absoluteTotal = runningTotal;
-    
+
   clueData.forEach(entry => {
-    const doneToday = entry.done_easy + entry.done_medium + entry.done_hard;
-    absoluteTotal += doneToday;
+    const doneToday = entry.done_easy + entry.done_medium + entry.done_hard + entry.done_elite;
   
-    if (!showCompleted && entry.status) return;
+    // Use target value **only** if no progress made that day
+    const countToday = doneToday > 0 ? doneToday : entry.target || 0;
   
-    runningTotal += doneToday;
+    runningTotal += countToday;
     const remaining = totalTargetClues - runningTotal;
-    
+  
+    // Only skip rendering
+    if (!showCompleted && entry.status) return;
 
     const card = document.createElement('div');
     card.className = 'col';
