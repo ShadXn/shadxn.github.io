@@ -14,7 +14,7 @@ const startingClueCount = {
   easy: 0,
   medium: 0,
   hard: 0,
-  elite: 50 // optional if you want to track elite later
+  elite: 50
 };
 
 const clueTargets = {
@@ -75,7 +75,7 @@ function renderCards() {
 
   const totalDisplay1 = document.createElement('div');
   totalDisplay1.className = 'alert alert-info fw-bold text-center';
-  totalDisplay1.textContent = `Total Clues Completed: ${totalCluesDone} / 2350 (${completed.easy} Easy | ${completed.medium} Medium | ${completed.hard} Hard)`;
+  totalDisplay1.textContent = `Total Clues Completed: ${totalCluesDone} / ${totalTargetClues} (${completed.easy} Easy | ${completed.medium} Medium | ${completed.hard} Hard)`;
 
   const totalDisplay2 = document.createElement('div');
   totalDisplay2.className = 'alert alert-info fw-bold text-center';
@@ -87,11 +87,14 @@ function renderCards() {
   let runningTotal = startingClueCount.easy + startingClueCount.medium + startingClueCount.hard;
 
   clueData.forEach(entry => {
+    const doneToday = entry.done_easy + entry.done_medium + entry.done_hard;
+
+    const tempRunningTotal = runningTotal + doneToday;
+    const remaining = totalTargetClues - tempRunningTotal;
+
     if (!showCompleted && entry.status) return;
 
-    const doneToday = entry.done_easy + entry.done_medium + entry.done_hard;
     runningTotal += doneToday;
-    const remaining = 2350 - runningTotal;
 
     const card = document.createElement('div');
     card.className = 'col';
