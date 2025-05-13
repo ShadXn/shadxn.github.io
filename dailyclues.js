@@ -13,8 +13,17 @@ let clueData = [];
 const startingClueCount = {
   easy: 0,
   medium: 0,
-  hard: 450
+  hard: 0,
+  elite: 50 // optional if you want to track elite later
 };
+
+const clueTargets = {
+  easy: 1000,
+  medium: 1000,
+  hard: 300,
+  elite: 50
+};
+const totalTargetClues = clueTargets.easy + clueTargets.medium + clueTargets.hard + clueTargets.elite;
 
 if (toggleBtn) {
   toggleBtn.addEventListener('click', () => {
@@ -62,12 +71,18 @@ function renderCards() {
   });
 
   const totalCluesDone = startingClueCount.easy + startingClueCount.medium + startingClueCount.hard + completed.easy + completed.medium + completed.hard;
-  const cluesLeft = 2350 - totalCluesDone;
+  const cluesLeft = totalTargetClues - totalCluesDone;
 
-  const totalDisplay = document.createElement('div');
-  totalDisplay.className = 'alert alert-info fw-bold text-center';
-  totalDisplay.textContent = `Total Clues Completed: ${totalCluesDone} / 2350 | Clues Left: ${cluesLeft} (Easy: ${completed.easy} | Medium: ${completed.medium} | Hard: ${completed.hard})`;
-  summaryContainer.appendChild(totalDisplay);
+  const totalDisplay1 = document.createElement('div');
+  totalDisplay1.className = 'alert alert-info fw-bold text-center';
+  totalDisplay1.textContent = `Total Clues Completed: ${totalCluesDone} / 2350`;
+
+  const totalDisplay2 = document.createElement('div');
+  totalDisplay2.className = 'alert alert-info fw-bold text-center';
+  totalDisplay2.textContent = `Clues Left: ${cluesLeft} (Easy: ${completed.easy} | Medium: ${completed.medium} | Hard: ${completed.hard})`;
+
+  summaryContainer.appendChild(totalDisplay1);
+  summaryContainer.appendChild(totalDisplay2);
 
   let runningTotal = startingClueCount.easy + startingClueCount.medium + startingClueCount.hard;
 
