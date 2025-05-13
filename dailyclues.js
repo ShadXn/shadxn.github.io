@@ -86,9 +86,11 @@ function renderCards() {
         </button>
       </div>
   
-      <p class="card-text mb-1"><strong>Target:</strong> ${entry.target} clues</p>
-      <p class="card-text mb-1"><strong>Done Today:</strong> ${doneToday}</p>
-  
+      <div class="d-flex justify-content-between">
+        <p class="card-text mb-1"><strong>Target:</strong> ${entry.target} clues</p>
+        <p class="card-text mb-1"><strong>Done Today:</strong> ${doneToday}</p>
+      </div>
+
       <div class="collapse mb-2" id="details-${entry.counter}">
         <div class="d-flex gap-2 flex-wrap">
           <span class="badge bg-light text-dark">Easy: ${entry.done_easy}</span>
