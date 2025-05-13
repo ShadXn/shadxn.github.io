@@ -25,6 +25,17 @@ const clueTargets = {
 };
 const totalTargetClues = clueTargets.easy + clueTargets.medium + clueTargets.hard + clueTargets.elite;
 
+const clueDurations = {
+  easy: 5,     // minutes
+  medium: 8,   // minutes
+  hard: 20     // minutes
+};
+
+const extraDurations = {
+  lms: 8,         // minutes per LMS point (example)
+  chompy: 0.5     // minutes per Chompy bird kill
+};
+
 if (toggleBtn) {
   toggleBtn.addEventListener('click', () => {
     showCompleted = !showCompleted;
@@ -92,10 +103,36 @@ function renderCards() {
 
   summaryContainer.appendChild(summaryRow);
 
+    // Update clue caskets and hours
+    document.getElementById("easy-casket").textContent = `${startingClueCount.easy + completed.easy}/1000`;
+    document.getElementById("medium-casket").textContent = `${startingClueCount.medium + completed.medium}/1000`;
+    document.getElementById("hard-casket").textContent = `${startingClueCount.hard + completed.hard}/300`;
+    document.getElementById("elite-casket").textContent = `50/50`;
+    document.getElementById("master-casket").textContent = `0/0`;
+  
+    const hoursLeft = clueData
+    .filter(e => !e.status)
+    .reduce((sum, e) => sum + (
+      (e.done_easy * clueDurations.easy) +
+      (e.done_medium * clueDurations.medium) +
+      (e.done_hard * clueDurations.hard) +
+      (e.lms_points * extraDurations.lms) +
+      (e.chompy_kills * extraDurations.chompy)
+    ), 0) / 60;
+  
+    document.getElementById("hours-left").textContent = hoursLeft.toFixed(2);
+
   let runningTotal = startingClueCount.easy + startingClueCount.medium + startingClueCount.hard;
 
   clueData.forEach(entry => {
     const doneToday = entry.done_easy + entry.done_medium + entry.done_hard + entry.done_elite;
+
+    const timeMinutes = (entry.done_easy * clueDurations.easy) +
+                        (entry.done_medium * clueDurations.medium) +
+                        (entry.done_hard * clueDurations.hard) +
+                        (entry.lms_points * extraDurations.lms) +
+                        (entry.chompy_kills * extraDurations.chompy);
+    const timeHours = (timeMinutes / 60).toFixed(2);
 
     const tempRunningTotal = runningTotal + doneToday;
     const remaining = totalTargetClues - tempRunningTotal;
