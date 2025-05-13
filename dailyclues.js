@@ -8,7 +8,11 @@ const container = document.getElementById('daily-clue-container');
 const summaryContainer = document.getElementById('daily-clue-summary');
 
 let clueData = [];
-const startingClueCount = 450;
+const startingClueCount = {
+  easy: 0,
+  medium: 0,
+  hard: 450
+};
 
 // Toggle show/hide completed days
 if (toggleBtn) {
@@ -22,7 +26,13 @@ if (toggleBtn) {
 fetch(url)
   .then(response => response.json())
   .then(data => {
-    clueData = data;
+    // Ensure each entry has the new clue fields
+    clueData = data.map(entry => ({
+      ...entry,
+      done_easy: entry.done_easy || 0,
+      done_medium: entry.done_medium || 0,
+      done_hard: entry.done_hard || 0
+    }));
     renderCards();
   })
   .catch(err => {
@@ -33,16 +43,18 @@ function renderCards() {
   container.innerHTML = '';
   summaryContainer.innerHTML = '';
 
-  let completedClues = 0;
+  let completed = { easy: 0, medium: 0, hard: 0 };
 
   // Sum clues from completed entries
   clueData.forEach(entry => {
     if (entry.status) {
-      completedClues += entry.done_today;
+      completed.easy += entry.done_easy;
+      completed.medium += entry.done_medium;
+      completed.hard += entry.done_hard;
     }
   });
 
-  const totalCluesDone = startingClueCount + completedClues;
+  const totalCluesDone = startingClueCount.easy + startingClueCount.medium + startingClueCount.hard + completed.easy + completed.medium + completed.hard;
   const cluesLeft = 2350 - totalCluesDone;
 
   const totalDisplay = document.createElement('div');
@@ -59,11 +71,14 @@ function renderCards() {
     const cardInner = document.createElement('div');
     cardInner.className = `card shadow-sm border ${entry.status ? 'border-success' : 'border-warning'}`;
 
+    const doneToday = entry.done_easy + entry.done_medium + entry.done_hard;
+
     cardInner.innerHTML = `
       <div class="card-body">
         <h5 class="card-title">${entry.date}</h5>
         <p class="card-text mb-1">Target: ${entry.target} clues</p>
-        <p class="card-text mb-1">Done Today: ${entry.done_today}</p>
+        <p class="card-text mb-1">Done Today: ${doneToday}</p>
+        <p class="card-text mb-1">Easy: ${entry.done_easy} | Medium: ${entry.done_medium} | Hard: ${entry.done_hard}</p>
         <p class="card-text mb-1">Counter: ${entry.counter}</p>
         <span class="badge ${entry.status ? 'bg-success' : 'bg-secondary'}">
           ${entry.status ? 'Completed' : 'Incomplete'}
