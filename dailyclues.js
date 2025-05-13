@@ -147,12 +147,12 @@ function renderCards() {
                         (entry.done_hard * clueDurations.hard);
     const timeHours = (timeMinutes / 60).toFixed(2);
 
-    const tempRunningTotal = runningTotal + doneToday;
-    const remaining = totalTargetClues - tempRunningTotal;
-
     if (!showCompleted && entry.status) return;
 
     runningTotal += doneToday;
+    
+    const tempRunningTotal = runningTotal;
+    const remaining = totalTargetClues - tempRunningTotal;    
 
     const card = document.createElement('div');
     card.className = 'col';
