@@ -55,9 +55,6 @@ function updateTotalHours() {
   }
 }
 
-// Call this after the page has rendered
-updateTotalHours();
-
 function updateClogTotals() {
   let totalWithClue = 0;
   let totalWithoutClue = 0;
