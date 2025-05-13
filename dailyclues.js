@@ -32,7 +32,7 @@ const clueDurations = {
 };
 
 const extraDurations = {
-  lms: 8,         // minutes per LMS point (example)
+  lms: 7,         // minutes per LMS point (example)
   chompy: 0.35     // minutes per Chompy bird kill
 };
 
