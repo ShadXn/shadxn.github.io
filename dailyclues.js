@@ -142,9 +142,11 @@ function renderCards() {
 
     let runningTotal = startingClueCount.easy + startingClueCount.medium + startingClueCount.hard + startingClueCount.elite;
 
-    runningTotal += doneToday;
+
 
     if (!showCompleted && entry.status) return;
+
+    runningTotal += doneToday;
     
     const remaining = totalTargetClues - runningTotal;
     
