@@ -20,7 +20,7 @@
   {
     "date": "2025-05-04",
     "target": 50,
-    "done_easy": 20,
+    "done_easy": 12,
     "done_medium": 20,
     "done_hard": 6,
     "status": true,
@@ -29,9 +29,9 @@
   {
     "date": "2025-05-05",
     "target": 50,
-    "done_easy": 30,
-    "done_medium": 30,
-    "done_hard": 7,
+    "done_easy": 0,
+    "done_medium": 0,
+    "done_hard": 0,
     "status": true,
     "counter": 4
   },
@@ -39,7 +39,7 @@
     "date": "2025-05-06",
     "target": 50,
     "done_easy": 6,
-    "done_medium": 7,
+    "done_medium": 5,
     "done_hard": 5,
     "status": true,
     "counter": 5
@@ -58,7 +58,7 @@
     "target": 50,
     "done_easy": 5,
     "done_medium": 6,
-    "done_hard": 7,
+    "done_hard": 0,
     "status": true,
     "counter": 7
   },
