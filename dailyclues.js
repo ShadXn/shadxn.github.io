@@ -126,6 +126,11 @@ function renderCards() {
     document.getElementById("hard-casket").textContent = `${startingClueCount.hard + completed.hard}/300`;
     document.getElementById("elite-casket").textContent = `${startingClueCount.elite + completed.elite}/50`;
     document.getElementById("master-casket").textContent = `0/0`;
+
+    document.getElementById("easy-casket-hours").textContent = Math.round((clueTargets.easy - (startingClueCount.easy + completed.easy)) * clueDurations.easy / 60);
+    document.getElementById("medium-casket-hours").textContent = Math.round((clueTargets.medium - (startingClueCount.medium + completed.medium)) * clueDurations.medium / 60);
+    document.getElementById("hard-casket-hours").textContent = Math.round((clueTargets.hard - (startingClueCount.hard + completed.hard)) * clueDurations.hard / 60);
+
   
   let runningTotal = startingClueCount.easy + startingClueCount.medium + startingClueCount.hard;
 
