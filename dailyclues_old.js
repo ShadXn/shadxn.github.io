@@ -7,17 +7,13 @@ const toggleBtn = document.getElementById('toggle-completed-btn');
 const container = document.getElementById('daily-clue-container');
 const summaryContainer = document.getElementById('daily-clue-summary');
 
-let clueData = [];
-const startingClueCount = 450;
+toggleBtn.addEventListener('click', () => {
+  showCompleted = !showCompleted;
+  toggleBtn.textContent = showCompleted ? 'Hide Completed Days' : 'Show Completed Days';
+  renderCards(); // re-render with updated toggle state
+});
 
-// Toggle show/hide completed days
-if (toggleBtn) {
-  toggleBtn.addEventListener('click', () => {
-    showCompleted = !showCompleted;
-    toggleBtn.textContent = showCompleted ? 'Hide Completed Days' : 'Show Completed Days';
-    renderCards();
-  });
-}
+let clueData = [];
 
 fetch(url)
   .then(response => response.json())
@@ -33,21 +29,18 @@ function renderCards() {
   container.innerHTML = '';
   summaryContainer.innerHTML = '';
 
-  let completedClues = 0;
-
-  // Sum clues from completed entries
-  clueData.forEach(entry => {
-    if (entry.status) {
-      completedClues += entry.done_today;
+  // Find latest completed entry for total
+  let latestCompletedTotal = 0;
+  for (let i = clueData.length - 1; i >= 0; i--) {
+    if (clueData[i].status) {
+      latestCompletedTotal = clueData[i].total_clues;
+      break;
     }
-  });
-
-  const totalCluesDone = startingClueCount + completedClues;
-  const cluesLeft = 2350 - totalCluesDone;
+  }
 
   const totalDisplay = document.createElement('div');
   totalDisplay.className = 'alert alert-info fw-bold text-center';
-  totalDisplay.textContent = `Total Clues Completed: ${totalCluesDone} / 2350 | Clues Left: ${cluesLeft}`;
+  totalDisplay.textContent = `Total Clues Completed: ${latestCompletedTotal} / 2350`;
   summaryContainer.appendChild(totalDisplay);
 
   clueData.forEach(entry => {
@@ -64,7 +57,9 @@ function renderCards() {
         <h5 class="card-title">${entry.date}</h5>
         <p class="card-text mb-1">Target: ${entry.target} clues</p>
         <p class="card-text mb-1">Done Today: ${entry.done_today}</p>
+        <p class="card-text mb-1">Clues Left: ${entry.clues_left}</p>
         <p class="card-text mb-1">Counter: ${entry.counter}</p>
+        <p class="card-text mb-1"><strong>Total Clues Done:</strong> ${entry.total_clues}</p>
         <span class="badge ${entry.status ? 'bg-success' : 'bg-secondary'}">
           ${entry.status ? 'Completed' : 'Incomplete'}
         </span>
