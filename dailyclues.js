@@ -137,17 +137,16 @@ function renderCards() {
     document.getElementById("hard-casket-hours").textContent = Math.round((clueTargets.hard - (startingClueCount.hard + completed.hard)) * clueDurations.hard / 60);
 
   
-  clueData.forEach(entry => {
-    const doneToday = entry.done_easy + entry.done_medium + entry.done_hard + entry.done_elite;
-
-    let runningTotal = startingClueCount.easy + startingClueCount.medium + startingClueCount.hard + startingClueCount.elite;
-
-
-
-    if (!showCompleted && entry.status) return;
-
-    runningTotal += doneToday;
+  let runningTotal = startingClueCount.easy + startingClueCount.medium + startingClueCount.hard;
+  let absoluteTotal = runningTotal;
     
+  clueData.forEach(entry => {
+    const doneToday = entry.done_easy + entry.done_medium + entry.done_hard;
+    absoluteTotal += doneToday;
+  
+    if (!showCompleted && entry.status) return;
+  
+    runningTotal += doneToday;
     const remaining = totalTargetClues - runningTotal;
     
 
