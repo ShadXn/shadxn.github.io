@@ -122,6 +122,21 @@ function renderCards() {
   
     document.getElementById("hours-left").textContent = hoursLeft.toFixed(2);
 
+    const lmsHours = clueData
+    .filter(e => !e.status)
+    .reduce((sum, e) => sum + (e.lms_points * extraDurations.lms), 0) / 60;
+
+    const chompyHours = clueData
+      .filter(e => !e.status)
+      .reduce((sum, e) => sum + (e.chompy_kills * extraDurations.chompy), 0) / 60;
+
+    const lmsCell = document.getElementById("lms-hours");
+    const chompyCell = document.getElementById("chompy-hours");
+
+    if (lmsCell) lmsCell.textContent = lmsHours.toFixed(2);
+    if (chompyCell) chompyCell.textContent = chompyHours.toFixed(2);
+
+
   let runningTotal = startingClueCount.easy + startingClueCount.medium + startingClueCount.hard;
 
   clueData.forEach(entry => {
