@@ -2,7 +2,7 @@
   {
     "date": "2025-05-02",
     "target": 50,
-    "done_easy": 5,
+    "done_easy": 30,
     "done_medium": 6,
     "done_hard": 7,
     "status": true,
@@ -20,8 +20,8 @@
   {
     "date": "2025-05-04",
     "target": 50,
-    "done_easy": 7,
-    "done_medium": 5,
+    "done_easy": 20,
+    "done_medium": 20,
     "done_hard": 6,
     "status": true,
     "counter": 3
@@ -29,8 +29,8 @@
   {
     "date": "2025-05-05",
     "target": 50,
-    "done_easy": 5,
-    "done_medium": 6,
+    "done_easy": 30,
+    "done_medium": 30,
     "done_hard": 7,
     "status": true,
     "counter": 4
@@ -67,7 +67,7 @@
     "target": 50,
     "done_easy": 6,
     "done_medium": 7,
-    "done_hard": 5,
+    "done_hard": 0,
     "status": true,
     "counter": 8
   },
@@ -76,7 +76,7 @@
     "target": 50,
     "done_easy": 7,
     "done_medium": 5,
-    "done_hard": 6,
+    "done_hard": 0,
     "status": true,
     "counter": 9
   },
@@ -85,25 +85,25 @@
     "target": 50,
     "done_easy": 5,
     "done_medium": 6,
-    "done_hard": 7,
+    "done_hard": 0,
     "status": true,
     "counter": 10
   },
   {
     "date": "2025-05-12",
     "target": 50,
-    "done_easy": 6,
-    "done_medium": 7,
-    "done_hard": 5,
+    "done_easy": 32,
+    "done_medium": 45,
+    "done_hard": 0,
     "status": true,
     "counter": 11
   },
   {
     "date": "2025-05-13",
     "target": 50,
-    "done_easy": 7,
-    "done_medium": 5,
-    "done_hard": 6,
+    "done_easy": 0,
+    "done_medium": 0,
+    "done_hard": 0,
     "status": false,
     "counter": 12
   },
