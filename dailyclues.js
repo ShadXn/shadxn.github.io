@@ -62,8 +62,14 @@ function renderCards() {
   totalDisplay.textContent = `Total Clues Completed: ${totalCluesDone} / 2350 | Clues Left: ${cluesLeft}`;
   summaryContainer.appendChild(totalDisplay);
 
+  let runningTotal = startingClueCount.easy + startingClueCount.medium + startingClueCount.hard;
+
   clueData.forEach(entry => {
     if (!showCompleted && entry.status) return;
+
+    const doneToday = entry.done_easy + entry.done_medium + entry.done_hard;
+    runningTotal += doneToday;
+    const remaining = 2350 - runningTotal;
 
     const card = document.createElement('div');
     card.className = 'col';
@@ -71,14 +77,12 @@ function renderCards() {
     const cardInner = document.createElement('div');
     cardInner.className = `card shadow-sm border ${entry.status ? 'border-success' : 'border-warning'}`;
 
-    const doneToday = entry.done_easy + entry.done_medium + entry.done_hard;
-
     cardInner.innerHTML = `
       <div class="card-body">
         <h5 class="card-title">${entry.date}</h5>
-        <p class="card-text mb-1">Target: ${entry.target} clues</p>
-        <p class="card-text mb-1">Done Today: ${doneToday}</p>
+        <p class="card-text mb-1">Target: ${entry.target} clues | Done Today: ${doneToday}</p>
         <p class="card-text mb-1">Easy: ${entry.done_easy} | Medium: ${entry.done_medium} | Hard: ${entry.done_hard}</p>
+        <p class="card-text mb-1">Total Clues Done: ${runningTotal} | Clues Left: ${remaining}</p>
         <p class="card-text mb-1">Counter: ${entry.counter}</p>
         <span class="badge ${entry.status ? 'bg-success' : 'bg-secondary'}">
           ${entry.status ? 'Completed' : 'Incomplete'}
