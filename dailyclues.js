@@ -114,7 +114,7 @@ function renderCards() {
           <p class="card-text mb-1"><strong>Total Left:</strong> ${remaining}</p>
         </div>
 
-        ${showBreakdown ? `<p class="card-text mb-1">Day Counter: ${entry.counter}</p>` : ''}
+        ${showBreakdown ? `<hr class="my-2"><p class="card-text mb-1">Day Counter: ${entry.counter}</p>` : ''}
       </div>
     `;
 
