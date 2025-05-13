@@ -73,16 +73,17 @@ function renderCards() {
   const totalCluesDone = startingClueCount.easy + startingClueCount.medium + startingClueCount.hard + completed.easy + completed.medium + completed.hard;
   const cluesLeft = totalTargetClues - totalCluesDone;
 
-  const totalDisplay1 = document.createElement('div');
-  totalDisplay1.className = 'alert alert-info fw-bold text-center';
-  totalDisplay1.textContent = `Total Clues Completed: ${totalCluesDone} / ${totalTargetClues} (${startingClueCount.easy + completed.easy} Easy | ${startingClueCount.medium + completed.medium} Medium | ${startingClueCount.hard + completed.hard} Hard)`;
+  const summaryRow = document.createElement('div');
+  summaryRow.className = 'alert alert-info text-center';
+  summaryRow.innerHTML = `
+    <div class="fw-bold">Total Clues Completed: ${totalCluesDone} / ${totalTargetClues}</div>
+    <div class="small">(${startingClueCount.easy + completed.easy} Easy | ${startingClueCount.medium + completed.medium} Medium | ${startingClueCount.hard + completed.hard} Hard)</div>
+    <hr>
+    <div class="fw-bold">Total Clues Left: ${cluesLeft}</div>
+    <div class="small">(${clueTargets.easy - (startingClueCount.easy + completed.easy)} Easy | ${clueTargets.medium - (startingClueCount.medium + completed.medium)} Medium | ${clueTargets.hard - (startingClueCount.hard + completed.hard)} Hard)</div>
+  `;
 
-  const totalDisplay2 = document.createElement('div');
-  totalDisplay2.className = 'alert alert-info fw-bold text-center';
-  totalDisplay2.textContent = `Total Clues Left: ${cluesLeft} (${clueTargets.easy - (startingClueCount.easy + completed.easy)} Easy | ${clueTargets.medium - (startingClueCount.medium + completed.medium)} Medium | ${clueTargets.hard - (startingClueCount.hard + completed.hard)} Hard)`;
-
-  summaryContainer.appendChild(totalDisplay1);
-  summaryContainer.appendChild(totalDisplay2);
+  summaryContainer.appendChild(summaryRow);
 
   let runningTotal = startingClueCount.easy + startingClueCount.medium + startingClueCount.hard;
 
