@@ -75,11 +75,11 @@ function renderCards() {
 
   const totalDisplay1 = document.createElement('div');
   totalDisplay1.className = 'alert alert-info fw-bold text-center';
-  totalDisplay1.textContent = `Total Clues Completed: ${totalCluesDone} / 2350`;
+  totalDisplay1.textContent = `Total Clues Completed: ${totalCluesDone} / 2350 (${completed.easy} Easy | ${completed.medium} Medium | ${completed.hard} Hard)`;
 
   const totalDisplay2 = document.createElement('div');
   totalDisplay2.className = 'alert alert-info fw-bold text-center';
-  totalDisplay2.textContent = `Clues Left: ${cluesLeft} (Easy: ${completed.easy} | Medium: ${completed.medium} | Hard: ${completed.hard})`;
+  totalDisplay2.textContent = `Total Clues Left: ${cluesLeft} / 2350 (${clueTargets.easy - completed.easy} Easy | ${clueTargets.medium - completed.medium} Medium | ${clueTargets.hard - completed.hard} Hard)`;
 
   summaryContainer.appendChild(totalDisplay1);
   summaryContainer.appendChild(totalDisplay2);
