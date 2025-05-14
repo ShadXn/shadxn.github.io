@@ -112,11 +112,11 @@
   {
     "date": "2025-05-13",
     "target": 50,
-    "done_easy": 0,
-    "done_medium": 32,
+    "done_easy": 22,
+    "done_medium": 51,
     "done_hard": 2,
     "done_elite": 0,
-    "status": false,
+    "status": true,
     "counter": 12
   },
   {
