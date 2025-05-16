@@ -132,11 +132,11 @@
   {
     "date": "2025-05-15",
     "target": 50,
-    "done_easy": 0,
-    "done_medium": 0,
-    "done_hard": 0,
-    "done_elite": 0,
-    "status": false,
+    "done_easy": 1,
+    "done_medium": 1,
+    "done_hard": 3,
+    "done_elite": 1,
+    "status": true,
     "counter": 14
   },
   {
