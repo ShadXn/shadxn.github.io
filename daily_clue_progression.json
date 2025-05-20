@@ -146,7 +146,7 @@
     "done_medium": 0,
     "done_hard": 0,
     "done_elite": 0,
-    "status": false,
+    "status": true,
     "counter": 15
   },
   {
@@ -156,7 +156,7 @@
     "done_medium": 0,
     "done_hard": 0,
     "done_elite": 0,
-    "status": false,
+    "status": true,
     "counter": 16
   },
   {
@@ -166,17 +166,17 @@
     "done_medium": 0,
     "done_hard": 0,
     "done_elite": 0,
-    "status": false,
+    "status": true,
     "counter": 17
   },
   {
     "date": "2025-05-19",
     "target": 50,
     "done_easy": 0,
-    "done_medium": 0,
-    "done_hard": 0,
+    "done_medium": 3,
+    "done_hard": 3,
     "done_elite": 0,
-    "status": false,
+    "status": true,
     "counter": 18
   },
   {
