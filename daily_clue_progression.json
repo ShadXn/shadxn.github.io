@@ -194,9 +194,9 @@
     "target": 50,
     "done_easy": 0,
     "done_medium": 0,
-    "done_hard": 0,
-    "done_elite": 0,
-    "status": false,
+    "done_hard": 26,
+    "done_elite": 2,
+    "status": true,
     "counter": 20
   },
   {
