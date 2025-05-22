@@ -398,5 +398,105 @@
     "done_elite": 0,
     "status": false,
     "counter": 40
+  },
+  {
+    "date": "2025-06-11",
+    "target": 50,
+    "done_easy": 0,
+    "done_medium": 0,
+    "done_hard": 0,
+    "done_elite": 0,
+    "status": false,
+    "counter": 41
+  },
+  {
+    "date": "2025-06-12",
+    "target": 50,
+    "done_easy": 0,
+    "done_medium": 0,
+    "done_hard": 0,
+    "done_elite": 0,
+    "status": false,
+    "counter": 42
+  },
+  {
+    "date": "2025-06-13",
+    "target": 50,
+    "done_easy": 0,
+    "done_medium": 0,
+    "done_hard": 0,
+    "done_elite": 0,
+    "status": false,
+    "counter": 43
+  },
+  {
+    "date": "2025-06-14",
+    "target": 50,
+    "done_easy": 0,
+    "done_medium": 0,
+    "done_hard": 0,
+    "done_elite": 0,
+    "status": false,
+    "counter": 44
+  },
+  {
+    "date": "2025-06-15",
+    "target": 50,
+    "done_easy": 0,
+    "done_medium": 0,
+    "done_hard": 0,
+    "done_elite": 0,
+    "status": false,
+    "counter": 45
+  },
+  {
+    "date": "2025-06-16",
+    "target": 50,
+    "done_easy": 0,
+    "done_medium": 0,
+    "done_hard": 0,
+    "done_elite": 0,
+    "status": false,
+    "counter": 46
+  },
+  {
+    "date": "2025-06-17",
+    "target": 50,
+    "done_easy": 0,
+    "done_medium": 0,
+    "done_hard": 0,
+    "done_elite": 0,
+    "status": false,
+    "counter": 47
+  },
+  {
+    "date": "2025-06-18",
+    "target": 50,
+    "done_easy": 0,
+    "done_medium": 0,
+    "done_hard": 0,
+    "done_elite": 0,
+    "status": false,
+    "counter": 48
+  },
+  {
+    "date": "2025-06-19",
+    "target": 50,
+    "done_easy": 0,
+    "done_medium": 0,
+    "done_hard": 0,
+    "done_elite": 0,
+    "status": false,
+    "counter": 49
+  },
+  {
+    "date": "2025-06-20",
+    "target": 50,
+    "done_easy": 0,
+    "done_medium": 0,
+    "done_hard": 0,
+    "done_elite": 0,
+    "status": false,
+    "counter": 50
   }
 ]
