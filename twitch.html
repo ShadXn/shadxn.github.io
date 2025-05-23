@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Gnomonkey Stream</title>
+  <title>Twitch Only</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      background: black;
+      background-color: black;
       overflow: hidden;
       height: 100%;
     }
@@ -18,9 +18,16 @@
   </style>
 </head>
 <body>
-  <iframe
-    src="https://player.twitch.tv/?channel=gnomonkey&parent=shadxn.github.io"
-    allowfullscreen>
-  </iframe>
+  <script>
+    const channel = prompt("Enter Twitch channel name:");
+    if (channel) {
+      const iframe = document.createElement("iframe");
+      iframe.src = `https://player.twitch.tv/?channel=${channel}&parent=shadxn.github.io`;
+      iframe.allowFullscreen = true;
+      document.body.appendChild(iframe);
+    } else {
+      document.body.innerHTML = "<p style='color:white; text-align:center; padding-top:20px;'>No channel entered.</p>";
+    }
+  </script>
 </body>
 </html>
