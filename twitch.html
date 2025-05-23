@@ -1,33 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Twitch Only</title>
+  <title>Twitch Stream Launcher</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      background-color: black;
-      overflow: hidden;
+      background: black;
       height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-family: sans-serif;
+      flex-direction: column;
+    }
+    input {
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
     }
     iframe {
       width: 100vw;
       height: 100vh;
       border: none;
+      position: absolute;
+      top: 0;
+      left: 0;
     }
   </style>
 </head>
 <body>
+
+  <div id="input-container">
+    <input id="channelInput" type="text" placeholder="Enter Twitch channel name" />
+    <button onclick="loadStream()">Watch Stream</button>
+  </div>
+
   <script>
-    const channel = prompt("Enter Twitch channel name:");
-    if (channel) {
-      const iframe = document.createElement("iframe");
-      iframe.src = `https://player.twitch.tv/?channel=${channel}&parent=shadxn.github.io`;
-      iframe.allowFullscreen = true;
-      document.body.appendChild(iframe);
-    } else {
-      document.body.innerHTML = "<p style='color:white; text-align:center; padding-top:20px;'>No channel entered.</p>";
+    function loadStream() {
+      const channel = document.getElementById("channelInput").value.trim();
+      if (channel) {
+        const iframe = document.createElement("iframe");
+        iframe.src = `https://player.twitch.tv/?channel=${channel}&parent=shadxn.github.io`;
+        iframe.allowFullscreen = true;
+        document.body.innerHTML = "";
+        document.body.appendChild(iframe);
+      }
     }
   </script>
+
 </body>
 </html>
