@@ -236,7 +236,7 @@
     "done_medium": 0,
     "done_hard": 0,
     "done_elite": 0,
-    "status": false,
+    "status": true,
     "counter": 24
   },
   {
@@ -246,17 +246,17 @@
     "done_medium": 0,
     "done_hard": 0,
     "done_elite": 0,
-    "status": false,
+    "status": true,
     "counter": 25
   },
   {
     "date": "2025-05-27",
     "target": 50,
     "done_easy": 0,
-    "done_medium": 0,
-    "done_hard": 0,
-    "done_elite": 0,
-    "status": false,
+    "done_medium": 2,
+    "done_hard": 2,
+    "done_elite": 2,
+    "status": true,
     "counter": 26
   },
   {
