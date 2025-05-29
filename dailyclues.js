@@ -14,16 +14,18 @@ const startingClueCount = {
   easy: 200,
   medium: 150,
   hard: 120,
-  elite: 50
+  elite: 50,
+  master: 2
 };
 
 const clueTargets = {
   easy: 1000,
   medium: 1000,
   hard: 300,
-  elite: 50
+  elite: 50,
+  master: 0
 };
-const totalTargetClues = clueTargets.easy + clueTargets.medium + clueTargets.hard + clueTargets.elite;
+const totalTargetClues = clueTargets.easy + clueTargets.medium + clueTargets.hard + clueTargets.elite + clueTargets.master;
 
 const clueDurations = {
   easy: 5,     // minutes
@@ -60,7 +62,8 @@ fetch(url)
       done_easy: entry.done_easy || 0,
       done_medium: entry.done_medium || 0,
       done_hard: entry.done_hard || 0,
-      done_elite: entry.done_elite || 0
+      done_elite: entry.done_elite || 0,
+      done_master: entry.done_master || 0
     }));
 
     // Get LMS and Chompy values from HTML safely
@@ -94,7 +97,7 @@ function renderCards() {
   container.innerHTML = '';
   summaryContainer.innerHTML = '';
 
-  let completed = { easy: 0, medium: 0, hard: 0, elite: 0 };
+  let completed = { easy: 0, medium: 0, hard: 0, elite: 0, master: 0 };
 
   clueData.forEach(entry => {
     if (entry.status) {
@@ -102,10 +105,12 @@ function renderCards() {
       completed.medium += entry.done_medium;
       completed.hard += entry.done_hard;
       completed.elite += entry.done_elite;
+      completed.master += entry.done_master;
     }
   });
 
-  const totalCluesDone = startingClueCount.easy + startingClueCount.medium + startingClueCount.hard + startingClueCount.elite + completed.easy + completed.medium + completed.hard + completed.elite;
+  const totalCluesDone = startingClueCount.easy + startingClueCount.medium + startingClueCount.hard + startingClueCount.elite + startingClueCount.master +
+    completed.easy + completed.medium + completed.hard + completed.elite + completed.master;
   const cluesLeft = totalTargetClues - totalCluesDone;
 
   const summaryRow = document.createElement('div');
@@ -114,11 +119,11 @@ function renderCards() {
     <div class="row text-center">
       <div class="col-md-6 border-end">
         <div class="fw-bold">Total Clues Completed: ${totalCluesDone} / ${totalTargetClues}</div>
-        <div class="small">(${startingClueCount.easy + completed.easy} Easy | ${startingClueCount.medium + completed.medium} Medium | ${startingClueCount.hard + completed.hard} Hard | ${startingClueCount.elite + completed.elite} Elite)</div>
+        <div class="small">(${startingClueCount.easy + completed.easy} Easy | ${startingClueCount.medium + completed.medium} Medium | ${startingClueCount.hard + completed.hard} Hard | ${startingClueCount.elite + completed.elite} Elite | ${startingClueCount.master + completed.master} Master)</div>
       </div>
       <div class="col-md-6">
         <div class="fw-bold">Total Clues Left: ${cluesLeft}</div>
-        <div class="small">(${clueTargets.easy - (startingClueCount.easy + completed.easy)} Easy | ${clueTargets.medium - (startingClueCount.medium + completed.medium)} Medium | ${clueTargets.hard - (startingClueCount.hard + completed.hard)} Hard | ${clueTargets.elite - (startingClueCount.elite + completed.elite)} Elite)</div>
+        <div class="small">(${clueTargets.easy - (startingClueCount.easy + completed.easy)} Easy | ${clueTargets.medium - (startingClueCount.medium + completed.medium)} Medium | ${clueTargets.hard - (startingClueCount.hard + completed.hard)} Hard | ${clueTargets.elite - (startingClueCount.elite + completed.elite)} Elite | ${clueTargets.master - (startingClueCount.master + completed.master)} Master)</div>
       </div>
     </div>
   `;
@@ -130,17 +135,17 @@ function renderCards() {
     document.getElementById("medium-casket").textContent = `${startingClueCount.medium + completed.medium}/1000`;
     document.getElementById("hard-casket").textContent = `${startingClueCount.hard + completed.hard}/300`;
     document.getElementById("elite-casket").textContent = `${startingClueCount.elite + completed.elite}/50`;
-    document.getElementById("master-casket").textContent = `0/0`;
+    document.getElementById("master-casket").textContent = `${startingClueCount.master + completed.master}/0`;
 
     document.getElementById("easy-casket-hours").textContent = Math.round((clueTargets.easy - (startingClueCount.easy + completed.easy)) * clueDurations.easy / 60);
     document.getElementById("medium-casket-hours").textContent = Math.round((clueTargets.medium - (startingClueCount.medium + completed.medium)) * clueDurations.medium / 60);
     document.getElementById("hard-casket-hours").textContent = Math.round((clueTargets.hard - (startingClueCount.hard + completed.hard)) * clueDurations.hard / 60);
 
   
-  let runningTotal = startingClueCount.easy + startingClueCount.medium + startingClueCount.hard + startingClueCount.elite;
+  let runningTotal = startingClueCount.easy + startingClueCount.medium + startingClueCount.hard + startingClueCount.elite + startingClueCount.master;
 
   clueData.forEach(entry => {
-    const doneToday = entry.done_easy + entry.done_medium + entry.done_hard + entry.done_elite;
+    const doneToday = entry.done_easy + entry.done_medium + entry.done_hard + entry.done_elite + entry.done_master;
   
     // Use target value **only** if no progress made that day
     const countToday = (doneToday > 0 || entry.status) ? doneToday : entry.target || 0;
@@ -178,6 +183,7 @@ function renderCards() {
           <span class="badge bg-light text-dark">Medium: ${entry.done_medium}</span>
           <span class="badge bg-light text-dark">Hard: ${entry.done_hard}</span>
           <span class="badge bg-light text-dark">Elite: ${entry.done_elite}</span>
+          <span class="badge bg-light text-dark">Master: ${entry.done_master}</span>
         </div>
         ` : ''}
 
