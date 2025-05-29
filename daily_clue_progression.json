@@ -272,11 +272,11 @@
   {
     "date": "2025-05-29",
     "target": 50,
-    "done_easy": 0,
-    "done_medium": 0,
+    "done_easy": 40,
+    "done_medium": 2,
     "done_hard": 0,
     "done_elite": 0,
-    "status": false,
+    "status": true,
     "counter": 28
   },
   {
