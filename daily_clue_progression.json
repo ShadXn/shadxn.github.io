@@ -302,7 +302,7 @@
     "done_easy": 40,
     "done_medium": 32,
     "done_hard": 0,
-    "done_elite": 0,
+    "done_elite": 1,
     "done_master": 0,
     "status": true,
     "counter": 28
