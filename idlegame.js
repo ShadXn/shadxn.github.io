@@ -46,6 +46,17 @@
         buyBtn = document.getElementById('buy-worker');
         taskList = document.getElementById('task-list');
 
+        // ✅ Hook Buy button inside this scope
+        buyBtn.addEventListener('click', () => {
+            if (resources.gold >= workerCost) {
+                resources.gold -= workerCost;
+                workers++;
+                workerCost = 10 * Math.pow(2, workers);
+                updateUI();
+                saveProgress();
+            }
+        });
+
         updateUI();
     }
 
@@ -172,16 +183,6 @@
             saveProgress();
         }
         });
-    });
-
-    buyBtn.addEventListener('click', () => {
-        if (resources.gold >= workerCost) {
-        resources.gold -= workerCost;
-        workers++;
-        workerCost = 10 * Math.pow(2, workers);
-        updateUI();
-        saveProgress();
-        }
     });
 
     function getBestToolForJob(jobId, resources) {
