@@ -377,10 +377,15 @@
 
     }
 
-    function showCraftingSection(items, resources) {
+    function showCraftingSection(items = [], resources = {}) {
         const gearContainer = document.getElementById("gear-craft");
-        const toolContainer = document.getElementById("tool-craft");
-        const upgradeContainer = document.getElementById("upgrade-craft");
+        const toolContainer = document.getElementById("tools-craft");
+        const upgradeContainer = document.getElementById("upgrades-craft");
+
+        if (!gearContainer || !toolContainer || !upgradeContainer) {
+            console.warn("Missing crafting containers");
+            return;
+        }
 
         gearContainer.innerHTML = "";
         toolContainer.innerHTML = "";
@@ -389,14 +394,18 @@
         items.forEach(item => {
             const button = document.createElement("button");
             button.className = "btn btn-sm btn-outline-secondary";
-            button.innerHTML = `${item.name}<br><small>${Object.entries(item.cost).map(([r, a]) => `${r}: ${a}`).join("<br>")}</small>`;
+            button.innerHTML = `
+                ${item.name}<br>
+                <small>${Object.entries(item.cost).map(([r, a]) => `${r}: ${a}`).join("<br>")}</small>
+            `;
             button.onclick = () => attemptCraft(item, resources);
 
             if (item.type === 'gear') gearContainer.appendChild(button);
             else if (item.type === 'tool') toolContainer.appendChild(button);
-            else upgradeContainer.appendChild(button); // For later if needed
+            else upgradeContainer.appendChild(button);
         });
     }
+
 
     function attemptCraft(item, resources) {
         for (const [res, amt] of Object.entries(item.cost)) {

@@ -16,4 +16,17 @@ document.addEventListener("DOMContentLoaded", function () {
   collapseEl.addEventListener("hidden.bs.collapse", () => {
     localStorage.setItem("idle_game_open", "false");
   });
+
+  
+  document.getElementById("toggle-all-crafting").addEventListener("click", () => {
+    ["gear-craft", "tools-craft", "upgrades-craft"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el.classList.contains("show")) {
+            new bootstrap.Collapse(el, { toggle: true });
+        } else {
+            new bootstrap.Collapse(el, { toggle: true });
+        }
+    });
+});
+
 });
