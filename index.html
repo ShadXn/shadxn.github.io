@@ -93,8 +93,12 @@
 
       <!-- Add before Jobs -->
       <div id="item-section" class="mt-3">
-        <h5>🎒 Items</h5>
-        <div id="resource-display" class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-2"></div>
+        <button class="btn btn-link p-0" data-bs-toggle="collapse" data-bs-target="#item-collapse" aria-expanded="true">
+          <h5>🎒 Items</h5>
+        </button>
+        <div id="item-collapse" class="collapse show">
+          <div id="resource-display" class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-2"></div>
+        </div>
       </div>
 
       <div id="gear-section" class="mt-3">
