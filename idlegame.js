@@ -156,7 +156,7 @@
             const details = document.createElement('div');
             details.className = 'small text-muted mt-1';
             details.innerHTML = `
-                <div>🎯 Requires: ${requires}${food ? ', ' + food : ''}</div>
+                <div>🎯 Requires: ${requires}${food ? ', ' + food : ''} & Armor: </div>
                 <div>🎁 Produces: ${drops}</div>
             `;
 

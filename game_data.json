@@ -219,19 +219,19 @@
             "tier": 9,
             "type": "weapon",
             "cost": { "dragon_sword": 1, "ore": 90, "recipe": 1 },
-            "upgrade_to": null
+            "upgrade_to": "nothing"
         },
         "armor": {
             "tier": 9,
             "type": "armor",
             "cost": { "dragon_armor": 1, "ore": 95, "recipe": 1 },
-            "upgrade_to": null
+            "upgrade_to": "nothing"
         },
         "shield": {
             "tier": 9,
             "type": "shield",
             "cost": { "dragon_shield": 1, "ore": 92, "recipe": 1 },
-            "upgrade_to": null
+            "upgrade_to": "nothing"
         }
     }
 
@@ -619,7 +619,7 @@
     "required_gear": "god_sword, god_armor, god_shield",
     "gp_reward": 100,
     "fights_required_to_unlock_next": 2000,
-    "unlocks": null,
+    "unlocks": "nothing",
     "tool_recipe_drops": ["victory_recipe"]
     }
 }
