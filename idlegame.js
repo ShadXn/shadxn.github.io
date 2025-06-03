@@ -26,27 +26,29 @@
     const assignmentsKey = 'idle_assignments';
 
     function initializeGame() {
-        // 🧠 Everything from here should use `jobs` and `tasks` loaded from game_data.json
-        // localStorage, assignments init, UI updates, DOM hooks, etc.
+        // Load saved state or initialize
+        workers = parseInt(localStorage.getItem(workersKey)) || 0;
+        gold = parseInt(localStorage.getItem(goldKey));
+        if (isNaN(gold)) gold = workers === 0 ? 100 : 0;
+
+        assignments = JSON.parse(localStorage.getItem(assignmentsKey)) || {};
+        tasks.forEach(task => { if (!(task.id in assignments)) assignments[task.id] = 0; });
+
+        workerCost = 10 * Math.pow(2, workers);
+
+        // DOM references
+        goldDisplay = document.getElementById('gold-count');
+        workerDisplay = document.getElementById('worker-count');
+        idleDisplay = document.getElementById('idle-count');
+        costDisplay = document.getElementById('worker-cost');
+        buyBtn = document.getElementById('buy-worker');
+        taskList = document.getElementById('task-list');
+
+        // Add all task UI here (generate buttons)
+        // Add buy button listener
+        // Add setInterval for job tick
+        // Update UI, etc.
     }
-
-    // Load saved state or initialize
-    let workers = parseInt(localStorage.getItem(workersKey)) || 0;
-    let gold = parseInt(localStorage.getItem(goldKey));
-    if (isNaN(gold)) gold = workers === 0 ? 100 : 0;
-
-    let assignments = JSON.parse(localStorage.getItem(assignmentsKey)) || {};
-    tasks.forEach(task => { if (!(task.id in assignments)) assignments[task.id] = 0; });
-
-    let workerCost = 10 * Math.pow(2, workers);
-
-    // DOM Elements
-    const goldDisplay = document.getElementById('gold-count');
-    const workerDisplay = document.getElementById('worker-count');
-    const idleDisplay = document.getElementById('idle-count');
-    const costDisplay = document.getElementById('worker-cost');
-    const buyBtn = document.getElementById('buy-worker');
-    const taskList = document.getElementById('task-list');
 
     function getIdleWorkers() {
         return workers - Object.values(assignments).reduce((a, b) => a + b, 0);
