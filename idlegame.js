@@ -390,16 +390,14 @@
     function showCraftingSection(items = [], resources = {}) {
         const gearContainer = document.getElementById("gear-craft");
         const toolContainer = document.getElementById("tools-craft");
-        const upgradeContainer = document.getElementById("upgrades-craft");
 
-        if (!gearContainer || !toolContainer || !upgradeContainer) {
+        if (!gearContainer || !toolContainer) {
             console.warn("Missing crafting containers");
             return;
         }
 
         gearContainer.innerHTML = "";
         toolContainer.innerHTML = "";
-        upgradeContainer.innerHTML = "";
 
         items.forEach(item => {
             const button = document.createElement("button");
@@ -415,7 +413,6 @@
 
             if (item.type === 'gear') gearContainer.appendChild(button);
             else if (item.type === 'tool') toolContainer.appendChild(button);
-            else upgradeContainer.appendChild(button);
         });
     }
 
