@@ -485,6 +485,7 @@
   "jobs": {
     "thieving": {
     "food_cost": 1,
+    "job_action_time": 0.9,
     "required_gear": "none",
     "action_speed_multiplier": 0.9,
     "produces": {
@@ -494,6 +495,7 @@
     },
     "woodcutting": {
     "food_cost": 0,
+    "job_action_time": 0.9,
     "required_gear": "none",
     "action_speed_multiplier": 0.9,
     "produces": {
@@ -502,6 +504,7 @@
     },
     "mining": {
     "food_cost": 0,
+    "job_action_time": 0.9,
     "required_gear": "none",
     "action_speed_multiplier": 0.9,
     "produces": {
@@ -510,6 +513,7 @@
     },
     "fishing": {
     "food_cost": 0,
+    "job_action_time": 0.9,
     "required_gear": "none",
     "action_speed_multiplier": 0.9,
     "produces": {
@@ -518,6 +522,7 @@
     },
     "cooking": {
     "food_cost": 0,
+    "job_action_time": 0.9,
     "required_gear": "none",
     "action_speed_multiplier": 0.9,
     "required_resources": {
