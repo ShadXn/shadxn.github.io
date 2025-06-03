@@ -59,6 +59,11 @@
         });
 
         updateUI();
+
+        // ✅ Crafting section setup (gear, tools, upgrades)
+        showCraftingSection("gear", Object.values(gameData.gear));
+        showCraftingSection("tools", Object.values(gameData.tools));
+        showCraftingSection("upgrades", Object.values(gameData.upgrades));
     }
 
     function getIdleWorkers() {
@@ -310,19 +315,19 @@
 
     }
 
-    function showCraftingOptions(availableItems, playerResources) {
-        const container = document.getElementById("crafting-options");
+    function showCraftingSection(type, items) {
+        const container = document.getElementById(`craft-${type}`);
         container.innerHTML = "";
 
-        availableItems.forEach(item => {
+        items.forEach(item => {
             const costList = Object.entries(item.cost).map(
             ([res, amt]) => `${res}: ${amt}`
             ).join("<br>");
 
             const button = document.createElement("button");
-            button.className = "btn btn-sm btn-outline-secondary";
+            button.className = "btn btn-sm btn-outline-primary";
             button.innerHTML = `${item.name}<br><small>${costList}</small>`;
-            button.onclick = () => attemptCraft(item, playerResources);
+            button.onclick = () => attemptCraft(item, resources);
             container.appendChild(button);
         });
     }
@@ -342,6 +347,4 @@
         resources[item.name] = (resources[item.name] || 0) + 1;
         updateResourceDisplay(resources);
     }
-
-    updateUI();
 })();

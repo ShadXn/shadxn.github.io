@@ -108,8 +108,18 @@
       </div>
 
       <div id="crafting-station" class="mt-3">
-        <h5>🔨 Craft Equipment</h5>
-        <div id="crafting-options" class="d-flex flex-wrap gap-2"></div>
+        <h5>🔨 Crafting</h5>
+
+        <div>
+          <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#craft-gear">Gear</button>
+          <div id="craft-gear" class="collapse show d-flex flex-wrap gap-2 mb-2"></div>
+
+          <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#craft-tools">Tools</button>
+          <div id="craft-tools" class="collapse show d-flex flex-wrap gap-2 mb-2"></div>
+
+          <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#craft-upgrades">Upgrades</button>
+          <div id="craft-upgrades" class="collapse show d-flex flex-wrap gap-2 mb-2"></div>
+        </div>
       </div>
 
       <!-- Jobs already exist in task-list -->
