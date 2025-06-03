@@ -400,7 +400,10 @@
             button.className = "btn btn-sm btn-outline-secondary";
             button.innerHTML = `
                 ${item.name}<br>
-                <small>${Object.entries(item.cost).map(([r, a]) => `${r}: ${a}`).join("<br>")}</small>
+                <small>
+                    ${Object.entries(item.cost).map(([r, a]) => `${r}: ${a}`).join("<br>")}
+                    ${item.used_for ? `<br>used for: ${item.used_for}` : ''}
+                </small>
             `;
             button.onclick = () => attemptCraft(item, resources);
 
