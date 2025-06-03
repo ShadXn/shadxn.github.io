@@ -326,23 +326,29 @@
 
 
     function assignTools(jobId, count, resources) {
-        const toolList = getBestToolForJob(jobId, resources);
-        const assignedTools = [];
+        const toolSets = getBestToolForJob(jobId, resources);  // Now an array of arrays
+        const assignedToolSets = [];
 
         for (let i = 0; i < count; i++) {
-            let found = false;
-            for (const tool of toolList) {
-                if ((resources[tool] || 0) - (toolsInUse[tool] || 0) > 0) {
-                    assignedTools.push(tool);
-                    toolsInUse[tool] = (toolsInUse[tool] || 0) + 1;
-                    found = true;
-                    break;
+            const toolsForThisWorker = [];
+
+            for (const slotOptions of toolSets) {
+                let foundTool = null;
+                for (const tool of slotOptions) {
+                    const available = (resources[tool] || 0) - (toolsInUse[tool] || 0);
+                    if (available > 0) {
+                        toolsInUse[tool] = (toolsInUse[tool] || 0) + 1;
+                        foundTool = tool;
+                        break;
+                    }
                 }
+                toolsForThisWorker.push(foundTool);  // Can be null if nothing found
             }
-            if (!found) assignedTools.push(null);  // no tool
+
+            assignedToolSets.push(toolsForThisWorker);
         }
 
-        return assignedTools;
+        return assignedToolSets;
     }
 
     function applyJobTick() {
@@ -384,8 +390,9 @@
 
                 // Use tool and calculate multipliers
                 const tool = toolsUsed[i];
+                const equippedCount = toolSet.filter(t => t !== null).length;
                 const speedMultiplier = tool ? 0.75 : 1.0;      // Unused for now, could be used for cooldown later
-                const rewardMultiplier = tool ? 1.25 : 1.0;
+                const rewardMultiplier = 1.0 + equippedCount * 0.1;  // 10% per equipped item
 
                 // Handle produces
                 if (job.produces) {
