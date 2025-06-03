@@ -6,6 +6,7 @@
     fetch('game_data.json')
     .then(response => response.json())
     .then(data => {
+        console.log("Loaded gameData:", data);  // <== debugging line
         gameData = data;
         jobs = gameData.jobs;
         populateJobs(jobs);
