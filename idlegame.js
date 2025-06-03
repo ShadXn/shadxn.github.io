@@ -9,6 +9,12 @@
         console.log("Loaded gameData:", data);  // <== debugging line
         gameData = data;
         jobs = gameData.jobs;
+        if (!jobs || !gearData || !toolData) {
+            console.error("Missing expected sections in game_data.json");
+            return;
+        }
+        gearData = gameData.gear || {};
+        toolData = gameData.tools || {};
         populateJobs(jobs);
 
         // Auto-generate tasks list from job keys (if you want to preserve order, sort here)
@@ -62,9 +68,7 @@
         updateUI();
 
         // ✅ Crafting section setup (gear, tools, upgrades)
-        showCraftingSection("gear", Object.values(gameData.gear));
-        showCraftingSection("tools", Object.values(gameData.tools));
-        showCraftingSection("upgrades", Object.values(gameData.upgrades));
+        showCraftingSection();  // <-- after game data is loaded
     }
 
     function getIdleWorkers() {
@@ -316,20 +320,24 @@
 
     }
 
-    function showCraftingSection(type, items) {
-        const container = document.getElementById(`craft-${type}`);
-        container.innerHTML = "";
+    function showCraftingSection(items, resources) {
+        const gearContainer = document.getElementById("gear-craft-options");
+        const toolContainer = document.getElementById("tool-craft-options");
+        const upgradeContainer = document.getElementById("upgrade-craft-options");
+
+        gearContainer.innerHTML = "";
+        toolContainer.innerHTML = "";
+        upgradeContainer.innerHTML = "";
 
         items.forEach(item => {
-            const costList = Object.entries(item.cost).map(
-            ([res, amt]) => `${res}: ${amt}`
-            ).join("<br>");
-
             const button = document.createElement("button");
-            button.className = "btn btn-sm btn-outline-primary";
-            button.innerHTML = `${item.name}<br><small>${costList}</small>`;
+            button.className = "btn btn-sm btn-outline-secondary";
+            button.innerHTML = `${item.name}<br><small>${Object.entries(item.cost).map(([r, a]) => `${r}: ${a}`).join("<br>")}</small>`;
             button.onclick = () => attemptCraft(item, resources);
-            container.appendChild(button);
+
+            if (item.type === 'gear') gearContainer.appendChild(button);
+            else if (item.type === 'tool') toolContainer.appendChild(button);
+            else upgradeContainer.appendChild(button); // For later if needed
         });
     }
 
