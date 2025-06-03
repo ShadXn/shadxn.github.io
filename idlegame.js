@@ -136,28 +136,55 @@
 
             const header = document.createElement('div');
             header.className = 'd-flex justify-content-between align-items-center';
-
             header.innerHTML = `
                 <strong>${jobName}</strong>
                 <span class="text-muted">${job.gp_reward || 0} gp/sec</span>
             `;
 
-            const requires = job.required_resources
-                ? Object.entries(job.required_resources).map(([r, a]) => `${r}: ${a}`).join(', ')
-                : 'None';
+            // 📦 Build "Requires" section
+            const requiresParts = [];
 
-            const food = job.food_cost ? `Food: ${job.food_cost}` : '';
-            const drops = job.produces
-                ? Object.entries(job.produces).map(([r, v]) =>
-                    typeof v === 'object' && v.chance ? `${r} (chance ${v.chance * 100}%)` : `${r}: ${v}`
-                ).join(', ')
-                : 'None';
+            if (job.required_resources) {
+                const res = Object.entries(job.required_resources)
+                    .map(([r, a]) => `${r}: ${a}`)
+                    .join(', ');
+                requiresParts.push(res);
+            }
+
+            if (job.required_gear && job.required_gear !== "none") {
+                requiresParts.push(`Armor: ${job.required_gear}`);
+            }
+
+            if (job.food_cost) {
+                requiresParts.push(`Food: ${job.food_cost}`);
+            }
+
+            const requires = requiresParts.length > 0 ? requiresParts.join(', ') : 'None';
+
+            // 🎁 Build "Produces" section
+            const producesParts = [];
+
+            if (job.produces) {
+                Object.entries(job.produces).forEach(([r, v]) => {
+                    if (typeof v === 'object' && v.chance) {
+                        producesParts.push(`${r} (chance ${v.chance * 100}%)`);
+                    } else {
+                        producesParts.push(`${r}: ${v}`);
+                    }
+                });
+            }
+
+            if (job.gp_reward) {
+                producesParts.push(`gp: ${job.gp_reward}`);
+            }
+
+            const produces = producesParts.length > 0 ? producesParts.join(', ') : 'None';
 
             const details = document.createElement('div');
             details.className = 'small text-muted mt-1';
             details.innerHTML = `
-                <div>🎯 Requires: ${requires}${food ? ', ' + food : ''} & Armor: </div>
-                <div>🎁 Produces: ${drops}</div>
+                <div>🎯 Requires: ${requires}</div>
+                <div>🎁 Produces: ${produces}</div>
             `;
 
             const controls = document.createElement('div');
@@ -168,7 +195,6 @@
                 <button class="btn btn-sm btn-success">+</button>
             `;
 
-            // Add logic
             const [minusBtn, plusBtn] = controls.querySelectorAll('button');
             minusBtn.onclick = () => {
                 if (assignments[jobId] > 0) {
@@ -188,10 +214,10 @@
             card.appendChild(header);
             card.appendChild(details);
             card.appendChild(controls);
-
             taskList.appendChild(card);
         });
     }
+
 
     // Generate task UI
     tasks.forEach(task => {
