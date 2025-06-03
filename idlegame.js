@@ -31,7 +31,7 @@
     function initializeGame() {
         workers = parseInt(localStorage.getItem(workersKey)) || 0;
         resources.gold = parseInt(localStorage.getItem(goldKey));
-        if (isNaN(resources.gold)) resources.gold = workers === 0 ? 100 : 0;
+        if (isNaN(resources.gold)) resources.gold = workers === 0 ? 10 : 0;
 
         assignments = JSON.parse(localStorage.getItem(assignmentsKey)) || {};
         tasks.forEach(task => { if (!(task.id in assignments)) assignments[task.id] = 0; });
