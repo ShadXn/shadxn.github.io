@@ -101,24 +101,28 @@
     function buildCraftables(gearData, toolData) {
         const craftables = [];
 
+        // Add gear
         for (const tier in gearData) {
             for (const part in gearData[tier]) {
                 const item = gearData[tier][part];
                 craftables.push({
-                    name: `${tier} ${part}`,
+                    name: `${tier} ${part}`,       // e.g. "bronze sword"
                     cost: item.cost,
                     type: 'gear'
                 });
             }
         }
 
-        for (const toolName in toolData) {
-            const tool = toolData[toolName];
-            craftables.push({
-                name: toolName,
-                cost: tool.cost,
-                type: 'tool'
-            });
+        // ✅ Add tools with the same nested structure
+        for (const tier in toolData) {
+            for (const part in toolData[tier]) {
+                const item = toolData[tier][part];
+                craftables.push({
+                    name: `${tier} ${part}`,        // e.g. "iron pickaxe"
+                    cost: item.cost,
+                    type: 'tool'
+                });
+            }
         }
 
         return craftables;
@@ -406,20 +410,30 @@
         });
     }
 
+    function normalizeItemKey(name) {
+        return name.toLowerCase().replace(/ /g, '_');  // "bronze sword" => "bronze_sword"
+    }
 
     function attemptCraft(item, resources) {
+        const itemKey = normalizeItemKey(item.name);
+
+        // Check cost
         for (const [res, amt] of Object.entries(item.cost)) {
             if ((resources[res] || 0) < amt) {
-            alert(`Not enough ${res} to craft ${item.name}`);
-            return;
+                alert(`Not enough ${res} to craft ${item.name}`);
+                return;
             }
         }
 
-        // Deduct and grant item
+        // Deduct resources
         for (const [res, amt] of Object.entries(item.cost)) {
             resources[res] -= amt;
         }
-        resources[item.name] = (resources[item.name] || 0) + 1;
+
+        // Add crafted item
+        resources[itemKey] = (resources[itemKey] || 0) + 1;
         updateResourceDisplay(resources);
+        saveProgress?.(); // Call this if needed
     }
+
 })();
