@@ -66,9 +66,9 @@
         });
 
         updateUI();
-
+        const craftables = buildCraftables(gearData, toolData);
         // ✅ Crafting section setup (gear, tools, upgrades)
-        showCraftingSection();  // <-- after game data is loaded
+        showCraftingSection(craftables, resources);
     }
 
     function getIdleWorkers() {
@@ -91,6 +91,32 @@
         localStorage.setItem(resources.goldKey, resources.gold);
         localStorage.setItem(workersKey, workers);
         localStorage.setItem(assignmentsKey, JSON.stringify(assignments));
+    }
+
+    function buildCraftables(gearData, toolData) {
+        const craftables = [];
+
+        for (const tier in gearData) {
+            for (const part in gearData[tier]) {
+                const item = gearData[tier][part];
+                craftables.push({
+                    name: `${tier} ${part}`,
+                    cost: item.cost,
+                    type: 'gear'
+                });
+            }
+        }
+
+        for (const toolName in toolData) {
+            const tool = toolData[toolName];
+            craftables.push({
+                name: toolName,
+                cost: tool.cost,
+                type: 'tool'
+            });
+        }
+
+        return craftables;
     }
 
     function populateJobs(jobs) {
