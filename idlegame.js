@@ -327,6 +327,9 @@
 
                 // Use tool and calculate multipliers
                 const tool = toolsUsed[i];
+                if (tool) {
+                    toolsInUse[tool] = (toolsInUse[tool] || 0) + 1;
+                }
                 const speedMultiplier = tool ? 0.75 : 1.0;      // Unused for now, could be used for cooldown later
                 const rewardMultiplier = tool ? 1.25 : 1.0;
 
