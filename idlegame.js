@@ -145,7 +145,6 @@
   // Passive gold income loop
     const resources = JSON.parse(localStorage.getItem('idle_resources') || '{}');
 
-
     function getBestToolForJob(jobId, resources) {
         const toolPriority = {
             mining: ["dragon_pickaxe", "runite_pickaxe", "adamant_pickaxe", "mithril_pickaxe", "iron_pickaxe", "bronze_pickaxe"],
@@ -175,66 +174,63 @@
     return assignedTools;
     }
 
-
     function applyJobTick() {
         for (const task of tasks) {
             const taskId = task.id;
             const assigned = assignments[taskId] || 0;
-            const toolsUsed = assignTools(taskId, assigned, resources);
             if (assigned <= 0) continue;
 
             const job = jobs[taskId];
             if (!job) continue;
 
-            // Simulate each worker individually
+            // Only assign tools once we know we have assigned workers
+            const toolsUsed = assignTools(taskId, assigned, resources);
+
             for (let i = 0; i < assigned; i++) {
-                // Check if worker has required tools
-                const tool = toolsUsed[i];
-                const job = jobs[taskId];
-
-                // Use tool to modify effectiveness
-                const speedMultiplier = tool ? 0.75 : 1.0; // or use better scaling
-                const rewardMultiplier = tool ? 1.25 : 1.0;
-
-                // Apply job costs and rewards as normal...
-                if (job.gp_reward) gold += job.gp_reward * rewardMultiplier;
-                // Do other resource processing adjusted by multipliers if needed
-
                 // Check food cost
                 if (job.food_cost && (resources["cooked_fish"] || 0) < job.food_cost) continue;
-                if (job.food_cost) resources["cooked_fish"] -= job.food_cost;
 
-                // Check required_resources like raw fish for cooking
+                // Check required resources
                 let hasRequired = true;
                 if (job.required_resources) {
                     for (const [res, amt] of Object.entries(job.required_resources)) {
-                    if ((resources[res] || 0) < amt) {
-                        hasRequired = false;
-                        break;
-                    }
+                        if ((resources[res] || 0) < amt) {
+                            hasRequired = false;
+                            break;
+                        }
                     }
                     if (!hasRequired) continue;
+                }
+
+                // Deduct food and required resources
+                if (job.food_cost) resources["cooked_fish"] -= job.food_cost;
+                if (job.required_resources) {
                     for (const [res, amt] of Object.entries(job.required_resources)) {
-                    resources[res] -= amt;
+                        resources[res] -= amt;
                     }
                 }
 
-                // Handle "produces"
+                // Use tool and calculate multipliers
+                const tool = toolsUsed[i];
+                const speedMultiplier = tool ? 0.75 : 1.0;      // Unused for now, could be used for cooldown later
+                const rewardMultiplier = tool ? 1.25 : 1.0;
+
+                // Handle produces
                 if (job.produces) {
                     for (const [res, value] of Object.entries(job.produces)) {
-                    if (typeof value === "object" && value.chance) {
-                        if (Math.random() < value.chance) {
-                        resources[res] = (resources[res] || 0) + 1;
+                        if (typeof value === "object" && value.chance) {
+                            if (Math.random() < value.chance) {
+                                resources[res] = (resources[res] || 0) + 1;
+                            }
+                        } else {
+                            resources[res] = (resources[res] || 0) + value;
                         }
-                    } else {
-                        resources[res] = (resources[res] || 0) + value;
-                    }
                     }
                 }
 
-                // Handle gp_reward (fighting tiers)
+                // Handle gp reward with multiplier
                 if (job.gp_reward) {
-                    gold += job.gp_reward;
+                    gold += job.gp_reward * rewardMultiplier;
                 }
             }
         }
