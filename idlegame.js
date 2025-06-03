@@ -103,6 +103,56 @@
     updateUI();
     saveProgress();
   }, 1000);
+  
+  function updateResourceDisplay(resources) {
+    const container = document.getElementById("resource-display");
+    container.innerHTML = "";
+
+    for (const [key, value] of Object.entries(resources)) {
+        const card = document.createElement("div");
+        card.className = "col";
+        card.innerHTML = `
+        <div class="card p-2 bg-white border shadow-sm">
+            <div class="fw-semibold">${key.replace(/_/g, ' ')}</div>
+            <div>${value}</div>
+        </div>
+        `;
+        container.appendChild(card);
+    }
+  }
+
+  function showCraftingOptions(availableItems, playerResources) {
+    const container = document.getElementById("crafting-options");
+    container.innerHTML = "";
+
+    availableItems.forEach(item => {
+        const costList = Object.entries(item.cost).map(
+        ([res, amt]) => `${res}: ${amt}`
+        ).join("<br>");
+
+        const button = document.createElement("button");
+        button.className = "btn btn-sm btn-outline-secondary";
+        button.innerHTML = `${item.name}<br><small>${costList}</small>`;
+        button.onclick = () => attemptCraft(item, playerResources);
+        container.appendChild(button);
+    });
+  }
+
+  function attemptCraft(item, resources) {
+    for (const [res, amt] of Object.entries(item.cost)) {
+        if ((resources[res] || 0) < amt) {
+        alert(`Not enough ${res} to craft ${item.name}`);
+        return;
+        }
+    }
+
+    // Deduct and grant item
+    for (const [res, amt] of Object.entries(item.cost)) {
+        resources[res] -= amt;
+    }
+    resources[item.name] = (resources[item.name] || 0) + 1;
+    updateResourceDisplay(resources);
+  }
 
   updateUI();
 })();

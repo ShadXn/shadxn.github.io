@@ -529,6 +529,7 @@
     },
     "fighting_tier_1": {
     "food_cost": 2,
+    "job_action_time": 0.9,
     "required_gear": "none",
     "gp_reward": 10,
     "fights_required_to_unlock_next": 200,
@@ -537,7 +538,8 @@
     },
     "fighting_tier_2": {
     "food_cost": 3,
-    "required_gear": "bronze",
+    "job_action_time": 0.9,
+    "required_gear": "bronze_sword, bronze_armor, bronze_shield",
     "gp_reward": 20,
     "fights_required_to_unlock_next": 400,
     "unlocks": "fighting_tier_3",
@@ -545,7 +547,8 @@
     },
     "fighting_tier_3": {
     "food_cost": 4,
-    "required_gear": "iron",
+    "job_action_time": 0.9,
+    "required_gear": "iron_sword, iron_armor, iron_shield",
     "gp_reward": 30,
     "fights_required_to_unlock_next": 600,
     "unlocks": "fighting_tier_4",
@@ -553,7 +556,8 @@
     },
     "fighting_tier_4": {
     "food_cost": 5,
-    "required_gear": "steel",
+    "job_action_time": 0.9,
+    "required_gear": "steel_sword, steel_armor, steel_shield",
     "gp_reward": 40,
     "fights_required_to_unlock_next": 800,
     "unlocks": "fighting_tier_5",
@@ -561,7 +565,8 @@
     },
     "fighting_tier_5": {
     "food_cost": 6,
-    "required_gear": "black",
+    "job_action_time": 0.8,
+    "required_gear": "black_sword, black_armor, black_shield",
     "gp_reward": 50,
     "fights_required_to_unlock_next": 1000,
     "unlocks": "fighting_tier_6",
@@ -569,7 +574,8 @@
     },
     "fighting_tier_6": {
     "food_cost": 7,
-    "required_gear": "mithril",
+    "job_action_time": 0.8,
+    "required_gear": "mithril_sword, mithril_armor, mithril_shield",
     "gp_reward": 60,
     "fights_required_to_unlock_next": 1200,
     "unlocks": "fighting_tier_7",
@@ -577,7 +583,8 @@
     },
     "fighting_tier_7": {
     "food_cost": 8,
-    "required_gear": "adamant",
+    "job_action_time": 0.8,
+    "required_gear": "adamant_sword, adamant_armor, adamant_shield",
     "gp_reward": 70,
     "fights_required_to_unlock_next": 1400,
     "unlocks": "fighting_tier_8",
@@ -585,7 +592,8 @@
     },
     "fighting_tier_8": {
     "food_cost": 9,
-    "required_gear": "rune",
+    "job_action_time": 0.8,
+    "required_gear": "rune_sword, rune_armor, rune_shield",
     "gp_reward": 80,
     "fights_required_to_unlock_next": 1600,
     "unlocks": "fighting_tier_9",
@@ -593,7 +601,8 @@
     },
     "fighting_tier_9": {
     "food_cost": 10,
-    "required_gear": "dragon",
+    "job_action_time": 0.8,
+    "required_gear": "dragon_sword, dragon_armor, dragon_shield",
     "gp_reward": 90,
     "fights_required_to_unlock_next": 1800,
     "unlocks": "fighting_tier_10",
@@ -601,7 +610,8 @@
     },
     "fighting_tier_10": {
     "food_cost": 11,
-    "required_gear": "god",
+    "job_action_time": 0.8,
+    "required_gear": "god_sword, god_armor, god_shield",
     "gp_reward": 100,
     "fights_required_to_unlock_next": 2000,
     "unlocks": null,
