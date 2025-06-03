@@ -1,0 +1,10 @@
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+#task-list .card {
+    transition: transform 0.1s ease;
+}
+#task-list .card:hover {
+    transform: scale(1.01);
+}

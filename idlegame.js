@@ -76,25 +76,68 @@
         const taskList = document.getElementById('task-list');
         taskList.innerHTML = ''; // Clear old tasks
 
-        Object.entries(jobs).forEach(([jobName, jobData]) => {
-            const taskItem = document.createElement('div');
-            taskItem.className = 'd-flex align-items-center gap-2';
+        Object.entries(jobs).forEach(([jobId, job]) => {
+            const jobName = jobId.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
-            const label = document.createElement('span');
-            label.textContent = `${jobName} (${jobData.gp_reward || 0} gp)`;
+            const card = document.createElement('div');
+            card.className = 'card border shadow-sm p-2';
 
-            const minusBtn = document.createElement('button');
-            minusBtn.className = 'btn btn-sm btn-outline-danger';
-            minusBtn.textContent = '−';
-            minusBtn.onclick = () => removeWorkerFromJob(jobName);
+            const header = document.createElement('div');
+            header.className = 'd-flex justify-content-between align-items-center';
 
-            const plusBtn = document.createElement('button');
-            plusBtn.className = 'btn btn-sm btn-outline-success';
-            plusBtn.textContent = '+';
-            plusBtn.onclick = () => assignWorkerToJob(jobName);
+            header.innerHTML = `
+                <strong>${jobName}</strong>
+                <span class="text-muted">${job.gp_reward || 0} gp/sec</span>
+            `;
 
-            taskItem.append(label, minusBtn, plusBtn);
-            taskList.appendChild(taskItem);
+            const requires = job.required_resources
+                ? Object.entries(job.required_resources).map(([r, a]) => `${r}: ${a}`).join(', ')
+                : 'None';
+
+            const food = job.food_cost ? `Food: ${job.food_cost}` : '';
+            const drops = job.produces
+                ? Object.entries(job.produces).map(([r, v]) =>
+                    typeof v === 'object' && v.chance ? `${r} (chance ${v.chance * 100}%)` : `${r}: ${v}`
+                ).join(', ')
+                : 'None';
+
+            const details = document.createElement('div');
+            details.className = 'small text-muted mt-1';
+            details.innerHTML = `
+                <div>🎯 Requires: ${requires}${food ? ', ' + food : ''}</div>
+                <div>🎁 Produces: ${drops}</div>
+            `;
+
+            const controls = document.createElement('div');
+            controls.className = 'd-flex align-items-center gap-2 mt-2';
+            controls.innerHTML = `
+                <button class="btn btn-sm btn-danger">−</button>
+                <span id="count-${jobId}" class="fw-bold">0</span>
+                <button class="btn btn-sm btn-success">+</button>
+            `;
+
+            // Add logic
+            const [minusBtn, plusBtn] = controls.querySelectorAll('button');
+            minusBtn.onclick = () => {
+                if (assignments[jobId] > 0) {
+                    assignments[jobId]--;
+                    updateUI();
+                    saveProgress();
+                }
+            };
+            plusBtn.onclick = () => {
+                if (getIdleWorkers() > 0) {
+                    assignments[jobId] = (assignments[jobId] || 0) + 1;
+                    updateUI();
+                    saveProgress();
+                }
+            };
+
+            card.appendChild(header);
+            card.appendChild(details);
+            card.appendChild(controls);
+
+            taskList.appendChild(card);
         });
     }
 
