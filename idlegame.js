@@ -292,6 +292,7 @@
         toolContainer.innerHTML = "";
 
         Object.entries(resources).forEach(([key, value]) => {
+            if (key === "gold") return; // Skip gold, handled separately
             const card = document.createElement("div");
             card.className = "col";
             card.innerHTML = `
