@@ -74,7 +74,24 @@
     </div>
   </div>
 </div>
-    
+
+<!-- Expandable Container -->
+<div class="mb-3">
+  <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#expandInfo" aria-expanded="false" aria-controls="expandInfo">
+    🔽 Show More Details
+  </button>
+
+  <div class="collapse mt-2" id="expandInfo">
+    <div class="card card-body bg-light border" id="idle-game">
+      <h5 class="mb-2">🛠️ Idle Worker Game</h5>
+      <p><strong>Gold:</strong> <span id="gold-count">0</span> gp</p>
+      <p><strong>Workers:</strong> <span id="worker-count">0</span></p>
+      <p><strong>Next Worker Cost:</strong> <span id="worker-cost">10</span> gp</p>
+      <button class="btn btn-success btn-sm" id="buy-worker">Buy Worker</button>
+    </div>
+
+  </div>
+</div>
 
     <div class="table-responsive">
       <table class="table table-bordered table-striped rounded-2 overflow-hidden">
