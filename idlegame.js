@@ -260,18 +260,70 @@
 
     function getBestToolForJob(jobId, resources) {
         const toolPriority = {
-            mining: ["god_pickaxe", "dragon_pickaxe", "rune_pickaxe", "adamant_pickaxe", "mithril_pickaxe", "black_pickaxe", "steel_pickaxe", "iron_pickaxe", "bronze_pickaxe"],
-            fishing: ["god_rod", "dragon_rod", "rune_rod", "adamant_rod", "mithril_rod", "black_rod", "steel_rod", "iron_rod", "bronze_rod"],
-            woodcutting: ["god_axe", "dragon_axe", "rune_axe", "adamant_axe", "mithril_axe", "black_axe", "steel_axe", "iron_axe", "bronze_axe"],
-            // Cooking gloves are used for cooking tasks
-            cooking: ["god_gloves", "dragon_gloves", "rune_gloves", "adamant_gloves", "mithril_gloves", "black_gloves", "steel_gloves", "iron_gloves", "bronze_gloves"],
-            // Thieving boots are used for thieving tasks
-            thieving: ["god_boots", "dragon_boots", "rune_boots", "adamant_boots", "mithril_boots", "black_boots", "steel_boots", "iron_boots", "bronze_boots"],
-            fighting_tier_1: ["god_sword", "dragon_sword", "rune_sword", "adamant_sword", "mithril_sword", "black_sword", "steel_sword", "iron_sword", "bronze_sword"],
-            // Add more if needed
+            mining: [["god_pickaxe", "dragon_pickaxe", "rune_pickaxe", "adamant_pickaxe", "mithril_pickaxe", "black_pickaxe", "steel_pickaxe", "iron_pickaxe", "bronze_pickaxe"]],
+            fishing: [["god_rod", "dragon_rod", "rune_rod", "adamant_rod", "mithril_rod", "black_rod", "steel_rod", "iron_rod", "bronze_rod"]],
+            woodcutting: [["god_axe", "dragon_axe", "rune_axe", "adamant_axe", "mithril_axe", "black_axe", "steel_axe", "iron_axe", "bronze_axe"]],
+            cooking: [["god_gloves", "dragon_gloves", "rune_gloves", "adamant_gloves", "mithril_gloves", "black_gloves", "steel_gloves", "iron_gloves", "bronze_gloves"]],
+            thieving: [["god_boots", "dragon_boots", "rune_boots", "adamant_boots", "mithril_boots", "black_boots", "steel_boots", "iron_boots", "bronze_boots"]],
+            fighting_tier_1: [
+                ["god_sword", "dragon_sword", "rune_sword", "adamant_sword", "mithril_sword", "black_sword", "steel_sword", "iron_sword", "bronze_sword"],
+                ["god_armor", "dragon_armor", "rune_armor", "adamant_armor", "mithril_armor", "black_armor", "steel_armor", "iron_armor", "bronze_armor"],
+                ["god_shield", "dragon_shield", "rune_shield", "adamant_shield", "mithril_shield", "black_shield", "steel_shield", "iron_shield", "bronze_shield"]
+            ],
+            fighting_tier_2: [
+                ["god_sword", "dragon_sword", "rune_sword", "adamant_sword", "mithril_sword", "black_sword", "steel_sword", "iron_sword", "bronze_sword"],
+                ["god_armor", "dragon_armor", "rune_armor", "adamant_armor", "mithril_armor", "black_armor", "steel_armor", "iron_armor", "bronze_armor"],
+                ["god_shield", "dragon_shield", "rune_shield", "adamant_shield", "mithril_shield", "black_shield", "steel_shield", "iron_shield", "bronze_shield"]
+            ],
+            fighting_tier_3: [
+                ["god_sword", "dragon_sword", "rune_sword", "adamant_sword", "mithril_sword", "black_sword", "steel_sword", "iron_sword", "bronze_sword"],
+                ["god_armor", "dragon_armor", "rune_armor", "adamant_armor", "mithril_armor", "black_armor", "steel_armor", "iron_armor", "bronze_armor"],
+                ["god_shield", "dragon_shield", "rune_shield", "adamant_shield", "mithril_shield", "black_shield", "steel_shield", "iron_shield", "bronze_shield"]
+            ],
+            fighting_tier_4: [
+                ["god_sword", "dragon_sword", "rune_sword", "adamant_sword", "mithril_sword", "black_sword", "steel_sword", "iron_sword", "bronze_sword"],
+                ["god_armor", "dragon_armor", "rune_armor", "adamant_armor", "mithril_armor", "black_armor", "steel_armor", "iron_armor", "bronze_armor"],
+                ["god_shield", "dragon_shield", "rune_shield", "adamant_shield", "mithril_shield", "black_shield", "steel_shield", "iron_shield", "bronze_shield"]
+            ],
+            fighting_tier_5: [
+                ["god_sword", "dragon_sword", "rune_sword", "adamant_sword", "mithril_sword", "black_sword", "steel_sword", "iron_sword", "bronze_sword"],
+                ["god_armor", "dragon_armor", "rune_armor", "adamant_armor", "mithril_armor", "black_armor", "steel_armor", "iron_armor", "bronze_armor"],
+                ["god_shield", "dragon_shield", "rune_shield", "adamant_shield", "mithril_shield", "black_shield", "steel_shield", "iron_shield", "bronze_shield"]
+            ],
+            fighting_tier_6: [
+                ["god_sword", "dragon_sword", "rune_sword", "adamant_sword", "mithril_sword", "black_sword", "steel_sword", "iron_sword", "bronze_sword"],
+                ["god_armor", "dragon_armor", "rune_armor", "adamant_armor", "mithril_armor", "black_armor", "steel_armor", "iron_armor", "bronze_armor"],
+                ["god_shield", "dragon_shield", "rune_shield", "adamant_shield", "mithril_shield", "black_shield", "steel_shield", "iron_shield", "bronze_shield"]
+            ],
+            fighting_tier_7: [
+                ["god_sword", "dragon_sword", "rune_sword", "adamant_sword", "mithril_sword", "black_sword", "steel_sword", "iron_sword", "bronze_sword"],
+                ["god_armor", "dragon_armor", "rune_armor", "adamant_armor", "mithril_armor", "black_armor", "steel_armor", "iron_armor", "bronze_armor"],
+                ["god_shield", "dragon_shield", "rune_shield", "adamant_shield", "mithril_shield", "black_shield", "steel_shield", "iron_shield", "bronze_shield"]
+            ],
+            fighting_tier_8: [
+                ["god_sword", "dragon_sword", "rune_sword", "adamant_sword", "mithril_sword", "black_sword", "steel_sword", "iron_sword", "bronze_sword"],
+                ["god_armor", "dragon_armor", "rune_armor", "adamant_armor", "mithril_armor", "black_armor", "steel_armor", "iron_armor", "bronze_armor"],
+                ["god_shield", "dragon_shield", "rune_shield", "adamant_shield", "mithril_shield", "black_shield", "steel_shield", "iron_shield", "bronze_shield"]
+            ],
+            fighting_tier_9: [
+                ["god_sword", "dragon_sword", "rune_sword", "adamant_sword", "mithril_sword", "black_sword", "steel_sword", "iron_sword", "bronze_sword"],
+                ["god_armor", "dragon_armor", "rune_armor", "adamant_armor", "mithril_armor", "black_armor", "steel_armor", "iron_armor", "bronze_armor"],
+                ["god_shield", "dragon_shield", "rune_shield", "adamant_shield", "mithril_shield", "black_shield", "steel_shield", "iron_shield", "bronze_shield"]
+            ],
+            fighting_tier_10: [
+                ["god_sword", "dragon_sword", "rune_sword", "adamant_sword", "mithril_sword", "black_sword", "steel_sword", "iron_sword", "bronze_sword"],
+                ["god_armor", "dragon_armor", "rune_armor", "adamant_armor", "mithril_armor", "black_armor", "steel_armor", "iron_armor", "bronze_armor"],
+                ["god_shield", "dragon_shield", "rune_shield", "adamant_shield", "mithril_shield", "black_shield", "steel_shield", "iron_shield", "bronze_shield"]
+            ],
+            fighting_tier_11: [
+                ["god_sword", "dragon_sword", "rune_sword", "adamant_sword", "mithril_sword", "black_sword", "steel_sword", "iron_sword", "bronze_sword"],
+                ["god_armor", "dragon_armor", "rune_armor", "adamant_armor", "mithril_armor", "black_armor", "steel_armor", "iron_armor", "bronze_armor"],
+                ["god_shield", "dragon_shield", "rune_shield", "adamant_shield", "mithril_shield", "black_shield", "steel_shield", "iron_shield", "bronze_shield"]
+            ]
         };
         return toolPriority[jobId] || [];
     }
+
 
     function assignTools(jobId, count, resources) {
         const toolList = getBestToolForJob(jobId, resources);
