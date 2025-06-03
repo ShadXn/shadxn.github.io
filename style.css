@@ -8,3 +8,7 @@ body {
 #task-list .card:hover {
     transform: scale(1.01);
 }
+
+.btn-link {
+text-decoration: none !important;
+}
