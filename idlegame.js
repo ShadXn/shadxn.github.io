@@ -422,8 +422,9 @@
 
     function attemptCraft(item, resources) {
         for (const [res, amt] of Object.entries(item.cost)) {
-            const inUse = toolsInUse[res] || 0;
-            const available = (resources[res] || 0) - inUse;
+            const resKey = normalizeItemKey(res);
+            const inUse = toolsInUse[resKey] || 0;
+            const available = (resources[resKey] || 0) - inUse;
 
             if (available < amt) {
                 alert(`Not enough available ${res} to craft ${item.name}.\nIn use: ${inUse}, Available: ${available}`);
@@ -435,7 +436,8 @@
         for (const [res, amt] of Object.entries(item.cost)) {
             resources[res] -= amt;
         }
-        resources[item.name] = (resources[item.name] || 0) + 1;
+        const itemKey = normalizeItemKey(item.name);
+        resources[itemKey] = (resources[itemKey] || 0) + 1;
 
         updateResourceDisplay(resources);
         saveProgress();
