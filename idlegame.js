@@ -36,6 +36,7 @@
     // Game state variables
     const workersKey = 'idle_workers';
     const assignmentsKey = 'idle_assignments';
+    const toolsInUse = {};  // Track how many of each tool is in use
 
     // Passive resources.gold income loop
     const resources = JSON.parse(localStorage.getItem('idle_resources') || '{}');
@@ -271,22 +272,24 @@
         const toolList = getBestToolForJob(jobId, resources);
         const assignedTools = [];
 
-    for (let i = 0; i < count; i++) {
-        let found = false;
-        for (const tool of toolList) {
-        if ((resources[tool] || 0) > 0) {
-            assignedTools.push(tool);
-            resources[tool]--;
-            found = true;
-            break;
+        for (let i = 0; i < count; i++) {
+            let found = false;
+            for (const tool of toolList) {
+                if ((resources[tool] || 0) - (toolsInUse[tool] || 0) > 0) {
+                    assignedTools.push(tool);
+                    toolsInUse[tool] = (toolsInUse[tool] || 0) + 1;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) assignedTools.push(null);  // no tool
         }
-        }
-        if (!found) assignedTools.push(null); // no tool
-    }
-    return assignedTools;
+
+        return assignedTools;
     }
 
     function applyJobTick() {
+        Object.keys(toolsInUse).forEach(tool => toolsInUse[tool] = 0);
         for (const task of tasks) {
             const taskId = task.id;
             const assigned = assignments[taskId] || 0;
@@ -354,7 +357,7 @@
     }
     setInterval(applyJobTick, 1000);
 
-  
+    // Update resource display
     function updateResourceDisplay(resources) {
         const resourceContainer = document.getElementById("resource-display");
         const gearContainer = document.getElementById("gear-display");
@@ -364,21 +367,24 @@
         toolContainer.innerHTML = "";
 
         Object.entries(resources).forEach(([key, value]) => {
-            if (key === "gold") return; // Skip gold, handled separately
+            if (key === "gold") return;
+
+            const inUse = toolsInUse[key] || 0;
+            const showInUse = inUse > 0 ? ` <span class="text-muted">(In use: ${inUse})</span>` : "";
+
             const card = document.createElement("div");
             card.className = "col";
             card.innerHTML = `
                 <div class="card p-2 bg-white border shadow-sm">
                     <div class="fw-semibold">${key.replace(/_/g, ' ')}</div>
-                    <div>${value}</div>
+                    <div>${value}${showInUse}</div>
                 </div>
             `;
 
             if (/sword|armor|shield/.test(key)) gearContainer.appendChild(card);
-            else if (/pickaxe|axe|rod|gloves/.test(key)) toolContainer.appendChild(card);
+            else if (/pickaxe|axe|rod|gloves|cape/.test(key)) toolContainer.appendChild(card);
             else resourceContainer.appendChild(card);
         });
-
     }
 
     function showCraftingSection(items = [], resources = {}) {
