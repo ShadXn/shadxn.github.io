@@ -300,12 +300,6 @@
 
             // Only assign tools once we know we have assigned workers
             const toolsUsed = assignTools(taskId, assigned, resources);
-            // ✅ Track each tool as "in use" once
-            for (const tool of toolsUsed) {
-                if (tool) {
-                    toolsInUse[tool] = (toolsInUse[tool] || 0) + 1;
-                }
-            }
 
             for (let i = 0; i < assigned; i++) {
                 // Check food cost
