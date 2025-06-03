@@ -18,21 +18,8 @@ function updateCountdown() {
   const seconds = Math.floor((diffMs / 1000) % 60);
 
   countdownElement.textContent =
-    `⏳ ${days}d ${hours}h ${minutes}m ${seconds}s to Clog Spam`;
+    `${days}d ${hours}h ${minutes}m ${seconds}s to Clog Spam`;
 }
 
 setInterval(updateCountdown, 1000);
 updateCountdown(); // initial call
-
-// === View Counter ===
-(function () {
-  const viewKey = 'osrs_tracker_views';
-  let views = parseInt(localStorage.getItem(viewKey)) || 0;
-  views++;
-  localStorage.setItem(viewKey, views);
-
-  const viewElement = document.getElementById("view-counter");
-  if (viewElement) {
-    viewElement.textContent = `Views this browser: ${views}`;
-  }
-})();
