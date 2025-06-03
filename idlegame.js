@@ -21,7 +21,7 @@
     })
     .catch(error => console.error('Error loading game data:', error));
 
-    const goldKey = 'idle_resources.gold';
+    // Game state variables
     const workersKey = 'idle_workers';
     const assignmentsKey = 'idle_assignments';
 
@@ -30,8 +30,9 @@
 
     function initializeGame() {
         workers = parseInt(localStorage.getItem(workersKey)) || 0;
-        resources.gold = parseInt(localStorage.getItem(goldKey));
-        if (isNaN(resources.gold)) resources.gold = workers === 0 ? 10 : 0;
+        if (typeof resources.gold !== "number") {
+            resources.gold = workers === 0 ? 10 : 0;
+        }
 
         assignments = JSON.parse(localStorage.getItem(assignmentsKey)) || {};
         tasks.forEach(task => { if (!(task.id in assignments)) assignments[task.id] = 0; });
@@ -307,7 +308,6 @@
             else resourceContainer.appendChild(card);
         });
 
-        // Inject resources.gold separately
     }
 
     function showCraftingOptions(availableItems, playerResources) {
