@@ -348,7 +348,7 @@
     "done_hard": 10,
     "done_elite": 1,
     "done_master": 0,
-    "status": false,
+    "status": true,
     "counter": 32
   },
   {
