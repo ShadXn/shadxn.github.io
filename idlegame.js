@@ -1,6 +1,7 @@
 (function () {
     let gameData = {};
     let jobs = {};
+    let tasks = [];
 
     fetch('game_data.json')
     .then(response => response.json())
@@ -8,6 +9,15 @@
         gameData = data;
         jobs = gameData.jobs;
         populateJobs(jobs);
+
+        // Auto-generate tasks list from job keys (if you want to preserve order, sort here)
+        tasks = Object.keys(jobs).map(key => ({
+            id: key,
+            name: key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()), // readable names
+            rate: jobs[key].gp_reward || 0
+        }));
+
+        initializeGame(); // <-- defer setup until data is ready
     })
     .catch(error => console.error('Error loading game data:', error));
 
@@ -15,14 +25,10 @@
     const workersKey = 'idle_workers';
     const assignmentsKey = 'idle_assignments';
 
-    const tasks = [
-        { id: 'fishing', name: '🎣 Fishing' },
-        { id: 'mining', name: '⛏️ Mining' },
-        { id: 'woodcutting', name: '🪓 Woodcutting' },
-        { id: 'cooking', name: '🍳 Cooking' },
-        { id: 'thieving', name: '🕵️ Thieving' }
-    ];
-
+    function initializeGame() {
+        // 🧠 Everything from here should use `jobs` and `tasks` loaded from game_data.json
+        // localStorage, assignments init, UI updates, DOM hooks, etc.
+    }
 
     // Load saved state or initialize
     let workers = parseInt(localStorage.getItem(workersKey)) || 0;
