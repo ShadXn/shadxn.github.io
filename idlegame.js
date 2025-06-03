@@ -352,9 +352,9 @@
     }
 
     function showCraftingSection(items, resources) {
-        const gearContainer = document.getElementById("gear-craft-options");
-        const toolContainer = document.getElementById("tool-craft-options");
-        const upgradeContainer = document.getElementById("upgrade-craft-options");
+        const gearContainer = document.getElementById("gear-craft");
+        const toolContainer = document.getElementById("tool-craft");
+        const upgradeContainer = document.getElementById("upgrade-craft");
 
         gearContainer.innerHTML = "";
         toolContainer.innerHTML = "";
