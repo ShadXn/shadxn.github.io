@@ -308,15 +308,6 @@
         });
 
         // Inject resources.gold separately
-        const goldCard = document.createElement("div");
-        goldCard.className = "col";
-        goldCard.innerHTML = `
-            <div class="card p-2 bg-warning-subtle border shadow-sm">
-                <div class="fw-semibold">Gold</div>
-                <div>${resources.gold}</div>
-            </div>
-        `;
-        resourceContainer.prepend(goldCard);
     }
 
     function showCraftingOptions(availableItems, playerResources) {
