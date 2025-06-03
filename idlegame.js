@@ -2,8 +2,12 @@
   const goldKey = 'idle_gold';
   const workersKey = 'idle_workers';
 
-  let gold = parseInt(localStorage.getItem(goldKey)) || 0;
-  let workers = parseInt(localStorage.getItem(workersKey)) || 0;
+  let workers = parseInt(localStorage.getItem(workersKey));
+  if (isNaN(workers)) workers = 0;
+
+  let gold = parseInt(localStorage.getItem(goldKey));
+  if (isNaN(gold)) gold = (workers === 0) ? 100 : 0;
+
   let workerCost = 10 * Math.pow(2, workers);
 
   const goldDisplay = document.getElementById('gold-count');
@@ -37,8 +41,7 @@
     gold += workers;
     updateUI();
     saveProgress();
-  }, 1000); // every second
+  }, 1000);
 
-  // Initial UI setup
   updateUI();
 })();
