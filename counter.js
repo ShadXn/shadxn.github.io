@@ -18,7 +18,7 @@ function updateCountdown() {
   const seconds = Math.floor((diffMs / 1000) % 60);
 
   countdownElement.textContent =
-    `${days}d ${hours}h ${minutes}m ${seconds}s to Clog Spam`;
+    `${days}d ${hours}h ${minutes}m ${seconds}s`;
 }
 
 setInterval(updateCountdown, 1000);
