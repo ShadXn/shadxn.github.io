@@ -362,7 +362,7 @@
             if (!job) continue;
 
             // Only assign tools once we know we have assigned workers
-            const toolsUsed = assignTools(taskId, assigned, resources);
+            const toolSetsUsed = assignTools(taskId, assigned, resources);
 
             for (let i = 0; i < assigned; i++) {
                 // Check food cost
@@ -389,9 +389,9 @@
                 }
 
                 // Use tool and calculate multipliers
-                const tool = toolsUsed[i];
+                const toolSet = toolSetsUsed[i];
                 const equippedCount = toolSet.filter(t => t !== null).length;
-                const speedMultiplier = tool ? 0.75 : 1.0;      // Unused for now, could be used for cooldown later
+                const speedMultiplier = equippedCount > 0 ? 0.75 : 1.0;      // Unused for now, could be used for cooldown later
                 const rewardMultiplier = 1.0 + equippedCount * 0.1;  // 10% per equipped item
 
                 // Handle produces
