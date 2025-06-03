@@ -21,15 +21,17 @@
     })
     .catch(error => console.error('Error loading game data:', error));
 
-    const goldKey = 'idle_gold';
+    const goldKey = 'idle_resources.gold';
     const workersKey = 'idle_workers';
     const assignmentsKey = 'idle_assignments';
 
+    // Passive resources.gold income loop
+    const resources = JSON.parse(localStorage.getItem('idle_resources') || '{}');
+
     function initializeGame() {
-        // Load saved state or initialize
         workers = parseInt(localStorage.getItem(workersKey)) || 0;
-        gold = parseInt(localStorage.getItem(goldKey));
-        if (isNaN(gold)) gold = workers === 0 ? 100 : 0;
+        resources.gold = parseInt(localStorage.getItem(goldKey));
+        if (isNaN(resources.gold)) resources.gold = workers === 0 ? 100 : 0;
 
         assignments = JSON.parse(localStorage.getItem(assignmentsKey)) || {};
         tasks.forEach(task => { if (!(task.id in assignments)) assignments[task.id] = 0; });
@@ -44,10 +46,7 @@
         buyBtn = document.getElementById('buy-worker');
         taskList = document.getElementById('task-list');
 
-        // Add all task UI here (generate buttons)
-        // Add buy button listener
-        // Add setInterval for job tick
-        // Update UI, etc.
+        updateUI();
     }
 
     function getIdleWorkers() {
@@ -55,19 +54,19 @@
     }
 
     function updateUI() {
-        goldDisplay.textContent = gold;
+        goldDisplay.textContent = resources.gold;
         workerDisplay.textContent = workers;
         idleDisplay.textContent = getIdleWorkers();
         costDisplay.textContent = workerCost;
 
         tasks.forEach(task => {
-        const countSpan = document.getElementById(`count-${task.id}`);
-        if (countSpan) countSpan.textContent = assignments[task.id];
+            const countSpan = document.getElementById(`count-${task.id}`);
+            if (countSpan) countSpan.textContent = assignments[task.id];
         });
     }
 
     function saveProgress() {
-        localStorage.setItem(goldKey, gold);
+        localStorage.setItem(resources.goldKey, resources.gold);
         localStorage.setItem(workersKey, workers);
         localStorage.setItem(assignmentsKey, JSON.stringify(assignments));
     }
@@ -176,17 +175,14 @@
     });
 
     buyBtn.addEventListener('click', () => {
-        if (gold >= workerCost) {
-        gold -= workerCost;
+        if (resources.gold >= workerCost) {
+        resources.gold -= workerCost;
         workers++;
         workerCost = 10 * Math.pow(2, workers);
         updateUI();
         saveProgress();
         }
     });
-
-  // Passive gold income loop
-    const resources = JSON.parse(localStorage.getItem('idle_resources') || '{}');
 
     function getBestToolForJob(jobId, resources) {
         const toolPriority = {
@@ -273,7 +269,7 @@
 
                 // Handle gp reward with multiplier
                 if (job.gp_reward) {
-                    gold += job.gp_reward * rewardMultiplier;
+                    resources.gold += job.gp_reward * rewardMultiplier;
                 }
             }
         }
@@ -298,16 +294,27 @@
             const card = document.createElement("div");
             card.className = "col";
             card.innerHTML = `
-            <div class="card p-2 bg-white border shadow-sm">
-                <div class="fw-semibold">${key.replace(/_/g, ' ')}</div>
-                <div>${value}</div>
-            </div>
+                <div class="card p-2 bg-white border shadow-sm">
+                    <div class="fw-semibold">${key.replace(/_/g, ' ')}</div>
+                    <div>${value}</div>
+                </div>
             `;
 
             if (/sword|armor|shield/.test(key)) gearContainer.appendChild(card);
             else if (/pickaxe|axe|rod|gloves/.test(key)) toolContainer.appendChild(card);
             else resourceContainer.appendChild(card);
         });
+
+        // Inject resources.gold separately
+        const goldCard = document.createElement("div");
+        goldCard.className = "col";
+        goldCard.innerHTML = `
+            <div class="card p-2 bg-warning-subtle border shadow-sm">
+                <div class="fw-semibold">Gold</div>
+                <div>${resources.gold}</div>
+            </div>
+        `;
+        resourceContainer.prepend(goldCard);
     }
 
     function showCraftingOptions(availableItems, playerResources) {
