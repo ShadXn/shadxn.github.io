@@ -145,10 +145,42 @@
   // Passive gold income loop
     const resources = JSON.parse(localStorage.getItem('idle_resources') || '{}');
 
+
+    function getBestToolForJob(jobId, resources) {
+        const toolPriority = {
+            mining: ["dragon_pickaxe", "runite_pickaxe", "adamant_pickaxe", "mithril_pickaxe", "iron_pickaxe", "bronze_pickaxe"],
+            fishing: ["dragon_rod", "runite_rod", "adamant_rod", "mithril_rod", "iron_rod", "bronze_rod"],
+            woodcutting: ["dragon_axe", "runite_axe", "adamant_axe", "mithril_axe", "iron_axe", "bronze_axe"],
+            // Add more if needed
+        };
+        return toolPriority[jobId] || [];
+    }
+
+    function assignTools(jobId, count, resources) {
+        const toolList = getBestToolForJob(jobId, resources);
+        const assignedTools = [];
+
+    for (let i = 0; i < count; i++) {
+        let found = false;
+        for (const tool of toolList) {
+        if ((resources[tool] || 0) > 0) {
+            assignedTools.push(tool);
+            resources[tool]--;
+            found = true;
+            break;
+        }
+        }
+        if (!found) assignedTools.push(null); // no tool
+    }
+    return assignedTools;
+    }
+
+
     function applyJobTick() {
         for (const task of tasks) {
             const taskId = task.id;
             const assigned = assignments[taskId] || 0;
+            const toolsUsed = assignTools(taskId, assigned, resources);
             if (assigned <= 0) continue;
 
             const job = jobs[taskId];
@@ -156,42 +188,54 @@
 
             // Simulate each worker individually
             for (let i = 0; i < assigned; i++) {
-            // Check food cost
-            if (job.food_cost && (resources["cooked_fish"] || 0) < job.food_cost) continue;
-            if (job.food_cost) resources["cooked_fish"] -= job.food_cost;
+                // Check if worker has required tools
+                const tool = toolsUsed[i];
+                const job = jobs[taskId];
 
-            // Check required_resources like raw fish for cooking
-            let hasRequired = true;
-            if (job.required_resources) {
-                for (const [res, amt] of Object.entries(job.required_resources)) {
-                if ((resources[res] || 0) < amt) {
-                    hasRequired = false;
-                    break;
-                }
-                }
-                if (!hasRequired) continue;
-                for (const [res, amt] of Object.entries(job.required_resources)) {
-                resources[res] -= amt;
-                }
-            }
+                // Use tool to modify effectiveness
+                const speedMultiplier = tool ? 0.75 : 1.0; // or use better scaling
+                const rewardMultiplier = tool ? 1.25 : 1.0;
 
-            // Handle "produces"
-            if (job.produces) {
-                for (const [res, value] of Object.entries(job.produces)) {
-                if (typeof value === "object" && value.chance) {
-                    if (Math.random() < value.chance) {
-                    resources[res] = (resources[res] || 0) + 1;
+                // Apply job costs and rewards as normal...
+                if (job.gp_reward) gold += job.gp_reward * rewardMultiplier;
+                // Do other resource processing adjusted by multipliers if needed
+
+                // Check food cost
+                if (job.food_cost && (resources["cooked_fish"] || 0) < job.food_cost) continue;
+                if (job.food_cost) resources["cooked_fish"] -= job.food_cost;
+
+                // Check required_resources like raw fish for cooking
+                let hasRequired = true;
+                if (job.required_resources) {
+                    for (const [res, amt] of Object.entries(job.required_resources)) {
+                    if ((resources[res] || 0) < amt) {
+                        hasRequired = false;
+                        break;
                     }
-                } else {
-                    resources[res] = (resources[res] || 0) + value;
+                    }
+                    if (!hasRequired) continue;
+                    for (const [res, amt] of Object.entries(job.required_resources)) {
+                    resources[res] -= amt;
+                    }
                 }
-                }
-            }
 
-            // Handle gp_reward (fighting tiers)
-            if (job.gp_reward) {
-                gold += job.gp_reward;
-            }
+                // Handle "produces"
+                if (job.produces) {
+                    for (const [res, value] of Object.entries(job.produces)) {
+                    if (typeof value === "object" && value.chance) {
+                        if (Math.random() < value.chance) {
+                        resources[res] = (resources[res] || 0) + 1;
+                        }
+                    } else {
+                        resources[res] = (resources[res] || 0) + value;
+                    }
+                    }
+                }
+
+                // Handle gp_reward (fighting tiers)
+                if (job.gp_reward) {
+                    gold += job.gp_reward;
+                }
             }
         }
 
@@ -204,10 +248,14 @@
 
   
     function updateResourceDisplay(resources) {
-        const container = document.getElementById("resource-display");
-        container.innerHTML = "";
+        const resourceContainer = document.getElementById("resource-display");
+        const gearContainer = document.getElementById("gear-display");
+        const toolContainer = document.getElementById("tool-display");
+        resourceContainer.innerHTML = "";
+        gearContainer.innerHTML = "";
+        toolContainer.innerHTML = "";
 
-        for (const [key, value] of Object.entries(resources)) {
+        Object.entries(resources).forEach(([key, value]) => {
             const card = document.createElement("div");
             card.className = "col";
             card.innerHTML = `
@@ -216,8 +264,11 @@
                 <div>${value}</div>
             </div>
             `;
-            container.appendChild(card);
-        }
+
+            if (/sword|armor|shield/.test(key)) gearContainer.appendChild(card);
+            else if (/pickaxe|axe|rod|gloves/.test(key)) toolContainer.appendChild(card);
+            else resourceContainer.appendChild(card);
+        });
     }
 
     function showCraftingOptions(availableItems, playerResources) {
