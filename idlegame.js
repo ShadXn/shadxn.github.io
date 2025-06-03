@@ -2,6 +2,9 @@
     let gameData = {};
     let jobs = {};
     let tasks = [];
+    let gearData = {};
+    let toolData = {};
+    let goldDisplay, workerDisplay, idleDisplay, costDisplay, buyBtn, taskList;
 
     fetch('game_data.json')
     .then(response => response.json())
@@ -9,12 +12,14 @@
         console.log("Loaded gameData:", data);  // <== debugging line
         gameData = data;
         jobs = gameData.jobs;
+        gearData = gameData.gear || {};
+        toolData = gameData.tools || {};
+
         if (!jobs || !gearData || !toolData) {
             console.error("Missing expected sections in game_data.json");
             return;
         }
-        gearData = gameData.gear || {};
-        toolData = gameData.tools || {};
+
         populateJobs(jobs);
 
         // Auto-generate tasks list from job keys (if you want to preserve order, sort here)
