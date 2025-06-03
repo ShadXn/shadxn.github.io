@@ -51,7 +51,7 @@
     "recipe_god_gloves": { "drop_rate": 0.01 },
     "recipe_god_cape": { "drop_rate": 0.01 },
     "victory_recipe": { "drop_rate": 0.01 },
-    "gp": {}
+    "gold": {}
   },
   "gear": {
     "bronze": {
@@ -490,7 +490,7 @@
     "action_speed_multiplier": 0.9,
     "produces": {
         "recipe": { "chance": 0.005 },
-        "gp": 5
+        "gold": 5
     }
     },
     "woodcutting": {
