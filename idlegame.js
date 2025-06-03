@@ -424,25 +424,24 @@
     }
 
     function attemptCraft(item, resources) {
-        const itemKey = normalizeItemKey(item.name);
-
-        // Check cost
         for (const [res, amt] of Object.entries(item.cost)) {
-            if ((resources[res] || 0) < amt) {
-                alert(`Not enough ${res} to craft ${item.name}`);
+            const inUse = toolsInUse[res] || 0;
+            const available = (resources[res] || 0) - inUse;
+
+            if (available < amt) {
+                alert(`Not enough available ${res} to craft ${item.name}.\nIn use: ${inUse}, Available: ${available}`);
                 return;
             }
         }
 
-        // Deduct resources
+        // Deduct and grant item
         for (const [res, amt] of Object.entries(item.cost)) {
             resources[res] -= amt;
         }
+        resources[item.name] = (resources[item.name] || 0) + 1;
 
-        // Add crafted item
-        resources[itemKey] = (resources[itemKey] || 0) + 1;
         updateResourceDisplay(resources);
-        saveProgress?.(); // Call this if needed
+        saveProgress();
     }
 
 })();
