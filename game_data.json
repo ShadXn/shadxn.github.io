@@ -9,47 +9,47 @@
     "recipe_bronze_axe": { "drop_rate": 0.01 },
     "recipe_bronze_fishing_rod": { "drop_rate": 0.01 },
     "recipe_bronze_gloves": { "drop_rate": 0.01 },
-    "recipe_bronze_cape": { "drop_rate": 0.01 },
+    "recipe_bronze_boots": { "drop_rate": 0.01 },
     "recipe_iron_pickaxe": { "drop_rate": 0.01 },
     "recipe_iron_axe": { "drop_rate": 0.01 },
     "recipe_iron_fishing_rod": { "drop_rate": 0.01 },
     "recipe_iron_gloves": { "drop_rate": 0.01 },
-    "recipe_iron_cape": { "drop_rate": 0.01 },
+    "recipe_iron_boots": { "drop_rate": 0.01 },
     "recipe_steel_pickaxe": { "drop_rate": 0.01 },
     "recipe_steel_axe": { "drop_rate": 0.01 },
     "recipe_steel_fishing_rod": { "drop_rate": 0.01 },
     "recipe_steel_gloves": { "drop_rate": 0.01 },
-    "recipe_steel_cape": { "drop_rate": 0.01 },
+    "recipe_steel_boots": { "drop_rate": 0.01 },
     "recipe_black_pickaxe": { "drop_rate": 0.01 },
     "recipe_black_axe": { "drop_rate": 0.01 },
     "recipe_black_fishing_rod": { "drop_rate": 0.01 },
     "recipe_black_gloves": { "drop_rate": 0.01 },
-    "recipe_black_cape": { "drop_rate": 0.01 },
+    "recipe_black_boots": { "drop_rate": 0.01 },
     "recipe_mithril_pickaxe": { "drop_rate": 0.01 },
     "recipe_mithril_axe": { "drop_rate": 0.01 },
     "recipe_mithril_fishing_rod": { "drop_rate": 0.01 },
     "recipe_mithril_gloves": { "drop_rate": 0.01 },
-    "recipe_mithril_cape": { "drop_rate": 0.01 },
+    "recipe_mithril_boots": { "drop_rate": 0.01 },
     "recipe_adamant_pickaxe": { "drop_rate": 0.01 },
     "recipe_adamant_axe": { "drop_rate": 0.01 },
     "recipe_adamant_fishing_rod": { "drop_rate": 0.01 },
     "recipe_adamant_gloves": { "drop_rate": 0.01 },
-    "recipe_adamant_cape": { "drop_rate": 0.01 },
+    "recipe_adamant_boots": { "drop_rate": 0.01 },
     "recipe_rune_pickaxe": { "drop_rate": 0.01 },
     "recipe_rune_axe": { "drop_rate": 0.01 },
     "recipe_rune_fishing_rod": { "drop_rate": 0.01 },
     "recipe_rune_gloves": { "drop_rate": 0.01 },
-    "recipe_rune_cape": { "drop_rate": 0.01 },
+    "recipe_rune_boots": { "drop_rate": 0.01 },
     "recipe_dragon_pickaxe": { "drop_rate": 0.01 },
     "recipe_dragon_axe": { "drop_rate": 0.01 },
     "recipe_dragon_fishing_rod": { "drop_rate": 0.01 },
     "recipe_dragon_gloves": { "drop_rate": 0.01 },
-    "recipe_dragon_cape": { "drop_rate": 0.01 },
+    "recipe_dragon_boots": { "drop_rate": 0.01 },
     "recipe_god_pickaxe": { "drop_rate": 0.01 },
     "recipe_god_axe": { "drop_rate": 0.01 },
     "recipe_god_fishing_rod": { "drop_rate": 0.01 },
     "recipe_god_gloves": { "drop_rate": 0.01 },
-    "recipe_god_cape": { "drop_rate": 0.01 },
+    "recipe_god_boots": { "drop_rate": 0.01 },
     "victory_recipe": { "drop_rate": 0.01 },
     "gold": {}
   },
@@ -259,7 +259,7 @@
         "action_speed_multiplier": 0.9,
         "cost": { "fish": 5, "logs": 2, "recipe": 1 }
         },
-        "cape": {
+        "boots": {
         "used_for": "thieving",
         "action_speed_multiplier": 0.9,
         "cost": { "ore": 10, "logs": 5, "recipe": 1 }
@@ -269,216 +269,216 @@
         "pickaxe": {
         "used_for": "mining",
         "action_speed_multiplier": 0.8,
-        "cost": { "ore": 15, "logs": 8, "recipe": 1 }
+        "cost": { "bronze_pickaxe": 1, "ore": 15, "logs": 8, "recipe": 1 }
         },
         "axe": {
         "used_for": "woodcutting",
         "action_speed_multiplier": 0.8,
-        "cost": { "ore": 15, "logs": 8, "recipe": 1 }
+        "cost": { "bronze_axe": 1, "ore": 15, "logs": 8, "recipe": 1 }
         },
         "fishing_rod": {
         "used_for": "fishing",
         "action_speed_multiplier": 0.8,
-        "cost": { "ore": 15, "logs": 8, "recipe": 1 }
+        "cost": { "bronze_fishing_rod": 1, "ore": 15, "logs": 8, "recipe": 1 }
         },
         "gloves": {
         "used_for": "cooking",
         "action_speed_multiplier": 0.8,
-        "cost": { "fish": 10, "logs": 4, "recipe": 1 }
+        "cost": { "bronze_gloves": 1, "fish": 10, "logs": 4, "recipe": 1 }
         },
-        "cape": {
+        "boots": {
         "used_for": "thieving",
         "action_speed_multiplier": 0.8,
-        "cost": { "ore": 15, "logs": 8, "recipe": 1 }
+        "cost": { "bronze_boots": 1, "ore": 15, "logs": 8, "recipe": 1 }
         }
     },
     "steel": {
         "pickaxe": {
         "used_for": "mining",
         "action_speed_multiplier": 0.7,
-        "cost": { "ore": 20, "logs": 10, "recipe": 1 }
+        "cost": { "iron_pickaxe": 1, "ore": 20, "logs": 10, "recipe": 1 }
         },
         "axe": {
         "used_for": "woodcutting",
         "action_speed_multiplier": 0.7,
-        "cost": { "ore": 20, "logs": 10, "recipe": 1 }
+        "cost": { "iron_axe": 1, "ore": 20, "logs": 10, "recipe": 1 }
         },
         "fishing_rod": {
         "used_for": "fishing",
         "action_speed_multiplier": 0.7,
-        "cost": { "ore": 20, "logs": 10, "recipe": 1 }
+        "cost": { "iron_fishing_rod": 1, "ore": 20, "logs": 10, "recipe": 1 }
         },
         "gloves": {
         "used_for": "cooking",
         "action_speed_multiplier": 0.7,
-        "cost": { "fish": 15, "logs": 6, "recipe": 1 }
+        "cost": { "iron_gloves": 1, "fish": 15, "logs": 6, "recipe": 1 }
         },
-        "cape": {
+        "boots": {
         "used_for": "thieving",
         "action_speed_multiplier": 0.7,
-        "cost": { "ore": 20, "logs": 10, "recipe": 1 }
+        "cost": { "iron_boots": 1, "ore": 20, "logs": 10, "recipe": 1 }
         }
     },
     "black": {
         "pickaxe": {
         "used_for": "mining",
         "action_speed_multiplier": 0.6,
-        "cost": { "ore": 25, "logs": 12, "recipe": 1 }
+        "cost": { "steel_pickaxe": 1, "ore": 25, "logs": 12, "recipe": 1 }
         },
         "axe": {
         "used_for": "woodcutting",
         "action_speed_multiplier": 0.6,
-        "cost": { "ore": 25, "logs": 12, "recipe": 1 }
+        "cost": { "steel_axe": 1, "ore": 25, "logs": 12, "recipe": 1 }
         },
         "fishing_rod": {
         "used_for": "fishing",
         "action_speed_multiplier": 0.6,
-        "cost": { "ore": 25, "logs": 12, "recipe": 1 }
+        "cost": { "steel_fishing_rod": 1, "ore": 25, "logs": 12, "recipe": 1 }
         },
         "gloves": {
         "used_for": "cooking",
         "action_speed_multiplier": 0.6,
-        "cost": { "fish": 20, "logs": 8, "recipe": 1 }
+        "cost": { "steel_gloves": 1, "fish": 20, "logs": 8, "recipe": 1 }
         },
-        "cape": {
+        "boots": {
         "used_for": "thieving",
         "action_speed_multiplier": 0.6,
-        "cost": { "ore": 25, "logs": 12, "recipe": 1 }
+        "cost": { "steel_boots": 1, "ore": 25, "logs": 12, "recipe": 1 }
         }
     },
     "mithril": {
         "pickaxe": {
         "used_for": "mining",
         "action_speed_multiplier": 0.5,
-        "cost": { "ore": 30, "logs": 15, "recipe": 1 }
+        "cost": { "black_pickaxe": 1, "ore": 30, "logs": 15, "recipe": 1 }
         },
         "axe": {
         "used_for": "woodcutting",
         "action_speed_multiplier": 0.5,
-        "cost": { "ore": 30, "logs": 15, "recipe": 1 }
+        "cost": { "black_axe": 1, "ore": 30, "logs": 15, "recipe": 1 }
         },
         "fishing_rod": {
         "used_for": "fishing",
         "action_speed_multiplier": 0.5,
-        "cost": { "ore": 30, "logs": 15, "recipe": 1 }
+        "cost": { "black_fishing_rod": 1, "ore": 30, "logs": 15, "recipe": 1 }
         },
         "gloves": {
         "used_for": "cooking",
         "action_speed_multiplier": 0.5,
-        "cost": { "fish": 25, "logs": 10, "recipe": 1 }
+        "cost": { "black_gloves": 1, "fish": 25, "logs": 10, "recipe": 1 }
         },
-        "cape": {
+        "boots": {
         "used_for": "thieving",
         "action_speed_multiplier": 0.5,
-        "cost": { "ore": 30, "logs": 15, "recipe": 1 }
+        "cost": { "black_boots": 1, "ore": 30, "logs": 15, "recipe": 1 }
         }
     },
     "adamant": {
         "pickaxe": {
         "used_for": "mining",
         "action_speed_multiplier": 0.4,
-        "cost": { "ore": 35, "logs": 18, "recipe": 1 }
+        "cost": { "mithril_pickaxe": 1, "ore": 35, "logs": 18, "recipe": 1 }
         },
         "axe": {
         "used_for": "woodcutting",
         "action_speed_multiplier": 0.4,
-        "cost": { "ore": 35, "logs": 18, "recipe": 1 }
+        "cost": { "mithril_axe": 1, "ore": 35, "logs": 18, "recipe": 1 }
         },
         "fishing_rod": {
         "used_for": "fishing",
         "action_speed_multiplier": 0.4,
-        "cost": { "ore": 35, "logs": 18, "recipe": 1 }
+        "cost": { "mithril_fishing_rod": 1, "ore": 35, "logs": 18, "recipe": 1 }
         },
         "gloves": {
         "used_for": "cooking",
         "action_speed_multiplier": 0.4,
-        "cost": { "fish": 30, "logs": 12, "recipe": 1 }
+        "cost": { "mithril_gloves": 1, "fish": 30, "logs": 12, "recipe": 1 }
         },
-        "cape": {
+        "boots": {
         "used_for": "thieving",
         "action_speed_multiplier": 0.4,
-        "cost": { "ore": 35, "logs": 18, "recipe": 1 }
+        "cost": { "mithril_boots": 1, "ore": 35, "logs": 18, "recipe": 1 }
         }
     },
     "rune": {
         "pickaxe": {
         "used_for": "mining",
         "action_speed_multiplier": 0.3,
-        "cost": { "ore": 40, "logs": 20, "recipe": 1 }
+        "cost": { "adamant_pickaxe": 1, "ore": 40, "logs": 20, "recipe": 1 }
         },
         "axe": {
         "used_for": "woodcutting",
         "action_speed_multiplier": 0.3,
-        "cost": { "ore": 40, "logs": 20, "recipe": 1 }
+        "cost": { "adamant_axe": 1, "ore": 40, "logs": 20, "recipe": 1 }
         },
         "fishing_rod": {
         "used_for": "fishing",
         "action_speed_multiplier": 0.3,
-        "cost": { "ore": 40, "logs": 20, "recipe": 1 }
+        "cost": { "adamant_fishing_rod": 1, "ore": 40, "logs": 20, "recipe": 1 }
         },
         "gloves": {
         "used_for": "cooking",
         "action_speed_multiplier": 0.3,
-        "cost": { "fish": 35, "logs": 15, "recipe": 1 }
+        "cost": { "adamant_gloves": 1, "fish": 35, "logs": 15, "recipe": 1 }
         },
-        "cape": {
+        "boots": {
         "used_for": "thieving",
         "action_speed_multiplier": 0.3,
-        "cost": { "ore": 40, "logs": 20, "recipe": 1 }
+        "cost": { "adamant_boots": 1, "ore": 40, "logs": 20, "recipe": 1 }
         }
     },
     "dragon": {
         "pickaxe": {
         "used_for": "mining",
         "action_speed_multiplier": 0.2,
-        "cost": { "ore": 45, "logs": 25, "recipe": 1 }
+        "cost": { "rune_pickaxe": 1, "ore": 45, "logs": 25, "recipe": 1 }
         },
         "axe": {
         "used_for": "woodcutting",
         "action_speed_multiplier": 0.2,
-        "cost": { "ore": 45, "logs": 25, "recipe": 1 }
+        "cost": { "rune_axe": 1, "ore": 45, "logs": 25, "recipe": 1 }
         },
         "fishing_rod": {
         "used_for": "fishing",
         "action_speed_multiplier": 0.2,
-        "cost": { "ore": 45, "logs": 25, "recipe": 1 }
+        "cost": { "rune_fishing_rod": 1, "ore": 45, "logs": 25, "recipe": 1 }
         },
         "gloves": {
         "used_for": "cooking",
         "action_speed_multiplier": 0.2,
-        "cost": { "fish": 40, "logs": 20, "recipe": 1 }
+        "cost": { "rune_gloves": 1, "fish": 40, "logs": 20, "recipe": 1 }
         },
-        "cape": {
+        "boots": {
         "used_for": "thieving",
         "action_speed_multiplier": 0.2,
-        "cost": { "ore": 45, "logs": 25, "recipe": 1 }
+        "cost": { "rune_boots": 1, "ore": 45, "logs": 25, "recipe": 1 }
         }
     },
     "god": {
         "pickaxe": {
             "used_for": "mining",
             "action_speed_multiplier": 0.1,
-            "cost": { "ore": 50, "logs": 30, "recipe": 1 }
+            "cost": { "dragon_pickaxe": 1, "ore": 50, "logs": 30, "recipe": 1 }
         },
         "axe": {
             "used_for": "woodcutting",
             "action_speed_multiplier": 0.1,
-            "cost": { "ore": 50, "logs": 30, "recipe": 1 }
+            "cost": { "dragon_axe": 1, "ore": 50, "logs": 30, "recipe": 1 }
         },
         "fishing_rod": {
             "used_for": "fishing",
             "action_speed_multiplier": 0.1,
-            "cost": { "ore": 50, "logs": 30, "recipe": 1 }
+            "cost": { "dragon_fishing_rod": 1, "ore": 50, "logs": 30, "recipe": 1 }
         },
         "gloves": {
             "used_for": "cooking",
             "action_speed_multiplier": 0.1,
-            "cost": { "fish": 45, "logs": 25, "recipe": 1 }
+            "cost": { "dragon_gloves": 1, "fish": 45, "logs": 25, "recipe": 1 }
         },
-        "cape": {
+        "boots": {
             "used_for": "thieving",
             "action_speed_multiplier": 0.1,
-            "cost": { "ore": 50, "logs": 30, "recipe": 1 }
+            "cost": { "dragon_boots": 1, "ore": 50, "logs": 30, "recipe": 1 }
         }
     }
 },
