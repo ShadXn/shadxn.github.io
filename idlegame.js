@@ -260,9 +260,14 @@
 
     function getBestToolForJob(jobId, resources) {
         const toolPriority = {
-            mining: ["dragon_pickaxe", "runite_pickaxe", "adamant_pickaxe", "mithril_pickaxe", "iron_pickaxe", "bronze_pickaxe"],
-            fishing: ["dragon_rod", "runite_rod", "adamant_rod", "mithril_rod", "iron_rod", "bronze_rod"],
-            woodcutting: ["dragon_axe", "runite_axe", "adamant_axe", "mithril_axe", "iron_axe", "bronze_axe"],
+            mining: ["god_pickaxe", "dragon_pickaxe", "rune_pickaxe", "adamant_pickaxe", "mithril_pickaxe", "black_pickaxe", "steel_pickaxe", "iron_pickaxe", "bronze_pickaxe"],
+            fishing: ["god_rod", "dragon_rod", "rune_rod", "adamant_rod", "mithril_rod", "black_rod", "steel_rod", "iron_rod", "bronze_rod"],
+            woodcutting: ["god_axe", "dragon_axe", "rune_axe", "adamant_axe", "mithril_axe", "black_axe", "steel_axe", "iron_axe", "bronze_axe"],
+            // Cooking gloves are used for cooking tasks
+            cooking: ["god_gloves", "dragon_gloves", "rune_gloves", "adamant_gloves", "mithril_gloves", "black_gloves", "steel_gloves", "iron_gloves", "bronze_gloves"],
+            // Thieving boots are used for thieving tasks
+            thieving: ["god_boots", "dragon_boots", "rune_boots", "adamant_boots", "mithril_boots", "black_boots", "steel_boots", "iron_boots", "bronze_boots"],
+            fighting_tier_1: ["god_sword", "dragon_sword", "rune_sword", "adamant_sword", "mithril_sword", "black_sword", "steel_sword", "iron_sword", "bronze_sword"],
             // Add more if needed
         };
         return toolPriority[jobId] || [];
