@@ -1,6 +1,6 @@
 // === Countdown Timer ===
 function updateCountdown() {
-  const targetDate = new Date(Date.UTC(2025, 5, 21, 22, 0, 0)); // June is month 5 (0-indexed)
+  const targetDate = new Date(Date.UTC(2025, 5, 21, 21, 0, 0)); // June is month 5 (0-indexed)
   const now = new Date();
   const diffMs = targetDate - now;
 
