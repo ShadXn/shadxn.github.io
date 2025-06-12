@@ -442,9 +442,9 @@
   {
     "date": "2025-06-11",
     "target": 50,
-    "done_easy": 0,
+    "done_easy": 18,
     "done_medium": 15,
-    "done_hard": 0,
+    "done_hard": 1,
     "done_elite": 0,
     "done_master": 0,
     "status": true,
