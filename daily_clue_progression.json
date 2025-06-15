@@ -487,11 +487,11 @@
     "date": "2025-06-15",
     "target": 50,
     "done_easy": 0,
-    "done_medium": 0,
+    "done_medium": 20,
     "done_hard": 0,
     "done_elite": 0,
     "done_master": 0,
-    "status": false,
+    "status": true,
     "counter": 45
   },
   {
