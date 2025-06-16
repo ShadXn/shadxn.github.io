@@ -79,8 +79,9 @@ fetch(url)
     const lmsCell = document.getElementById("lms-hours");
     const chompyCell = document.getElementById("chompy-hours");
 
-    if (lmsCell) lmsCell.textContent = Math.round(lmsHours);
-    if (chompyCell) chompyCell.textContent = Math.round(chompyHours);    
+    if (lmsCell) lmsCell.textContent = lmsHours > 0 ? Math.round(lmsHours) : "";
+    if (chompyCell) chompyCell.textContent = chompyHours > 0 ? Math.round(chompyHours) : "";
+
 
     renderCards();
 
