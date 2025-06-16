@@ -137,9 +137,14 @@ function renderCards() {
     document.getElementById("elite-casket").textContent = `${startingClueCount.elite + completed.elite}/50`;
     document.getElementById("master-casket").textContent = `${startingClueCount.master + completed.master}/0`;
 
-    document.getElementById("easy-casket-hours").textContent = Math.max(0, Math.round((clueTargets.easy - (startingClueCount.easy + completed.easy)) * clueDurations.easy / 60));
-    document.getElementById("medium-casket-hours").textContent = Math.max(0, Math.round((clueTargets.medium - (startingClueCount.medium + completed.medium)) * clueDurations.medium / 60));
-    document.getElementById("hard-casket-hours").textContent = Math.max(0, Math.round((clueTargets.hard - (startingClueCount.hard + completed.hard)) * clueDurations.hard / 60));
+    const easyHours = Math.round((clueTargets.easy - (startingClueCount.easy + completed.easy)) * clueDurations.easy / 60);
+    document.getElementById("easy-casket-hours").textContent = easyHours > 0 ? easyHours : "";
+
+    const mediumHours = Math.round((clueTargets.medium - (startingClueCount.medium + completed.medium)) * clueDurations.medium / 60);
+    document.getElementById("medium-casket-hours").textContent = mediumHours > 0 ? mediumHours : "";
+
+    const hardHours = Math.round((clueTargets.hard - (startingClueCount.hard + completed.hard)) * clueDurations.hard / 60);
+    document.getElementById("hard-casket-hours").textContent = hardHours > 0 ? hardHours : "";
 
   
   let runningTotal = startingClueCount.easy + startingClueCount.medium + startingClueCount.hard + startingClueCount.elite + startingClueCount.master;
