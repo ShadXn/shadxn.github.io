@@ -500,7 +500,7 @@
     "done_easy": 0,
     "done_medium": 0,
     "done_hard": 24,
-    "done_elite": 0,
+    "done_elite": 2,
     "done_master": 0,
     "status": true,
     "counter": 46
@@ -521,10 +521,10 @@
     "target": 50,
     "done_easy": 0,
     "done_medium": 0,
-    "done_hard": 0,
+    "done_hard": 2,
     "done_elite": 0,
     "done_master": 0,
-    "status": false,
+    "status": true,
     "counter": 48
   },
   {
