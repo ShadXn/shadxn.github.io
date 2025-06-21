@@ -545,7 +545,7 @@
     "done_medium": 2,
     "done_hard": 3,
     "done_elite": 0,
-    "done_master": 0,
+    "done_master": 2,
     "status": true,
     "counter": 50
   }
