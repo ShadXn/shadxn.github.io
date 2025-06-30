@@ -9,158 +9,9 @@
 </head>
 <body class="bg-light text-dark">
 
-<div class="container py-5">
-<!-- Add button and modal above your main table -->
-<div class="bg-white rounded shadow-sm p-4 mb-4 border">
-  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-    <h2 class="mb-0">
-      My OSRS Clog Spam Goals –
-      <span id="countdown-timer" class="text-warning"></span>
-    </h2>
 
-    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#clueProgressModal">
-      Daily Clue Casket Progression
-    </button>
-  </div>
-
-  <p class="mb-1 text-muted">The goal is to get my total collection log slots to 1000 when I do my clog spam day.</p>
-  <ul class="list-group list-group-flush mt-3">
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <strong>Currently Collection log slots:</strong>
-      <span><strong><span id="clog-current">794</span>/1000</strong></span>
-    </li>
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      In Game Hours Remaining To Clog Spam:
-      <span class="fw-semibold" id="hours-left">0</span>
-    </li>
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      Clog Items Stored (no clues):
-      <span class="text-primary fw-semibold" id="clogs-no-clue">0</span>
-    </li>
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      Clog Items (Estimate with clues):
-      <span class="text-info fw-semibold" id="clogs-with-clue">0</span>
-    </li>
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <strong>Clog Total (Estimate):</strong>
-      <span class="text-success fw-bold" id="clogs-total">0</span>
-    </li>
-  </ul>
-</div>
-
-<!-- Modal -->
-<div class="modal fade" id="clueProgressModal" tabindex="-1" aria-labelledby="clueProgressModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl">
-    <div class="modal-content rounded">
-      <div class="modal-header bg-primary text-white d-flex justify-content-between align-items-center">
-        <div class="d-flex flex-column">
-          <h5 class="modal-title mb-0" id="clueProgressModalLabel">Daily Clue Casket Progression</h5>
-        </div>
-        <div class="d-flex align-items-center gap-2">
-          <button class="btn btn-outline-light btn-sm" id="toggle-breakdown-btn">Show More Info</button>
-          <button class="btn btn-outline-light btn-sm" id="toggle-completed-btn">Show Completed Days</button>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-      </div>           
-      <div class="modal-body">
-        <div id="daily-clue-summary"></div> <!-- NEW full-width wrapper -->  
-        <div id="daily-clue-container" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3"></div>
-      </div>      
-    </div>
-  </div>
-</div>
-
-
-
-    <div class="table-responsive">
-      <table class="table table-bordered table-striped rounded-2 overflow-hidden">
-        <thead class="table-dark">
-          <tr>
-            <th>Hours</th>
-            <th>Task</th>
-            <th>Clog Items</th>
-            <th>Status</th>
-            <th>Progress</th>
-            <th>Notes</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td id="easy-casket-hours"></td>
-            <td>Easy Clue Caskets x 1000 (Clogs: 28/131)</td>
-            <td data-estimate="70">70</td>
-            <td>✅</td>
-            <td id="easy-casket"></td>
-            <td>Easy Caskets</td>
-          </tr>
-          <tr>
-            <td id="medium-casket-hours"></td>
-            <td>Medium Clue Caskets x 1000 (Clogs: 35/115)</td>
-            <td data-estimate="55">55</td>
-            <td>✅</td>
-            <td id="medium-casket"></td>
-            <td>Medium Caskets</td>
-          </tr>
-          <tr>
-            <td id="hard-casket-hours"></td>
-            <td>Hard Clue Caskets x 300 (Clogs: 71/134)</td>
-            <td data-estimate="15">15</td>
-            <td>✅</td>
-            <td id="hard-casket"></td>
-            <td>Hard Caskets</td>
-          </tr>
-          <tr>
-            <td></td>
-            <td>Elite Clue Caskets x 50 (Clogs: 7/59)</td>
-            <td data-estimate="5">5</td>
-            <td>✅</td>
-            <td id="elite-casket"></td>
-            <td>Elite Caskets</td>
-          </tr>
-          <tr>
-            <td></td>
-            <td>Master Clue Caskets</td>
-            <td data-estimate="0">0</td>
-            <td>✅</td>
-            <td id="master-casket"></td>
-            <td>Master Caskets</td>
-          </tr>
-          <tr><td id="lms-hours"></td><td>LMS</td><td>13</td><td>✅</td><td id="lms-progress">250/250</td><td>Points</td></tr>
-          <tr><td id="chompy-hours"></td><td>Chompy Bird Hunting</td><td>5</td><td>✅</td><td id="chompy-progress">4000/4000</td><td>Kills</td></tr>
-          <tr><td></td><td>Trouble Brewing</td><td>29</td><td>✅</td><td>39700/39600</td><td>Pieces of Eight</td></tr>
-          <tr><td></td><td>BA</td><td>7</td><td>✅</td><td>1725</td><td>Points each role</td></tr>
-          <tr><td></td><td>Brimhaven Agility Arena</td><td>7</td><td>✅</td><td>1050/1050</td><td>Tickets</td></tr>
-          <tr><td></td><td>Castle Wars</td><td>10</td><td>✅</td><td>800/800</td><td>Tickets</td></tr>
-          <tr><td></td><td>Hallowed Sepulchre - Black Dye & Acorn</td><td>2</td><td>✅</td><td>3300/3300</td><td>Hallowed Mark</td></tr>
-          <tr><td></td><td>Magic Training Arena</td><td>10</td><td>✅</td><td></td><td></td></tr>
-          <tr><td></td><td>Monkey Backpacks</td><td>6</td><td>✅</td><td>2000/2000</td><td>Laps</td></tr>
-          <tr><td></td><td>Aerial fishing</td><td>2</td><td>✅</td><td>1150/1150</td><td>Pearls</td></tr>
-          <tr><td></td><td>Colossal Wyrm Agility</td><td>8</td><td>✅</td><td>1590/1590</td><td>Termites</td></tr>
-          <tr><td></td><td>Merfolk Trident</td><td>1</td><td>✅</td><td></td><td></td></tr>
-          <tr><td></td><td>Bandos Hilt & Boots</td><td></td><td>✅</td><td></td><td>Master Clue Item</td></tr>
-          <tr><td></td><td>Zamorak Hilt</td><td></td><td>✅</td><td></td><td>Master Clue Item</td></tr>
-          <tr><td></td><td>Armadyl Helmet</td><td></td><td>✅</td><td></td><td>Master Clue Item</td></tr>
-          <tr><td></td><td>Bryophyta's Staff</td><td></td><td>✅</td><td></td><td>Master Clue Item</td></tr>
-          <tr>
-            <td></td>
-            <td>100 Clogs</td>
-            <td></td>
-            <td>✅</td>
-            <td>100/100</td>
-            <td>Any clog item to help reach 1000 clogs</td>
-          </tr>
-          
-        </tbody>
-      </table>
-    </div>
       <!-- Expandable Container - idle game -->
   <div class="mb-3">
-    <button class="btn btn-sm btn-outline-secondary" type="button"
-      data-bs-toggle="collapse" data-bs-target="#expandInfo"
-      aria-expanded="false" aria-controls="expandInfo"
-      id="expand-toggle">
-      🔽 Idle Game
-    </button>
 
     <div class="collapse mt-2" id="expandInfo">
       <div class="card card-body bg-light border" id="idle-game">
@@ -241,9 +92,6 @@
 
   <!-- Bootstrap JS (required for modal to work) -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="dailyclues.js"></script>
-  <script src="updateui.js"></script>
-  <script src="counter.js"></script>
   <script src="idlegame.js"></script>
   <script src="opengame.js"></script>
   <script src="jobs.js"></script>
