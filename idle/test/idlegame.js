@@ -464,7 +464,7 @@
                     const fallback = document.createElement("div");
                     fallback.className = "fallback-text";
                     fallback.textContent = key.replace(/_/g, ' ');
-                    innerCard.replaceChild(fallback, img);
+                    img.replaceWith(fallback); // ✅ safer than replaceChild
                 };
 
                 img.alt = key;
