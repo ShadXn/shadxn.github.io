@@ -441,6 +441,8 @@
         gearContainer.innerHTML = "";
         toolContainer.innerHTML = "";
 
+        console.log("availableIcons:", availableIcons);
+        console.log("Calling updateResourceDisplay:", resources);
         Object.entries(resources).forEach(([key, value]) => {
             if (key === "gold") return;
 
