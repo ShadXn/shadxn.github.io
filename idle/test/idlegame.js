@@ -454,7 +454,7 @@
 
             if (availableIcons.has(key)) {
                 const img = document.createElement("img");
-                img.src = `assets/icons/${key}.png`;
+                img.src = `assets/icons/${key}_icon.png`;
 
                 // 🔁 Fallback if the image fails to load
                 img.onerror = () => {
