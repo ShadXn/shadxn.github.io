@@ -1,0 +1,19 @@
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+#task-list .card {
+    transition: transform 0.1s ease;
+}
+#task-list .card:hover {
+    transform: scale(1.01);
+}
+
+.btn-link {
+    text-decoration: none !important;
+    color: black !important;
+}
+
+#resource-display img {
+    margin-right: 6px;
+}
