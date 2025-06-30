@@ -5,6 +5,11 @@
     let gearData = {};
     let toolData = {};
     let goldDisplay, workerDisplay, idleDisplay, costDisplay, buyBtn, taskList;
+    
+    const availableIcons = new Set([
+        "fish", "logs", "ore", "cooked_fish", "gold"
+        // Add other resource keys you’ve created icons for
+    ]);
 
     fetch('game_data.json')
     .then(response => response.json())
@@ -442,20 +447,23 @@
             const innerCard = document.createElement("div");
             innerCard.className = "card p-2 bg-white border shadow-sm d-flex align-items-center gap-2";
 
-            // Create icon (img) or fallback text
-            const img = document.createElement("img");
-            img.src = `assets/icons/${key}.png`;
-            img.alt = key;
-            img.width = 24;
-            img.height = 24;
-            img.onerror = function () {
+            let iconOrText;
+
+            if (availableIcons.has(key)) {
+                const img = document.createElement("img");
+                img.src = `assets/icons/${key}.png`;
+                img.alt = key;
+                img.width = 24;
+                img.height = 24;
+                iconOrText = img;
+            } else {
                 const fallback = document.createElement("div");
                 fallback.className = "fallback-text";
                 fallback.textContent = key.replace(/_/g, ' ');
-                this.replaceWith(fallback);
-            };
+                iconOrText = fallback;
+            }
 
-            innerCard.appendChild(img);
+            innerCard.appendChild(iconOrText);
 
             const textContainer = document.createElement("div");
             textContainer.className = "d-flex flex-column";

@@ -19,12 +19,12 @@ body {
 }
 
 .fallback-text {
-    font-weight: bold;
-    font-size: 1rem;
-    text-transform: capitalize;
     width: 24px;
     height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-transform: capitalize;
 }
