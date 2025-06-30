@@ -482,19 +482,9 @@
 
             innerCard.appendChild(iconOrText);
 
-            const textContainer = document.createElement("div");
-            textContainer.className = "d-flex flex-column";
-
-            const label = document.createElement("div");
-            label.className = "fw-semibold text-capitalize";
-            label.textContent = key.replace(/_/g, ' ');
-
-            const count = document.createElement("div");
-            count.innerHTML = `${value}${showInUse}`;
-
-            textContainer.appendChild(label);  // ✅ Add this
-            textContainer.appendChild(count);
-            innerCard.appendChild(textContainer);
+            const text = document.createElement("div");
+            text.innerHTML = `${value}${showInUse}`;
+            innerCard.appendChild(text);
             card.appendChild(innerCard);
 
             // Add to appropriate section

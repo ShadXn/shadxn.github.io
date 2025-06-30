@@ -32,6 +32,12 @@ body {
   text-transform: capitalize;
 }
 
-#resource-display .col {
-  border: 1px dashed #ccc;
+#resource-display .card {
+  flex-direction: row !important;
+  justify-content: start;
+}
+
+#resource-display img,
+#resource-display .fallback-text {
+  margin-right: 8px;
 }
