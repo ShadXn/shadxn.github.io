@@ -453,9 +453,6 @@
             const innerCard = document.createElement("div");
             innerCard.className = "card p-2 bg-white border shadow-sm d-flex align-items-center gap-2";
 
-            console.log("Available:", availableIcons);
-            console.log("Resources in use:", Object.keys(resources));
-
             let iconOrText;
 
             if (availableIcons.has(key)) {
