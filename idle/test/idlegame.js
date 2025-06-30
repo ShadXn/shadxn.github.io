@@ -296,7 +296,7 @@
 
             // Append to correct section
             if (/sword|armor|shield/.test(key)) containers.gear.appendChild(card);
-            else if (/pickaxe|axe|rod|gloves|cape|boots/.test(key)) containers.tool.appendChild(card);
+            else if (/pickaxe|axe|rod|hammer|gloves|cape|boots/.test(key)) containers.tool.appendChild(card);
             else containers.default.appendChild(card);
 
             // ✅ Store reference for future updates
@@ -343,6 +343,7 @@
             mining: [["god_pickaxe", "dragon_pickaxe", "rune_pickaxe", "adamant_pickaxe", "mithril_pickaxe", "black_pickaxe", "steel_pickaxe", "iron_pickaxe", "bronze_pickaxe"]],
             fishing: [["god_rod", "dragon_rod", "rune_rod", "adamant_rod", "mithril_rod", "black_rod", "steel_rod", "iron_rod", "bronze_rod"]],
             woodcutting: [["god_axe", "dragon_axe", "rune_axe", "adamant_axe", "mithril_axe", "black_axe", "steel_axe", "iron_axe", "bronze_axe"]],
+            smithing: [["god_hammer", "dragon_hammer", "rune_hammer", "adamant_hammer", "mithril_hammer", "black_hammer", "steel_hammer", "iron_hammer", "bronze_hammer"]],
             cooking: [["god_gloves", "dragon_gloves", "rune_gloves", "adamant_gloves", "mithril_gloves", "black_gloves", "steel_gloves", "iron_gloves", "bronze_gloves"]],
             thieving: [["god_boots", "dragon_boots", "rune_boots", "adamant_boots", "mithril_boots", "black_boots", "steel_boots", "iron_boots", "bronze_boots"]],
             fighting_tier_1: [
@@ -404,7 +405,7 @@
         return toolPriority[jobId] || [];
     }
 
-
+    // Assign tools based on job requirements
     function assignTools(jobId, count, resources) {
         const toolSets = getBestToolForJob(jobId, resources);  // Now an array of arrays
         const assignedToolSets = [];
@@ -431,6 +432,7 @@
         return assignedToolSets;
     }
 
+    // Apply job tick every second
     function applyJobTick() {
         Object.keys(toolsInUse).forEach(tool => toolsInUse[tool] = 0);
         for (const task of tasks) {
@@ -511,6 +513,7 @@
         });
     }
 
+    // Show crafting section with gear and tools
     function showCraftingSection(items = [], resources = {}) {
         const gearContainer = document.getElementById("gear-craft");
         const toolContainer = document.getElementById("tools-craft");

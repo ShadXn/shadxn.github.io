@@ -597,7 +597,7 @@
     "gp_reward": 10,
     "fights_required_to_unlock_next": 200,
     "unlocks": "fighting_tier_2",
-    "tool_recipe_drops": ["bronze_pickaxe", "bronze_axe", "bronze_fishing_rod", "bronze_gloves"]
+    "tool_recipe_drops": ["bronze_pickaxe", "bronze_axe", "bronze_fishing_rod", "bronze_gloves", "bronze_boots", "bronze_hammer"]
     },
     "fighting_tier_2": {
     "food_cost": 3,
@@ -606,7 +606,7 @@
     "gp_reward": 20,
     "fights_required_to_unlock_next": 400,
     "unlocks": "fighting_tier_3",
-    "tool_recipe_drops": ["iron_pickaxe", "iron_axe", "iron_fishing_rod", "iron_gloves"]
+    "tool_recipe_drops": ["iron_pickaxe", "iron_axe", "iron_fishing_rod", "iron_gloves", "iron_boots", "iron_hammer"]
     },
     "fighting_tier_3": {
     "food_cost": 4,
@@ -615,7 +615,7 @@
     "gp_reward": 30,
     "fights_required_to_unlock_next": 600,
     "unlocks": "fighting_tier_4",
-    "tool_recipe_drops": ["steel_pickaxe", "steel_axe", "steel_fishing_rod", "steel_gloves"]
+    "tool_recipe_drops": ["steel_pickaxe", "steel_axe", "steel_fishing_rod", "steel_gloves", "steel_boots", "steel_hammer"]
     },
     "fighting_tier_4": {
     "food_cost": 5,
@@ -624,7 +624,7 @@
     "gp_reward": 40,
     "fights_required_to_unlock_next": 800,
     "unlocks": "fighting_tier_5",
-    "tool_recipe_drops": ["black_pickaxe", "black_axe", "black_fishing_rod", "black_gloves"]
+    "tool_recipe_drops": ["black_pickaxe", "black_axe", "black_fishing_rod", "black_gloves", "black_boots", "black_hammer"]
     },
     "fighting_tier_5": {
     "food_cost": 6,
@@ -633,7 +633,7 @@
     "gp_reward": 50,
     "fights_required_to_unlock_next": 1000,
     "unlocks": "fighting_tier_6",
-    "tool_recipe_drops": ["mithril_pickaxe", "mithril_axe", "mithril_fishing_rod", "mithril_gloves"]
+    "tool_recipe_drops": ["mithril_pickaxe", "mithril_axe", "mithril_fishing_rod", "mithril_gloves", "mithril_boots", "mithril_hammer"]
     },
     "fighting_tier_6": {
     "food_cost": 7,
@@ -642,7 +642,7 @@
     "gp_reward": 60,
     "fights_required_to_unlock_next": 1200,
     "unlocks": "fighting_tier_7",
-    "tool_recipe_drops": ["adamant_pickaxe", "adamant_axe", "adamant_fishing_rod", "adamant_gloves"]
+    "tool_recipe_drops": ["adamant_pickaxe", "adamant_axe", "adamant_fishing_rod", "adamant_gloves", "adamant_boots", "adamant_hammer"]
     },
     "fighting_tier_7": {
     "food_cost": 8,
@@ -651,7 +651,7 @@
     "gp_reward": 70,
     "fights_required_to_unlock_next": 1400,
     "unlocks": "fighting_tier_8",
-    "tool_recipe_drops": ["rune_pickaxe", "rune_axe", "rune_fishing_rod", "rune_gloves"]
+    "tool_recipe_drops": ["rune_pickaxe", "rune_axe", "rune_fishing_rod", "rune_gloves", "rune_boots", "rune_hammer"]
     },
     "fighting_tier_8": {
     "food_cost": 9,
@@ -660,7 +660,7 @@
     "gp_reward": 80,
     "fights_required_to_unlock_next": 1600,
     "unlocks": "fighting_tier_9",
-    "tool_recipe_drops": ["dragon_pickaxe", "dragon_axe", "dragon_fishing_rod", "dragon_gloves"]
+    "tool_recipe_drops": ["dragon_pickaxe", "dragon_axe", "dragon_fishing_rod", "dragon_gloves", "dragon_boots", "dragon_hammer"]
     },
     "fighting_tier_9": {
     "food_cost": 10,
@@ -669,7 +669,7 @@
     "gp_reward": 90,
     "fights_required_to_unlock_next": 1800,
     "unlocks": "fighting_tier_10",
-    "tool_recipe_drops": ["god_pickaxe", "god_axe", "god_fishing_rod", "god_gloves"]
+    "tool_recipe_drops": ["god_pickaxe", "god_axe", "god_fishing_rod", "god_gloves", "god_boots", "god_hammer"]
     },
     "fighting_tier_10": {
     "food_cost": 11,
