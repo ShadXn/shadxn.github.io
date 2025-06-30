@@ -47,6 +47,23 @@
             }
         }
 
+        if (data.recipes) {
+            for (const type in data.recipes) {
+                const recipe = data.recipes[type];
+                if (recipe.tiers && Array.isArray(recipe.tiers)) {
+                    recipe.tiers.forEach(tier => {
+                        const key = `recipe_${tier}_${type}`;
+                        allItemKeys.add(key);
+                        availableIcons.add(key); // ✅ preload icon/text for this recipe
+                    });
+                } else {
+                    const key = `recipe_${type}`;
+                    allItemKeys.add(key);
+                    availableIcons.add(key); // ✅ single recipe case
+                }
+            }
+        }
+
         populateJobs(jobs);
 
         // Auto-generate tasks list from job keys (if you want to preserve order, sort here)
@@ -257,7 +274,8 @@
         const containers = {
             default: document.getElementById("resource-display"),
             gear: document.getElementById("gear-display"),
-            tool: document.getElementById("tool-display")
+            tool: document.getElementById("tool-display"),
+            recipe: document.getElementById("recipe-display")
         };
 
         updateResourceDisplay._initialized = true;
@@ -298,9 +316,15 @@
             card.appendChild(innerCard);
 
             // Append to correct section
-            if (/sword|armor|shield/.test(key)) containers.gear.appendChild(card);
-            else if (/pickaxe|axe|rod|hammer|gloves|cape|boots/.test(key)) containers.tool.appendChild(card);
-            else containers.default.appendChild(card);
+            if (key.startsWith("recipe_")) {
+                containers.recipe.appendChild(card);
+            } else if (/sword|armor|shield/.test(key)) {
+                containers.gear.appendChild(card);
+            } else if (/pickaxe|axe|rod|hammer|gloves|cape|boots/.test(key)) {
+                containers.tool.appendChild(card);
+            } else {
+                containers.default.appendChild(card);
+            }
 
             // ✅ Store reference for future updates
             updateResourceDisplay._elements[key] = text;
