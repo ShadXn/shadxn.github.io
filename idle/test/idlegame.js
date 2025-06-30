@@ -7,7 +7,7 @@
     let goldDisplay, workerDisplay, idleDisplay, costDisplay, buyBtn, taskList;
     
     const availableIcons = new Set([
-        "fish", "logs", "ore", "cooked_fish", "gold"
+        "fish", "logs", "ore", "cooked_fish", "gold", "recipe", "bronze_sword", "bronze_axe", "bronze_pickaxe"
         // Add other resource keys you’ve created icons for
     ]);
 
