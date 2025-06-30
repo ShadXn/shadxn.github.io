@@ -441,7 +441,8 @@
             const iconUrl = `assets/icons/${key}.png`;  // image must be named exactly like the key
             card.innerHTML = `
                 <div class="card p-2 bg-white border shadow-sm d-flex align-items-center gap-2">
-                    <img src="${iconUrl}" alt="${key}" width="24" height="24" onerror="this.style.display='none'">
+                    <img src="${iconUrl}" alt="${key}" width="24" height="24"
+                         onerror="this.outerHTML = '<span style=\'font-size:1.2em\'>🎒</span>';">
                     <div class="d-flex flex-column">
                         <div class="fw-semibold text-capitalize">${key.replace(/_/g, ' ')}</div>
                         <div>${value}${showInUse}</div>
