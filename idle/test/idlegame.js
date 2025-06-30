@@ -257,6 +257,9 @@
             tool: document.getElementById("tool-display")
         };
 
+        updateResourceDisplay._initialized = true;
+        updateResourceDisplay._elements = {};
+
         itemKeys.forEach(key => {
             const card = document.createElement("div");
             card.className = "col";
@@ -295,9 +298,11 @@
             if (/sword|armor|shield/.test(key)) containers.gear.appendChild(card);
             else if (/pickaxe|axe|rod|gloves|cape|boots/.test(key)) containers.tool.appendChild(card);
             else containers.default.appendChild(card);
+
+            // ✅ Store reference for future updates
+            updateResourceDisplay._elements[key] = text;
         });
     }
-
 
     // Generate task UI
     tasks.forEach(task => {
@@ -496,80 +501,8 @@
     }
     setInterval(applyJobTick, 1000);
 
-    // Update resource display
+    // Update resource count display
     function updateResourceDisplay(resources) {
-        const sections = {
-            resource: document.getElementById("resource-display"),
-            gear: document.getElementById("gear-display"),
-            tool: document.getElementById("tool-display")
-        };
-
-        // Only on first call: build static item cards
-        if (!updateResourceDisplay._initialized) {
-            updateResourceDisplay._initialized = true;
-            updateResourceDisplay._elements = {};
-
-            const allKeys = new Set([
-                ...Object.keys(gameData.resources),
-                ...Object.keys(resources)
-            ]);
-
-            // Add tools and gear keys
-            for (const tier in toolData) {
-                for (const part in toolData[tier]) {
-                    allKeys.add(`${tier}_${part}`);
-                }
-            }
-            for (const tier in gearData) {
-                for (const part in gearData[tier]) {
-                    allKeys.add(`${tier}_${part}`);
-                }
-            }
-
-            allKeys.forEach(key => {
-                const container = (/sword|armor|shield/.test(key))
-                    ? sections.gear
-                    : (/pickaxe|axe|rod|gloves|cape|boots/.test(key))
-                    ? sections.tool
-                    : sections.resource;
-
-                const card = document.createElement("div");
-                card.className = "col";
-                card.id = `item-card-${key}`;
-
-                const innerCard = document.createElement("div");
-                innerCard.className = "card p-2 bg-white border shadow-sm d-flex align-items-center gap-2";
-
-                let iconOrText;
-                if (availableIcons.has(key)) {
-                    const img = document.createElement("img");
-                    img.src = `assets/icons/${key}_icon.png`;
-                    img.alt = key;
-                    img.width = 24;
-                    img.height = 24;
-                    iconOrText = img;
-                } else {
-                    const fallback = document.createElement("div");
-                    fallback.className = "fallback-text";
-                    fallback.textContent = key.replace(/_/g, ' ');
-                    iconOrText = fallback;
-                }
-
-                innerCard.appendChild(iconOrText);
-
-                const text = document.createElement("div");
-                text.id = `item-count-${key}`;
-                text.innerHTML = "0";
-
-                innerCard.appendChild(text);
-                card.appendChild(innerCard);
-                container.appendChild(card);
-
-                updateResourceDisplay._elements[key] = text;
-            });
-        }
-
-        // Update values only
         Object.entries(updateResourceDisplay._elements).forEach(([key, element]) => {
             const value = resources[key] || 0;
             const inUse = toolsInUse[key] || 0;
@@ -577,7 +510,6 @@
             element.innerHTML = `${value}${showInUse}`;
         });
     }
-
 
     function showCraftingSection(items = [], resources = {}) {
         const gearContainer = document.getElementById("gear-craft");

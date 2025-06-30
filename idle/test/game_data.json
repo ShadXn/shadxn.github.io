@@ -4,6 +4,7 @@
     "cooked_fish": {},
     "logs": {},
     "ore": {},
+    "ingot": {},
     "recipe": { "drop_rate": 0.005 },
     "recipe_bronze_pickaxe": { "drop_rate": 0.01 },
     "recipe_bronze_axe": { "drop_rate": 0.01 },
@@ -254,6 +255,11 @@
         "action_speed_multiplier": 0.9,
         "cost": { "ore": 10, "logs": 5, "recipe": 1 }
         },
+        "hammer": {
+        "used_for": "smithing",
+        "action_speed_multiplier": 0.9,
+        "cost": { "ore": 10, "logs": 5, "recipe": 1 }
+        },
         "gloves": {
         "used_for": "cooking",
         "action_speed_multiplier": 0.9,
@@ -280,6 +286,11 @@
         "used_for": "fishing",
         "action_speed_multiplier": 0.8,
         "cost": { "bronze_fishing_rod": 1, "ore": 15, "logs": 8, "recipe": 1 }
+        },
+        "hammer": {
+        "used_for": "smithing",
+        "action_speed_multiplier": 0.8,
+        "cost": { "bronze_hammer": 1, "ore": 15, "logs": 8, "recipe": 1 }
         },
         "gloves": {
         "used_for": "cooking",
@@ -308,6 +319,11 @@
         "action_speed_multiplier": 0.7,
         "cost": { "iron_fishing_rod": 1, "ore": 20, "logs": 10, "recipe": 1 }
         },
+        "hammer": {
+        "used_for": "smithing",
+        "action_speed_multiplier": 0.7,
+        "cost": { "iron_hammer": 1, "ore": 20, "logs": 10, "recipe": 1 }
+        },
         "gloves": {
         "used_for": "cooking",
         "action_speed_multiplier": 0.7,
@@ -334,6 +350,11 @@
         "used_for": "fishing",
         "action_speed_multiplier": 0.6,
         "cost": { "steel_fishing_rod": 1, "ore": 25, "logs": 12, "recipe": 1 }
+        },
+        "hammer": {
+        "used_for": "smithing",
+        "action_speed_multiplier": 0.6,
+        "cost": { "steel_hammer": 1, "ore": 25, "logs": 12, "recipe": 1 }
         },
         "gloves": {
         "used_for": "cooking",
@@ -362,6 +383,11 @@
         "action_speed_multiplier": 0.5,
         "cost": { "black_fishing_rod": 1, "ore": 30, "logs": 15, "recipe": 1 }
         },
+        "hammer": {
+        "used_for": "smithing",
+        "action_speed_multiplier": 0.5,
+        "cost": { "black_hammer": 1, "ore": 30, "logs": 15, "recipe": 1 }
+        },
         "gloves": {
         "used_for": "cooking",
         "action_speed_multiplier": 0.5,
@@ -388,6 +414,11 @@
         "used_for": "fishing",
         "action_speed_multiplier": 0.4,
         "cost": { "mithril_fishing_rod": 1, "ore": 35, "logs": 18, "recipe": 1 }
+        },
+        "hammer": {
+        "used_for": "smithing",
+        "action_speed_multiplier": 0.4,
+        "cost": { "mithril_hammer": 1, "ore": 35, "logs": 18, "recipe": 1 }
         },
         "gloves": {
         "used_for": "cooking",
@@ -416,6 +447,11 @@
         "action_speed_multiplier": 0.3,
         "cost": { "adamant_fishing_rod": 1, "ore": 40, "logs": 20, "recipe": 1 }
         },
+        "hammer": {
+        "used_for": "smithing",
+        "action_speed_multiplier": 0.3,
+        "cost": { "adamant_hammer": 1, "ore": 40, "logs": 20, "recipe": 1 }
+        },
         "gloves": {
         "used_for": "cooking",
         "action_speed_multiplier": 0.3,
@@ -443,6 +479,11 @@
         "action_speed_multiplier": 0.2,
         "cost": { "rune_fishing_rod": 1, "ore": 45, "logs": 25, "recipe": 1 }
         },
+        "hammer": {
+        "used_for": "smithing",
+        "action_speed_multiplier": 0.2,
+        "cost": { "rune_hammer": 1, "ore": 45, "logs": 25, "recipe": 1 }
+        },
         "gloves": {
         "used_for": "cooking",
         "action_speed_multiplier": 0.2,
@@ -469,6 +510,11 @@
             "used_for": "fishing",
             "action_speed_multiplier": 0.1,
             "cost": { "dragon_fishing_rod": 1, "ore": 50, "logs": 30, "recipe": 1 }
+        },
+        "hammer": {
+            "used_for": "smithing",
+            "action_speed_multiplier": 0.1,
+            "cost": { "dragon_hammer": 1, "ore": 50, "logs": 30, "recipe": 1 }
         },
         "gloves": {
             "used_for": "cooking",
@@ -509,6 +555,18 @@
     "action_speed_multiplier": 0.9,
     "produces": {
         "ore": 1
+    }
+    },
+    "smithing": {
+    "food_cost": 0,
+    "job_action_time": 0.9,
+    "required_gear": "none",
+    "action_speed_multiplier": 0.9,
+    "required_resources": {
+        "ore": 1
+    },
+    "produces": {
+        "ingot": 1
     }
     },
     "fishing": {
