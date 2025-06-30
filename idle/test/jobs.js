@@ -1,16 +1,15 @@
-let jobs = {};  // Make this accessible globally
+function initGame() {
 
-function loadJobsAndStartGame() {
-  fetch('game_data.json')
+    let jobs = {};
+
+    fetch('game_data.json')
     .then(response => response.json())
     .then(data => {
-      jobs = data.jobs;
-      window.startGame();  // explicitly access global function
-    })
-    .catch(error => {
-      console.error("Failed to load game_data.json:", error);
+        jobs = data.jobs;
+        initGame();  // only start game loop after jobs are loaded
     });
-}
+    // Place your `setInterval`, `applyJobTick()`, `updateUI()` calls here
 
-// Call loader once DOM is ready
-document.addEventListener("DOMContentLoaded", loadJobsAndStartGame);
+    setInterval(applyJobTick, 1000);
+    updateUI();
+}
