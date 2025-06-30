@@ -46,10 +46,7 @@ body {
 #resource-display .card,
 #gear-display .card,
 #tool-display .card,
-#recipe-display .card,
-#craft-gear .card,
-#craft-tool .card,
-#task-list .card {
+#recipe-display .card {
   flex-direction: row !important;
   justify-content: start;
 }
