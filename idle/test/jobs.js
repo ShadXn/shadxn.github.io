@@ -1,15 +1,23 @@
-function initGame() {
+let jobs = {};  // Make this accessible globally
 
-    let jobs = {};
-
-    fetch('game_data.json')
+function loadJobsAndStartGame() {
+  fetch('game_data.json')
     .then(response => response.json())
     .then(data => {
-        jobs = data.jobs;
-        initGame();  // only start game loop after jobs are loaded
+      jobs = data.jobs;
+      startGame();  // Call this once when data is ready
+    })
+    .catch(error => {
+      console.error("Failed to load game_data.json:", error);
     });
-    // Place your `setInterval`, `applyJobTick()`, `updateUI()` calls here
-
-    setInterval(applyJobTick, 1000);
-    updateUI();
 }
+
+function startGame() {
+  // Kick off the actual game logic
+  initializeGame();           // your game setup (probably in idlegame.js)
+  updateUI();                 // refresh everything
+  setInterval(applyJobTick, 1000);
+}
+
+// Call loader once DOM is ready
+document.addEventListener("DOMContentLoaded", loadJobsAndStartGame);
