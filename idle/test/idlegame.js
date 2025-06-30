@@ -448,6 +448,8 @@
             innerCard.className = "card p-2 bg-white border shadow-sm d-flex align-items-center gap-2";
 
             let iconOrText;
+            console.log("Available:", availableIcons);
+            console.log("Resources in use:", Object.keys(resources));
 
             if (availableIcons.has(key)) {
                 const img = document.createElement("img");
