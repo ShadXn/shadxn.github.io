@@ -447,13 +447,23 @@
             const innerCard = document.createElement("div");
             innerCard.className = "card p-2 bg-white border shadow-sm d-flex align-items-center gap-2";
 
-            let iconOrText;
             console.log("Available:", availableIcons);
             console.log("Resources in use:", Object.keys(resources));
 
+            let iconOrText;
+
             if (availableIcons.has(key)) {
                 const img = document.createElement("img");
-                img.src = `assets/icons/${key}_icon.png`;
+                img.src = `assets/icons/${key}.png`;
+
+                // 🔁 Fallback if the image fails to load
+                img.onerror = () => {
+                    const fallback = document.createElement("div");
+                    fallback.className = "fallback-text";
+                    fallback.textContent = key.replace(/_/g, ' ');
+                    innerCard.replaceChild(fallback, img);
+                };
+
                 img.alt = key;
                 img.width = 24;
                 img.height = 24;
