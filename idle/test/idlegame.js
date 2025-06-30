@@ -11,6 +11,10 @@
         // Add other resource keys you’ve created icons for
     ]);
 
+    // Collect all item keys from gearData and toolData
+    const allItemKeys = new Set();
+
+
     fetch('game_data.json')
     .then(response => response.json())
     .then(data => {
@@ -23,6 +27,21 @@
         if (!jobs || !gearData || !toolData) {
             console.error("Missing expected sections in game_data.json");
             return;
+        }
+
+        // Collect all resource, tool, gear keys
+        Object.keys(data.resources).forEach(k => allItemKeys.add(k));
+
+        for (const tier in data.tools) {
+            for (const part in data.tools[tier]) {
+                allItemKeys.add(`${tier}_${part}`); // e.g. bronze_pickaxe
+            }
+        }
+
+        for (const tier in data.gear) {
+            for (const part in data.gear[tier]) {
+                allItemKeys.add(`${tier}_${part}`); // e.g. bronze_sword
+            }
         }
 
         populateJobs(jobs);
@@ -75,6 +94,9 @@
                 saveProgress();
             }
         });
+        
+        // ✅ Prebuild item display for resources, gear, and tools
+        prebuildItemDisplay(allItemKeys);
 
         updateUI();
         const craftables = buildCraftables(gearData, toolData);
@@ -225,6 +247,54 @@
             card.appendChild(details);
             card.appendChild(controls);
             taskList.appendChild(card);
+        });
+    }
+
+    function prebuildItemDisplay(itemKeys) {
+        const containers = {
+            default: document.getElementById("resource-display"),
+            gear: document.getElementById("gear-display"),
+            tool: document.getElementById("tool-display")
+        };
+
+        itemKeys.forEach(key => {
+            const card = document.createElement("div");
+            card.className = "col";
+            card.id = `item-card-${key}`;
+
+            const innerCard = document.createElement("div");
+            innerCard.className = "card p-2 bg-white border shadow-sm d-flex align-items-center gap-2";
+
+            // Icon or fallback
+            let iconOrText;
+            if (availableIcons.has(key)) {
+                const img = document.createElement("img");
+                img.src = `assets/icons/${key}_icon.png`;
+                img.alt = key;
+                img.width = 24;
+                img.height = 24;
+                iconOrText = img;
+            } else {
+                const fallback = document.createElement("div");
+                fallback.className = "fallback-text";
+                fallback.textContent = key.replace(/_/g, ' ');
+                iconOrText = fallback;
+            }
+
+            innerCard.appendChild(iconOrText);
+
+            // Amount text
+            const text = document.createElement("div");
+            text.id = `item-count-${key}`;
+            text.innerHTML = "0";
+            innerCard.appendChild(text);
+
+            card.appendChild(innerCard);
+
+            // Append to correct section
+            if (/sword|armor|shield/.test(key)) containers.gear.appendChild(card);
+            else if (/pickaxe|axe|rod|gloves|cape|boots/.test(key)) containers.tool.appendChild(card);
+            else containers.default.appendChild(card);
         });
     }
 
@@ -428,65 +498,86 @@
 
     // Update resource display
     function updateResourceDisplay(resources) {
-        const resourceContainer = document.getElementById("resource-display");
-        const gearContainer = document.getElementById("gear-display");
-        const toolContainer = document.getElementById("tool-display");
-        resourceContainer.innerHTML = "";
-        gearContainer.innerHTML = "";
-        toolContainer.innerHTML = "";
+        const sections = {
+            resource: document.getElementById("resource-display"),
+            gear: document.getElementById("gear-display"),
+            tool: document.getElementById("tool-display")
+        };
 
-        console.log("availableIcons:", availableIcons);
-        console.log("Calling updateResourceDisplay:", resources);
-        Object.entries(resources).forEach(([key, value]) => {
-            if (key === "gold") return;
+        // Only on first call: build static item cards
+        if (!updateResourceDisplay._initialized) {
+            updateResourceDisplay._initialized = true;
+            updateResourceDisplay._elements = {};
 
-            const inUse = toolsInUse[key] || 0;
-            const showInUse = inUse > 0 ? ` (In use: ${inUse})` : "";
+            const allKeys = new Set([
+                ...Object.keys(gameData.resources),
+                ...Object.keys(resources)
+            ]);
 
-            const card = document.createElement("div");
-            card.className = "col";
+            // Add tools and gear keys
+            for (const tier in toolData) {
+                for (const part in toolData[tier]) {
+                    allKeys.add(`${tier}_${part}`);
+                }
+            }
+            for (const tier in gearData) {
+                for (const part in gearData[tier]) {
+                    allKeys.add(`${tier}_${part}`);
+                }
+            }
 
-            const innerCard = document.createElement("div");
-            innerCard.className = "card p-2 bg-white border shadow-sm d-flex align-items-center gap-2";
+            allKeys.forEach(key => {
+                const container = (/sword|armor|shield/.test(key))
+                    ? sections.gear
+                    : (/pickaxe|axe|rod|gloves|cape|boots/.test(key))
+                    ? sections.tool
+                    : sections.resource;
 
-            let iconOrText;
+                const card = document.createElement("div");
+                card.className = "col";
+                card.id = `item-card-${key}`;
 
-            if (availableIcons.has(key)) {
-                const img = document.createElement("img");
-                img.src = `assets/icons/${key}_icon.png`;
+                const innerCard = document.createElement("div");
+                innerCard.className = "card p-2 bg-white border shadow-sm d-flex align-items-center gap-2";
 
-                // 🔁 Fallback if the image fails to load
-                img.onerror = () => {
+                let iconOrText;
+                if (availableIcons.has(key)) {
+                    const img = document.createElement("img");
+                    img.src = `assets/icons/${key}_icon.png`;
+                    img.alt = key;
+                    img.width = 24;
+                    img.height = 24;
+                    iconOrText = img;
+                } else {
                     const fallback = document.createElement("div");
                     fallback.className = "fallback-text";
                     fallback.textContent = key.replace(/_/g, ' ');
-                    img.replaceWith(fallback); // ✅ safer than replaceChild
-                };
+                    iconOrText = fallback;
+                }
 
-                img.alt = key;
-                img.width = 24;
-                img.height = 24;
-                iconOrText = img;
-            } else {
-                const fallback = document.createElement("div");
-                fallback.className = "fallback-text";
-                fallback.textContent = key.replace(/_/g, ' ');
-                iconOrText = fallback;
-            }
+                innerCard.appendChild(iconOrText);
 
-            innerCard.appendChild(iconOrText);
+                const text = document.createElement("div");
+                text.id = `item-count-${key}`;
+                text.innerHTML = "0";
 
-            const text = document.createElement("div");
-            text.innerHTML = `${value}${showInUse}`;
-            innerCard.appendChild(text);
-            card.appendChild(innerCard);
+                innerCard.appendChild(text);
+                card.appendChild(innerCard);
+                container.appendChild(card);
 
-            // Add to appropriate section
-            if (/sword|armor|shield/.test(key)) gearContainer.appendChild(card);
-            else if (/pickaxe|axe|rod|gloves|cape/.test(key)) toolContainer.appendChild(card);
-            else resourceContainer.appendChild(card);
+                updateResourceDisplay._elements[key] = text;
+            });
+        }
+
+        // Update values only
+        Object.entries(updateResourceDisplay._elements).forEach(([key, element]) => {
+            const value = resources[key] || 0;
+            const inUse = toolsInUse[key] || 0;
+            const showInUse = inUse > 0 ? ` (In use: ${inUse})` : "";
+            element.innerHTML = `${value}${showInUse}`;
         });
     }
+
 
     function showCraftingSection(items = [], resources = {}) {
         const gearContainer = document.getElementById("gear-craft");
