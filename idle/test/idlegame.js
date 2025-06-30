@@ -434,22 +434,45 @@
             if (key === "gold") return;
 
             const inUse = toolsInUse[key] || 0;
-            const showInUse = inUse > 0 ? ` <span class="text-muted">(In use: ${inUse})</span>` : "";
+            const showInUse = inUse > 0 ? ` (In use: ${inUse})` : "";
 
             const card = document.createElement("div");
             card.className = "col";
-            const iconUrl = `assets/icons/${key}.png`;  // image must be named exactly like the key
-            card.innerHTML = `
-                <div class="card p-2 bg-white border shadow-sm d-flex align-items-center gap-2">
-                    <img src="${iconUrl}" alt="${key}" width="24" height="24"
-                         onerror="this.outerHTML = '<span style=\'font-size:1.2em\'>🎒</span>';">
-                    <div class="d-flex flex-column">
-                        <div class="fw-semibold text-capitalize">${key.replace(/_/g, ' ')}</div>
-                        <div>${value}${showInUse}</div>
-                    </div>
-                </div>
-            `;
 
+            const innerCard = document.createElement("div");
+            innerCard.className = "card p-2 bg-white border shadow-sm d-flex align-items-center gap-2";
+
+            // Create image with fallback
+            const img = document.createElement("img");
+            img.src = `assets/icons/${key}.png`;
+            img.alt = key;
+            img.width = 24;
+            img.height = 24;
+            img.onerror = function () {
+                const fallback = document.createElement("span");
+                fallback.style.fontSize = "1.2em";
+                fallback.textContent = "🎒";
+                this.replaceWith(fallback);
+            };
+
+            innerCard.appendChild(img);
+
+            const textContainer = document.createElement("div");
+            textContainer.className = "d-flex flex-column";
+
+            const title = document.createElement("div");
+            title.className = "fw-semibold text-capitalize";
+            title.textContent = key.replace(/_/g, ' ');
+
+            const count = document.createElement("div");
+            count.innerHTML = `${value}${showInUse}`;
+
+            textContainer.appendChild(title);
+            textContainer.appendChild(count);
+            innerCard.appendChild(textContainer);
+            card.appendChild(innerCard);
+
+            // Add to appropriate section
             if (/sword|armor|shield/.test(key)) gearContainer.appendChild(card);
             else if (/pickaxe|axe|rod|gloves|cape/.test(key)) toolContainer.appendChild(card);
             else resourceContainer.appendChild(card);
