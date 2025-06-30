@@ -37,13 +37,19 @@ body {
 #gear-display img,
 #gear-display .fallback-text,
 #tool-display img,
-#tool-display .fallback-text {
+#tool-display .fallback-text,
+#recipe-display img,
+#recipe-display .fallback-text {
   margin-right: 8px;
 }
 
 #resource-display .card,
 #gear-display .card,
-#tool-display .card {
+#tool-display .card,
+#recipe-display .card,
+#craft-gear .card,
+#craft-tool .card,
+#task-list .card {
   flex-direction: row !important;
   justify-content: start;
 }
