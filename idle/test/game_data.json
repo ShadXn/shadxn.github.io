@@ -64,7 +64,7 @@
       "dragon": { "drop_rate": 0.01 },
       "god": { "drop_rate": 0.01 }
     },
-    "fishing_rod": {
+    "rod": {
       "bronze": { "drop_rate": 0.01 },
       "iron": { "drop_rate": 0.01 },
       "steel": { "drop_rate": 0.01 },
@@ -308,7 +308,7 @@
         "action_speed_multiplier": 0.9,
         "cost": { "ore": 10, "logs": 5, "recipe": 1 }
         },
-        "fishing_rod": {
+        "rod": {
         "used_for": "fishing",
         "action_speed_multiplier": 0.9,
         "cost": { "ore": 10, "logs": 5, "recipe": 1 }
@@ -340,10 +340,10 @@
         "action_speed_multiplier": 0.8,
         "cost": { "bronze_axe": 1, "ore": 15, "logs": 8, "recipe": 1 }
         },
-        "fishing_rod": {
+        "rod": {
         "used_for": "fishing",
         "action_speed_multiplier": 0.8,
-        "cost": { "bronze_fishing_rod": 1, "ore": 15, "logs": 8, "recipe": 1 }
+        "cost": { "bronze_rod": 1, "ore": 15, "logs": 8, "recipe": 1 }
         },
         "hammer": {
         "used_for": "smithing",
@@ -372,10 +372,10 @@
         "action_speed_multiplier": 0.7,
         "cost": { "iron_axe": 1, "ore": 20, "logs": 10, "recipe": 1 }
         },
-        "fishing_rod": {
+        "rod": {
         "used_for": "fishing",
         "action_speed_multiplier": 0.7,
-        "cost": { "iron_fishing_rod": 1, "ore": 20, "logs": 10, "recipe": 1 }
+        "cost": { "iron_rod": 1, "ore": 20, "logs": 10, "recipe": 1 }
         },
         "hammer": {
         "used_for": "smithing",
@@ -404,10 +404,10 @@
         "action_speed_multiplier": 0.6,
         "cost": { "steel_axe": 1, "ore": 25, "logs": 12, "recipe": 1 }
         },
-        "fishing_rod": {
+        "rod": {
         "used_for": "fishing",
         "action_speed_multiplier": 0.6,
-        "cost": { "steel_fishing_rod": 1, "ore": 25, "logs": 12, "recipe": 1 }
+        "cost": { "steel_rod": 1, "ore": 25, "logs": 12, "recipe": 1 }
         },
         "hammer": {
         "used_for": "smithing",
@@ -436,10 +436,10 @@
         "action_speed_multiplier": 0.5,
         "cost": { "black_axe": 1, "ore": 30, "logs": 15, "recipe": 1 }
         },
-        "fishing_rod": {
+        "rod": {
         "used_for": "fishing",
         "action_speed_multiplier": 0.5,
-        "cost": { "black_fishing_rod": 1, "ore": 30, "logs": 15, "recipe": 1 }
+        "cost": { "black_rod": 1, "ore": 30, "logs": 15, "recipe": 1 }
         },
         "hammer": {
         "used_for": "smithing",
@@ -468,10 +468,10 @@
         "action_speed_multiplier": 0.4,
         "cost": { "mithril_axe": 1, "ore": 35, "logs": 18, "recipe": 1 }
         },
-        "fishing_rod": {
+        "rod": {
         "used_for": "fishing",
         "action_speed_multiplier": 0.4,
-        "cost": { "mithril_fishing_rod": 1, "ore": 35, "logs": 18, "recipe": 1 }
+        "cost": { "mithril_rod": 1, "ore": 35, "logs": 18, "recipe": 1 }
         },
         "hammer": {
         "used_for": "smithing",
@@ -500,10 +500,10 @@
         "action_speed_multiplier": 0.3,
         "cost": { "adamant_axe": 1, "ore": 40, "logs": 20, "recipe": 1 }
         },
-        "fishing_rod": {
+        "rod": {
         "used_for": "fishing",
         "action_speed_multiplier": 0.3,
-        "cost": { "adamant_fishing_rod": 1, "ore": 40, "logs": 20, "recipe": 1 }
+        "cost": { "adamant_rod": 1, "ore": 40, "logs": 20, "recipe": 1 }
         },
         "hammer": {
         "used_for": "smithing",
@@ -532,10 +532,10 @@
         "action_speed_multiplier": 0.2,
         "cost": { "rune_axe": 1, "ore": 45, "logs": 25, "recipe": 1 }
         },
-        "fishing_rod": {
+        "rod": {
         "used_for": "fishing",
         "action_speed_multiplier": 0.2,
-        "cost": { "rune_fishing_rod": 1, "ore": 45, "logs": 25, "recipe": 1 }
+        "cost": { "rune_rod": 1, "ore": 45, "logs": 25, "recipe": 1 }
         },
         "hammer": {
         "used_for": "smithing",
@@ -564,10 +564,10 @@
             "action_speed_multiplier": 0.1,
             "cost": { "dragon_axe": 1, "ore": 50, "logs": 30, "recipe": 1 }
         },
-        "fishing_rod": {
+        "rod": {
             "used_for": "fishing",
             "action_speed_multiplier": 0.1,
-            "cost": { "dragon_fishing_rod": 1, "ore": 50, "logs": 30, "recipe": 1 }
+            "cost": { "dragon_rod": 1, "ore": 50, "logs": 30, "recipe": 1 }
         },
         "hammer": {
             "used_for": "smithing",
@@ -655,7 +655,7 @@
     "gp_reward": 10,
     "fights_required_to_unlock_next": 200,
     "unlocks": "fighting_tier_2",
-    "tool_recipe_drops": ["bronze_pickaxe", "bronze_axe", "bronze_fishing_rod", "bronze_gloves", "bronze_boots", "bronze_hammer"]
+    "tool_recipe_drops": ["bronze_pickaxe", "bronze_axe", "bronze_rod", "bronze_gloves", "bronze_boots", "bronze_hammer"]
     },
     "fighting_tier_2": {
     "food_cost": 3,
@@ -664,7 +664,7 @@
     "gp_reward": 20,
     "fights_required_to_unlock_next": 400,
     "unlocks": "fighting_tier_3",
-    "tool_recipe_drops": ["iron_pickaxe", "iron_axe", "iron_fishing_rod", "iron_gloves", "iron_boots", "iron_hammer"]
+    "tool_recipe_drops": ["iron_pickaxe", "iron_axe", "iron_rod", "iron_gloves", "iron_boots", "iron_hammer"]
     },
     "fighting_tier_3": {
     "food_cost": 4,
@@ -673,7 +673,7 @@
     "gp_reward": 30,
     "fights_required_to_unlock_next": 600,
     "unlocks": "fighting_tier_4",
-    "tool_recipe_drops": ["steel_pickaxe", "steel_axe", "steel_fishing_rod", "steel_gloves", "steel_boots", "steel_hammer"]
+    "tool_recipe_drops": ["steel_pickaxe", "steel_axe", "steel_rod", "steel_gloves", "steel_boots", "steel_hammer"]
     },
     "fighting_tier_4": {
     "food_cost": 5,
@@ -682,7 +682,7 @@
     "gp_reward": 40,
     "fights_required_to_unlock_next": 800,
     "unlocks": "fighting_tier_5",
-    "tool_recipe_drops": ["black_pickaxe", "black_axe", "black_fishing_rod", "black_gloves", "black_boots", "black_hammer"]
+    "tool_recipe_drops": ["black_pickaxe", "black_axe", "black_rod", "black_gloves", "black_boots", "black_hammer"]
     },
     "fighting_tier_5": {
     "food_cost": 6,
@@ -691,7 +691,7 @@
     "gp_reward": 50,
     "fights_required_to_unlock_next": 1000,
     "unlocks": "fighting_tier_6",
-    "tool_recipe_drops": ["mithril_pickaxe", "mithril_axe", "mithril_fishing_rod", "mithril_gloves", "mithril_boots", "mithril_hammer"]
+    "tool_recipe_drops": ["mithril_pickaxe", "mithril_axe", "mithril_rod", "mithril_gloves", "mithril_boots", "mithril_hammer"]
     },
     "fighting_tier_6": {
     "food_cost": 7,
@@ -700,7 +700,7 @@
     "gp_reward": 60,
     "fights_required_to_unlock_next": 1200,
     "unlocks": "fighting_tier_7",
-    "tool_recipe_drops": ["adamant_pickaxe", "adamant_axe", "adamant_fishing_rod", "adamant_gloves", "adamant_boots", "adamant_hammer"]
+    "tool_recipe_drops": ["adamant_pickaxe", "adamant_axe", "adamant_rod", "adamant_gloves", "adamant_boots", "adamant_hammer"]
     },
     "fighting_tier_7": {
     "food_cost": 8,
@@ -709,7 +709,7 @@
     "gp_reward": 70,
     "fights_required_to_unlock_next": 1400,
     "unlocks": "fighting_tier_8",
-    "tool_recipe_drops": ["rune_pickaxe", "rune_axe", "rune_fishing_rod", "rune_gloves", "rune_boots", "rune_hammer"]
+    "tool_recipe_drops": ["rune_pickaxe", "rune_axe", "rune_rod", "rune_gloves", "rune_boots", "rune_hammer"]
     },
     "fighting_tier_8": {
     "food_cost": 9,
@@ -718,7 +718,7 @@
     "gp_reward": 80,
     "fights_required_to_unlock_next": 1600,
     "unlocks": "fighting_tier_9",
-    "tool_recipe_drops": ["dragon_pickaxe", "dragon_axe", "dragon_fishing_rod", "dragon_gloves", "dragon_boots", "dragon_hammer"]
+    "tool_recipe_drops": ["dragon_pickaxe", "dragon_axe", "dragon_rod", "dragon_gloves", "dragon_boots", "dragon_hammer"]
     },
     "fighting_tier_9": {
     "food_cost": 10,
@@ -727,7 +727,7 @@
     "gp_reward": 90,
     "fights_required_to_unlock_next": 1800,
     "unlocks": "fighting_tier_10",
-    "tool_recipe_drops": ["god_pickaxe", "god_axe", "god_fishing_rod", "god_gloves", "god_boots", "god_hammer"]
+    "tool_recipe_drops": ["god_pickaxe", "god_axe", "god_rod", "god_gloves", "god_boots", "god_hammer"]
     },
     "fighting_tier_10": {
     "food_cost": 11,
