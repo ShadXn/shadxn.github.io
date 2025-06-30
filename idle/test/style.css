@@ -32,12 +32,18 @@ body {
   text-transform: capitalize;
 }
 
-#resource-display .card {
-  flex-direction: row !important;
-  justify-content: start;
+#resource-display img,
+#resource-display .fallback-text,
+#gear-display img,
+#gear-display .fallback-text,
+#tool-display img,
+#tool-display .fallback-text {
+  margin-right: 8px;
 }
 
-#resource-display img,
-#resource-display .fallback-text {
-  margin-right: 8px;
+#resource-display .card,
+#gear-display .card,
+#tool-display .card {
+  flex-direction: row !important;
+  justify-content: start;
 }
