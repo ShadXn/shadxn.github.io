@@ -31,3 +31,7 @@ body {
   border-radius: 4px;
   text-transform: capitalize;
 }
+
+#resource-display .col {
+  border: 1px dashed #ccc;
+}
