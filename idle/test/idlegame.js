@@ -451,7 +451,7 @@
 
             if (availableIcons.has(key)) {
                 const img = document.createElement("img");
-                img.src = `assets/icons/${key}.png`;
+                img.src = `assets/icons/${key}_icon.png`;
                 img.alt = key;
                 img.width = 24;
                 img.height = 24;
