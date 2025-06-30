@@ -442,16 +442,16 @@
             const innerCard = document.createElement("div");
             innerCard.className = "card p-2 bg-white border shadow-sm d-flex align-items-center gap-2";
 
-            // Create image with fallback
+            // Create icon (img) or fallback text
             const img = document.createElement("img");
             img.src = `assets/icons/${key}.png`;
             img.alt = key;
             img.width = 24;
             img.height = 24;
             img.onerror = function () {
-                const fallback = document.createElement("span");
-                fallback.style.fontSize = "1.2em";
-                fallback.textContent = "🎒";
+                const fallback = document.createElement("div");
+                fallback.className = "fallback-text";
+                fallback.textContent = key.replace(/_/g, ' ');
                 this.replaceWith(fallback);
             };
 
@@ -460,14 +460,9 @@
             const textContainer = document.createElement("div");
             textContainer.className = "d-flex flex-column";
 
-            const title = document.createElement("div");
-            title.className = "fw-semibold text-capitalize";
-            title.textContent = key.replace(/_/g, ' ');
-
             const count = document.createElement("div");
             count.innerHTML = `${value}${showInUse}`;
 
-            textContainer.appendChild(title);
             textContainer.appendChild(count);
             innerCard.appendChild(textContainer);
             card.appendChild(innerCard);
