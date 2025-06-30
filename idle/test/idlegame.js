@@ -46,11 +46,11 @@
     // Passive resources.gold income loop
     const resources = JSON.parse(localStorage.getItem('idle_resources') || '{}');
 
-    function startGame() {
-        initializeGame();
-        updateUI();
-        setInterval(applyJobTick, 1000);
-    }
+    window.startGame = function () {
+    initializeGame();      // make sure this is globally defined too
+    updateUI();            // and this
+    setInterval(applyJobTick, 1000);
+    };
 
     function initializeGame() {
         workers = parseInt(localStorage.getItem(workersKey)) || 0;
