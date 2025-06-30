@@ -47,20 +47,18 @@
             }
         }
 
-        if (data.recipes) {
-            for (const type in data.recipes) {
-                const recipe = data.recipes[type];
-                if (recipe.tiers && Array.isArray(recipe.tiers)) {
-                    recipe.tiers.forEach(tier => {
-                        const key = `recipe_${tier}_${type}`;
-                        allItemKeys.add(key);
-                        availableIcons.add(key); // ✅ preload icon/text for this recipe
-                    });
-                } else {
-                    const key = `recipe_${type}`;
-                    allItemKeys.add(key);
-                    availableIcons.add(key); // ✅ single recipe case
-                }
+        // Expand recipe keys from structured recipe definitions
+        const recipeData = data.recipes || {};
+        for (const itemType in recipeData) {
+            const itemEntry = recipeData[itemType];
+            // victory_recipe has no tiers
+            if (itemType === "victory_recipe") {
+                allItemKeys.add("recipe_victory_recipe");
+                continue;
+            }
+            for (const tier in itemEntry) {
+                const recipeKey = `recipe_${tier}_${itemType}`; // e.g. recipe_bronze_sword
+                allItemKeys.add(recipeKey);
             }
         }
 
