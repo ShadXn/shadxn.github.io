@@ -289,22 +289,31 @@
             innerCard.className = "card p-2 bg-white border shadow-sm d-flex align-items-center gap-2";
 
             // Icon or fallback
-            let iconOrText;
-            if (availableIcons.has(key)) {
-                const img = document.createElement("img");
-                img.src = `assets/icons/${key}_icon.png`;
-                img.alt = key;
-                img.width = 24;
-                img.height = 24;
-                iconOrText = img;
-            } else {
+            const img = document.createElement("img");
+
+            // Load icons based on key
+            let iconKey = key;
+            if (key.startsWith("recipe_")) {
+                const parts = key.split("_");
+                const tier = parts[1];
+                const type = parts.slice(2).join("_");
+                iconKey = `${tier}_${type}`;
+            }
+
+            img.src = `assets/icons/${iconKey}_icon.png`;
+            img.alt = key;
+            img.width = 24;
+            img.height = 24;
+
+            img.onerror = () => {
+                img.remove();
                 const fallback = document.createElement("div");
                 fallback.className = "fallback-text";
                 fallback.textContent = key.replace(/_/g, ' ');
-                iconOrText = fallback;
-            }
+                innerCard.insertBefore(fallback, text);
+            };
 
-            innerCard.appendChild(iconOrText);
+            innerCard.appendChild(img);
 
             // Amount text
             const text = document.createElement("div");
