@@ -13,6 +13,12 @@ function hardResetGame() {
 
   console.log("All localStorage keys:", Object.keys(localStorage));
 
+  // Clear all related idle game data from localStorage
+  localStorage.removeItem("idle_workers");
+  localStorage.removeItem("idle_assignments");
+  localStorage.removeItem("idle_gold");
+  localStorage.removeItem("idle_resources");
+
   // Clear localStorage keys
   const keysToClear = [
     "idle_assignments",
