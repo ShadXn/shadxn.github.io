@@ -600,27 +600,4 @@
         saveProgress();
     }
 
-    function hardResetGame() {
-        if (!confirm("Are you sure you want to reset the game? This will erase all progress.")) return;
-
-        // Clear localStorage or only relevant keys
-        localStorage.clear(); // or use filtered keys if needed
-
-        // Reset game state variables (optional safety)
-        gold = 0;
-        workers = 0;
-        idleWorkers = 0;
-        playerItems = {}; // clear all inventory
-
-        // Re-initialize your UI and logic
-        updateResourceDisplay();
-        updateWorkerDisplay();
-        updateTaskDisplay();
-        updateCraftingOptions();
-
-        // You may also want to call any init methods used on first load
-        initializeGame();
-    }
-
-
 })();
