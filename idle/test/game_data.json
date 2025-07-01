@@ -593,7 +593,6 @@
     "required_gear": "none",
     "action_speed_multiplier": 0.9,
     "produces": {
-        "recipe": { "chance": 0.005 },
         "gold": 5
     }
     },
