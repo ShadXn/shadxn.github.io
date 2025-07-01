@@ -20,51 +20,11 @@ function hardResetGame() {
   localStorage.removeItem("idle_assignments");
   localStorage.removeItem("idle_resources");
 
-  // Clear in-memory values
   if (typeof resources === "object") {
-    for (const key in resources) {
-      delete resources[key];
-    }
+  Object.keys(resources).forEach(k => delete resources[k]);
   }
-
-  if (typeof assignments === "object") {
-    for (const key in assignments) {
-      delete assignments[key];
-    }
-  }
-
-  if (typeof tasks === "object") {
-    for (const key in tasks) {
-      delete tasks[key];
-    }
-  }
-
-  if (typeof gearData === "object") {
-    for (const key in gearData) {
-      delete gearData[key];
-    }
-  }
-
-  if (typeof toolData === "object") {
-    for (const key in toolData) {
-      delete toolData[key];
-    }
-  }
-
-  if (typeof workers !== "undefined") {
-    workers = 0;
-  }
-
   if (typeof goldDisplay === "object") {
     goldDisplay.textContent = 0;
-  }
-
-  if (typeof workerDisplay === "object") {
-    workerDisplay.textContent = 0;
-  }
-
-  if (typeof idleDisplay === "object") {
-    idleDisplay.textContent = 0;
   }
 
   localStorage.setItem("resetting", "true");
