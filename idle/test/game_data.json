@@ -326,6 +326,7 @@
         "boots": {
         "used_for": "thieving",
         "action_speed_multiplier": 0.9,
+        "gold_multiplier": 2.0,
         "cost": { "ingot": 100, "logs": 200, "recipe_bronze_boots": 1 }
         }
     },
@@ -358,6 +359,7 @@
         "boots": {
         "used_for": "thieving",
         "action_speed_multiplier": 0.8,
+        "gold_multiplier": 3.0,
         "cost": { "bronze_boots": 1, "ingot": 15, "logs": 8, "recipe_iron_boots": 1 }
         }
     },
@@ -390,6 +392,7 @@
         "boots": {
         "used_for": "thieving",
         "action_speed_multiplier": 0.7,
+        "gold_multiplier": 5.0,
         "cost": { "iron_boots": 1, "ingot": 20, "logs": 10, "recipe_steel_boots": 1 }
         }
     },
@@ -422,6 +425,7 @@
         "boots": {
         "used_for": "thieving",
         "action_speed_multiplier": 0.6,
+        "gold_multiplier": 10.0,
         "cost": { "steel_boots": 1, "ingot": 25, "logs": 12, "recipe_black_boots": 1 }
         }
     },
@@ -454,6 +458,7 @@
         "boots": {
         "used_for": "thieving",
         "action_speed_multiplier": 0.5,
+        "gold_multiplier": 15.0,
         "cost": { "black_boots": 1, "ingot": 30, "logs": 15, "recipe_mithril_boots": 1 }
         }
     },
@@ -486,6 +491,7 @@
         "boots": {
         "used_for": "thieving",
         "action_speed_multiplier": 0.4,
+        "gold_multiplier": 20.0,
         "cost": { "mithril_boots": 1, "ingot": 35, "logs": 18, "recipe_adamant_boots": 1 }
         }
     },
@@ -518,6 +524,7 @@
         "boots": {
         "used_for": "thieving",
         "action_speed_multiplier": 0.3,
+        "gold_multiplier": 25.0,
         "cost": { "adamant_boots": 1, "ingot": 40, "logs": 20, "recipe_rune_boots": 1 }
         }
     },
@@ -550,6 +557,7 @@
         "boots": {
         "used_for": "thieving",
         "action_speed_multiplier": 0.2,
+        "gold_multiplier": 50.0,
         "cost": { "rune_boots": 1, "ingot": 45, "logs": 25, "recipe_dragon_boots": 1 }
         }
     },
@@ -582,6 +590,7 @@
         "boots": {
             "used_for": "thieving",
             "action_speed_multiplier": 0.1,
+            "gold_multiplier": 100.0,
             "cost": { "dragon_boots": 1, "ingot": 50, "logs": 30, "recipe_god_boots": 1 }
         }
     }
