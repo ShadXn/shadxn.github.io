@@ -1,4 +1,14 @@
 (function () {
+    if (localStorage.getItem("resetting") === "true") {
+        localStorage.removeItem("resetting");
+
+        // Prevent loading old values
+        localStorage.removeItem("idle_gold");
+        localStorage.removeItem("idle_resources");
+        localStorage.removeItem("idle_workers");
+        localStorage.removeItem("idle_assignments");
+    }
+
     let gameData = {};
     let jobs = {};
     let tasks = [];

@@ -67,9 +67,6 @@ function hardResetGame() {
     idleDisplay.textContent = 0;
   }
 
-  // Force UI to refresh if needed (optional)
-  updateResourceDisplay(resources);
-  updateWorkerDisplay();
-
-  // location.reload();  // Refresh the page to reload clean state
+  localStorage.setItem("resetting", "true");
+  location.reload();
 }
