@@ -13,12 +13,26 @@ function hardResetGame() {
 
   console.log("All localStorage keys:", Object.keys(localStorage));
 
+  // Clear localStorage keys
   const keysToClear = [
     "idle_assignments",
     "idle_resources",
     "idle_workers",
-    "undefined"  // this key seems unintentional, but clear it anyway
+    "idle_gold",
+    "undefined"
   ];
   keysToClear.forEach(key => localStorage.removeItem(key));
+
+  // ALSO clear in-memory values if defined
+  if (typeof resources === "object") {
+    Object.keys(resources).forEach(key => delete resources[key]);
+  }
+  if (typeof assignments === "object") {
+    Object.keys(assignments).forEach(key => delete assignments[key]);
+  }
+  if (typeof workers !== "undefined") {
+    workers = 0;
+  }
+
   // location.reload();  // Refresh the page to reload clean state
 }
