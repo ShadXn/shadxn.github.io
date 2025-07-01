@@ -7,15 +7,6 @@
     //     return;
     // }
 
-    const originalSetItem = localStorage.setItem;
-    localStorage.setItem = function(key, value) {
-        if (key === undefined || key === "undefined") {
-            console.warn("⚠️ localStorage.setItem called with undefined key!", value);
-            console.trace();  // Show call stack in dev console
-        }
-        return originalSetItem.apply(this, arguments);
-    };
-
     let gameData = {};
     let jobs = {};
     let tasks = [];
@@ -153,7 +144,7 @@
     }
 
     function saveProgress() {
-        localStorage.setItem(resources.goldKey, resources.gold);
+        localStorage.setItem("idle_gold", resources.gold);
         localStorage.setItem(workersKey, workers);
         localStorage.setItem(assignmentsKey, JSON.stringify(assignments));
     }
