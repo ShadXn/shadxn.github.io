@@ -49,20 +49,13 @@
 
         // Expand recipe keys from structured recipe definitions
         const recipeData = data.recipes || {};
-        const tierOrder = ["bronze", "iron", "steel", "black", "mithril", "adamant", "rune", "dragon", "god"];
+        const tierOrder = ["bronze", "iron", "steel", "black", "mithril", "adamant", "rune", "dragon", "god", "victory"];
 
         tierOrder.forEach(tier => {
-            for (const itemType in recipeData) {
-                const itemEntry = recipeData[itemType];
-                if (itemType === "victory_recipe") {
-                    allItemKeys.add("recipe_victory_recipe");
-                    continue;
-                }
-                if (itemEntry[tier]) {
-                    const recipeKey = `recipe_${tier}_${itemType}`;
-                    console.log(`Adding recipe for ${recipeKey}`);
-                    allItemKeys.add(recipeKey);
-                }
+            if (recipeData[tier]) {
+                const recipeKey = `recipe_${tier}`;
+                allItemKeys.add(recipeKey);
+                console.log(`✅ Added recipe: ${recipeKey}`);
             }
         });
 

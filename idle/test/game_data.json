@@ -18,7 +18,7 @@
       "rune": { "chance": 0.01 },
       "dragon": { "chance": 0.01 },
       "god": { "chance": 0.01 },
-      "victory_recipe": {"chance": 0.0001}
+      "victory": {"chance": 0.0001}
   },
   "gear": {
     "bronze": {
