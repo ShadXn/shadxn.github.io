@@ -53,6 +53,12 @@
               Crafting
             </button>
           </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab">
+              <img src="assets/icons/settings_icon.png" alt="" width="28" height="28" style="vertical-align: middle; margin-right: 6px;">
+              Settings
+            </button>
+          </li>
         </ul>
 
 
@@ -116,6 +122,14 @@
               </div>
             </div>
           </div>
+
+          <!-- Settings Tab -->
+          <div class="tab-pane fade" id="settings" role="tabpanel">
+            <div id="settings-section" class="mt-3">
+              <button class="btn btn-danger btn-sm" onclick="hardResetGame()">🔁 Reset Game</button>
+            </div>
+          </div>
+          
         </div>
     </div>
   </div>
