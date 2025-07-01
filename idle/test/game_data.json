@@ -663,17 +663,17 @@
     "gp_reward": 10,
     "fights_required_to_unlock_next": 200,
     "unlocks": "fighting_tier_2",
-    "tool_recipe_drops": [
-      "recipe_bronze_pickaxe",
-      "recipe_bronze_axe",
-      "recipe_bronze_rod",
-      "recipe_bronze_gloves",
-      "recipe_bronze_boots",
-      "recipe_bronze_hammer",
-      "recipe_bronze_shield",
-      "recipe_bronze_sword",
-      "recipe_bronze_armor"
-    ]
+    "produces": {
+      "recipe_bronze_pickaxe": { "chance": 0.01 },
+      "recipe_bronze_axe": { "chance": 0.01 },
+      "recipe_bronze_rod": { "chance": 0.01 },
+      "recipe_bronze_gloves": { "chance": 0.01 },
+      "recipe_bronze_boots": { "chance": 0.01 },
+      "recipe_bronze_hammer": { "chance": 0.01 },
+      "recipe_bronze_shield": { "chance": 0.01 },
+      "recipe_bronze_sword": { "chance": 0.01 },
+      "recipe_bronze_armor": { "chance": 0.01 }
+    }
     },
     "fighting_tier_2": {
     "food_cost": 3,
