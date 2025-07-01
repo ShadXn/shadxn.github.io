@@ -1,6 +1,9 @@
 // settings.js
 function hardResetGame() {
   if (!confirm("Are you sure you want to reset all progress?")) return;
+
+  console.log("All localStorage keys:", Object.keys(localStorage));
+
   const keysToClear = [
     "idle_assignments",
     "idle_resources",
