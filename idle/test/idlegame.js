@@ -297,7 +297,7 @@
                 const parts = key.split("_");
                 const tier = parts[1];
                 const type = parts.slice(2).join("_");
-                iconKey = `${tier}_${type}`;
+                iconKey = `recipe_${tier}_${type}`;
             }
 
             img.src = `assets/icons/${iconKey}_icon.png`;
