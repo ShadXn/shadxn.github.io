@@ -1,12 +1,4 @@
 (function () {
-    // if (localStorage.getItem("resetting") === "true") {
-    //     localStorage.clear(); // Now actually wipe everything
-    //     localStorage.removeItem("resetting"); // Clean up
-    //     // Optional: Add delay if you want smoother UX
-    //     setTimeout(() => location.reload(), 1000);
-    //     return;
-    // }
-
     let gameData = {};
     let jobs = {};
     let tasks = [];
