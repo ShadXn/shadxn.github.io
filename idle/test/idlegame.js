@@ -600,4 +600,19 @@
         saveProgress();
     }
 
+    function hardResetGame() {
+        if (confirm("Are you sure you want to reset the game? This will delete all progress.")) {
+            // Clear all localStorage keys used by the game
+            localStorage.clear();
+
+            // Optionally: If you store things under a specific prefix, use:
+            // for (let key in localStorage) {
+            //   if (key.startsWith("idlegame_")) localStorage.removeItem(key);
+            // }
+
+            // Reload the page to reinitialize the game
+            location.reload();
+        }
+    }
+
 })();
