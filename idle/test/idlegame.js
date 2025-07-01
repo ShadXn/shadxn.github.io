@@ -1,4 +1,14 @@
 (function () {
+    if (localStorage.getItem("resetting") === "true") {
+        localStorage.removeItem("resetting");
+
+        // Prevent loading old values
+        localStorage.removeItem("idle_gold");
+        localStorage.removeItem("idle_resources");
+        localStorage.removeItem("idle_workers");
+        localStorage.removeItem("idle_assignments");
+    }
+
     let gameData = {};
     let jobs = {};
     let tasks = [];
@@ -136,7 +146,7 @@
     }
 
     function saveProgress() {
-        localStorage.setItem(resources.goldKey, resources.gold);
+        localStorage.setItem("idle_gold", resources.gold);
         localStorage.setItem(workersKey, workers);
         localStorage.setItem(assignmentsKey, JSON.stringify(assignments));
     }
