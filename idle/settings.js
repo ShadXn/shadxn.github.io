@@ -11,5 +11,5 @@ function hardResetGame() {
     "undefined"  // this key seems unintentional, but clear it anyway
   ];
   keysToClear.forEach(key => localStorage.removeItem(key));
-  location.reload();  // Refresh the page to reload clean state
+  // location.reload();  // Refresh the page to reload clean state
 }
