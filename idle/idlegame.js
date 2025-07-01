@@ -601,18 +601,26 @@
     }
 
     function hardResetGame() {
-        if (confirm("Are you sure you want to reset the game? This will delete all progress.")) {
-            // Clear all localStorage keys used by the game
-            localStorage.clear();
+        if (!confirm("Are you sure you want to reset the game? This will erase all progress.")) return;
 
-            // Optionally: If you store things under a specific prefix, use:
-            // for (let key in localStorage) {
-            //   if (key.startsWith("idlegame_")) localStorage.removeItem(key);
-            // }
+        // Clear localStorage or only relevant keys
+        localStorage.clear(); // or use filtered keys if needed
 
-            // Reload the page to reinitialize the game
-            location.reload();
-        }
+        // Reset game state variables (optional safety)
+        gold = 0;
+        workers = 0;
+        idleWorkers = 0;
+        playerItems = {}; // clear all inventory
+
+        // Re-initialize your UI and logic
+        updateResourceDisplay();
+        updateWorkerDisplay();
+        updateTaskDisplay();
+        updateCraftingOptions();
+
+        // You may also want to call any init methods used on first load
+        initializeGame();
     }
+
 
 })();
