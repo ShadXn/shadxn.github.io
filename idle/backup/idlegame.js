@@ -5,18 +5,6 @@
     let gearData = {};
     let toolData = {};
     let goldDisplay, workerDisplay, idleDisplay, costDisplay, buyBtn, taskList;
-    
-    const availableIcons = new Set([
-        "fish", "logs", "ore", "ingot", "cooked_fish", "gold", "recipe", 
-        "bronze_sword", "bronze_armor", "bronze_shield",
-        "bronze_axe", "bronze_pickaxe", "bronze_rod", "bronze_hammer", "bronze_boots", "bronze_gloves",
-
-        // Add other resource keys you’ve created icons for
-    ]);
-
-    // Collect all item keys from gearData and toolData
-    const allItemKeys = new Set();
-
 
     fetch('game_data.json')
     .then(response => response.json())
@@ -31,33 +19,6 @@
             console.error("Missing expected sections in game_data.json");
             return;
         }
-
-        // Collect all resource, tool, gear keys
-        Object.keys(data.resources).forEach(k => allItemKeys.add(k));
-
-        for (const tier in data.tools) {
-            for (const part in data.tools[tier]) {
-                allItemKeys.add(`${tier}_${part}`); // e.g. bronze_pickaxe
-            }
-        }
-
-        for (const tier in data.gear) {
-            for (const part in data.gear[tier]) {
-                allItemKeys.add(`${tier}_${part}`); // e.g. bronze_sword
-            }
-        }
-
-        // Expand recipe keys from structured recipe definitions
-        const recipeData = data.recipes || {};
-        const tierOrder = ["bronze", "iron", "steel", "black", "mithril", "adamant", "rune", "dragon", "god", "victory"];
-
-        tierOrder.forEach(tier => {
-            if (recipeData[tier]) {
-                const recipeKey = `recipe_${tier}`;
-                allItemKeys.add(recipeKey);
-                console.log(`✅ Added recipe: ${recipeKey}`);
-            }
-        });
 
         populateJobs(jobs);
 
@@ -109,9 +70,6 @@
                 saveProgress();
             }
         });
-        
-        // ✅ Prebuild item display for resources, gear, and tools
-        prebuildItemDisplay(allItemKeys);
 
         updateUI();
         const craftables = buildCraftables(gearData, toolData);
@@ -265,74 +223,6 @@
         });
     }
 
-    function prebuildItemDisplay(itemKeys) {
-        const containers = {
-            default: document.getElementById("resource-display"),
-            gear: document.getElementById("gear-display"),
-            tool: document.getElementById("tool-display"),
-            recipe: document.getElementById("recipe-display")
-        };
-
-        updateResourceDisplay._initialized = true;
-        updateResourceDisplay._elements = {};
-
-        itemKeys.forEach(key => {
-            const card = document.createElement("div");
-            card.className = "col";
-            card.id = `item-card-${key}`;
-
-            const innerCard = document.createElement("div");
-            innerCard.className = "card p-2 bg-white border shadow-sm d-flex align-items-center gap-2";
-
-            // Icon or fallback
-            const img = document.createElement("img");
-
-            // Load icons based on key
-            let iconKey = key;
-            if (key.startsWith("recipe_")) {
-                const parts = key.split("_");
-                const tier = parts[1];
-                iconKey = `recipe_${tier}`;
-            }
-
-            img.src = `assets/icons/${iconKey}_icon.png`;
-            img.alt = key;
-            img.width = 24;
-            img.height = 24;
-
-            img.onerror = () => {
-                img.remove();
-                const fallback = document.createElement("div");
-                fallback.className = "fallback-text";
-                fallback.textContent = key.replace(/_/g, ' ');
-                innerCard.insertBefore(fallback, text);
-            };
-
-            innerCard.appendChild(img);
-
-            // Amount text
-            const text = document.createElement("div");
-            text.id = `item-count-${key}`;
-            text.innerHTML = "0";
-            innerCard.appendChild(text);
-
-            card.appendChild(innerCard);
-
-            // Append to correct section
-            if (key.startsWith("recipe_")) {
-                containers.recipe.appendChild(card);
-            } else if (/sword|armor|shield/.test(key)) {
-                containers.gear.appendChild(card);
-            } else if (/pickaxe|axe|rod|hammer|gloves|cape|boots/.test(key)) {
-                containers.tool.appendChild(card);
-            } else {
-                containers.default.appendChild(card);
-            }
-
-            // ✅ Store reference for future updates
-            updateResourceDisplay._elements[key] = text;
-        });
-    }
 
     // Generate task UI
     tasks.forEach(task => {
@@ -373,7 +263,6 @@
             mining: [["god_pickaxe", "dragon_pickaxe", "rune_pickaxe", "adamant_pickaxe", "mithril_pickaxe", "black_pickaxe", "steel_pickaxe", "iron_pickaxe", "bronze_pickaxe"]],
             fishing: [["god_rod", "dragon_rod", "rune_rod", "adamant_rod", "mithril_rod", "black_rod", "steel_rod", "iron_rod", "bronze_rod"]],
             woodcutting: [["god_axe", "dragon_axe", "rune_axe", "adamant_axe", "mithril_axe", "black_axe", "steel_axe", "iron_axe", "bronze_axe"]],
-            smithing: [["god_hammer", "dragon_hammer", "rune_hammer", "adamant_hammer", "mithril_hammer", "black_hammer", "steel_hammer", "iron_hammer", "bronze_hammer"]],
             cooking: [["god_gloves", "dragon_gloves", "rune_gloves", "adamant_gloves", "mithril_gloves", "black_gloves", "steel_gloves", "iron_gloves", "bronze_gloves"]],
             thieving: [["god_boots", "dragon_boots", "rune_boots", "adamant_boots", "mithril_boots", "black_boots", "steel_boots", "iron_boots", "bronze_boots"]],
             fighting_tier_1: [
@@ -435,7 +324,7 @@
         return toolPriority[jobId] || [];
     }
 
-    // Assign tools based on job requirements
+
     function assignTools(jobId, count, resources) {
         const toolSets = getBestToolForJob(jobId, resources);  // Now an array of arrays
         const assignedToolSets = [];
@@ -462,7 +351,6 @@
         return assignedToolSets;
     }
 
-    // Apply job tick every second
     function applyJobTick() {
         Object.keys(toolsInUse).forEach(tool => toolsInUse[tool] = 0);
         for (const task of tasks) {
@@ -533,17 +421,36 @@
     }
     setInterval(applyJobTick, 1000);
 
-    // Update resource count display
+    // Update resource display
     function updateResourceDisplay(resources) {
-        Object.entries(updateResourceDisplay._elements).forEach(([key, element]) => {
-            const value = resources[key] || 0;
+        const resourceContainer = document.getElementById("resource-display");
+        const gearContainer = document.getElementById("gear-display");
+        const toolContainer = document.getElementById("tool-display");
+        resourceContainer.innerHTML = "";
+        gearContainer.innerHTML = "";
+        toolContainer.innerHTML = "";
+
+        Object.entries(resources).forEach(([key, value]) => {
+            if (key === "gold") return;
+
             const inUse = toolsInUse[key] || 0;
-            const showInUse = inUse > 0 ? ` (In use: ${inUse})` : "";
-            element.innerHTML = `${value}${showInUse}`;
+            const showInUse = inUse > 0 ? ` <span class="text-muted">(In use: ${inUse})</span>` : "";
+
+            const card = document.createElement("div");
+            card.className = "col";
+            card.innerHTML = `
+                <div class="card p-2 bg-white border shadow-sm">
+                    <div class="fw-semibold">${key.replace(/_/g, ' ')}</div>
+                    <div>${value}${showInUse}</div>
+                </div>
+            `;
+
+            if (/sword|armor|shield/.test(key)) gearContainer.appendChild(card);
+            else if (/pickaxe|axe|rod|gloves|cape/.test(key)) toolContainer.appendChild(card);
+            else resourceContainer.appendChild(card);
         });
     }
 
-    // Show crafting section with gear and tools
     function showCraftingSection(items = [], resources = {}) {
         const gearContainer = document.getElementById("gear-craft");
         const toolContainer = document.getElementById("tools-craft");
