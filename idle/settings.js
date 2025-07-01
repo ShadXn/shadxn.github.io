@@ -30,6 +30,18 @@ function hardResetGame() {
   if (typeof assignments === "object") {
     Object.keys(assignments).forEach(key => delete assignments[key]);
   }
+  if (typeof tasks === "object") {
+    Object.keys(tasks).forEach(key => delete tasks[key]);
+  }
+  if (typeof gearData === "object") {
+    Object.keys(gearData).forEach(key => delete gearData[key]);
+  }
+  if (typeof toolData === "object") {
+    Object.keys(toolData).forEach(key => delete toolData[key]);
+  }
+  if (typeof goldDisplay === "object") {
+    goldDisplay.textContent = 0;
+  }
   if (typeof workers !== "undefined") {
     workers = 0;
   }
