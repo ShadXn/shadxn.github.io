@@ -7,6 +7,15 @@
     //     return;
     // }
 
+    const originalSetItem = localStorage.setItem;
+    localStorage.setItem = function(key, value) {
+        if (key === undefined || key === "undefined") {
+            console.warn("⚠️ localStorage.setItem called with undefined key!", value);
+            console.trace();  // Show call stack in dev console
+        }
+        return originalSetItem.apply(this, arguments);
+    };
+
     let gameData = {};
     let jobs = {};
     let tasks = [];
