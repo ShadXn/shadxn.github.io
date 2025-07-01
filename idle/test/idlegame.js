@@ -49,19 +49,22 @@
 
         // Expand recipe keys from structured recipe definitions
         const recipeData = data.recipes || {};
-        for (const itemType in recipeData) {
-            const itemEntry = recipeData[itemType];
-            // victory_recipe has no tiers
-            if (itemType === "victory_recipe") {
-                allItemKeys.add("recipe_victory_recipe");
-                continue;
+        const tierOrder = ["bronze", "iron", "steel", "black", "mithril", "adamant", "rune", "dragon", "god"];
+
+        tierOrder.forEach(tier => {
+            for (const itemType in recipeData) {
+                const itemEntry = recipeData[itemType];
+                if (itemType === "victory_recipe") {
+                    allItemKeys.add("recipe_victory_recipe");
+                    continue;
+                }
+                if (itemEntry[tier]) {
+                    const recipeKey = `recipe_${tier}_${itemType}`;
+                    console.log(`Adding recipe for ${recipeKey}`);
+                    allItemKeys.add(recipeKey);
+                }
             }
-            for (const tier in itemEntry) {
-                console.log(`Adding recipe for ${tier} ${itemType}`); // <== debugging line
-                const recipeKey = `recipe_${tier}_${itemType}`; // e.g. recipe_bronze_sword
-                allItemKeys.add(recipeKey);
-            }
-        }
+        });
 
         populateJobs(jobs);
 
