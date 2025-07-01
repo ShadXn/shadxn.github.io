@@ -57,6 +57,7 @@
                 continue;
             }
             for (const tier in itemEntry) {
+                console.log(`Adding recipe for ${tier} ${itemType}`); // <== debugging line
                 const recipeKey = `recipe_${tier}_${itemType}`; // e.g. recipe_bronze_sword
                 allItemKeys.add(recipeKey);
             }
