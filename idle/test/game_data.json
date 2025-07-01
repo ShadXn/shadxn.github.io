@@ -9,7 +9,6 @@
     "gold": {}
   },
   "recipes": {
-    "bronze": {
       "bronze": { "chance": 0.01 },
       "iron": { "chance": 0.01 },
       "steel": { "chance": 0.01 },
@@ -20,7 +19,6 @@
       "dragon": { "chance": 0.01 },
       "god": { "chance": 0.01 },
       "victory_recipe": {"chance": 0.0001}
-    }
   },
   "gear": {
     "bronze": {
