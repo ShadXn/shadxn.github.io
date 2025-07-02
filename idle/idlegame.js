@@ -139,6 +139,9 @@
         idleDisplay.textContent = getIdleWorkers();
         costDisplay.textContent = workerCost;
 
+        // Disable buy button if not enough gold
+        buyBtn.disabled = resources.gold < workerCost;
+
         tasks.forEach(task => {
             const countSpan = document.getElementById(`count-${task.id}`);
             if (countSpan) countSpan.textContent = assignments[task.id];
