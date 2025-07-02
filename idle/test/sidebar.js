@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const positionSelect = document.getElementById("sidebar-position");
   const toggleBtn = document.getElementById("toggle-sidebar");
   const sidebar = document.getElementById("sidebar");
+  const toggleIcon = document.getElementById("sidebar-toggle-icon");
 
   loadSidebarPreferences();
   loadSidebarPosition();
@@ -21,7 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (toggleBtn) {
     toggleBtn.addEventListener("click", () => {
-      sidebar.classList.toggle("collapsed");
+    sidebar.classList.toggle("collapsed");
+    updateToggleIcon();
     });
   }
 
@@ -143,16 +145,25 @@ function loadSidebarPosition() {
   const saved = localStorage.getItem("sidebar_position") || "right";
   const selector = document.getElementById("sidebar-position");
 
-  // Apply sidebar position class (sidebar-left or sidebar-right)
   applySidebarPosition(saved);
 
-  // Update the floating toggle button’s side so it matches
   const btn = document.getElementById("sidebar-visibility-toggle");
   if (btn) {
     btn.classList.toggle("sidebar-left", saved === "left");
     btn.classList.toggle("sidebar-right", saved === "right");
   }
 
-  // Also update the <select> dropdown in the settings form (if visible)
+  updateToggleIcon(); // <- Add this line
   if (selector) selector.value = saved;
+}
+
+function updateToggleIcon() {
+  const isCollapsed = sidebar.classList.contains("collapsed");
+  const isLeft = sidebar.classList.contains("sidebar-left");
+
+  if (toggleIcon) {
+    toggleIcon.className = isCollapsed
+      ? (isLeft ? "bi bi-chevron-right" : "bi bi-chevron-left")
+      : (isLeft ? "bi bi-chevron-left" : "bi bi-chevron-right");
+  }
 }
