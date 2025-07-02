@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("sidebar-settings-form");
   const positionSelect = document.getElementById("sidebar-position");
   const visibilityBtn = document.getElementById("sidebar-visibility-toggle");
+  const sidebarWrapper = document.getElementById("sidebar-wrapper");
+
 
   window.sidebar = sidebar;
   window.toggleIcon = toggleIcon;
@@ -24,14 +26,13 @@ document.addEventListener("DOMContentLoaded", () => {
     positionSelect.addEventListener("change", saveSidebarPosition);
   }
 
-  if (visibilityBtn) {
     visibilityBtn.addEventListener("click", () => {
-      sidebar.classList.toggle("collapsed");
-      const isCollapsed = sidebar.classList.contains("collapsed");
-      localStorage.setItem("sidebar_collapsed", isCollapsed ? "true" : "false");
-      updateToggleIcon();
+    sidebar.classList.toggle("collapsed");
+    sidebarWrapper.classList.toggle("collapsed");  // <-- Add this line
+    const isCollapsed = sidebar.classList.contains("collapsed");
+    localStorage.setItem("sidebar_collapsed", isCollapsed ? "true" : "false");
+    updateToggleIcon();
     });
-  }
 
   renderSidebarContent();
 });
