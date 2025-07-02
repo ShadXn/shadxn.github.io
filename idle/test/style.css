@@ -63,9 +63,10 @@ body {
 
 /* Sidebar */
 .sidebar-wrapper {
-  display: flex;
-  flex-direction: row;
-  transition: all 0.3s ease;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  z-index: 2000;
 }
 
 .sidebar {
@@ -85,8 +86,12 @@ body {
 }
 
 /* Toggle button */
+/* Button should be inside wrapper so it follows sidebar movement */
 .sidebar-toggle-btn {
-  width: 12px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
   height: 48px;
   background-color: #e0e0e0;
   border: 1px solid #999;
@@ -96,26 +101,22 @@ body {
   cursor: pointer;
   font-size: 16px;
   padding: 0;
-  margin-top: 50%;
+  z-index: 10;
   transition: left 0.3s ease, right 0.3s ease;
 }
 
-/* Button placement when sidebar is on RIGHT */
+/* Right side toggle */
 .sidebar-wrapper.sidebar-right .sidebar-toggle-btn {
   right: 0;
 }
-
-/* Move inward when sidebar is collapsed (on RIGHT) */
 .sidebar-wrapper.sidebar-right .sidebar.collapsed + .sidebar-toggle-btn {
   right: -14px;
 }
 
-/* Button placement when sidebar is on LEFT */
+/* Left side toggle */
 .sidebar-wrapper.sidebar-left .sidebar-toggle-btn {
   left: 0;
 }
-
-/* Move inward when sidebar is collapsed (on LEFT) */
 .sidebar-wrapper.sidebar-left .sidebar.collapsed + .sidebar-toggle-btn {
   left: -14px;
 }
