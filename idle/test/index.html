@@ -35,33 +35,11 @@
           </button>
         </div>
 
-      <!-- Sidebar -->
-      <div id="sidebar" class="sidebar sidebar-right">
-        <button id="toggle-sidebar" class="btn btn-sm btn-secondary">☰</button>
-        <div id="sidebar-content" class="sidebar-content">
-          <h6>📋 Display in Sidebar</h6>
-          <form id="sidebar-settings-form">
-            <label><input type="checkbox" name="show_resources" checked> Resources</label><br>
-            <label><input type="checkbox" name="show_tools" checked> Tools</label><br>
-            <label><input type="checkbox" name="show_gear" checked> Weapons & Armor</label><br>
-            <label><input type="checkbox" name="show_recipes" checked> Recipes</label><br>
-            <label><input type="checkbox" name="show_jobs" checked> Jobs</label><br>
-            <label><input type="checkbox" name="show_crafting_tools" checked> Crafting Tools</label><br>
-            <label><input type="checkbox" name="show_crafting_gear" checked> Crafting Gear</label><br>
-            <label><input type="checkbox" name="show_achievements" checked> Achievements</label><br>
-            <hr>
-            <label>Sidebar Position:
-              <select id="sidebar-position">
-                <option value="right">Right</option>
-                <option value="left">Left</option>
-              </select>
-            </label>
-          </form>
+        <!-- Sidebar -->
+        <div id="sidebar" class="sidebar sidebar-right">
+          <button id="toggle-sidebar" class="btn btn-sm btn-secondary">☰</button>
+          <div id="sidebar-viewer"></div>
         </div>
-        <div id="sidebar-viewer"></div>
-      </div>
-
-
 
         <!-- Tabs Nav -->
         <ul class="nav nav-tabs mt-3" id="gameTabs" role="tablist">
@@ -205,7 +183,16 @@
                   <input class="form-check-input" type="checkbox" id="show_achievements" checked>
                   <label class="form-check-label" for="show_achievements">Achievements</label>
                 </div>
+
+                <div class="form-group mt-2">
+                  <label for="sidebar-position">Sidebar Position:</label>
+                  <select id="sidebar-position" class="form-select form-select-sm w-auto">
+                    <option value="right">Right</option>
+                    <option value="left">Left</option>
+                  </select>
+                </div>
               </form>
+
 
             </div>
           </div>

@@ -1,19 +1,32 @@
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("sidebar-settings-form");
+  const positionSelect = document.getElementById("sidebar-position");
+  const toggleBtn = document.getElementById("toggle-sidebar");
+  const sidebar = document.getElementById("sidebar");
 
-  // Load saved settings
   loadSidebarPreferences();
+  loadSidebarPosition();
 
-  // Save and re-render on change
   form.addEventListener("change", () => {
     saveSidebarPreferences();
     renderSidebarContent();
+    saveSidebarPosition(); // position might also have changed
   });
 
-  // Initial render
+  if (positionSelect) {
+    positionSelect.addEventListener("change", () => {
+      saveSidebarPosition();
+    });
+  }
+
+  if (toggleBtn) {
+    toggleBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("collapsed");
+    });
+  }
+
   renderSidebarContent();
 });
-
 
 function getSidebarPreferences() {
   const form = document.getElementById("sidebar-settings-form");
@@ -26,6 +39,7 @@ function getSidebarPreferences() {
     show_crafting_tools: form.show_crafting_tools.checked,
     show_crafting_gear: form.show_crafting_gear.checked,
     show_achievements: form.show_achievements.checked,
+    sidebar_position: form.sidebar_position?.value || "right",
   };
 }
 
@@ -72,11 +86,38 @@ function loadSidebarPreferences() {
     const form = document.getElementById("sidebar-settings-form");
 
     for (const key in preferences) {
-      if (form.elements[key]) {
+      if (form.elements[key] && form.elements[key].type === "checkbox") {
         form.elements[key].checked = preferences[key];
       }
     }
+
+    // ✅ Restore sidebar position select value too
+    if (preferences.sidebar_position && form.elements.sidebar_position) {
+      form.elements.sidebar_position.value = preferences.sidebar_position;
+    }
+
   } catch (err) {
     console.warn("Failed to load sidebar preferences:", err);
   }
+}
+
+function applySidebarPosition(position) {
+  const sidebar = document.getElementById("sidebar");
+  sidebar.classList.remove("sidebar-left", "sidebar-right");
+  sidebar.classList.add(`sidebar-${position}`);
+}
+
+function saveSidebarPosition() {
+  const selector = document.getElementById("sidebar-position");
+  const position = selector?.value || "right";
+  localStorage.setItem("sidebar_position", position);
+  applySidebarPosition(position);
+}
+
+function loadSidebarPosition() {
+  const saved = localStorage.getItem("sidebar_position") || "right";
+  const selector = document.getElementById("sidebar-position");
+
+  if (selector) selector.value = saved;
+  applySidebarPosition(saved);
 }
