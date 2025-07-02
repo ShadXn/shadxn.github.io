@@ -111,3 +111,27 @@ body {
   flex-direction: column;
   gap: 10px;
 }
+
+.sidebar-toggle-btn {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3000;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+/* Sidebar toggle button styles */
+.sidebar-left + .sidebar-toggle-btn {
+  left: 290px; /* next to left sidebar */
+}
+.sidebar-right + .sidebar-toggle-btn {
+  right: 290px; /* next to right sidebar */
+}
+
+.sidebar.collapsed + .sidebar-toggle-btn.sidebar-left {
+  left: 10px;
+}
+.sidebar.collapsed + .sidebar-toggle-btn.sidebar-right {
+  right: 10px;
+}

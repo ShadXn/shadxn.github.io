@@ -26,6 +26,23 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   renderSidebarContent();
+
+    // Sidebar toggle button
+    const visibilityBtn = document.getElementById("sidebar-visibility-toggle");
+
+    visibilityBtn.addEventListener("click", () => {
+        sidebar.classList.toggle("collapsed");
+
+        // Adjust floating button location
+        if (sidebar.classList.contains("sidebar-left")) {
+            visibilityBtn.classList.toggle("sidebar-left", true);
+            visibilityBtn.classList.toggle("sidebar-right", false);
+        } else {
+            visibilityBtn.classList.toggle("sidebar-left", false);
+            visibilityBtn.classList.toggle("sidebar-right", true);
+        }
+    });
+
 });
 
 function getSidebarPreferences() {
@@ -126,6 +143,16 @@ function loadSidebarPosition() {
   const saved = localStorage.getItem("sidebar_position") || "right";
   const selector = document.getElementById("sidebar-position");
 
-  if (selector) selector.value = saved;
+  // Apply sidebar position class (sidebar-left or sidebar-right)
   applySidebarPosition(saved);
+
+  // Update the floating toggle button’s side so it matches
+  const btn = document.getElementById("sidebar-visibility-toggle");
+  if (btn) {
+    btn.classList.toggle("sidebar-left", saved === "left");
+    btn.classList.toggle("sidebar-right", saved === "right");
+  }
+
+  // Also update the <select> dropdown in the settings form (if visible)
+  if (selector) selector.value = saved;
 }
