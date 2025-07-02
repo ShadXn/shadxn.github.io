@@ -14,6 +14,7 @@
       <!-- Expandable Container - idle game -->
   <div class="mb-3">
 
+    <!-- Header -->
     <div class="mt-2" id="expandInfo">
       <div class="card card-body bg-light border" id="idle-game">
         <div class="d-flex justify-content-between align-items-center mb-2">
@@ -33,6 +34,26 @@
             ➕ Buy Worker (<span id="worker-cost">10</span> gp)
           </button>
         </div>
+
+        <!-- Sidebar -->
+        <div id="sidebar" class="sidebar">
+          <button id="toggle-sidebar" class="btn btn-sm btn-secondary">☰</button>
+          <div id="sidebar-content" class="sidebar-content">
+            <h6>📋 Display in Sidebar</h6>
+            <form id="sidebar-settings-form">
+              <label><input type="checkbox" name="show_resources" checked> Resources</label><br>
+              <label><input type="checkbox" name="show_tools" checked> Tools</label><br>
+              <label><input type="checkbox" name="show_gear" checked> Weapons & Armor</label><br>
+              <label><input type="checkbox" name="show_recipes" checked> Recipes</label><br>
+              <label><input type="checkbox" name="show_jobs" checked> Jobs</label><br>
+              <label><input type="checkbox" name="show_crafting_tools" checked> Crafting Tools</label><br>
+              <label><input type="checkbox" name="show_crafting_gear" checked> Crafting Gear</label><br>
+              <label><input type="checkbox" name="show_achievements" checked> Achievements</label><br>
+            </form>
+          </div>
+          <div id="sidebar-viewer"></div>
+        </div>
+
 
         <!-- Tabs Nav -->
         <ul class="nav nav-tabs mt-3" id="gameTabs" role="tablist">
@@ -155,5 +176,6 @@
   <script src="settings.js"></script>
   <script src="idlegame.js"></script>
   <script src="jobs.js"></script>
+  <script src="sidebar.js"></script>
 </body>
 </html>

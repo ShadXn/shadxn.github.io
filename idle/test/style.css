@@ -1,3 +1,4 @@
+/* Global styles */
 body {
     font-family: 'Inter', sans-serif;
 }
@@ -14,6 +15,7 @@ body {
     color: black !important;
 }
 
+/* Resource display styles */
 #resource-display img {
     margin-right: 6px;
 }
@@ -49,4 +51,37 @@ body {
 #recipe-display .card {
   flex-direction: row !important;
   justify-content: start;
+}
+
+/* Sidebar styles */
+.sidebar {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 280px;
+  height: 100vh;
+  background: #f8f9fa;
+  border-left: 1px solid #ccc;
+  padding: 8px;
+  z-index: 2000;
+  overflow-y: auto;
+  transition: transform 0.3s ease;
+}
+
+.sidebar.collapsed {
+  transform: translateX(100%);
+}
+
+#toggle-sidebar {
+  position: absolute;
+  left: -40px;
+  top: 10px;
+  border-radius: 4px 0 0 4px;
+}
+
+#sidebar-viewer {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
