@@ -54,31 +54,57 @@ body {
 }
 
 /* Sidebar styles */
+/* Base sidebar */
 .sidebar {
   position: fixed;
-  right: 0;
   top: 0;
   width: 280px;
   height: 100vh;
   background: #f8f9fa;
-  border-left: 1px solid #ccc;
   padding: 8px;
   z-index: 2000;
   overflow-y: auto;
   transition: transform 0.3s ease;
 }
 
-.sidebar.collapsed {
+/* Right sidebar */
+.sidebar-right {
+  right: 0;
+  border-left: 1px solid #ccc;
+}
+
+.sidebar.collapsed.sidebar-right {
   transform: translateX(100%);
 }
 
+/* Left sidebar */
+.sidebar-left {
+  left: 0;
+  border-right: 1px solid #ccc;
+}
+
+.sidebar.collapsed.sidebar-left {
+  transform: translateX(-100%);
+}
+
+/* Toggle button */
 #toggle-sidebar {
   position: absolute;
-  left: -40px;
   top: 10px;
+  z-index: 10;
+}
+
+.sidebar-right #toggle-sidebar {
+  left: -40px;
   border-radius: 4px 0 0 4px;
 }
 
+.sidebar-left #toggle-sidebar {
+  right: -40px;
+  border-radius: 0 4px 4px 0;
+}
+
+/* Content */
 #sidebar-viewer {
   margin-top: 12px;
   display: flex;

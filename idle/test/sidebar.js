@@ -44,6 +44,14 @@ function getSidebarPreferences() {
 }
 
 function renderSidebarContent() {
+    const sidebar = document.getElementById("sidebar");
+
+    if (!preferences.show_sidebar) {
+    sidebar.style.display = "none";
+    } else {
+    sidebar.style.display = "block";
+    }
+
   const viewer = document.getElementById("sidebar-viewer");
   viewer.innerHTML = "";
   const preferences = getSidebarPreferences();
