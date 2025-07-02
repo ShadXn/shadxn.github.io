@@ -55,51 +55,37 @@ body {
 
 /* Sidebar styles */
 /* Sidebar base */
+/* App layout */
+#app-wrapper {
+  display: flex;
+  width: 100%;
+}
+
+/* Sidebar */
+.sidebar-wrapper {
+  display: flex;
+  flex-direction: row;
+  transition: all 0.3s ease;
+}
+
 .sidebar {
-  position: fixed;
-  top: 0;
   width: 280px;
-  height: 100vh;
   background: #f8f9fa;
   padding: 8px;
-  z-index: 2000;
-  overflow-y: auto;
-  transition: transform 0.3s ease;
-}
-
-/* Sidebar content area */
-#sidebar-viewer {
-  margin-top: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-/* Sidebar position: RIGHT */
-.sidebar-right {
-  right: 0;
   border-left: 1px solid #ccc;
+  overflow-y: auto;
+  transition: all 0.3s ease;
 }
 
-.sidebar.collapsed.sidebar-right {
-  transform: translateX(100%);
+.sidebar.collapsed {
+  width: 0;
+  padding: 0;
+  overflow: hidden;
+  border: none;
 }
 
-/* Sidebar position: LEFT */
-.sidebar-left {
-  left: 0;
-  border-right: 1px solid #ccc;
-}
-
-.sidebar.collapsed.sidebar-left {
-  transform: translateX(-100%);
-}
-
-/* Toggle button – base style */
+/* Toggle button */
 .sidebar-toggle-btn {
-  position: fixed;
-  top: 50%;
-  transform: translateY(-50%);
   width: 12px;
   height: 48px;
   background-color: #e0e0e0;
@@ -107,25 +93,24 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 3000;
   cursor: pointer;
-  padding: 0;
   font-size: 16px;
+  padding: 0;
+  margin-top: 50%;
+  transition: left 0.3s ease, right 0.3s ease;
 }
 
-/* Toggle button: RIGHT side */
 .sidebar-toggle-btn.sidebar-right {
-  right: 0;
-  border-radius: 6px 0 0 6px;
+  margin-left: -1px;
 }
 
-/* Toggle button: LEFT side */
 .sidebar-toggle-btn.sidebar-left {
-  left: 0;
-  border-radius: 0 6px 6px 0;
+  margin-right: -1px;
 }
 
-/* Toggle button hover effect */
-.sidebar-toggle-btn:hover {
-  background-color: #d0d0d0;
+/* Main content grows next to sidebar */
+#main-content {
+  flex-grow: 1;
+  padding: 16px;
+  transition: margin 0.3s ease;
 }

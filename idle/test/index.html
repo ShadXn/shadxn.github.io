@@ -11,22 +11,24 @@
 </head>
 <body class="bg-light text-dark">
 <!-- Sidebar Toggle Button -->
-<div id="sidebar-wrapper" class="sidebar-wrapper sidebar-right">
-  <div id="sidebar" class="sidebar collapsed">
-    <div id="sidebar-viewer"></div>
-  </div>
-  <button id="sidebar-visibility-toggle" class="sidebar-toggle-btn sidebar-right">
-    <i id="sidebar-toggle-icon" class="bi bi-chevron-left"></i>
-  </button>
-</div>
+<body class="bg-light text-dark">
+  <div id="app-wrapper" class="d-flex">
+    <!-- Sidebar Wrapper -->
+    <div id="sidebar-wrapper" class="sidebar-wrapper sidebar-right">
+      <div id="sidebar" class="sidebar collapsed">
+        <div id="sidebar-viewer"></div>
+      </div>
+      <button id="sidebar-visibility-toggle" class="sidebar-toggle-btn sidebar-right">
+        <i id="sidebar-toggle-icon" class="bi bi-chevron-left"></i>
+      </button>
+    </div>
 
-
-      <!-- Expandable Container - idle game -->
-  <div class="mb-3">
-
-    <!-- Header -->
-    <div class="mt-2" id="expandInfo">
-      <div class="card card-body bg-light border" id="idle-game">
+    <!-- Main content -->
+    <main id="main-content" class="flex-grow-1">
+      <!-- Your game content here -->
+      <div class="mb-3">
+        <div class="mt-2" id="expandInfo">
+          <div class="card card-body bg-light border" id="idle-game">
         <div class="d-flex justify-content-between align-items-center mb-2">
           <h5 id="game-title" class="mb-0">Idle Worker</h5>
           <a id="version-button" href="#" target="_blank" class="btn btn-outline-primary btn-sm">Switch Version</a>
