@@ -54,71 +54,71 @@ body {
 }
 
 /* Sidebar styles */
-/* Sidebar base */
-/* App layout */
-#app-wrapper {
-  display: flex;
-  width: 100%;
-}
-
-/* Sidebar */
+/* Sidebar wrapper - affects layout */
 .sidebar-wrapper {
+  display: flex;
+  height: 100vh;
   position: fixed;
   top: 0;
-  bottom: 0;
   z-index: 2000;
+  transition: margin 0.3s ease;
 }
 
+/* Push content properly */
+.sidebar-wrapper.sidebar-left {
+  left: 0;
+  flex-direction: row;
+}
+
+.sidebar-wrapper.sidebar-right {
+  right: 0;
+  flex-direction: row-reverse;
+}
+
+/* Sidebar panel */
 .sidebar {
   width: 280px;
   background: #f8f9fa;
   padding: 8px;
-  border-left: 1px solid #ccc;
+  height: 100vh;
   overflow-y: auto;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease;
+  border-right: 1px solid #ccc;
 }
 
 .sidebar.collapsed {
-  width: 0;
-  padding: 0;
-  overflow: hidden;
-  border: none;
+  transform: translateX(-100%);
+}
+
+.sidebar-wrapper.sidebar-right .sidebar {
+  border-left: 1px solid #ccc;
+  border-right: none;
+}
+
+.sidebar-wrapper.sidebar-right .sidebar.collapsed {
+  transform: translateX(100%);
 }
 
 /* Toggle button */
-/* Button should be inside wrapper so it follows sidebar movement */
 .sidebar-toggle-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 14px;
+  position: relative;
+  width: 12px;
   height: 48px;
-  background-color: #e0e0e0;
+  background: #ddd;
   border: 1px solid #999;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 16px;
-  padding: 0;
-  z-index: 10;
-  transition: left 0.3s ease, right 0.3s ease;
+  margin-top: calc(50vh - 24px);
 }
 
-/* Right side toggle */
-.sidebar-wrapper.sidebar-right .sidebar-toggle-btn {
-  right: 0;
-}
-.sidebar-wrapper.sidebar-right .sidebar.collapsed + .sidebar-toggle-btn {
-  right: -14px;
-}
-
-/* Left side toggle */
 .sidebar-wrapper.sidebar-left .sidebar-toggle-btn {
-  left: 0;
+  border-radius: 0 6px 6px 0;
 }
-.sidebar-wrapper.sidebar-left .sidebar.collapsed + .sidebar-toggle-btn {
-  left: -14px;
+
+.sidebar-wrapper.sidebar-right .sidebar-toggle-btn {
+  border-radius: 6px 0 0 6px;
 }
 
 /* Main content layout */
