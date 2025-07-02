@@ -106,6 +106,12 @@ function loadSidebarPreferences() {
 }
 
 function applySidebarPosition(position) {
+  const sidebar = document.getElementById("sidebar");
+  if (!sidebar) {
+    console.warn("❌ Sidebar element not found in DOM");
+    return;
+  }
+
   sidebar.classList.remove("sidebar-left", "sidebar-right");
   sidebar.classList.add(`sidebar-${position}`);
 }
@@ -128,12 +134,15 @@ function loadSidebarPosition() {
 }
 
 function updateToggleIcon() {
+  const sidebar = document.getElementById("sidebar");
+  const toggleIcon = document.getElementById("sidebar-toggle-icon");
+
+  if (!sidebar || !toggleIcon) return;
+
   const isCollapsed = sidebar.classList.contains("collapsed");
   const isLeft = sidebar.classList.contains("sidebar-left");
 
-  if (toggleIcon) {
-    toggleIcon.className = isCollapsed
-      ? (isLeft ? "bi bi-chevron-right" : "bi bi-chevron-left")
-      : (isLeft ? "bi bi-chevron-left" : "bi bi-chevron-right");
-  }
+  toggleIcon.className = isCollapsed
+    ? (isLeft ? "bi bi-chevron-right" : "bi bi-chevron-left")
+    : (isLeft ? "bi bi-chevron-left" : "bi bi-chevron-right");
 }
