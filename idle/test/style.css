@@ -100,17 +100,22 @@ body {
   transition: left 0.3s ease, right 0.3s ease;
 }
 
-.sidebar-toggle-btn.sidebar-right {
-  margin-left: -1px;
+/* Button placement when sidebar is on RIGHT */
+.sidebar-wrapper.sidebar-right .sidebar-toggle-btn {
+  right: 0;
 }
 
-.sidebar-toggle-btn.sidebar-left {
-  margin-right: -1px;
+/* Move inward when sidebar is collapsed (on RIGHT) */
+.sidebar-wrapper.sidebar-right .sidebar.collapsed + .sidebar-toggle-btn {
+  right: -14px;
 }
 
-/* Main content grows next to sidebar */
-#main-content {
-  flex-grow: 1;
-  padding: 16px;
-  transition: margin 0.3s ease;
+/* Button placement when sidebar is on LEFT */
+.sidebar-wrapper.sidebar-left .sidebar-toggle-btn {
+  left: 0;
+}
+
+/* Move inward when sidebar is collapsed (on LEFT) */
+.sidebar-wrapper.sidebar-left .sidebar.collapsed + .sidebar-toggle-btn {
+  left: -14px;
 }
