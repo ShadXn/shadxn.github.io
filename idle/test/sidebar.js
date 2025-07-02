@@ -14,14 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
   applySidebarPosition(getSavedSidebarPosition());
   loadSidebarPosition();
 
-  // ⬇️ Restore collapsed state
-  const collapsed = localStorage.getItem("sidebar_collapsed") === "true";
-  if (collapsed) {
-    sidebar.classList.add("collapsed");
-  } else {
-    sidebar.classList.remove("collapsed");
-  }
-
   form.addEventListener("change", () => {
     saveSidebarPreferences();
     renderSidebarContent();
@@ -127,8 +119,18 @@ function loadSidebarPreferences() {
 // Apply sidebar position based on saved preference
 function applySidebarPosition(position) {
   const wrapper = document.getElementById("sidebar-wrapper");
+  const sidebar = document.getElementById("sidebar");
+  const btn = document.getElementById("sidebar-visibility-toggle");
+
   wrapper.classList.remove("sidebar-left", "sidebar-right");
   wrapper.classList.add(`sidebar-${position}`);
+
+  btn.classList.remove("sidebar-left", "sidebar-right");
+  btn.classList.add(`sidebar-${position}`);
+
+  // ⬇️ Apply collapsed state from localStorage
+  const isCollapsed = localStorage.getItem("sidebar_collapsed") === "true";
+  sidebar.classList.toggle("collapsed", isCollapsed);
 }
 
 // Save sidebar position and update toggle icon
