@@ -7,14 +7,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const positionSelect = document.getElementById("sidebar-position");
   const visibilityBtn = document.getElementById("sidebar-visibility-toggle");
 
-  // Make these accessible in helper functions
   window.sidebar = sidebar;
   window.toggleIcon = toggleIcon;
 
-    loadSidebarPreferences();
-    applySidebarPosition(getSavedSidebarPosition()); // manually apply early
-    loadSidebarPosition(); // sets toggle classes and selector
+  loadSidebarPreferences();
+  applySidebarPosition(getSavedSidebarPosition());
+  loadSidebarPosition();
 
+  // ⬇️ Restore collapsed state
+  const collapsed = localStorage.getItem("sidebar_collapsed") === "true";
+  if (collapsed) {
+    sidebar.classList.add("collapsed");
+  } else {
+    sidebar.classList.remove("collapsed");
+  }
 
   form.addEventListener("change", () => {
     saveSidebarPreferences();
@@ -29,6 +35,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (visibilityBtn) {
     visibilityBtn.addEventListener("click", () => {
       sidebar.classList.toggle("collapsed");
+      const isCollapsed = sidebar.classList.contains("collapsed");
+      localStorage.setItem("sidebar_collapsed", isCollapsed ? "true" : "false");
       updateToggleIcon();
     });
   }
@@ -36,10 +44,12 @@ document.addEventListener("DOMContentLoaded", () => {
   renderSidebarContent();
 });
 
+// Save sidebar position to localStorage
 function getSavedSidebarPosition() {
   return localStorage.getItem("sidebar_position") || "right";
 }
 
+// Get sidebar preferences from the form
 function getSidebarPreferences() {
   const form = document.getElementById("sidebar-settings-form");
   return {
@@ -55,6 +65,7 @@ function getSidebarPreferences() {
   };
 }
 
+// Render sidebar content based on preferences
 function renderSidebarContent() {
   const viewer = document.getElementById("sidebar-viewer");
   viewer.innerHTML = "";
@@ -84,11 +95,13 @@ function renderSidebarContent() {
   if (preferences.show_achievements) appendSection("Achievements", []);
 }
 
+// Save sidebar preferences to localStorage
 function saveSidebarPreferences() {
   const preferences = getSidebarPreferences();
   localStorage.setItem("sidebar_preferences", JSON.stringify(preferences));
 }
 
+// Load sidebar preferences from localStorage
 function loadSidebarPreferences() {
   const saved = localStorage.getItem("sidebar_preferences");
   if (!saved) return;
@@ -111,12 +124,14 @@ function loadSidebarPreferences() {
   }
 }
 
+// Apply sidebar position based on saved preference
 function applySidebarPosition(position) {
   const wrapper = document.getElementById("sidebar-wrapper");
   wrapper.classList.remove("sidebar-left", "sidebar-right");
   wrapper.classList.add(`sidebar-${position}`);
 }
 
+// Save sidebar position and update toggle icon
 function saveSidebarPosition() {
   const selector = document.getElementById("sidebar-position");
   const position = selector?.value || "right";
@@ -125,6 +140,7 @@ function saveSidebarPosition() {
   updateToggleIcon();
 }
 
+// Load sidebar position from localStorage or default to "right"
 function loadSidebarPosition() {
   const saved = localStorage.getItem("sidebar_position") || "right";
   const selector = document.getElementById("sidebar-position");
@@ -134,6 +150,7 @@ function loadSidebarPosition() {
   updateToggleIcon();
 }
 
+// Update the toggle icon based on sidebar state
 function updateToggleIcon() {
   const sidebar = document.getElementById("sidebar");
   const icon = document.getElementById("sidebar-toggle-icon");
