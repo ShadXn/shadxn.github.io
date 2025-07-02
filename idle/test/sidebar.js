@@ -43,6 +43,9 @@ document.addEventListener("DOMContentLoaded", () => {
   if (savedCollapsed) {
     sidebarWrapper.classList.add("collapsed");
   }
+
+    // ✅ Make sure this runs after layout setup
+  renderSidebarContent(); 
 });
 
 // Save sidebar position to localStorage
