@@ -1,73 +1,48 @@
 let sidebar, toggleIcon;
 
 document.addEventListener("DOMContentLoaded", () => {
-  const sidebar = document.getElementById("sidebar");
-  const toggleIcon = document.getElementById("sidebar-toggle-icon");
-  const form = document.getElementById("sidebar-settings-form");
-  const positionSelect = document.getElementById("sidebar-position");
-  const visibilityBtn = document.getElementById("sidebar-visibility-toggle");
   const sidebarWrapper = document.getElementById("sidebar-wrapper");
+  const toggleIcon = document.getElementById("sidebar-toggle-icon");
+  const toggleBtn = document.getElementById("sidebar-visibility-toggle");
+  const positionSelect = document.getElementById("sidebar-position");
 
-  // Expose for debugging if needed
-  window.sidebar = sidebar;
-  window.toggleIcon = toggleIcon;
-
-  // === Utility to apply left/right positioning ===
-  function applySidebarPosition(position) {
-    // Clean up
-    sidebarWrapper.classList.remove("sidebar-left", "sidebar-right");
-    sidebar.classList.remove("sidebar-left", "sidebar-right");
-    visibilityBtn.classList.remove("sidebar-left", "sidebar-right");
-
-    // Apply new position
-    sidebarWrapper.classList.add(`sidebar-${position}`);
-    sidebar.classList.add(`sidebar-${position}`);
-    visibilityBtn.classList.add(`sidebar-${position}`);
+  function updateIcon(collapsed, position) {
+    if (position === "left") {
+      toggleIcon.className = collapsed ? "bi bi-chevron-right" : "bi bi-chevron-left";
+    } else {
+      toggleIcon.className = collapsed ? "bi bi-chevron-left" : "bi bi-chevron-right";
+    }
   }
 
-  // === Initialize Position and Collapse State ===
-  const savedPosition = getSavedSidebarPosition(); // "left" or "right"
-  applySidebarPosition(savedPosition);
+  function applyPosition(pos) {
+    sidebarWrapper.classList.remove("sidebar-left", "sidebar-right");
+    sidebarWrapper.classList.add(`sidebar-${pos}`);
+    updateIcon(sidebarWrapper.classList.contains("collapsed"), pos);
+  }
 
-  const collapsed = localStorage.getItem("sidebar_collapsed") === "true";
-  if (collapsed) {
-    sidebar.classList.add("collapsed");
+  toggleBtn.addEventListener("click", () => {
+    sidebarWrapper.classList.toggle("collapsed");
+    const isCollapsed = sidebarWrapper.classList.contains("collapsed");
+    const currentPosition = sidebarWrapper.classList.contains("sidebar-right") ? "right" : "left";
+    updateIcon(isCollapsed, currentPosition);
+    localStorage.setItem("sidebar_collapsed", isCollapsed ? "true" : "false");
+  });
+
+  if (positionSelect) {
+    positionSelect.addEventListener("change", () => {
+      const pos = positionSelect.value;
+      localStorage.setItem("sidebar_position", pos);
+      applyPosition(pos);
+    });
+  }
+
+  // Init
+  const savedPos = localStorage.getItem("sidebar_position") || "left";
+  const savedCollapsed = localStorage.getItem("sidebar_collapsed") === "true";
+  applyPosition(savedPos);
+  if (savedCollapsed) {
     sidebarWrapper.classList.add("collapsed");
   }
-
-  // === Load Settings ===
-  loadSidebarPreferences();
-  loadSidebarPosition();
-
-  // === Event Listeners ===
-
-  form?.addEventListener("change", () => {
-    saveSidebarPreferences();
-    renderSidebarContent();
-    saveSidebarPosition();
-
-    // Reapply correct position in case user changes it
-    const updatedPosition = getSavedSidebarPosition();
-    applySidebarPosition(updatedPosition);
-  });
-
-  positionSelect?.addEventListener("change", () => {
-    saveSidebarPosition();
-    applySidebarPosition(positionSelect.value);
-  });
-
-  visibilityBtn?.addEventListener("click", () => {
-    sidebar.classList.toggle("collapsed");
-    sidebarWrapper.classList.toggle("collapsed");
-
-    const isCollapsed = sidebar.classList.contains("collapsed");
-    localStorage.setItem("sidebar_collapsed", isCollapsed ? "true" : "false");
-
-    updateToggleIcon();
-  });
-
-  // === Render the initial content ===
-  renderSidebarContent();
 });
 
 // Save sidebar position to localStorage
