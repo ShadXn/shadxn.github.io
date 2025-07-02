@@ -11,14 +11,18 @@
 </head>
 <body class="bg-light text-dark">
 <!-- Sidebar Toggle Button -->
-<button id="sidebar-visibility-toggle" class="sidebar-toggle-btn">
-  <i id="sidebar-toggle-icon" class="bi bi-chevron-left"></i>
-</button>
-<!-- Collapsible sidebar panel -->
-<div id="sidebar" class="sidebar sidebar-right collapsed">
-  <!-- Everything you render from sidebar.js drops in here -->
-  <div id="sidebar-viewer"></div>
+<div id="sidebar-wrapper" class="sidebar-wrapper sidebar-right">
+  <!-- Sidebar Panel -->
+  <div id="sidebar" class="sidebar collapsed">
+    <div id="sidebar-viewer"></div>
+  </div>
+
+  <!-- Toggle Button -->
+  <button id="sidebar-visibility-toggle" class="sidebar-toggle-btn">
+    <i id="sidebar-toggle-icon" class="bi bi-chevron-left"></i>
+  </button>
 </div>
+
 
 
       <!-- Expandable Container - idle game -->

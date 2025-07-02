@@ -11,8 +11,10 @@ document.addEventListener("DOMContentLoaded", () => {
   window.sidebar = sidebar;
   window.toggleIcon = toggleIcon;
 
-  loadSidebarPreferences();
-  loadSidebarPosition();
+    loadSidebarPreferences();
+    applySidebarPosition(getSavedSidebarPosition()); // manually apply early
+    loadSidebarPosition(); // sets toggle classes and selector
+
 
   form.addEventListener("change", () => {
     saveSidebarPreferences();
@@ -34,13 +36,17 @@ document.addEventListener("DOMContentLoaded", () => {
   renderSidebarContent();
 });
 
+function getSavedSidebarPosition() {
+  return localStorage.getItem("sidebar_position") || "right";
+}
+
 function getSidebarPreferences() {
   const form = document.getElementById("sidebar-settings-form");
   return {
     show_resources: form.show_resources.checked,
+    show_recipes: form.show_recipes.checked,
     show_tools: form.show_tools.checked,
     show_gear: form.show_gear.checked,
-    show_recipes: form.show_recipes.checked,
     show_jobs: form.show_jobs.checked,
     show_crafting_tools: form.show_crafting_tools.checked,
     show_crafting_gear: form.show_crafting_gear.checked,
@@ -106,14 +112,9 @@ function loadSidebarPreferences() {
 }
 
 function applySidebarPosition(position) {
-  const sidebar = document.getElementById("sidebar");
-  if (!sidebar) {
-    console.warn("❌ Sidebar element not found in DOM");
-    return;
-  }
-
-  sidebar.classList.remove("sidebar-left", "sidebar-right");
-  sidebar.classList.add(`sidebar-${position}`);
+  const wrapper = document.getElementById("sidebar-wrapper");
+  wrapper.classList.remove("sidebar-left", "sidebar-right");
+  wrapper.classList.add(`sidebar-${position}`);
 }
 
 function saveSidebarPosition() {
@@ -135,14 +136,13 @@ function loadSidebarPosition() {
 
 function updateToggleIcon() {
   const sidebar = document.getElementById("sidebar");
-  const toggleIcon = document.getElementById("sidebar-toggle-icon");
-
-  if (!sidebar || !toggleIcon) return;
+  const icon = document.getElementById("sidebar-toggle-icon");
+  const wrapper = document.getElementById("sidebar-wrapper");
 
   const isCollapsed = sidebar.classList.contains("collapsed");
-  const isLeft = sidebar.classList.contains("sidebar-left");
+  const isLeft = wrapper.classList.contains("sidebar-left");
 
-  toggleIcon.className = isCollapsed
+  icon.className = isCollapsed
     ? (isLeft ? "bi bi-chevron-right" : "bi bi-chevron-left")
     : (isLeft ? "bi bi-chevron-left" : "bi bi-chevron-right");
 }
