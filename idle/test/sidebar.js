@@ -1,29 +1,29 @@
 let sidebar, toggleIcon;
 
 document.addEventListener("DOMContentLoaded", () => {
+  const sidebar = document.getElementById("sidebar");
+  const toggleIcon = document.getElementById("sidebar-toggle-icon");
   const form = document.getElementById("sidebar-settings-form");
   const positionSelect = document.getElementById("sidebar-position");
   const visibilityBtn = document.getElementById("sidebar-visibility-toggle");
 
-  sidebar = document.getElementById("sidebar");
-  toggleIcon = document.getElementById("sidebar-toggle-icon");
+  // Make these accessible in helper functions
+  window.sidebar = sidebar;
+  window.toggleIcon = toggleIcon;
 
   loadSidebarPreferences();
   loadSidebarPosition();
 
-  // Handle settings change
   form.addEventListener("change", () => {
     saveSidebarPreferences();
     renderSidebarContent();
     saveSidebarPosition();
   });
 
-  // Handle position selector change
   if (positionSelect) {
     positionSelect.addEventListener("change", saveSidebarPosition);
   }
 
-  // Handle visibility toggle button
   if (visibilityBtn) {
     visibilityBtn.addEventListener("click", () => {
       sidebar.classList.toggle("collapsed");
