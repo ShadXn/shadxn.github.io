@@ -119,3 +119,9 @@ body {
 .sidebar-wrapper.sidebar-left .sidebar.collapsed + .sidebar-toggle-btn {
   left: -14px;
 }
+
+/* worker buy button */
+#buy-worker:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
