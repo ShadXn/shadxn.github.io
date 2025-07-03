@@ -76,5 +76,16 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.style.overflow = ""; // ✅ restore scroll
     });
 
+    const overlay = document.getElementById("news-overlay");
+
+    document.getElementById("open-news-btn").addEventListener("click", () => {
+        overlay.classList.add("show");
+        document.body.style.overflow = "hidden";
+    });
+
+    document.getElementById("close-news-btn").addEventListener("click", () => {
+        overlay.classList.remove("show");
+        document.body.style.overflow = "";
+    });
 
 });
