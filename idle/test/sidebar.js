@@ -128,7 +128,8 @@ function loadSidebarPreferences() {
     }
 
     if (form.elements.sidebar_position) {
-      form.elements.sidebar_position.value = preferences.sidebar_position || "right";
+    const savedPos = localStorage.getItem("sidebar_position") || "right";
+    form.elements.sidebar_position.value = savedPos;
     }
 
     applySidebarPosition(preferences.sidebar_position || "right");
