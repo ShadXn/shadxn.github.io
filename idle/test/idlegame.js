@@ -290,7 +290,7 @@
 
         itemKeys.forEach(key => {
             const card = document.createElement("div");
-            card.className = "col";
+            card.className = "";
             card.id = `item-card-${key}`;
 
             const innerCard = document.createElement("div");
