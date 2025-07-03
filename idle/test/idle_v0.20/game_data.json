@@ -1,0 +1,678 @@
+{
+  "resources": {
+    "fish": {},
+    "cooked_fish": {},
+    "logs": {},
+    "ore": {},
+    "ingot": {},
+    "recipe": { "chance": 0.005 },
+    "gold": {}
+  },
+  "recipes": {
+      "bronze": { "chance": 0.01 },
+      "iron": { "chance": 0.01 },
+      "steel": { "chance": 0.01 },
+      "black": { "chance": 0.01 },
+      "mithril": { "chance": 0.01 },
+      "adamant": { "chance": 0.01 },
+      "rune": { "chance": 0.01 },
+      "dragon": { "chance": 0.01 },
+      "god": { "chance": 0.01 },
+      "victory": {"chance": 0.0001}
+  },
+  "gear": {
+    "bronze": {
+      "sword": {
+        "tier": 1,
+        "type": "weapon",
+        "cost": { "logs": 200, "ingot": 100, "recipe_bronze": 1 },
+        "upgrade_to": "iron_sword"
+      },
+      "armor": {
+        "tier": 1,
+        "type": "armor",
+        "cost": { "logs": 200, "ingot": 150, "recipe_bronze": 1 },
+        "upgrade_to": "iron_armor"
+      },
+      "shield": {
+        "tier": 1,
+        "type": "shield",
+        "cost": { "logs": 200, "ingot": 100, "recipe_bronze": 1 },
+        "upgrade_to": "iron_shield"
+      }
+    },
+    "iron": {
+      "sword": {
+        "tier": 2,
+        "type": "weapon",
+        "cost": { "bronze_sword": 1, "ingot": 20, "recipe_iron": 1 },
+        "upgrade_to": "steel_sword"
+      },
+      "armor": {
+        "tier": 2,
+        "type": "armor",
+        "cost": { "bronze_armor": 1, "ingot": 25, "recipe_iron": 1 },
+        "upgrade_to": "steel_armor"
+      },
+      "shield": {
+        "tier": 2,
+        "type": "shield",
+        "cost": { "bronze_shield": 1, "ingot": 22, "recipe_iron": 1 },
+        "upgrade_to": "steel_shield"
+      }
+    },
+    "steel": {
+      "sword": {
+        "tier": 3,
+        "type": "weapon",
+        "cost": { "iron_sword": 1, "ingot": 30, "recipe_steel": 1 },
+        "upgrade_to": "black_sword"
+      },
+      "armor": {
+        "tier": 3,
+        "type": "armor",
+        "cost": { "iron_armor": 1, "ingot": 35, "recipe_steel": 1 },
+        "upgrade_to": "black_armor"
+      },
+      "shield": {
+        "tier": 3,
+        "type": "shield",
+        "cost": { "iron_shield": 1, "ingot": 32, "recipe_steel": 1 },
+        "upgrade_to": "black_shield"
+      }
+    }, 
+    "black": {
+      "sword": {
+        "tier": 4,
+        "type": "weapon",
+        "cost": { "steel_sword": 1, "ingot": 40, "recipe_black": 1 },
+        "upgrade_to": "mithril_sword"
+      },
+      "armor": {
+        "tier": 4,
+        "type": "armor",
+        "cost": { "steel_armor": 1, "ingot": 45, "recipe_black": 1 },
+        "upgrade_to": "mithril_armor"
+      },
+      "shield": {
+        "tier": 4,
+        "type": "shield",
+        "cost": { "steel_shield": 1, "ingot": 42, "recipe_black": 1 },
+        "upgrade_to": "mithril_shield"
+      }
+    },
+    "mithril": {
+      "sword": {
+        "tier": 5,
+        "type": "weapon",
+        "cost": { "black_sword": 1, "ingot": 50, "recipe_mithril": 1 },
+        "upgrade_to": "adamant_sword"
+      },
+      "armor": {
+        "tier": 5,
+        "type": "armor",
+        "cost": { "black_armor": 1, "ingot": 55, "recipe_mithril": 1 },
+        "upgrade_to": "adamant_armor"
+      },
+      "shield": {
+        "tier": 5,
+        "type": "shield",
+        "cost": { "black_shield": 1, "ingot": 52, "recipe_mithril": 1 },
+        "upgrade_to": "adamant_armor"
+      }
+    },
+    "adamant": {
+      "sword": {
+        "tier": 6,
+        "type": "weapon",
+        "cost": { "mithril_sword": 1, "ingot": 60, "recipe_adamant": 1 },
+        "upgrade_to": "rune_sword"
+      },
+        "armor": {
+            "tier": 6,
+            "type": "armor",
+            "cost": { "mithril_armor": 1, "ingot": 65, "recipe_adamant": 1 },
+            "upgrade_to": "rune_armor"
+        },
+        "shield": {
+            "tier": 6,
+            "type": "shield",
+            "cost": { "mithril_shield": 1, "ingot": 62, "recipe_adamant": 1 },
+            "upgrade_to": "rune_shield"
+        }
+    },
+    "rune": {
+        "sword": {
+            "tier": 7,
+            "type": "weapon",
+            "cost": { "adamant_sword": 1, "ingot": 70, "recipe_rune": 1 },
+            "upgrade_to": "dragon_sword"
+        },
+        "armor": {
+            "tier": 7,
+            "type": "armor",
+            "cost": { "adamant_armor": 1, "ingot": 75, "recipe_rune": 1 },
+            "upgrade_to": "dragon_armor"
+        },
+        "shield": {
+            "tier": 7,
+            "type": "shield",
+            "cost": { "adamant_shield": 1, "ingot": 72, "recipe_rune": 1 },
+            "upgrade_to": "dragon_shield"
+        }
+    },
+    "dragon": {
+        "sword": {
+            "tier": 8,
+            "type": "weapon",
+            "cost": { "rune_sword": 1, "ingot": 80, "recipe_dragon": 1 },
+            "upgrade_to": "god_sword"
+        },
+        "armor": {
+            "tier": 8,
+            "type": "armor",
+            "cost": { "rune_armor": 1, "ingot": 85, "recipe_dragon": 1 },
+            "upgrade_to": "god_armor"
+        },
+        "shield": {
+            "tier": 8,
+            "type": "shield",
+            "cost": { "rune_shield": 1, "ingot": 82, "recipe_dragon": 1 },
+            "upgrade_to": "god_shield"
+        }
+    },
+    "god": {
+        "sword": {
+            "tier": 9,
+            "type": "weapon",
+            "cost": { "dragon_sword": 1, "ingot": 90, "recipe_god": 1 },
+            "upgrade_to": "nothing"
+        },
+        "armor": {
+            "tier": 9,
+            "type": "armor",
+            "cost": { "dragon_armor": 1, "ingot": 95, "recipe_god": 1 },
+            "upgrade_to": "nothing"
+        },
+        "shield": {
+            "tier": 9,
+            "type": "shield",
+            "cost": { "dragon_shield": 1, "ingot": 92, "recipe_god": 1 },
+            "upgrade_to": "nothing"
+        }
+    }
+
+    
+  },
+    "tools": {
+    "bronze": {
+        "pickaxe": {
+        "used_for": "mining",
+        "action_speed_multiplier": 0.9,
+        "cost": { "ingot": 100, "logs": 200, "recipe_bronze": 1 }
+        },
+        "axe": {
+        "used_for": "woodcutting",
+        "action_speed_multiplier": 0.9,
+        "cost": { "ingot": 100, "logs": 200, "recipe_bronze": 1 }
+        },
+        "rod": {
+        "used_for": "fishing",
+        "action_speed_multiplier": 0.9,
+        "cost": { "ingot": 100, "logs": 200, "recipe_bronze": 1 }
+        },
+        "hammer": {
+        "used_for": "smithing",
+        "action_speed_multiplier": 0.9,
+        "cost": { "ingot": 100, "logs": 200, "recipe_bronze": 1 }
+        },
+        "gloves": {
+        "used_for": "cooking",
+        "action_speed_multiplier": 0.9,
+        "cost": { "fish": 300, "logs": 200, "recipe_bronze": 1 }
+        },
+        "boots": {
+        "used_for": "thieving",
+        "action_speed_multiplier": 0.9,
+        "gold_multiplier": 2.0,
+        "cost": { "ingot": 100, "logs": 200, "recipe_bronze": 1 }
+        }
+    },
+    "iron": {
+        "pickaxe": {
+        "used_for": "mining",
+        "action_speed_multiplier": 0.8,
+        "cost": { "bronze_pickaxe": 1, "ingot": 200, "logs": 400, "recipe_iron": 1 }
+        },
+        "axe": {
+        "used_for": "woodcutting",
+        "action_speed_multiplier": 0.8,
+        "cost": { "bronze_axe": 1, "ingot": 200, "logs": 400, "recipe_iron": 1 }
+        },
+        "rod": {
+        "used_for": "fishing",
+        "action_speed_multiplier": 0.8,
+        "cost": { "bronze_rod": 1, "ingot": 200, "logs": 400, "recipe_iron": 1 }
+        },
+        "hammer": {
+        "used_for": "smithing",
+        "action_speed_multiplier": 0.8,
+        "cost": { "bronze_hammer": 1, "ingot": 200, "logs": 400, "recipe_iron": 1 }
+        },
+        "gloves": {
+        "used_for": "cooking",
+        "action_speed_multiplier": 0.8,
+        "cost": { "bronze_gloves": 1, "fish": 200, "logs": 400, "recipe_iron": 1 }
+        },
+        "boots": {
+        "used_for": "thieving",
+        "action_speed_multiplier": 0.8,
+        "gold_multiplier": 3.0,
+        "cost": { "bronze_boots": 1, "ingot": 200, "logs": 400, "recipe_iron": 1 }
+        }
+    },
+    "steel": {
+        "pickaxe": {
+        "used_for": "mining",
+        "action_speed_multiplier": 0.7,
+        "cost": { "iron_pickaxe": 1, "ingot": 20, "logs": 10, "recipe_steel": 1 }
+        },
+        "axe": {
+        "used_for": "woodcutting",
+        "action_speed_multiplier": 0.7,
+        "cost": { "iron_axe": 1, "ingot": 20, "logs": 10, "recipe_steel": 1 }
+        },
+        "rod": {
+        "used_for": "fishing",
+        "action_speed_multiplier": 0.7,
+        "cost": { "iron_rod": 1, "ingot": 20, "logs": 10, "recipe_steel": 1 }
+        },
+        "hammer": {
+        "used_for": "smithing",
+        "action_speed_multiplier": 0.7,
+        "cost": { "iron_hammer": 1, "ingot": 20, "logs": 10, "recipe_steel": 1 }
+        },
+        "gloves": {
+        "used_for": "cooking",
+        "action_speed_multiplier": 0.7,
+        "cost": { "iron_gloves": 1, "fish": 15, "logs": 6, "recipe_steel": 1 }
+        },
+        "boots": {
+        "used_for": "thieving",
+        "action_speed_multiplier": 0.7,
+        "gold_multiplier": 5.0,
+        "cost": { "iron_boots": 1, "ingot": 20, "logs": 10, "recipe_steel": 1 }
+        }
+    },
+    "black": {
+        "pickaxe": {
+        "used_for": "mining",
+        "action_speed_multiplier": 0.6,
+        "cost": { "steel_pickaxe": 1, "ingot": 25, "logs": 12, "recipe_black": 1 }
+        },
+        "axe": {
+        "used_for": "woodcutting",
+        "action_speed_multiplier": 0.6,
+        "cost": { "steel_axe": 1, "ingot": 25, "logs": 12, "recipe_black": 1 }
+        },
+        "rod": {
+        "used_for": "fishing",
+        "action_speed_multiplier": 0.6,
+        "cost": { "steel_rod": 1, "ingot": 25, "logs": 12, "recipe_black": 1 }
+        },
+        "hammer": {
+        "used_for": "smithing",
+        "action_speed_multiplier": 0.6,
+        "cost": { "steel_hammer": 1, "ingot": 25, "logs": 12, "recipe_black": 1 }
+        },
+        "gloves": {
+        "used_for": "cooking",
+        "action_speed_multiplier": 0.6,
+        "cost": { "steel_gloves": 1, "fish": 20, "logs": 8, "recipe_black": 1 }
+        },
+        "boots": {
+        "used_for": "thieving",
+        "action_speed_multiplier": 0.6,
+        "gold_multiplier": 10.0,
+        "cost": { "steel_boots": 1, "ingot": 25, "logs": 12, "recipe_black": 1 }
+        }
+    },
+    "mithril": {
+        "pickaxe": {
+        "used_for": "mining",
+        "action_speed_multiplier": 0.5,
+        "cost": { "black_pickaxe": 1, "ingot": 30, "logs": 15, "recipe_mithril": 1 }
+        },
+        "axe": {
+        "used_for": "woodcutting",
+        "action_speed_multiplier": 0.5,
+        "cost": { "black_axe": 1, "ingot": 30, "logs": 15, "recipe_mithril": 1 }
+        },
+        "rod": {
+        "used_for": "fishing",
+        "action_speed_multiplier": 0.5,
+        "cost": { "black_rod": 1, "ingot": 30, "logs": 15, "recipe_mithril": 1 }
+        },
+        "hammer": {
+        "used_for": "smithing",
+        "action_speed_multiplier": 0.5,
+        "cost": { "black_hammer": 1, "ingot": 30, "logs": 15, "recipe_mithril": 1 }
+        },
+        "gloves": {
+        "used_for": "cooking",
+        "action_speed_multiplier": 0.5,
+        "cost": { "black_gloves": 1, "fish": 25, "logs": 10, "recipe_mithril": 1 }
+        },
+        "boots": {
+        "used_for": "thieving",
+        "action_speed_multiplier": 0.5,
+        "gold_multiplier": 15.0,
+        "cost": { "black_boots": 1, "ingot": 30, "logs": 15, "recipe_mithril": 1 }
+        }
+    },
+    "adamant": {
+        "pickaxe": {
+        "used_for": "mining",
+        "action_speed_multiplier": 0.4,
+        "cost": { "mithril_pickaxe": 1, "ingot": 35, "logs": 18, "recipe_adamant": 1 }
+        },
+        "axe": {
+        "used_for": "woodcutting",
+        "action_speed_multiplier": 0.4,
+        "cost": { "mithril_axe": 1, "ingot": 35, "logs": 18, "recipe_adamant": 1 }
+        },
+        "rod": {
+        "used_for": "fishing",
+        "action_speed_multiplier": 0.4,
+        "cost": { "mithril_rod": 1, "ingot": 35, "logs": 18, "recipe_adamant": 1 }
+        },
+        "hammer": {
+        "used_for": "smithing",
+        "action_speed_multiplier": 0.4,
+        "cost": { "mithril_hammer": 1, "ingot": 35, "logs": 18, "recipe_adamant": 1 }
+        },
+        "gloves": {
+        "used_for": "cooking",
+        "action_speed_multiplier": 0.4,
+        "cost": { "mithril_gloves": 1, "fish": 30, "logs": 12, "recipe_adamant": 1 }
+        },
+        "boots": {
+        "used_for": "thieving",
+        "action_speed_multiplier": 0.4,
+        "gold_multiplier": 20.0,
+        "cost": { "mithril_boots": 1, "ingot": 35, "logs": 18, "recipe_adamant": 1 }
+        }
+    },
+    "rune": {
+        "pickaxe": {
+        "used_for": "mining",
+        "action_speed_multiplier": 0.3,
+        "cost": { "adamant_pickaxe": 1, "ingot": 40, "logs": 20, "recipe_rune": 1 }
+        },
+        "axe": {
+        "used_for": "woodcutting",
+        "action_speed_multiplier": 0.3,
+        "cost": { "adamant_axe": 1, "ingot": 40, "logs": 20, "recipe_rune": 1 }
+        },
+        "rod": {
+        "used_for": "fishing",
+        "action_speed_multiplier": 0.3,
+        "cost": { "adamant_rod": 1, "ingot": 40, "logs": 20, "recipe_rune": 1 }
+        },
+        "hammer": {
+        "used_for": "smithing",
+        "action_speed_multiplier": 0.3,
+        "cost": { "adamant_hammer": 1, "ingot": 40, "logs": 20, "recipe_rune": 1 }
+        },
+        "gloves": {
+        "used_for": "cooking",
+        "action_speed_multiplier": 0.3,
+        "cost": { "adamant_gloves": 1, "fish": 35, "logs": 15, "recipe_rune": 1 }
+        },
+        "boots": {
+        "used_for": "thieving",
+        "action_speed_multiplier": 0.3,
+        "gold_multiplier": 25.0,
+        "cost": { "adamant_boots": 1, "ingot": 40, "logs": 20, "recipe_rune": 1 }
+        }
+    },
+    "dragon": {
+        "pickaxe": {
+        "used_for": "mining",
+        "action_speed_multiplier": 0.2,
+        "cost": { "rune_pickaxe": 1, "ingot": 45, "logs": 25, "recipe_dragon": 1 }
+        },
+        "axe": {
+        "used_for": "woodcutting",
+        "action_speed_multiplier": 0.2,
+        "cost": { "rune_axe": 1, "ingot": 45, "logs": 25, "recipe_dragon": 1 }
+        },
+        "rod": {
+        "used_for": "fishing",
+        "action_speed_multiplier": 0.2,
+        "cost": { "rune_rod": 1, "ingot": 45, "logs": 25, "recipe_dragon": 1 }
+        },
+        "hammer": {
+        "used_for": "smithing",
+        "action_speed_multiplier": 0.2,
+        "cost": { "rune_hammer": 1, "ingot": 45, "logs": 25, "recipe_dragon": 1 }
+        },
+        "gloves": {
+        "used_for": "cooking",
+        "action_speed_multiplier": 0.2,
+        "cost": { "rune_gloves": 1, "fish": 40, "logs": 20, "recipe_dragon": 1 }
+        },
+        "boots": {
+        "used_for": "thieving",
+        "action_speed_multiplier": 0.2,
+        "gold_multiplier": 50.0,
+        "cost": { "rune_boots": 1, "ingot": 45, "logs": 25, "recipe_dragon": 1 }
+        }
+    },
+    "god": {
+        "pickaxe": {
+            "used_for": "mining",
+            "action_speed_multiplier": 0.1,
+            "cost": { "dragon_pickaxe": 1, "ingot": 50, "logs": 30, "recipe_god": 1 }
+        },
+        "axe": {
+            "used_for": "woodcutting",
+            "action_speed_multiplier": 0.1,
+            "cost": { "dragon_axe": 1, "ingot": 50, "logs": 30, "recipe_god": 1 }
+        },
+        "rod": {
+            "used_for": "fishing",
+            "action_speed_multiplier": 0.1,
+            "cost": { "dragon_rod": 1, "ingot": 50, "logs": 30, "recipe_god": 1 }
+        },
+        "hammer": {
+            "used_for": "smithing",
+            "action_speed_multiplier": 0.1,
+            "cost": { "dragon_hammer": 1, "ingot": 50, "logs": 30, "recipe_god": 1 }
+        },
+        "gloves": {
+            "used_for": "cooking",
+            "action_speed_multiplier": 0.1,
+            "cost": { "dragon_gloves": 1, "fish": 45, "logs": 25, "recipe_god": 1 }
+        },
+        "boots": {
+            "used_for": "thieving",
+            "action_speed_multiplier": 0.1,
+            "gold_multiplier": 100.0,
+            "cost": { "dragon_boots": 1, "ingot": 50, "logs": 30, "recipe_god": 1 }
+        }
+    }
+},
+  "jobs": {
+    "thieving": {
+    "food_cost": 1,
+    "job_action_time": 0.9,
+    "required_gear": "none",
+    "action_speed_multiplier": 0.9,
+    "produces": {
+        "gold": 5
+    }
+    },
+    "woodcutting": {
+    "food_cost": 0,
+    "job_action_time": 0.9,
+    "required_gear": "none",
+    "action_speed_multiplier": 0.9,
+    "produces": {
+        "logs": 1
+    }
+    },
+    "mining": {
+    "food_cost": 0,
+    "job_action_time": 0.9,
+    "required_gear": "none",
+    "action_speed_multiplier": 0.9,
+    "produces": {
+        "ore": 1
+    }
+    },
+    "smithing": {
+    "food_cost": 0,
+    "job_action_time": 0.9,
+    "required_gear": "none",
+    "action_speed_multiplier": 0.9,
+    "required_resources": {
+        "ore": 1
+    },
+    "produces": {
+        "ingot": 1
+    }
+    },
+    "fishing": {
+    "food_cost": 0,
+    "job_action_time": 0.9,
+    "required_gear": "none",
+    "action_speed_multiplier": 0.9,
+    "produces": {
+        "fish": 1
+    }
+    },
+    "cooking": {
+    "food_cost": 0,
+    "job_action_time": 0.9,
+    "required_gear": "none",
+    "action_speed_multiplier": 0.9,
+    "required_resources": {
+        "fish": 1
+    },
+    "produces": {
+        "cooked_fish": 1
+    }
+    },
+    "fighting_tier_1": {
+    "food_cost": 2,
+    "job_action_time": 0.9,
+    "required_gear": "none",
+    "gp_reward": 10,
+    "fights_required_to_unlock_next": 200,
+    "unlocks": "fighting_tier_2",
+    "produces": {
+      "recipe_bronze": { "chance": 0.01 }
+    }
+    },
+    "fighting_tier_2": {
+    "food_cost": 3,
+    "job_action_time": 0.9,
+    "required_gear": "bronze_sword, bronze_armor, bronze_shield",
+    "gp_reward": 20,
+    "fights_required_to_unlock_next": 400,
+    "unlocks": "fighting_tier_3",
+    "produces": {
+      "recipe_iron": { "chance": 0.01 }
+    }
+    },
+    "fighting_tier_3": {
+    "food_cost": 4,
+    "job_action_time": 0.9,
+    "required_gear": "iron_sword, iron_armor, iron_shield",
+    "gp_reward": 30,
+    "fights_required_to_unlock_next": 600,
+    "unlocks": "fighting_tier_4",
+    "produces": {
+      "recipe_steel": { "chance": 0.01 }
+    }
+    },
+    "fighting_tier_4": {
+    "food_cost": 5,
+    "job_action_time": 0.9,
+    "required_gear": "steel_sword, steel_armor, steel_shield",
+    "gp_reward": 40,
+    "fights_required_to_unlock_next": 800,
+    "unlocks": "fighting_tier_5",
+    "produces": {
+      "recipe_black": { "chance": 0.01 }
+    }
+    },
+    "fighting_tier_5": {
+    "food_cost": 6,
+    "job_action_time": 0.8,
+    "required_gear": "black_sword, black_armor, black_shield",
+    "gp_reward": 50,
+    "fights_required_to_unlock_next": 1000,
+    "unlocks": "fighting_tier_6",
+    "produces": {
+      "recipe_mithril": { "chance": 0.01 }
+    }
+    },
+    "fighting_tier_6": {
+    "food_cost": 7,
+    "job_action_time": 0.8,
+    "required_gear": "mithril_sword, mithril_armor, mithril_shield",
+    "gp_reward": 60,
+    "fights_required_to_unlock_next": 1200,
+    "unlocks": "fighting_tier_7",
+    "produces": {
+      "recipe_adamant": { "chance": 0.01 }
+    }
+    },
+    "fighting_tier_7": {
+    "food_cost": 8,
+    "job_action_time": 0.8,
+    "required_gear": "adamant_sword, adamant_armor, adamant_shield",
+    "gp_reward": 70,
+    "fights_required_to_unlock_next": 1400,
+    "unlocks": "fighting_tier_8",
+    "produces": {
+      "recipe_rune": { "chance": 0.01 }
+    }
+    },
+    "fighting_tier_8": {
+    "food_cost": 9,
+    "job_action_time": 0.8,
+    "required_gear": "rune_sword, rune_armor, rune_shield",
+    "gp_reward": 80,
+    "fights_required_to_unlock_next": 1600,
+    "unlocks": "fighting_tier_9",
+    "produces": {
+      "recipe_dragon": { "chance": 0.01 }
+    }
+    },
+    "fighting_tier_9": {
+    "food_cost": 10,
+    "job_action_time": 0.8,
+    "required_gear": "dragon_sword, dragon_armor, dragon_shield",
+    "gp_reward": 90,
+    "fights_required_to_unlock_next": 1800,
+    "unlocks": "fighting_tier_10",
+    "produces": {
+      "recipe_god": { "chance": 0.01 }
+    }
+    },
+    "fighting_tier_10": {
+    "food_cost": 11,
+    "job_action_time": 0.8,
+    "required_gear": "god_sword, god_armor, god_shield",
+    "gp_reward": 100,
+    "fights_required_to_unlock_next": 2000,
+    "unlocks": "nothing",
+    "produces": {
+      "recipe_victory": { "chance": 0.0001 }
+    }
+    }
+  }
+}
