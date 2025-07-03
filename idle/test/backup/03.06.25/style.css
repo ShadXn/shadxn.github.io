@@ -16,53 +16,8 @@ body {
 }
 
 /* Resource display styles */
-/* Suggested CSS overrides to make item cards more compact */
-/* Reduce padding on each card */
-#resource-display .card,
-#gear-display .card,
-#tool-display .card,
-#recipe-display .card {
-  padding: 4px !important;
-  gap: 4px !important;
-  font-size: 0.8rem;
-  min-width: 80px;
-  max-width: 100px;
-}
-
-/* Reduce inner icon and text spacing */
-#resource-display .card img,
-#gear-display .card img,
-#tool-display .card img,
-#recipe-display .card img {
-  width: 20px;
-  height: 20px;
-  margin-right: 4px;
-}
-
-/* Center items vertically and horizontally more tightly */
-#resource-display .card .d-flex,
-#gear-display .card .d-flex,
-#tool-display .card .d-flex,
-#recipe-display .card .d-flex {
-  align-items: center;
-  justify-content: start;
-  gap: 4px;
-}
-
-/* Reduce text size for counts */
-#resource-display .card div,
-#gear-display .card div,
-#tool-display .card div,
-#recipe-display .card div {
-  font-size: 0.75rem;
-}
-
-/* Ensure row layouts show more columns */
-#resource-display,
-#gear-display,
-#tool-display,
-#recipe-display {
-  gap: 4px !important;
+#resource-display img {
+    margin-right: 6px;
 }
 
 .fallback-text {
@@ -88,6 +43,14 @@ body {
 #recipe-display img,
 #recipe-display .fallback-text {
   margin-right: 8px;
+}
+
+#resource-display .card,
+#gear-display .card,
+#tool-display .card,
+#recipe-display .card {
+  flex-direction: row !important;
+  justify-content: start;
 }
 
 /* Sidebar styles */
@@ -183,4 +146,54 @@ body {
 #buy-worker:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+
+/* Suggested CSS overrides to make item cards more compact */
+/* Reduce padding on each card */
+#resource-display .card,
+#gear-display .card,
+#tool-display .card,
+#recipe-display .card {
+  padding: 4px !important;
+  gap: 4px !important;
+  font-size: 0.8rem;
+  min-width: 80px;
+  max-width: 100px;
+}
+
+/* Reduce inner icon and text spacing */
+#resource-display .card img,
+#gear-display .card img,
+#tool-display .card img,
+#recipe-display .card img {
+  width: 20px;
+  height: 20px;
+  margin-right: 4px;
+}
+
+/* Center items vertically and horizontally more tightly */
+#resource-display .card .d-flex,
+#gear-display .card .d-flex,
+#tool-display .card .d-flex,
+#recipe-display .card .d-flex {
+  align-items: center;
+  justify-content: start;
+  gap: 4px;
+}
+
+/* Reduce text size for counts */
+#resource-display .card div,
+#gear-display .card div,
+#tool-display .card div,
+#recipe-display .card div {
+  font-size: 0.75rem;
+}
+
+/* Ensure row layouts show more columns */
+#resource-display,
+#gear-display,
+#tool-display,
+#recipe-display {
+  gap: 4px !important;
 }
