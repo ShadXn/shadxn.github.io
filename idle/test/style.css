@@ -17,6 +17,11 @@ body {
 
 /* Resource display styles */
 /* Suggested CSS overrides to make item cards more compact */
+#resource-display .gap-2 .p-2 {
+  gap: 0.1rem; /* Reduce gap between items */
+  padding: 0.1rem; /* Reduce padding around items */
+}
+
 /* Fixed-size cards */
 #resource-display .card,
 #gear-display .card,
