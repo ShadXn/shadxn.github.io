@@ -40,6 +40,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const modal = new bootstrap.Modal(document.getElementById("updateModal"));
             modal.show();
+            // Ensure focus goes to the modal properly
+            setTimeout(() => {
+                document.getElementById("updateModal").focus();
+            }, 10);
             }
         }
 
