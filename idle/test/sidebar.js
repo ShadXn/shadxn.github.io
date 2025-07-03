@@ -10,13 +10,27 @@ document.addEventListener("DOMContentLoaded", () => {
   // 🛠 Load preferences FIRST
   loadSidebarPreferences();
 
-  if (form) {
     form.addEventListener("change", () => {
-      saveSidebarPreferences();
-      renderSidebarContent();
-      saveSidebarPosition();
+    const preferences = getSidebarPreferences();
+
+    // Update collapsed state if sidebar is being hidden
+    if (!preferences.show_sidebar) {
+        sidebarWrapper.classList.add("d-none");
+        toggleBtn.classList.add("d-none");
+        sidebarWrapper.classList.add("collapsed"); // visually collapse it
+        preferences.sidebar_collapsed = true;      // logically collapsed
+    } else {
+        sidebarWrapper.classList.remove("d-none");
+        toggleBtn.classList.remove("d-none");
+        // Do NOT force collapse open; leave it in its last state
+        preferences.sidebar_collapsed = sidebarWrapper.classList.contains("collapsed");
+    }
+
+    // Save and apply
+    localStorage.setItem("sidebar_preferences", JSON.stringify(preferences));
+    renderSidebarContent();
+    updateToggleIcon();
     });
-  }
 
   function updateIcon(collapsed, position) {
     toggleIcon.className =
