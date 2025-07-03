@@ -5,6 +5,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const toggleIcon = document.getElementById("sidebar-toggle-icon");
   const toggleBtn = document.getElementById("sidebar-visibility-toggle");
   const positionSelect = document.getElementById("sidebar-position");
+  const form = document.getElementById("sidebar-settings-form");
+
+  // ✅ Safely attach listener only if form exists
+  if (form) {
+    form.addEventListener("change", () => {
+      saveSidebarPreferences();
+      renderSidebarContent();
+      saveSidebarPosition();
+    });
+  }
 
   function updateIcon(collapsed, position) {
     if (position === "left") {
@@ -102,6 +112,11 @@ function renderSidebarContent() {
 function saveSidebarPreferences() {
   const preferences = getSidebarPreferences();
   localStorage.setItem("sidebar_preferences", JSON.stringify(preferences));
+
+  const wrapper = document.getElementById("sidebar-wrapper");
+  if (wrapper) {
+    wrapper.style.display = preferences.hide_sidebar ? "none" : "flex";
+  }
 }
 
 // Load sidebar preferences from localStorage
@@ -121,6 +136,12 @@ function loadSidebarPreferences() {
 
     if (preferences.sidebar_position && form.elements.sidebar_position) {
       form.elements.sidebar_position.value = preferences.sidebar_position;
+    }
+
+    // 🧱 Apply hide_sidebar to UI
+    const wrapper = document.getElementById("sidebar-wrapper");
+    if (wrapper) {
+      wrapper.style.display = preferences.hide_sidebar ? "none" : "flex";
     }
   } catch (err) {
     console.warn("Failed to load sidebar preferences:", err);
