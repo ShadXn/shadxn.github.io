@@ -61,11 +61,10 @@ function getSidebarPreferences() {
     show_recipes: form.show_recipes.checked,
     show_tools: form.show_tools.checked,
     show_gear: form.show_gear.checked,
-    show_jobs: form.show_jobs.checked,
-    show_crafting_tools: form.show_crafting_tools.checked,
-    show_crafting_gear: form.show_crafting_gear.checked,
-    show_achievements: form.show_achievements.checked,
-    sidebar_position: form.sidebar_position?.value || "right",
+    // hide the sidebar by default
+    hide_sidebar: form.hide_sidebar.checked,
+    // It has to get the right or left value from the localStorage
+    sidebar_position: form.sidebar_position?.value || getSavedSidebarPosition(),
   };
 }
 
