@@ -2,7 +2,7 @@
     {
         "version": "Roadmap",
         "title": "Roadmap",
-        "content": "Achievements, Weapons, armor and tool effects.\n\nThis is a roadmap for the future of Idle Worker. The game is still in development, and these features will be added in the future."
+        "content": "### Planned Systems\n- Skills with levels **1–99**\n- Achievements system with rewards\n- Dedicated **Workers tab** _(may be removed)_\n\n### Improvements & Fixes\n- Better **UI for Jobs** (clearer info, easier controls)\n- Improved **Crafting UI** (batch crafting, categories)\n- **Balancing** of job/resource progression (especially mid-late game)\n\n### Other Ideas\n- Playtime tracking"
     },
     {
         "version": "0.21",
