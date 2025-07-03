@@ -17,41 +17,36 @@ body {
 
 /* Resource display styles */
 /* Suggested CSS overrides to make item cards more compact */
-/* Reduce padding on each card */
-/* Compact item cards */
+/* Fixed-size cards */
 #resource-display .card,
 #gear-display .card,
 #tool-display .card,
 #recipe-display .card {
-  padding: 4px !important;
-  gap: 4px !important;
+  width: 88px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
   font-size: 0.75rem;
-  min-width: 72px;
-  max-width: 88px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
   margin: 2px;
 }
 
-/* Icons and text inside cards */
+/* Icons */
 #resource-display .card img,
 #gear-display .card img,
 #tool-display .card img,
 #recipe-display .card img {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   margin-right: 4px;
 }
 
-/* Layout inside card */
-#resource-display .card .d-flex,
-#gear-display .card .d-flex,
-#tool-display .card .d-flex,
-#recipe-display .card .d-flex {
-  align-items: center;
-  justify-content: start;
-  gap: 4px;
-}
-
-/* Shrink item count text */
+/* Count text */
 #resource-display .card div,
 #gear-display .card div,
 #tool-display .card div,
@@ -59,23 +54,14 @@ body {
   font-size: 0.75rem;
 }
 
-/* Reduce outer flex gaps */
-#resource-display,
-#gear-display,
-#tool-display,
-#recipe-display {
-  gap: 4px !important;
-}
-
-
-/* Fallback text for missing images */
+/* Fallback text */
 .fallback-text {
   width: 24px;
   height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: bold;
   background-color: #f0f0f0;
   border: 1px solid #ccc;
@@ -83,17 +69,52 @@ body {
   text-transform: capitalize;
 }
 
-/* Fallback text for resource, gear, tool, and recipe displays */
-#resource-display img,
-#resource-display .fallback-text,
-#gear-display img,
-#gear-display .fallback-text,
-#tool-display img,
-#tool-display .fallback-text,
-#recipe-display img,
-#recipe-display .fallback-text {
-  margin-right: 8px;
+/* Responsive grid layout for item cards */
+/* Grid layout: responsive wrap using fixed-size cards */
+.item-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 4px 0;
 }
+
+/* Fixed-size card styles */
+.item-grid .card {
+  width: 88px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  font-size: 0.75rem;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* 24x24 icons */
+.item-grid .card img {
+  width: 24px;
+  height: 24px;
+  margin-right: 4px;
+}
+
+/* Adjust fallback text to match */
+.item-grid .fallback-text {
+  width: 24px;
+  height: 24px;
+  font-size: 0.75rem;
+}
+
+/* Count text */
+.item-grid .card div {
+  flex: 1;
+  text-align: left;
+  font-weight: 500;
+  font-size: 0.75rem;
+}
+
 
 /* Sidebar styles */
 /* Sidebar wrapper */
