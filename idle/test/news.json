@@ -1,0 +1,22 @@
+[
+    {
+        "version": "1.0.0",
+        "title": "Roadmap",
+        "content": "🚀 Initial release with crafting, jobs and upgrades!"
+    },
+    {
+        "version": "0.21.1",
+        "title": "Version 0.21.1",
+        "content": "🐛 Fixed minor bugs"
+    },
+    {
+        "version": "0.21",
+        "title": "Version 0.21",
+        "content": "🛠 Added new tools\n🔥 Improved performance\n🐛 Fixed fighting bug"
+    },
+    {
+        "version": "0.20",
+        "title": "Version 0.20",
+        "content": "🚀 Initial release with crafting, jobs and upgrades!"
+    }
+]

@@ -201,35 +201,20 @@
           </div>
         </div>
 
-        <!-- News Overlay -->
-        <div id="news-overlay" class="position-fixed top-0 start-0 w-100 h-100 bg-white" style="display: none; z-index: 2500; overflow: auto;">
-          <div class="d-flex h-100">
-            <!-- Sidebar index -->
-            <div class="p-3 border-end bg-light" style="width: 220px;">
-              <h5>Versions</h5>
-              <ul class="nav flex-column">
-                <li><a href="#version-020" class="nav-link">Version 0.20</a></li>
-                <li><a href="#version-021" class="nav-link">Version 0.21</a></li>
-                <!-- Add more versions here -->
-              </ul>
-              <button id="close-news-btn" class="btn btn-sm btn-secondary mt-4">Close</button>
-            </div>
-
-            <!-- Main content -->
-            <div class="p-4 flex-grow-1">
-              <section id="version-020">
-                <h3>Version 0.20</h3>
-                <p>Details about version 0.20...</p>
-              </section>
-              <hr>
-              <section id="version-021">
-                <h3>Version 0.21</h3>
-                <p>Details about version 0.21...</p>
-              </section>
-              <!-- Add more version sections here -->
-            </div>
-          </div>
+        <!-- Sidebar index -->
+        <div class="p-3 border-end bg-light" style="width: 220px;">
+          <h5>Versions</h5>
+          <ul id="news-sidebar" class="nav flex-column">
+            <!-- Automatically filled by JS -->
+          </ul>
+          <button id="close-news-btn" class="btn btn-sm btn-secondary mt-4">Close</button>
         </div>
+
+        <!-- Main content -->
+        <div class="p-4 flex-grow-1">
+          <div id="news-container"></div>
+        </div>
+
       </div>
     </main>
 
