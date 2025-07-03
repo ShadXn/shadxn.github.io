@@ -15,12 +15,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const versionButton = document.getElementById("version-button");
 
   if (isTestVersion) {
-    titleElement.textContent = "Idle Worker - Test Version 0.2";
+    titleElement.textContent = "Idle Worker - Test Version 0.21";
     versionButton.textContent = "Try Official Version 0.2";
     versionButton.href = "https://shadxn.github.io/idle/";
   } else {
     titleElement.textContent = "Idle Worker - Version 0.2";
-    versionButton.textContent = "Try Test Version 0.2";
+    versionButton.textContent = "Try Test Version 0.21";
     versionButton.href = "https://shadxn.github.io/idle/test/";
   }
 });
