@@ -5,7 +5,6 @@
     "logs": {},
     "ore": {},
     "ingot": {},
-    "recipe": { "chance": 0.005 },
     "gold": {}
   },
   "recipes": {
