@@ -38,6 +38,10 @@ document.addEventListener("DOMContentLoaded", () => {
             modalTitle.textContent = latest.version;
             modalBody.innerHTML = marked.parse(latest.content);
 
+            // set a delay before calling modal content is ready
+            setTimeout(() => {
+            }, 100);
+
             const modal = new bootstrap.Modal(document.getElementById("updateModal"));
             modal.show();
             }
