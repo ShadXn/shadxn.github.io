@@ -337,7 +337,7 @@
                 containers.gear.appendChild(card);
             } else if (/pickaxe|axe|rod|hammer|gloves|cape|boots/.test(key)) {
                 containers.tool.appendChild(card);
-            } else {
+            } else if (key !== "gold") {
                 containers.default.appendChild(card);
             }
 
