@@ -67,11 +67,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     document.getElementById("open-news-btn").addEventListener("click", () => {
-    document.getElementById("news-overlay").style.display = "block";
+        document.getElementById("news-overlay").style.display = "block";
+        document.body.style.overflow = "hidden"; // ✅ prevent background scroll
     });
 
     document.getElementById("close-news-btn").addEventListener("click", () => {
-    document.getElementById("news-overlay").style.display = "none";
+        document.getElementById("news-overlay").style.display = "none";
+        document.body.style.overflow = ""; // ✅ restore scroll
     });
+
 
 });
