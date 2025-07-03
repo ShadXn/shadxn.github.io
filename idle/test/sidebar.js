@@ -72,7 +72,7 @@ function getSidebarPreferences() {
     show_tools: form.show_tools.checked,
     show_gear: form.show_gear.checked,
     // hide the sidebar by default
-    hide_sidebar: form.hide_sidebar.checked,
+    show_sidebar: form.show_sidebar.checked,
     // It has to get the right or left value from the localStorage
     sidebar_position: form.sidebar_position?.value || getSavedSidebarPosition(),
   };
@@ -102,10 +102,6 @@ function renderSidebarContent() {
   if (preferences.show_tools) appendSection("Tools", Object.keys(resources).filter(k => /_pickaxe|_axe|_rod|_hammer|_gloves|_boots/.test(k)));
   if (preferences.show_gear) appendSection("Weapons & Armor", Object.keys(resources).filter(k => /_sword|_armor|_shield/.test(k)));
   if (preferences.show_recipes) appendSection("Recipes", Object.keys(resources).filter(k => k.startsWith("recipe_")));
-  if (preferences.show_jobs) appendSection("Jobs", []);
-  if (preferences.show_crafting_tools) appendSection("Crafting Tools", []);
-  if (preferences.show_crafting_gear) appendSection("Crafting Gear", []);
-  if (preferences.show_achievements) appendSection("Achievements", []);
 }
 
 // Save sidebar preferences to localStorage
@@ -115,7 +111,7 @@ function saveSidebarPreferences() {
 
   const wrapper = document.getElementById("sidebar-wrapper");
   if (wrapper) {
-    wrapper.style.display = preferences.hide_sidebar ? "none" : "flex";
+    wrapper.style.display = preferences.show_sidebar ? "none" : "flex";
   }
 }
 
@@ -138,10 +134,10 @@ function loadSidebarPreferences() {
       form.elements.sidebar_position.value = preferences.sidebar_position;
     }
 
-    // 🧱 Apply hide_sidebar to UI
+    // 🧱 Apply show_sidebar to UI
     const wrapper = document.getElementById("sidebar-wrapper");
     if (wrapper) {
-      wrapper.style.display = preferences.hide_sidebar ? "none" : "flex";
+      wrapper.style.display = preferences.show_sidebar ? "none" : "flex";
     }
   } catch (err) {
     console.warn("Failed to load sidebar preferences:", err);
