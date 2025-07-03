@@ -66,16 +66,14 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    const overlay = document.getElementById("news-overlay");
-
     document.getElementById("open-news-btn").addEventListener("click", () => {
-        overlay.classList.add("show");
-        document.body.style.overflow = "hidden";
+        document.getElementById("news-overlay").style.display = "block";
+        document.body.style.overflow = "hidden"; // ✅ prevent background scroll
     });
 
     document.getElementById("close-news-btn").addEventListener("click", () => {
-        overlay.classList.remove("show");
-        document.body.style.overflow = "";
+        document.getElementById("news-overlay").style.display = "none";
+        document.body.style.overflow = ""; // ✅ restore scroll
     });
 
 });

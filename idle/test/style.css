@@ -167,15 +167,3 @@ body {
   opacity: 0.6;
   cursor: not-allowed;
 }
-
-/* News overlay styles */
-#news-overlay {
-  transition: opacity 0.2s ease;
-  opacity: 0;
-  pointer-events: none;
-}
-
-#news-overlay.show {
-  opacity: 1;
-  pointer-events: auto;
-}
