@@ -10,7 +10,7 @@ fetch('news.json')
       // 📰 News section content
       const section = document.createElement("section");
       section.id = versionId;
-      section.innerHTML = `<h3>${item.title}</h3><p>${item.content.replace(/\n/g, '<br>')}</p><hr>`;
+      section.innerHTML = `<h3>${item.title}</h3>${marked.parse(item.content)}<hr>`;
       container.appendChild(section);
 
       // 🧭 Sidebar link

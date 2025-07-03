@@ -12,6 +12,6 @@
     {
         "version": "0.20",
         "title": "Version 0.20",
-        "content": "🚀 Initial release with crafting, jobs and upgrades!"
+        "content": "# header\n\n ## header\n\n ### header\n\n - bulletpoint\n\n **bold**\n\n Initial release with crafting, jobs and upgrades!"
     }
 ]
