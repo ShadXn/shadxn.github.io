@@ -18,27 +18,20 @@ body {
 /* Resource display styles */
 /* Suggested CSS overrides to make item cards more compact */
 /* Reduce padding on each card */
+/* Compact item cards */
 #resource-display .card,
 #gear-display .card,
 #tool-display .card,
 #recipe-display .card {
   padding: 4px !important;
   gap: 4px !important;
-  font-size: 0.8rem;
-  min-width: 80px;
-  max-width: 100px;
+  font-size: 0.75rem;
+  min-width: 72px;
+  max-width: 88px;
+  margin: 2px;
 }
 
-/* Reduce vertical spacing between rows */
-#resource-display.row,
-#gear-display.row,
-#tool-display.row,
-#recipe-display.d-flex {
-  --bs-gutter-y: 4px;
-  --bs-gutter-x: 4px;
-}
-
-/* Reduce inner icon and text spacing */
+/* Icons and text inside cards */
 #resource-display .card img,
 #gear-display .card img,
 #tool-display .card img,
@@ -48,7 +41,7 @@ body {
   margin-right: 4px;
 }
 
-/* Center items vertically and horizontally more tightly */
+/* Layout inside card */
 #resource-display .card .d-flex,
 #gear-display .card .d-flex,
 #tool-display .card .d-flex,
@@ -58,7 +51,7 @@ body {
   gap: 4px;
 }
 
-/* Reduce text size for counts */
+/* Shrink item count text */
 #resource-display .card div,
 #gear-display .card div,
 #tool-display .card div,
@@ -66,7 +59,7 @@ body {
   font-size: 0.75rem;
 }
 
-/* Ensure row layouts show more columns */
+/* Reduce outer flex gaps */
 #resource-display,
 #gear-display,
 #tool-display,
@@ -74,6 +67,8 @@ body {
   gap: 4px !important;
 }
 
+
+/* Fallback text for missing images */
 .fallback-text {
   width: 24px;
   height: 24px;
@@ -88,6 +83,7 @@ body {
   text-transform: capitalize;
 }
 
+/* Fallback text for resource, gear, tool, and recipe displays */
 #resource-display img,
 #resource-display .fallback-text,
 #gear-display img,
