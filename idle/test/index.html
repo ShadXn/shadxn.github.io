@@ -201,19 +201,25 @@
           </div>
         </div>
 
-        <!-- Sidebar index -->
-        <div class="p-3 border-end bg-light" style="width: 220px;">
-          <h5>Versions</h5>
-          <ul id="news-sidebar" class="nav flex-column">
-            <!-- Automatically filled by JS -->
-          </ul>
-          <button id="close-news-btn" class="btn btn-sm btn-secondary mt-4">Close</button>
+        <!-- News Overlay -->
+        <div id="news-overlay" class="position-fixed top-0 start-0 w-100 h-100 bg-white" style="display: none; z-index: 2500; overflow: auto;">
+          <div class="d-flex h-100">
+            <!-- Sidebar index -->
+            <div class="p-3 border-end bg-light" style="width: 220px;">
+              <h5>Versions</h5>
+              <ul id="news-sidebar" class="nav flex-column">
+                <!-- Filled by JS -->
+              </ul>
+              <button id="close-news-btn" class="btn btn-sm btn-secondary mt-4">Close</button>
+            </div>
+
+            <!-- News Content -->
+            <div class="p-4 flex-grow-1">
+              <div id="news-container"></div>
+            </div>
+          </div>
         </div>
 
-        <!-- Main content -->
-        <div class="p-4 flex-grow-1">
-          <div id="news-container"></div>
-        </div>
 
       </div>
     </main>
