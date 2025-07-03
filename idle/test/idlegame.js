@@ -294,7 +294,7 @@
             card.id = `item-card-${key}`;
 
             const innerCard = document.createElement("div");
-            innerCard.className = "card p-2 bg-white border shadow-sm d-flex align-items-center gap-2";
+            innerCard.className = "card bg-white border shadow-sm d-flex align-items-center";
 
             // Icon or fallback
             const img = document.createElement("img");

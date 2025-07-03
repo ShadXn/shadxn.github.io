@@ -17,11 +17,6 @@ body {
 
 /* Resource display styles */
 /* Suggested CSS overrides to make item cards more compact */
-#resource-display .gap-2 .p-2 {
-  gap: 0.1rem; /* Reduce gap between items */
-  padding: 0.1rem; /* Reduce padding around items */
-}
-
 /* Fixed-size cards */
 #resource-display .card,
 #gear-display .card,
@@ -31,8 +26,8 @@ body {
   height: 48px;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px;
+  gap: 0.1rem; /* Reduce gap between icon and text */
+  padding: 0.1rem; /* Reduce padding around cards */
   font-size: 0.75rem;
   background: #fff;
   border: 1px solid #ccc;
