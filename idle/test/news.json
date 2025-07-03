@@ -7,7 +7,7 @@
     {
         "version": "0.21",
         "title": "Version 0.21",
-        "content": "#### Added\n- Added 2 new resource items: Refined wood and Firewood.\n- Added 2 new jobs: Firemaking (to produce firewood) and Carpentry (to produce refined wood).\n- Added a news popup that only shows if the user previously played on an older version.\n- Added a News Button to view update logs.\n- Added more icons to the Inventory.\n- Added a Sidebar for Inventory.\n\n### Changes\n- Improved Inventory UI.\n\n### Fixes\n- Fixed an issue where you could assign workers when requirements for a job were not being met.\n\n### Removed\n- Removed an old item (Recipe from thieving).\n- Removed gold from Resources (This is always displayed in the top bar)."
+        "content": "#### Added\n- Added 2 new resource items: Refined wood and Firewood.\n- Added 2 new jobs: Firemaking (to produce firewood) and Carpentry (to produce refined wood).\n- Added a news popup that only shows if the user previously played on an older version.\n- Added a News Button to view update logs.\n- Added more icons to the Inventory.\n- Added a Sidebar for Inventory.\n\n### Changes\n- Improved Inventory UI.\n\n### Fixes\n- Fixed an issue where you could assign workers when requirements for a job were not being met.\n\n### Removed\n- Removed an old item (Recipe from thieving).\n- Removed gold from Resources (This is always displayed in the top bar).\n #### [Play Version 0.21](https://shadxn.github.io/idle/test/idle_v0.20/)"
     },
     {
         "version": "0.20",
