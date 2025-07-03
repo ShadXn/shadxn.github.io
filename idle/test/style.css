@@ -22,7 +22,7 @@ body {
 #gear-display .card,
 #tool-display .card,
 #recipe-display .card {
-  width: 88px;
+  width: 60px;
   height: 48px;
   display: flex;
   align-items: center;
