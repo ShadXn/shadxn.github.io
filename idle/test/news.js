@@ -38,11 +38,13 @@ document.addEventListener("DOMContentLoaded", () => {
             modalTitle.textContent = latest.version;
             modalBody.innerHTML = marked.parse(latest.content);
 
-            // set a delay before calling modal content is ready
-            setTimeout(() => {
-            }, 100);
+            const modalElement = document.getElementById("updateModal");
+            const modal = new bootstrap.Modal(modalElement);
 
-            const modal = new bootstrap.Modal(document.getElementById("updateModal"));
+            modalElement.addEventListener('shown.bs.modal', () => {
+                // Bootstrap confirms modal is fully open and aria-hidden is removed
+                console.log("✅ Modal is fully shown and accessible.");
+            });
             modal.show();
             }
         }
