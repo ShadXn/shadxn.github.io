@@ -7,7 +7,7 @@
     {
         "version": "0.21",
         "title": "Version 0.21",
-        "content": "🛠 Added new tools\n🔥 Improved performance\n🐛 Fixed fighting bug"
+        "content": "- Added 2 new resource items: Refined wood and Firewood.\n- Added 2 new jobs: Firemaking - to produce firewood and Carpentry - to produce refined wood.\n- Improved Inventory UI\n- Added more Icons to Inventory\n- Sidebar for Inventory\n- Fix issue where you could assign workers when requirements on job is not being met.\n- Removed an old item (Recipe from thieving)\n- Removed gold from Resources (This is always displayed in the top bar)\n- Added a news popup, that only shows if user previously played on an older version.\n- Added News Button (See update logs)."
     },
     {
         "version": "0.20",
