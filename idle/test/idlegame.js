@@ -550,7 +550,7 @@
         Object.entries(updateResourceDisplay._elements).forEach(([key, element]) => {
             const value = resources[key] || 0;
             const inUse = toolsInUse[key] || 0;
-            const showInUse = inUse > 0 ? ` (In use: ${inUse})` : "";
+            const showInUse = inUse > 0 ? ` (${inUse})` : "";
             element.innerHTML = `${value}${showInUse}`;
         });
     }
