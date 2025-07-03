@@ -81,7 +81,7 @@ function getSidebarPreferences() {
     show_gear: form.show_gear?.checked ?? true,
     show_sidebar: form.show_sidebar?.checked ?? true,
     sidebar_position: form.sidebar_position?.value ?? "right",
-    sidebar_collapsed: sidebarWrapper?.classList.contains("collapsed") ?? false,
+    sidebar_collapsed: sidebarWrapper?.classList.contains("collapsed") ?? true,
   };
 }
 
@@ -106,9 +106,9 @@ function renderSidebarContent() {
   };
 
   if (preferences.show_resources) appendSection("Resources", ["logs", "ore", "fish", "cooked_fish", "gold", "ingot"]);
+  if (preferences.show_recipes) appendSection("Recipes", Object.keys(resources).filter(k => k.startsWith("recipe_")));
   if (preferences.show_tools) appendSection("Tools", Object.keys(resources).filter(k => /_pickaxe|_axe|_rod|_hammer|_gloves|_boots/.test(k)));
   if (preferences.show_gear) appendSection("Weapons & Armor", Object.keys(resources).filter(k => /_sword|_armor|_shield/.test(k)));
-  if (preferences.show_recipes) appendSection("Recipes", Object.keys(resources).filter(k => k.startsWith("recipe_")));
 }
 
 // Save sidebar preferences to localStorage
