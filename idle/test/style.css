@@ -23,7 +23,7 @@ body {
 #tool-display .card,
 #recipe-display .card {
   width: 60px;
-  height: 48px;
+  height: 54px;
   display: flex;
   align-items: center;
   gap: 0.1rem; /* Reduce gap between icon and text */
@@ -41,8 +41,8 @@ body {
 #gear-display .card img,
 #tool-display .card img,
 #recipe-display .card img {
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   margin-right: 4px;
 }
 
