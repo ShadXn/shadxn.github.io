@@ -29,6 +29,15 @@ body {
   max-width: 100px;
 }
 
+/* Reduce vertical spacing between rows */
+#resource-display.row,
+#gear-display.row,
+#tool-display.row,
+#recipe-display.d-flex {
+  --bs-gutter-y: 4px;
+  --bs-gutter-x: 4px;
+}
+
 /* Reduce inner icon and text spacing */
 #resource-display .card img,
 #gear-display .card img,
