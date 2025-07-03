@@ -42,9 +42,15 @@ document.addEventListener("DOMContentLoaded", () => {
             const modal = new bootstrap.Modal(modalElement);
 
             modalElement.addEventListener('shown.bs.modal', () => {
-                // Bootstrap confirms modal is fully open and aria-hidden is removed
-                console.log("✅ Modal is fully shown and accessible.");
+            const interval = setInterval(() => {
+                if (modalElement.getAttribute("aria-hidden") === "false") {
+                    console.log("✅ Modal is now fully accessible, safe to focus");
+                    modalElement.focus(); // or focus something inside
+                    clearInterval(interval);
+                }
+            }, 10);
             });
+
             modal.show();
             }
         }
