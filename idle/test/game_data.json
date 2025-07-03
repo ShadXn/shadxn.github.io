@@ -3,6 +3,8 @@
     "fish": {},
     "cooked_fish": {},
     "logs": {},
+    "refined_wood": {},
+    "fire_wood": {},
     "ore": {},
     "ingot": {},
     "gold": {}
@@ -509,7 +511,10 @@
     "required_gear": "none",
     "action_speed_multiplier": 0.9,
     "produces": {
-        "gold": 5
+        "gold": 5,
+        "refined_wood": 1,
+        "fire_wood": 2,
+        "ingot": 1
     }
     },
     "woodcutting": {
@@ -519,6 +524,30 @@
     "action_speed_multiplier": 0.9,
     "produces": {
         "logs": 1
+    }    
+    },
+    "firemaking": {
+    "food_cost": 0,
+    "job_action_time": 0.9,
+    "required_gear": "none",
+    "action_speed_multiplier": 0.9,
+    "required_resources": {
+        "logs": 1
+    },
+    "produces": {
+        "fire_wood": 5
+    }
+    },
+    "carpentry": {
+    "food_cost": 0,
+    "job_action_time": 0.9,
+    "required_gear": "none",
+    "action_speed_multiplier": 0.9,
+    "required_resources": {
+        "logs": 1
+    },
+    "produces": {
+        "refined_wood": 1
     }
     },
     "mining": {
@@ -557,7 +586,8 @@
     "required_gear": "none",
     "action_speed_multiplier": 0.9,
     "required_resources": {
-        "fish": 1
+        "fish": 1,
+        "fire_wood": 1
     },
     "produces": {
         "cooked_fish": 1
