@@ -12,6 +12,6 @@
     {
         "version": "0.20",
         "title": "Version 0.20",
-        "content": "# header\n\n ## header\n\n ### header\n\n - bulletpoint\n\n **bold**\n\n Initial release with crafting, jobs and upgrades!"
+        "content": "#### First version\n- This is the first version of the game.\n- It includes basic resource gathering, crafting, and job systems.\n- The game is designed to be simple and easy to play, with a focus on idle mechanics."
     }
 ]
