@@ -36,20 +36,25 @@ document.addEventListener("DOMContentLoaded", () => {
     const isCollapsed = sidebarWrapper.classList.contains("collapsed");
     const currentPosition = sidebarWrapper.classList.contains("sidebar-right") ? "right" : "left";
     updateIcon(isCollapsed, currentPosition);
-    localStorage.setItem("sidebar_collapsed", isCollapsed ? "true" : "false");
+    const preferences = JSON.parse(localStorage.getItem("sidebar_preferences") || "{}");
+    preferences.sidebar_collapsed = isCollapsed;
+    localStorage.setItem("sidebar_preferences", JSON.stringify(preferences));
   });
 
   if (positionSelect) {
     positionSelect.addEventListener("change", () => {
       const pos = positionSelect.value;
-      localStorage.setItem("sidebar_position", pos);
+      const preferences = JSON.parse(localStorage.getItem("sidebar_preferences") || "{}");
+      preferences.sidebar_position = pos;
+      localStorage.setItem("sidebar_preferences", JSON.stringify(preferences));
       applyPosition(pos);
     });
   }
 
   // ✅ Reapply after loading preferences
-  const savedPos = localStorage.getItem("sidebar_position") || "right";
-  const savedCollapsed = localStorage.getItem("sidebar_collapsed") === "true";
+  const preferences = JSON.parse(localStorage.getItem("sidebar_preferences") || "{}");
+  const savedPos = preferences.sidebar_position || "right";
+  const savedCollapsed = preferences.sidebar_collapsed ?? false;
   applyPosition(savedPos);
   if (savedCollapsed) {
     sidebarWrapper.classList.add("collapsed");
@@ -66,6 +71,7 @@ function getSavedSidebarPosition() {
 // Get sidebar preferences from the form
 function getSidebarPreferences() {
   const form = document.getElementById("sidebar-settings-form");
+  const sidebarWrapper = document.getElementById("sidebar-wrapper");
 
   return {
     show_resources: form.show_resources?.checked ?? true,
@@ -73,8 +79,8 @@ function getSidebarPreferences() {
     show_tools: form.show_tools?.checked ?? true,
     show_gear: form.show_gear?.checked ?? true,
     show_sidebar: form.show_sidebar?.checked ?? true,
-    sidebar_position: localStorage.getItem("sidebar_position") || "right",
-    sidebar_collapsed: document.getElementById("sidebar-wrapper")?.classList.contains("collapsed") ?? false,
+    sidebar_position: form.sidebar_position?.value ?? "right",
+    sidebar_collapsed: sidebarWrapper?.classList.contains("collapsed") ?? false,
   };
 }
 
@@ -120,36 +126,30 @@ function loadSidebarPreferences() {
     const preferences = JSON.parse(saved);
     const form = document.getElementById("sidebar-settings-form");
     const sidebarWrapper = document.getElementById("sidebar-wrapper");
+    const toggleBtn = document.getElementById("sidebar-visibility-toggle");
 
+    // Apply checkboxes
     for (const key in preferences) {
       if (form.elements[key] && form.elements[key].type === "checkbox") {
         form.elements[key].checked = preferences[key];
       }
     }
 
+    // Apply sidebar position (from preferences only)
+    const position = preferences.sidebar_position || "right";
     if (form.elements.sidebar_position) {
-    const savedPos = localStorage.getItem("sidebar_position") || "right";
-    form.elements.sidebar_position.value = savedPos;
+      form.elements.sidebar_position.value = position;
     }
+    applySidebarPosition(position);
 
-    applySidebarPosition(preferences.sidebar_position || "right");
+    // Apply collapse state (from preferences only)
+    const isCollapsed = preferences.sidebar_collapsed ?? false;
+    sidebarWrapper.classList.toggle("collapsed", isCollapsed);
 
-    if (preferences.sidebar_collapsed) {
-      sidebarWrapper?.classList.add("collapsed");
-    } else {
-      sidebarWrapper?.classList.remove("collapsed");
-    }
-
-    // Show/hide sidebar if applicable
-    const toggleBtn = document.getElementById("sidebar-visibility-toggle");
-    if (!preferences.show_sidebar) {
-        sidebarWrapper?.classList.add("d-none");
-        toggleBtn?.classList.add("d-none");
-    } else {
-        sidebarWrapper?.classList.remove("d-none");
-        toggleBtn?.classList.remove("d-none");
-    }
-
+    // Show/hide sidebar & toggle button
+    const showSidebar = preferences.show_sidebar ?? true;
+    sidebarWrapper.classList.toggle("d-none", !showSidebar);
+    toggleBtn.classList.toggle("d-none", !showSidebar);
 
   } catch (err) {
     console.warn("Failed to load sidebar preferences:", err);
@@ -174,19 +174,26 @@ function applySidebarPosition(position) {
 // Save sidebar position and update toggle icon
 function saveSidebarPosition() {
   const selector = document.getElementById("sidebar-position");
-  const position = selector?.value || "right";
-  localStorage.setItem("sidebar_position", position);
-  applySidebarPosition(position);
+  const formValue = selector?.value || "right";
+
+  // Get current preferences
+  const current = JSON.parse(localStorage.getItem("sidebar_preferences") || "{}");
+  current.sidebar_position = formValue;
+
+  localStorage.setItem("sidebar_preferences", JSON.stringify(current));
+  applySidebarPosition(formValue);
   updateToggleIcon();
 }
 
 // Load sidebar position from localStorage or default to "right"
 function loadSidebarPosition() {
-  const saved = localStorage.getItem("sidebar_position") || "right";
-  const selector = document.getElementById("sidebar-position");
-  if (selector) selector.value = saved;
+  const saved = JSON.parse(localStorage.getItem("sidebar_preferences") || "{}");
+  const position = saved.sidebar_position || "right";
 
-  applySidebarPosition(saved);
+  const selector = document.getElementById("sidebar-position");
+  if (selector) selector.value = position;
+
+  applySidebarPosition(position);
   updateToggleIcon();
 }
 
