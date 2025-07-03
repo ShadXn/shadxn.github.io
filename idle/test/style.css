@@ -17,47 +17,42 @@ body {
 
 /* Resource display styles */
 /* Suggested CSS overrides to make item cards more compact */
-/* Fixed-size cards */
-#resource-display .card,
-#gear-display .card,
-#tool-display .card,
-#recipe-display .card {
+/* === ITEM GRID WRAPPER === */
+.item-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 60px); /* Max 12 cards per row */
+  gap: 6px; /* fixed spacing between cards */
+  justify-content: start;
+  padding: 4px 0;
+}
+
+/* === ITEM CARD === */
+.item-grid .card {
   width: 60px;
   height: 54px;
   display: flex;
   align-items: center;
-  gap: 0.1rem; /* Reduce gap between icon and text */
-  padding: 0.1rem; /* Reduce padding around cards */
+  justify-content: start;
+  padding: 0.1rem;
+  gap: 0.1rem;
   font-size: 0.75rem;
   background: #fff;
   border: 1px solid #ccc;
   border-radius: 6px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-  margin: 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-/* Icons */
-#resource-display .card img,
-#gear-display .card img,
-#tool-display .card img,
-#recipe-display .card img {
+/* === ICONS === */
+.item-grid .card img {
   width: 32px;
   height: 32px;
   margin-right: 4px;
 }
 
-/* Count text */
-#resource-display .card div,
-#gear-display .card div,
-#tool-display .card div,
-#recipe-display .card div {
-  font-size: 0.75rem;
-}
-
-/* Fallback text */
-.fallback-text {
-  width: 24px;
-  height: 24px;
+/* === FALLBACK TEXT IF ICON FAILS === */
+.item-grid .fallback-text {
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -69,45 +64,7 @@ body {
   text-transform: capitalize;
 }
 
-/* Responsive grid layout for item cards */
-/* Grid layout: responsive wrap using fixed-size cards */
-.item-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  padding: 4px 0;
-}
-
-/* Fixed-size card styles */
-.item-grid .card {
-  width: 88px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px;
-  font-size: 0.75rem;
-  background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-}
-
-/* 24x24 icons */
-.item-grid .card img {
-  width: 24px;
-  height: 24px;
-  margin-right: 4px;
-}
-
-/* Adjust fallback text to match */
-.item-grid .fallback-text {
-  width: 24px;
-  height: 24px;
-  font-size: 0.75rem;
-}
-
-/* Count text */
+/* === RESOURCE COUNT TEXT === */
 .item-grid .card div {
   flex: 1;
   text-align: left;
