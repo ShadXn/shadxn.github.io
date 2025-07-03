@@ -65,7 +65,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Save sidebar position to localStorage
 function getSavedSidebarPosition() {
-  return localStorage.getItem("sidebar_position") || "right";
+  const prefs = JSON.parse(localStorage.getItem("sidebar_preferences") || "{}");
+  return prefs.sidebar_position || "right";
 }
 
 // Get sidebar preferences from the form
