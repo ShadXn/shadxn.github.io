@@ -20,8 +20,9 @@ body {
 /* === ITEM GRID WRAPPER === */
 .item-grid {
   display: grid;
-  grid-template-columns: repeat(12, 60px); /* Max 12 cards per row */
-  gap: 6px; /* fixed spacing between cards */
+  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); /* ✅ Responsive */
+  max-width: calc(60px * 12 + 6px * 11); /* ✅ Max 12 cards wide including gaps */
+  gap: 6px;
   justify-content: start;
   padding: 4px 0;
 }
