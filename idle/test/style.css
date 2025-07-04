@@ -20,11 +20,11 @@ body {
 /* === ITEM GRID WRAPPER === */
 .item-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); /* ✅ Responsive */
-  max-width: calc(60px * 12 + 6px * 11); /* ✅ Max 12 cards wide including gaps */
-  gap: 6px;
-  justify-content: start;
+  grid-template-columns: repeat(auto-fill, 60px); /* Allow dynamic wrapping */
+  gap: 6px; /* Fixed gap */
+  justify-content: start; /* Prevent extra spacing */
   padding: 4px 0;
+  max-width: calc(60px * 12 + 6px * 11); /* Enforce max 12 cards per row with fixed spacing */
 }
 
 /* === ITEM CARD === */
