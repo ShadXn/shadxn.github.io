@@ -25,6 +25,17 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+// Clean up localStorage by removing unused keys
+function cleanLocalStorage(whitelist) {
+  const allKeys = Object.keys(localStorage);
+  const keysToRemove = allKeys.filter(key => !whitelist.includes(key));
+
+  keysToRemove.forEach(key => {
+    console.log(`🧹 Removing unused localStorage key: ${key}`);
+    localStorage.removeItem(key);
+  });
+}
+
 function hardResetGame() {
   if (!confirm("Are you sure you want to reset all progress?")) return;
 

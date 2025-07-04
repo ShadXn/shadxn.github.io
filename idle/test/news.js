@@ -26,7 +26,9 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Current version:", CURRENT_GAME_VERSION);
 
         if (lastPlayedVersion !== CURRENT_GAME_VERSION) {
-        const latest = newsItems.find(item => item.version === CURRENT_GAME_VERSION);
+            // Clean storage before doing anything else
+            cleanLocalStorage(LOCALSTORAGE_WHITELIST);
+            const latest = newsItems.find(item => item.version === CURRENT_GAME_VERSION);
         if (latest) {
             const modalTitle = document.getElementById("update-version-label");
             const modalBody = document.getElementById("update-modal-body");
