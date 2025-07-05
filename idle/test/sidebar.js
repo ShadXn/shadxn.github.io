@@ -27,7 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
     updateToggleIcon();
   });
 
-  renderSidebarContent();
+  // renderSidebarContent();
+  updateResourceDisplay(GameState.resources, GameState.toolsInUse);
 });
 
 // Get sidebar preferences from the form
@@ -85,54 +86,75 @@ function applySidebarPreferences(prefs = getSavedPreferences()) {
   updateToggleIcon();
 }
 
+// Add a title to the sidebar section
+function addSidebarTitle(container, text) {
+  if (!container) return;
+  const title = document.createElement("div");
+  title.className = "sidebar-section-title";
+  title.textContent = text;
+  container.appendChild(title);
+}
+
 // Render sidebar content based on preferences
 function renderSidebarContent() {
   const prefs = getSavedPreferences();
-  const resources = JSON.parse(localStorage.getItem("idle_resources") || "{}");
+  const resources = GameState?.resources || {};  // ✅ use GameState directly
 
-  // Clear all sidebar sections first
-  ["sidebar-section-resources", "sidebar-section-gear", "sidebar-section-tools", "sidebar-section-recipes"]
-    .forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.innerHTML = "";
-    });
+  const containers = {
+    default: document.getElementById("sidebar-section-resources"),
+    recipe: document.getElementById("sidebar-section-recipes"),
+    gear: document.getElementById("sidebar-section-gear"),
+    tool: document.getElementById("sidebar-section-tools"),
+  };
 
+  Object.values(containers).forEach(container => {
+    if (container) container.innerHTML = "";
+  });
 
   const keys = Object.keys(resources);
 
-  const filteredKeys = keys.filter(key => {
-    if (!/^[a-z_]+$/i.test(key)) return false; // Only allow valid item keys (e.g., bronze_sword)
-    if (key === "gold") return false;
-    if (!prefs.show_resources && !key.startsWith("recipe_") && !/_pickaxe|_axe|_rod|_hammer|_gloves|_cape|_boots|_sword|_armor|_shield/.test(key)) {
-      return false;
+  const sections = [
+    {
+      name: "Resources",
+      enabled: prefs.show_resources,
+      container: containers.default,
+      filter: key =>
+        !key.startsWith("recipe_") &&
+        !/_pickaxe|_axe|_rod|_hammer|_gloves|_cape|_boots|_sword|_armor|_shield/.test(key) &&
+        key !== "gold",
+    },
+    {
+      name: "Recipes",
+      enabled: prefs.show_recipes,
+      container: containers.recipe,
+      filter: key => key.startsWith("recipe_"),
+    },
+    {
+      name: "Weapons & Armor",
+      enabled: prefs.show_gear,
+      container: containers.gear,
+      filter: key => /_sword|_armor|_shield/.test(key),
+    },
+    {
+      name: "Tools",
+      enabled: prefs.show_tools,
+      container: containers.tool,
+      filter: key => /_pickaxe|_axe|_rod|_hammer|_gloves|_cape|_boots/.test(key),
+    },
+  ];
+
+  for (const section of sections) {
+    if (!section.enabled || !section.container) continue;
+
+    const filtered = keys.filter(key => /^[a-z_]+$/i.test(key) && section.filter(key));
+
+    if (filtered.length > 0) {
+      addSidebarTitle(section.container, section.name);
+      prebuildItemDisplay(filtered, containers, true);  // true = sidebar mode
     }
-    if (!prefs.show_recipes && key.startsWith("recipe_")) return false;
-    if (!prefs.show_tools && /_pickaxe|_axe|_rod|_hammer|_gloves|_cape|_boots/.test(key)) return false;
-    if (!prefs.show_gear && /_sword|_armor|_shield/.test(key)) return false;
-
-    return true;
-  });
-
-  console.log("✅ Filtered keys for sidebar:", filteredKeys);
-  buildSidebarItemDisplay(filteredKeys);
+  }
 }
 
-// Build sidebar item display based on keys
-function buildSidebarItemDisplay(itemKeys) {
-  const containers = {
-    default: document.getElementById("sidebar-section-resources"),
-    gear: document.getElementById("sidebar-section-gear"),
-    tool: document.getElementById("sidebar-section-tools"),
-    recipe: document.getElementById("sidebar-section-recipes"),
-  };
-
-  // Clear all containers first
-  Object.values(containers).forEach(container => container.innerHTML = "");
-
-
-  // Use shared function from display.js
-  prebuildItemDisplay(itemKeys, containers, true);
-}
 
 // Get saved preferences from localStorage or return default values
 function updateToggleIcon() {

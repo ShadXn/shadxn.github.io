@@ -99,6 +99,7 @@
 
 
         CraftingUI.showCraftingSection(buildCraftables(gearData, toolData), GameState.resources, GameState.toolsInUse);
+        renderSidebarContent();
         populateJobs(jobs);
         setInterval(() => {
             applyJobTick(GameState.assignments, tasks, jobs, GameState.resources, GameState.toolsInUse);

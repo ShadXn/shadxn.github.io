@@ -4,16 +4,11 @@ window.ToolParts = window.ToolParts || [];
 
 window.updateResourceDisplay = function(resources, toolsInUse = {}) {
   Object.entries(updateResourceDisplay._elements).forEach(([key, element]) => {
-    const value = resources[key] || 0;
-    const inUse = toolsInUse[key] || 0;
-    
+    const resourceKey = key.replace(/_sidebar$/, "");  // ✅ Fix here
+    const value = resources[resourceKey] || 0;
+    const inUse = toolsInUse[resourceKey] || 0;
 
     const displayValue = inUse > 0 ? `${value} (${inUse})` : `${value}`;
-    
-    if (inUse > 0) {
-        console.log(`Item in use: ${key} → ${inUse}`);
-    }
-
 
     if (updateResourceDisplay._lastValues[key] !== displayValue) {
       element.innerHTML = displayValue;
@@ -21,6 +16,7 @@ window.updateResourceDisplay = function(resources, toolsInUse = {}) {
     }
   });
 
+  // Gold display (non-sidebar)
   const goldEl = document.getElementById("gold-count");
   if (goldEl) {
     const goldValue = resources.gold || 0;
@@ -35,8 +31,8 @@ window.updateResourceDisplay._elements = {};
 window.updateResourceDisplay._lastValues = {};
 
 window.prebuildItemDisplay = function(itemKeys, containers, isSidebar = false) {
-  updateResourceDisplay._elements = {};
-  updateResourceDisplay._lastValues = {};
+  if (!updateResourceDisplay._elements) updateResourceDisplay._elements = {};
+  if (!updateResourceDisplay._lastValues) updateResourceDisplay._lastValues = {};
 
   itemKeys.forEach(key => {
     const createCard = (key, container) => {
