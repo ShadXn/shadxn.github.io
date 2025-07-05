@@ -41,7 +41,7 @@ function getSidebarPreferences() {
     show_gear: form.show_gear?.checked ?? true,
     show_sidebar: form.show_sidebar?.checked ?? true,
     sidebar_position: form.sidebar_position?.value || "right",
-    sidebar_collapsed: wrapper?.classList.contains("collapsed") ?? false,
+    sidebar_collapsed: (!form.show_sidebar?.checked) || (wrapper?.classList.contains("collapsed") ?? false),
   };
 }
 
