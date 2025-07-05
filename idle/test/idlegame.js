@@ -328,12 +328,6 @@
             text.innerHTML = "0";
             innerCard.appendChild(text);
 
-            // Store reference for sidebar as well (if exists)
-            const sidebarElement = document.getElementById(`sidebar-${key}`);
-            if (sidebarElement) {
-                updateResourceDisplay._elements[key + "_sidebar"] = sidebarElement;
-            }
-
             card.appendChild(innerCard);
 
             // Append to correct section
