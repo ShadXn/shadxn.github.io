@@ -235,7 +235,7 @@
         "boots": {
         "used_for": "thieving",
         "action_speed_multiplier": 0.9,
-        "gold_multiplier": 2.0,
+        "gold_multiplier": 0.0,
         "cost": { "ingot": 100, "logs": 200, "recipe_bronze": 1 }
         }
     },
