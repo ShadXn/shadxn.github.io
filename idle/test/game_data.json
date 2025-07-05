@@ -723,5 +723,16 @@
     }
   },
   "gear_parts": ["sword", "armor", "shield"],
-  "tools_parts": ["pickaxe", "axe", "rod", "hammer", "gloves", "boots"]
+  "tools_parts": ["pickaxe", "axe", "rod", "hammer", "gloves", "boots"],
+  "tiers": {
+    "bronze": 1,
+    "iron": 2,
+    "steel": 3,
+    "black": 4,
+    "mithril": 5,
+    "adamant": 6,
+    "rune": 7,
+    "dragon": 8,
+    "god": 9
+  }
 }

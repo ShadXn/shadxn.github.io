@@ -30,39 +30,36 @@ window.hasRequiredGear = function(jobId, resources) {
 
 // This file contains logic for assigning tools and gear to jobs, and applying job ticks
 window.getBestToolForJob = function(jobId) {
-  const priorities = [];
+  const toolList = [];
 
   for (const [tierName, tools] of Object.entries(window.gameData.tools)) {
     for (const [toolName, data] of Object.entries(tools)) {
       if (data.used_for === jobId) {
         const itemId = `${tierName}_${toolName}`;
-        let slot = priorities.find(p => p.includes(itemId));
-        if (!slot) priorities.push([itemId]);  // wrap in array
+        toolList.push(itemId);
       }
     }
   }
 
-  // Sort descending by tier value (higher tier first)
-  priorities.forEach(slot => {
-    slot.sort((a, b) => {
-      const tierA = window.gameData.tools[a.split('_')[0]]?.[a.split('_')[1]]?.tier || 0;
-      const tierB = window.gameData.tools[b.split('_')[0]]?.[b.split('_')[1]]?.tier || 0;
-      return tierB - tierA;
-    });
+  // 🔁 Sort descending by tier value
+  toolList.sort((a, b) => {
+    const [tierA] = a.split('_');
+    const [tierB] = b.split('_');
+    const valA = window.gameData.tiers[tierA] || 0;
+    const valB = window.gameData.tiers[tierB] || 0;
+    return valB - valA;  // Higher tiers first
   });
-
-  return priorities;
+  console.log(`Best tools for job ${jobId}:`, toolList);
+  return toolList;
 };
 
 // Get the best gear for a job, sorted by tier and part
 window.getBestGearForJob = function(jobId) {
   const job = window.gameData.jobs[jobId];
-    if (!job) return [];
+  if (!job) return [];
 
-    const priorities = [];
-
-    // Define required gear parts used in fighting (always try equip if available)
-    const requiredParts = ["sword", "armor", "shield"];
+  const priorities = [];
+  const requiredParts = ["sword", "armor", "shield"];
 
   for (const part of requiredParts) {
     const matching = [];
@@ -73,12 +70,11 @@ window.getBestGearForJob = function(jobId) {
       }
     }
 
-    // Sort descending by tier
     matching.sort((a, b) => {
       const [tierA] = a.split("_");
       const [tierB] = b.split("_");
-      const valA = window.gameData.gear[tierA]?.[part]?.tier || 0;
-      const valB = window.gameData.gear[tierB]?.[part]?.tier || 0;
+      const valA = window.gameData.tiers[tierA] || 0;
+      const valB = window.gameData.tiers[tierB] || 0;
       return valB - valA;
     });
 
@@ -91,11 +87,13 @@ window.getBestGearForJob = function(jobId) {
 // Get the best gear for a job
 // TODO: Optimize tool/gear assignment by caching per worker to avoid re-evaluating on every tick.
 window.assignTools = function(jobId, count, resources, toolsInUse) {
-  const toolSets = getBestToolForJob(jobId, resources);
+  const toolList = getBestToolForJob(jobId);  // ✅ flat sorted list
   const job = window.gameData.jobs[jobId];
   const gearSets = job?.job_type === "combat" ? getBestGearForJob(jobId, resources) : [];
   const availableItems = { ...resources };
-    Object.keys(toolsInUse).forEach(k => {
+
+  // Subtract used tools/gear
+  Object.keys(toolsInUse).forEach(k => {
     availableItems[k] = (availableItems[k] || 0) - toolsInUse[k];
   });
 
@@ -104,41 +102,39 @@ window.assignTools = function(jobId, count, resources, toolsInUse) {
   for (let i = 0; i < count; i++) {
     const allEquipped = [];
 
-    // Equip best tools for this worker
-    for (const slotOptions of toolSets) {
-      let found = null;
-      for (const tool of slotOptions) {
-        const available = availableItems[tool] || 0;
-        if (available > 0) {
-          toolsInUse[tool] = (toolsInUse[tool] || 0) + 1;
-          found = tool;
-          break;
-        }
+    // ✅ Equip best single tool for this worker
+    let foundTool = null;
+    for (const tool of toolList) {
+      const available = availableItems[tool] || 0;
+      if (available > 0) {
+        foundTool = tool;
+        toolsInUse[tool] = (toolsInUse[tool] || 0) + 1;
+        availableItems[tool]--;
+        break;
       }
-      allEquipped.push(found);
     }
+    allEquipped.push(foundTool);
 
-    // Equip required gear (sword, armor, shield)
+    // ✅ Gear logic (unchanged)
     for (const gearSlot of gearSets) {
       let found = null;
       for (const gear of gearSlot) {
         const available = availableItems[gear] || 0;
         if (available > 0) {
-          toolsInUse[gear] = (toolsInUse[gear] || 0) + 1;
           found = gear;
+          toolsInUse[gear] = (toolsInUse[gear] || 0) + 1;
+          availableItems[gear]--;
           break;
         }
       }
       allEquipped.push(found);
     }
-    // console.log(`🛡️  Gear equipped for ${jobId}:`, allEquipped);
 
     assignedSets.push(allEquipped);
   }
 
   return assignedSets;
 };
-
 
 window.applyJobTick = function(assignments, tasks, jobs, resources, toolsInUse) {
   Object.keys(toolsInUse).forEach(tool => toolsInUse[tool] = 0);
