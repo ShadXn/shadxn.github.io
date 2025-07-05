@@ -102,6 +102,7 @@ function renderSidebarContent() {
   const keys = Object.keys(resources);
 
   const filteredKeys = keys.filter(key => {
+    if (!isNaN(Number(key))) return false; // Exclude numeric-only keys
     if (key === "gold") return false;
     if (!prefs.show_resources && !key.startsWith("recipe_") && !/_pickaxe|_axe|_rod|_hammer|_gloves|_cape|_boots|_sword|_armor|_shield/.test(key)) {
       return false;
