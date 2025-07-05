@@ -3,9 +3,10 @@
     "fish": {},
     "cooked_fish": {},
     "logs": {},
+    "refined_wood": {},
+    "fire_wood": {},
     "ore": {},
     "ingot": {},
-    "recipe": { "chance": 0.005 },
     "gold": {}
   },
   "recipes": {
@@ -505,174 +506,233 @@
 },
   "jobs": {
     "thieving": {
-    "food_cost": 1,
-    "job_action_time": 0.9,
-    "required_gear": "none",
-    "action_speed_multiplier": 0.9,
-    "produces": {
-        "gold": 5
-    }
+      "job_type": "skilling",
+      "food_cost": 1,
+      "job_action_time": 0.9,
+      "required_gear": "none",
+      "action_speed_multiplier": 0.9,
+      "produces": {
+          "gold": 5,
+          "refined_wood": 1,
+          "fire_wood": 2,
+          "ingot": 1
+      }
     },
     "woodcutting": {
-    "food_cost": 0,
-    "job_action_time": 0.9,
-    "required_gear": "none",
-    "action_speed_multiplier": 0.9,
-    "produces": {
-        "logs": 1
-    }
+      "job_type": "skilling",
+      "food_cost": 0,
+      "job_action_time": 0.9,
+      "required_gear": "none",
+      "action_speed_multiplier": 0.9,
+      "produces": {
+          "logs": 1
+      }    
+    },
+    "firemaking": {
+      "job_type": "skilling",
+      "food_cost": 0,
+      "job_action_time": 0.9,
+      "required_gear": "none",
+      "action_speed_multiplier": 0.9,
+      "required_resources": {
+          "logs": 1
+      },
+      "produces": {
+          "fire_wood": 5
+      }
+    },
+    "carpentry": {
+      "job_type": "skilling",
+      "food_cost": 0,
+      "job_action_time": 0.9,
+      "required_gear": "none",
+      "action_speed_multiplier": 0.9,
+      "required_resources": {
+          "logs": 1
+      },
+      "produces": {
+          "refined_wood": 1
+      }
     },
     "mining": {
-    "food_cost": 0,
-    "job_action_time": 0.9,
-    "required_gear": "none",
-    "action_speed_multiplier": 0.9,
-    "produces": {
-        "ore": 1
-    }
+      "job_type": "skilling",
+      "food_cost": 0,
+      "job_action_time": 0.9,
+      "required_gear": "none",
+      "action_speed_multiplier": 0.9,
+      "produces": {
+          "ore": 1
+      }
     },
     "smithing": {
-    "food_cost": 0,
-    "job_action_time": 0.9,
-    "required_gear": "none",
-    "action_speed_multiplier": 0.9,
-    "required_resources": {
-        "ore": 1
-    },
-    "produces": {
-        "ingot": 1
-    }
+      "job_type": "skilling",
+      "food_cost": 0,
+      "job_action_time": 0.9,
+      "required_gear": "none",
+      "action_speed_multiplier": 0.9,
+      "required_resources": {
+          "ore": 1
+      },
+      "produces": {
+          "ingot": 1
+      }
     },
     "fishing": {
-    "food_cost": 0,
-    "job_action_time": 0.9,
-    "required_gear": "none",
-    "action_speed_multiplier": 0.9,
-    "produces": {
-        "fish": 1
-    }
+      "job_type": "skilling",
+      "food_cost": 0,
+      "job_action_time": 0.9,
+      "required_gear": "none",
+      "action_speed_multiplier": 0.9,
+      "produces": {
+          "fish": 1
+      }
     },
     "cooking": {
-    "food_cost": 0,
-    "job_action_time": 0.9,
-    "required_gear": "none",
-    "action_speed_multiplier": 0.9,
-    "required_resources": {
-        "fish": 1
-    },
-    "produces": {
-        "cooked_fish": 1
-    }
+      "job_type": "skilling",
+      "food_cost": 0,
+      "job_action_time": 0.9,
+      "required_gear": "none",
+      "action_speed_multiplier": 0.9,
+      "required_resources": {
+          "fish": 1,
+          "fire_wood": 1
+      },
+      "produces": {
+          "cooked_fish": 1
+      }
     },
     "fighting_tier_1": {
-    "food_cost": 2,
-    "job_action_time": 0.9,
-    "required_gear": "none",
-    "gp_reward": 10,
-    "fights_required_to_unlock_next": 200,
-    "unlocks": "fighting_tier_2",
-    "produces": {
-      "recipe_bronze": { "chance": 0.01 }
-    }
+      "job_type": "combat",
+      "food_cost": 2,
+      "job_action_time": 0.9,
+      "required_gear": "none",
+      "gp_reward": 10,
+      "fights_required_to_unlock_next": 200,
+      "unlocks": "fighting_tier_2",
+      "produces": {
+        "recipe_bronze": { "chance": 0.01 }
+      }
     },
     "fighting_tier_2": {
-    "food_cost": 3,
-    "job_action_time": 0.9,
-    "required_gear": "bronze_sword, bronze_armor, bronze_shield",
-    "gp_reward": 20,
-    "fights_required_to_unlock_next": 400,
-    "unlocks": "fighting_tier_3",
-    "produces": {
-      "recipe_iron": { "chance": 0.01 }
-    }
+      "job_type": "combat",
+      "food_cost": 3,
+      "job_action_time": 0.9,
+      "required_gear": "bronze_sword, bronze_armor, bronze_shield",
+      "gp_reward": 20,
+      "fights_required_to_unlock_next": 400,
+      "unlocks": "fighting_tier_3",
+      "produces": {
+        "recipe_iron": { "chance": 0.01 }
+      }
     },
     "fighting_tier_3": {
-    "food_cost": 4,
-    "job_action_time": 0.9,
-    "required_gear": "iron_sword, iron_armor, iron_shield",
-    "gp_reward": 30,
-    "fights_required_to_unlock_next": 600,
-    "unlocks": "fighting_tier_4",
-    "produces": {
-      "recipe_steel": { "chance": 0.01 }
-    }
+      "job_type": "combat",
+      "food_cost": 4,
+      "job_action_time": 0.9,
+      "required_gear": "iron_sword, iron_armor, iron_shield",
+      "gp_reward": 30,
+      "fights_required_to_unlock_next": 600,
+      "unlocks": "fighting_tier_4",
+      "produces": {
+        "recipe_steel": { "chance": 0.01 }
+      }
     },
     "fighting_tier_4": {
-    "food_cost": 5,
-    "job_action_time": 0.9,
-    "required_gear": "steel_sword, steel_armor, steel_shield",
-    "gp_reward": 40,
-    "fights_required_to_unlock_next": 800,
-    "unlocks": "fighting_tier_5",
-    "produces": {
-      "recipe_black": { "chance": 0.01 }
-    }
+      "job_type": "combat",
+      "food_cost": 5,
+      "job_action_time": 0.9,
+      "required_gear": "steel_sword, steel_armor, steel_shield",
+      "gp_reward": 40,
+      "fights_required_to_unlock_next": 800,
+      "unlocks": "fighting_tier_5",
+      "produces": {
+        "recipe_black": { "chance": 0.01 }
+      }
     },
     "fighting_tier_5": {
-    "food_cost": 6,
-    "job_action_time": 0.8,
-    "required_gear": "black_sword, black_armor, black_shield",
-    "gp_reward": 50,
-    "fights_required_to_unlock_next": 1000,
-    "unlocks": "fighting_tier_6",
-    "produces": {
-      "recipe_mithril": { "chance": 0.01 }
-    }
+      "job_type": "combat",
+      "food_cost": 6,
+      "job_action_time": 0.8,
+      "required_gear": "black_sword, black_armor, black_shield",
+      "gp_reward": 50,
+      "fights_required_to_unlock_next": 1000,
+      "unlocks": "fighting_tier_6",
+      "produces": {
+        "recipe_mithril": { "chance": 0.01 }
+      }
     },
     "fighting_tier_6": {
-    "food_cost": 7,
-    "job_action_time": 0.8,
-    "required_gear": "mithril_sword, mithril_armor, mithril_shield",
-    "gp_reward": 60,
-    "fights_required_to_unlock_next": 1200,
-    "unlocks": "fighting_tier_7",
-    "produces": {
-      "recipe_adamant": { "chance": 0.01 }
-    }
+      "job_type": "combat",
+      "food_cost": 7,
+      "job_action_time": 0.8,
+      "required_gear": "mithril_sword, mithril_armor, mithril_shield",
+      "gp_reward": 60,
+      "fights_required_to_unlock_next": 1200,
+      "unlocks": "fighting_tier_7",
+      "produces": {
+        "recipe_adamant": { "chance": 0.01 }
+      }
     },
     "fighting_tier_7": {
-    "food_cost": 8,
-    "job_action_time": 0.8,
-    "required_gear": "adamant_sword, adamant_armor, adamant_shield",
-    "gp_reward": 70,
-    "fights_required_to_unlock_next": 1400,
-    "unlocks": "fighting_tier_8",
-    "produces": {
-      "recipe_rune": { "chance": 0.01 }
-    }
+      "job_type": "combat",
+      "food_cost": 8,
+      "job_action_time": 0.8,
+      "required_gear": "adamant_sword, adamant_armor, adamant_shield",
+      "gp_reward": 70,
+      "fights_required_to_unlock_next": 1400,
+      "unlocks": "fighting_tier_8",
+      "produces": {
+        "recipe_rune": { "chance": 0.01 }
+      }
     },
     "fighting_tier_8": {
-    "food_cost": 9,
-    "job_action_time": 0.8,
-    "required_gear": "rune_sword, rune_armor, rune_shield",
-    "gp_reward": 80,
-    "fights_required_to_unlock_next": 1600,
-    "unlocks": "fighting_tier_9",
-    "produces": {
-      "recipe_dragon": { "chance": 0.01 }
-    }
+      "job_type": "combat",
+      "food_cost": 9,
+      "job_action_time": 0.8,
+      "required_gear": "rune_sword, rune_armor, rune_shield",
+      "gp_reward": 80,
+      "fights_required_to_unlock_next": 1600,
+      "unlocks": "fighting_tier_9",
+      "produces": {
+        "recipe_dragon": { "chance": 0.01 }
+      }
     },
     "fighting_tier_9": {
-    "food_cost": 10,
-    "job_action_time": 0.8,
-    "required_gear": "dragon_sword, dragon_armor, dragon_shield",
-    "gp_reward": 90,
-    "fights_required_to_unlock_next": 1800,
-    "unlocks": "fighting_tier_10",
-    "produces": {
-      "recipe_god": { "chance": 0.01 }
-    }
+      "job_type": "combat",
+      "food_cost": 10,
+      "job_action_time": 0.8,
+      "required_gear": "dragon_sword, dragon_armor, dragon_shield",
+      "gp_reward": 90,
+      "fights_required_to_unlock_next": 1800,
+      "unlocks": "fighting_tier_10",
+      "produces": {
+        "recipe_god": { "chance": 0.01 }
+      }
     },
     "fighting_tier_10": {
-    "food_cost": 11,
-    "job_action_time": 0.8,
-    "required_gear": "god_sword, god_armor, god_shield",
-    "gp_reward": 100,
-    "fights_required_to_unlock_next": 2000,
-    "unlocks": "nothing",
-    "produces": {
-      "recipe_victory": { "chance": 0.0001 }
+      "job_type": "combat",
+      "food_cost": 11,
+      "job_action_time": 0.8,
+      "required_gear": "god_sword, god_armor, god_shield",
+      "gp_reward": 100,
+      "fights_required_to_unlock_next": 2000,
+      "unlocks": "nothing",
+      "produces": {
+        "recipe_victory": { "chance": 0.0001 }
+      }
     }
-    }
+  },
+  "gear_parts": ["sword", "armor", "shield"],
+  "tools_parts": ["pickaxe", "axe", "rod", "hammer", "gloves", "boots"],
+  "tiers": {
+    "bronze": 1,
+    "iron": 2,
+    "steel": 3,
+    "black": 4,
+    "mithril": 5,
+    "adamant": 6,
+    "rune": 7,
+    "dragon": 8,
+    "god": 9
   }
 }
