@@ -36,7 +36,10 @@
 
     function initializeGame() {
         GameState.loadProgress();  // This handles loading all state
-        tasks.forEach(task => { if (!(task.id in assignments)) assignments[task.id] = 0; });
+        tasks.forEach(task => {
+        if (!(task.id in GameState.assignments)) GameState.assignments[task.id] = 0;
+        });
+
 
         workerCost = 10 * Math.pow(2, GameState.workers);
 
