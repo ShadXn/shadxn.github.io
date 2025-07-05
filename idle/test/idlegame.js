@@ -533,7 +533,7 @@
 
                 // Handle gp reward with multiplier
                 if (job.gp_reward) {
-                    resources.gold += job.gp_reward * rewardMultiplier;
+                    resources.gold += job.gp_reward;
                 }
             }
         }
