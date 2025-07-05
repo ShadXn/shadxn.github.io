@@ -92,8 +92,12 @@ function renderSidebarContent() {
   const resources = JSON.parse(localStorage.getItem("idle_resources") || "{}");
 
   // Clear all sidebar sections first
-  ["sidebar-resource-display", "sidebar-gear-display", "sidebar-tool-display", "sidebar-recipe-display"]
-    .forEach(id => document.getElementById(id).innerHTML = "");
+  ["sidebar-section-resources", "sidebar-section-gear", "sidebar-section-tools", "sidebar-section-recipes"]
+    .forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = "";
+    });
+
 
   const keys = Object.keys(resources);
 
