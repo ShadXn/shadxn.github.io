@@ -112,14 +112,49 @@ function renderSidebarContent() {
 }
 
 function buildSidebarItemDisplay(itemKeys) {
+  const resources = JSON.parse(localStorage.getItem("idle_resources") || "{}");
+
   const containers = {
-    default: document.getElementById("sidebar-resource-display"),
-    gear: document.getElementById("sidebar-gear-display"),
-    tool: document.getElementById("sidebar-tool-display"),
-    recipe: document.getElementById("sidebar-recipe-display"),
+    default: document.getElementById("sidebar-section-resources"),
+    gear: document.getElementById("sidebar-section-gear"),
+    tool: document.getElementById("sidebar-section-tools"),
+    recipe: document.getElementById("sidebar-section-recipes"),
   };
 
+  // Clear any previous content
+  Object.values(containers).forEach(container => container.innerHTML = "");
+
+  // Section titles
+  const sectionTitles = {
+    default: "Resources",
+    gear: "Weapons & Armor",
+    tool: "Tools",
+    recipe: "Recipes",
+  };
+
+  const addedSections = new Set();
+
   itemKeys.forEach(key => {
+    const value = resources[key];
+    if (!value) return; // Skip 0 or undefined
+
+    let sectionKey = "default";
+    if (key.startsWith("recipe_")) sectionKey = "recipe";
+    else if (/sword|armor|shield/.test(key)) sectionKey = "gear";
+    else if (/pickaxe|axe|rod|hammer|gloves|cape|boots/.test(key)) sectionKey = "tool";
+
+    const container = containers[sectionKey];
+
+    // Add section title once
+    if (!addedSections.has(sectionKey)) {
+      const title = document.createElement("h6");
+      title.className = "sidebar-section-title";
+      title.textContent = sectionTitles[sectionKey];
+      container.appendChild(title);
+      addedSections.add(sectionKey);
+    }
+
+    // Create card
     const card = document.createElement("div");
     card.className = "sidebar-item-card";
     card.id = `sidebar-item-card-${key}`;
@@ -142,7 +177,7 @@ function buildSidebarItemDisplay(itemKeys) {
 
     const text = document.createElement("div");
     text.id = `sidebar-item-count-${key}`;
-    text.innerHTML = "0";
+    text.innerHTML = value;
 
     img.onerror = () => {
       img.remove();
@@ -155,16 +190,9 @@ function buildSidebarItemDisplay(itemKeys) {
     innerCard.appendChild(img);
     innerCard.appendChild(text);
     card.appendChild(innerCard);
+    container.appendChild(card);
 
-    if (key.startsWith("recipe_")) {
-      containers.recipe.appendChild(card);
-    } else if (/sword|armor|shield/.test(key)) {
-      containers.gear.appendChild(card);
-    } else if (/pickaxe|axe|rod|hammer|gloves|cape|boots/.test(key)) {
-      containers.tool.appendChild(card);
-    } else if (key !== "gold") {
-      containers.default.appendChild(card);
-    }
+    updateResourceDisplay._elements[key + "_sidebar"] = text;
   });
 }
 
