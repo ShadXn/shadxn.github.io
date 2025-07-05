@@ -10,15 +10,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   applySidebarPreferences();  // Loads and applies everything
 
+  // ✅ Single listener handles everything (checkboxes + position)
   form.addEventListener("change", () => {
     const preferences = getSidebarPreferences();
-    applySidebarPreferences(preferences);  // Apply changes immediately
     localStorage.setItem("sidebar_preferences", JSON.stringify(preferences));
+    applySidebarPreferences(preferences);
     renderSidebarContent();
   });
 
-  document.getElementById("sidebar-visibility-toggle").addEventListener("click", () => {
-    const wrapper = document.getElementById("sidebar-wrapper");
+  toggleBtn.addEventListener("click", () => {
     wrapper.classList.toggle("collapsed");
     const prefs = getSavedPreferences();
     prefs.sidebar_collapsed = wrapper.classList.contains("collapsed");
