@@ -39,11 +39,11 @@ document.addEventListener("DOMContentLoaded", () => {
         : (position === "left" ? "bi bi-chevron-left" : "bi bi-chevron-right");
   }
 
-  function applyPosition(pos) {
-    sidebarWrapper.classList.remove("sidebar-left", "sidebar-right");
-    sidebarWrapper.classList.add(`sidebar-${pos}`);
-    updateIcon(sidebarWrapper.classList.contains("collapsed"), pos);
-  }
+//   function applyPosition(pos) {
+//     sidebarWrapper.classList.remove("sidebar-left", "sidebar-right");
+//     sidebarWrapper.classList.add(`sidebar-${pos}`);
+//     updateIcon(sidebarWrapper.classList.contains("collapsed"), pos);
+//   }
 
   toggleBtn.addEventListener("click", () => {
     sidebarWrapper.classList.toggle("collapsed");
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const preferences = JSON.parse(localStorage.getItem("sidebar_preferences") || "{}");
       preferences.sidebar_position = pos;
       localStorage.setItem("sidebar_preferences", JSON.stringify(preferences));
-      applyPosition(pos);
+    //   applyPosition(pos);
     });
   }
 
@@ -69,10 +69,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const preferences = JSON.parse(localStorage.getItem("sidebar_preferences") || "{}");
   const savedPos = preferences.sidebar_position || "right";
   const savedCollapsed = preferences.sidebar_collapsed ?? false;
-  applyPosition(savedPos);
-  if (savedCollapsed) {
-    sidebarWrapper.classList.add("collapsed");
-  }
+//   applyPosition(savedPos);
+//   if (savedCollapsed) {
+//     sidebarWrapper.classList.add("collapsed");
+//   }
 
   renderSidebarContent();
 });
