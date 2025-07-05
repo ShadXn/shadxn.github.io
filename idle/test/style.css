@@ -163,6 +163,28 @@ body {
   margin-right: 280px;
 }
 
+/* Sidebar Inventory content */
+/* Inventory display */
+#sidebar-inventory-display {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Inventory header */
+#sidebar-inventory-display .item-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* Inventory item cards */
+.sidebar-item-card {
+  width: 60px;
+  height: 54px;
+}
+
+
 /* worker buy button */
 #buy-worker:disabled {
   opacity: 0.6;
