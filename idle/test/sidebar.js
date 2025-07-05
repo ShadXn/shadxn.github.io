@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   toggleIcon = document.getElementById("sidebar-toggle-icon");
 
   const form = document.getElementById("sidebar-settings-form");
-  const allItemKeys = Object.keys(localStorage.getItem("idle_resources") || {});
+
 
   applySidebarPreferences();  // Loads and applies everything
 
@@ -28,7 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   renderSidebarContent();
-  buildSidebarItemDisplay(allItemKeys);
 });
 
 // Get sidebar preferences from the form
@@ -92,12 +91,17 @@ function renderSidebarContent() {
   const resources = JSON.parse(localStorage.getItem("idle_resources") || "{}");
 
   // Clear all sidebar sections first
-  ["sidebar-resource-display", "sidebar-gear-display", "sidebar-tool-display", "sidebar-recipe-display"]
-    .forEach(id => document.getElementById(id).innerHTML = "");
+  ["sidebar-section-resources", "sidebar-section-gear", "sidebar-section-tools", "sidebar-section-recipes"]
+    .forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = "";
+    });
+
 
   const keys = Object.keys(resources);
 
   const filteredKeys = keys.filter(key => {
+    if (!/^[a-z_]+$/i.test(key)) return false; // Only allow valid item keys (e.g., bronze_sword)
     if (key === "gold") return false;
     if (!prefs.show_resources && !key.startsWith("recipe_") && !/_pickaxe|_axe|_rod|_hammer|_gloves|_cape|_boots|_sword|_armor|_shield/.test(key)) {
       return false;
@@ -105,15 +109,16 @@ function renderSidebarContent() {
     if (!prefs.show_recipes && key.startsWith("recipe_")) return false;
     if (!prefs.show_tools && /_pickaxe|_axe|_rod|_hammer|_gloves|_cape|_boots/.test(key)) return false;
     if (!prefs.show_gear && /_sword|_armor|_shield/.test(key)) return false;
+
     return true;
   });
 
+  console.log("✅ Filtered keys for sidebar:", filteredKeys);
   buildSidebarItemDisplay(filteredKeys);
 }
 
+// Build sidebar item display based on keys
 function buildSidebarItemDisplay(itemKeys) {
-  const resources = JSON.parse(localStorage.getItem("idle_resources") || "{}");
-
   const containers = {
     default: document.getElementById("sidebar-section-resources"),
     gear: document.getElementById("sidebar-section-gear"),
@@ -121,79 +126,12 @@ function buildSidebarItemDisplay(itemKeys) {
     recipe: document.getElementById("sidebar-section-recipes"),
   };
 
-  // Clear any previous content
+  // Clear all containers first
   Object.values(containers).forEach(container => container.innerHTML = "");
 
-  // Section titles
-  const sectionTitles = {
-    default: "Resources",
-    gear: "Weapons & Armor",
-    tool: "Tools",
-    recipe: "Recipes",
-  };
 
-  const addedSections = new Set();
-
-  itemKeys.forEach(key => {
-    const value = resources[key];
-    if (!value) return; // Skip 0 or undefined
-
-    let sectionKey = "default";
-    if (key.startsWith("recipe_")) sectionKey = "recipe";
-    else if (/sword|armor|shield/.test(key)) sectionKey = "gear";
-    else if (/pickaxe|axe|rod|hammer|gloves|cape|boots/.test(key)) sectionKey = "tool";
-
-    const container = containers[sectionKey];
-
-    // Add section title once
-    if (!addedSections.has(sectionKey)) {
-      const title = document.createElement("h6");
-      title.className = "sidebar-section-title";
-      title.textContent = sectionTitles[sectionKey];
-      container.appendChild(title);
-      addedSections.add(sectionKey);
-    }
-
-    // Create card
-    const card = document.createElement("div");
-    card.className = "sidebar-item-card";
-    card.id = `sidebar-item-card-${key}`;
-
-    const innerCard = document.createElement("div");
-    innerCard.className = "card bg-white border shadow-sm d-flex align-items-center";
-
-    const img = document.createElement("img");
-    let iconKey = key;
-    if (key.startsWith("recipe_")) {
-      const parts = key.split("_");
-      const tier = parts[1];
-      iconKey = `recipe_${tier}`;
-    }
-
-    img.src = `assets/icons/${iconKey}_icon.png`;
-    img.alt = key;
-    img.width = 24;
-    img.height = 24;
-
-    const text = document.createElement("div");
-    text.id = `sidebar-item-count-${key}`;
-    text.innerHTML = value;
-
-    img.onerror = () => {
-      img.remove();
-      const fallback = document.createElement("div");
-      fallback.className = "fallback-text";
-      fallback.textContent = key.replace(/_/g, ' ');
-      innerCard.insertBefore(fallback, text);
-    };
-
-    innerCard.appendChild(img);
-    innerCard.appendChild(text);
-    card.appendChild(innerCard);
-    container.appendChild(card);
-
-    updateResourceDisplay._elements[key + "_sidebar"] = text;
-  });
+  // Use shared function from display.js
+  prebuildItemDisplay(itemKeys, containers, true);
 }
 
 // Get saved preferences from localStorage or return default values

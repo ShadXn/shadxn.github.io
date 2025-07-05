@@ -18,10 +18,10 @@
         <div id="sidebar-viewer"></div>
         <!-- Inside your #sidebar element -->
         <div id="sidebar-inventory-display">
-          <div id="sidebar-resource-display" class="item-section"></div>
-          <div id="sidebar-gear-display" class="item-section"></div>
-          <div id="sidebar-tool-display" class="item-section"></div>
-          <div id="sidebar-recipe-display" class="item-section"></div>
+          <div id="sidebar-section-resources" class="item-section"></div>
+          <div id="sidebar-section-gear" class="item-section"></div>
+          <div id="sidebar-section-tools" class="item-section"></div>
+          <div id="sidebar-section-recipes" class="item-section"></div>
         </div>
       </div>
       <button id="sidebar-visibility-toggle" class="sidebar-toggle-btn">
@@ -244,14 +244,25 @@
     </div>
   </div>
 
+  <!-- Toast for game messages -->
+  <div id="game-toast"></div>
+
   <!-- Bootstrap JS (required for modal to work) -->
+  <!-- 1. Third-party libraries first -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
+  <!-- 2. Core systems -->
   <script src="version.js?v=0.21"></script>
   <script src="settings.js?v=0.21"></script>
-  <script src="idlegame.js?v=0.21"></script>
-  <script src="jobs.js?v=0.21"></script>
-  <script src="sidebar.js?v=0.21"></script>
-  <script src="news.js?v=0.21"></script>
+  <script src="gamestate.js?v=0.21"></script>   <!-- Defines GameState -->
+  <script src="crafting.js?v=0.21"></script>    <!-- Defines CraftingUI -->
+
+  <!-- 3. Game logic and data -->
+   <script src="display.js?v=0.21"></script>  <!-- Handles display updates -->
+  <script src="idlegame.js?v=0.21"></script>   <!-- Depends on GameState + CraftingUI -->
+  <script src="jobs.js?v=0.21"></script>       <!-- if used by idlegame -->
+  <script src="sidebar.js?v=0.21"></script>    <!-- Uses prebuilt display -->
+  <script src="news.js?v=0.21"></script>       <!-- Optional last -->
 </body>
 </html>
