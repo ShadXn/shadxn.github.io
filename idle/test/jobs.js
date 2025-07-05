@@ -49,7 +49,6 @@ window.getBestToolForJob = function(jobId) {
     const valB = window.gameData.tiers[tierB] || 0;
     return valB - valA;  // Higher tiers first
   });
-  console.log(`Best tools for job ${jobId}:`, toolList);
   return toolList;
 };
 
