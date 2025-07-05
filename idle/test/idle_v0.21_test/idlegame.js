@@ -9,12 +9,8 @@
     }
 
     let gameData = {}, jobs = {}, tasks = [], gearData = {}, toolData = {};
-    let goldDisplay, workerDisplay, idleDisplay, costDisplay, buyBtn, taskList;
+    let goldDisplay, workerDisplay, idleDisplay, costDisplay, buyBtn, taskList, workerCost;
 
-    const workersKey = 'idle_workers';
-    const assignmentsKey = 'idle_assignments';
-    const toolsInUse = {};
-    const resources = JSON.parse(localStorage.getItem('idle_resources') || '{}');
     const allItemKeys = new Set();
 
     fetch('game_data.json')
@@ -39,13 +35,10 @@
     .catch(error => console.error('Error loading game data:', error));
 
     function initializeGame() {
-        workers = parseInt(localStorage.getItem(workersKey)) || 0;
-        if (typeof resources.gold !== "number") resources.gold = workers === 0 ? 10 : 0;
-
-        assignments = JSON.parse(localStorage.getItem(assignmentsKey) || '{}');
+        GameState.loadProgress();  // This handles loading all state
         tasks.forEach(task => { if (!(task.id in assignments)) assignments[task.id] = 0; });
 
-        workerCost = 10 * Math.pow(2, workers);
+        workerCost = 10 * Math.pow(2, GameState.workers);
 
         goldDisplay = document.getElementById('gold-count');
         workerDisplay = document.getElementById('worker-count');
@@ -55,12 +48,12 @@
         taskList = document.getElementById('task-list');
 
         buyBtn.addEventListener('click', () => {
-            if (resources.gold >= workerCost) {
-                resources.gold -= workerCost;
-                workers++;
-                workerCost = 10 * Math.pow(2, workers);
+            if (GameState.resources.gold >= workerCost) {
+                GameState.resources.gold -= workerCost;
+                GameState.workers++;
+                workerCost = 10 * Math.pow(2, GameState.workers);
                 updateUI();
-                saveProgress();
+                GameState.saveProgress();
             }
         });
 
@@ -72,32 +65,34 @@
         });
 
         updateUI();
-        showCraftingSection(buildCraftables(gearData, toolData), resources);
+        CraftingUI.showCraftingSection(buildCraftables(gearData, toolData), GameState.resources, GameState.toolsInUse);
         populateJobs(jobs);
-        setInterval(() => applyJobTick(assignments, tasks, jobs, resources, toolsInUse), 1000);
+        setInterval(() => applyJobTick(GameState.assignments, tasks, jobs, GameState.resources, GameState.toolsInUse), 1000);
     }
 
-    function getIdleWorkers() {
-        return workers - Object.values(assignments).reduce((a, b) => a + b, 0);
-    }
+    // GameState object to manage game state
+
+    GameState.getIdleWorkers = function () {
+    return GameState.workers - Object.values(GameState.assignments).reduce((a, b) => a + b, 0);
+    };
 
     function updateUI() {
-        goldDisplay.textContent = resources.gold;
-        workerDisplay.textContent = workers;
-        idleDisplay.textContent = getIdleWorkers();
+        goldDisplay.textContent = GameState.resources.gold;
+        workerDisplay.textContent = GameState.workers;
+        idleDisplay.textContent = GameState.getIdleWorkers();
         costDisplay.textContent = workerCost;
-        buyBtn.disabled = resources.gold < workerCost;
+        buyBtn.disabled = GameState.resources.gold < workerCost;
         tasks.forEach(task => {
             const countSpan = document.getElementById(`count-${task.id}`);
-            if (countSpan) countSpan.textContent = assignments[task.id];
+            if (countSpan) countSpan.textContent = GameState.assignments[task.id];
         });
     }
 
-    function saveProgress() {
-        localStorage.setItem("idle_gold", resources.gold);
-        localStorage.setItem(workersKey, workers);
-        localStorage.setItem(assignmentsKey, JSON.stringify(assignments));
-        localStorage.setItem('idle_resources', JSON.stringify(resources));
+    GameState.saveProgress = function() {
+        localStorage.setItem("idle_gold", GameState.resources.gold);
+        localStorage.setItem(GameState.workersKey, GameState.workers);
+        localStorage.setItem(GameState.assignmentsKey, JSON.stringify(GameState.assignments));
+        localStorage.setItem("idle_resources", JSON.stringify(GameState.resources));
     }
 
     function buildCraftables(gearData, toolData) {
@@ -135,50 +130,17 @@
             controls.className = 'd-flex align-items-center gap-2 mt-2';
             controls.innerHTML = `<button class="btn btn-sm btn-danger">−</button><span id="count-${jobId}" class="fw-bold">0</span><button class="btn btn-sm btn-success">+</button>`;
             const [minusBtn, plusBtn] = controls.querySelectorAll('button');
-            minusBtn.onclick = () => { if (assignments[jobId] > 0) { assignments[jobId]--; updateUI(); saveProgress(); } };
-            plusBtn.onclick = () => { if (getIdleWorkers() > 0) { assignments[jobId] = (assignments[jobId] || 0) + 1; updateUI(); saveProgress(); } };
+            minusBtn.onclick = () => { if (GameState.assignments[jobId] > 0) { GameState.assignments[jobId]--; updateUI(); GameState.saveProgress(); } };
+            plusBtn.onclick = () => { if (GameState.getIdleWorkers() > 0) {
+                GameState.assignments[jobId] = (GameState.assignments[jobId] || 0) + 1;
+                updateUI();
+                GameState.saveProgress();
+            } };
 
             card.appendChild(header);
             card.appendChild(details);
             card.appendChild(controls);
             taskList.appendChild(card);
         });
-    }
-
-    function showCraftingSection(items = [], resources = {}) {
-        const gearContainer = document.getElementById("gear-craft");
-        const toolContainer = document.getElementById("tools-craft");
-        if (!gearContainer || !toolContainer) return;
-        gearContainer.innerHTML = "";
-        toolContainer.innerHTML = "";
-        items.forEach(item => {
-            const button = document.createElement("button");
-            button.className = "btn btn-sm btn-outline-secondary";
-            button.innerHTML = `${item.name}<br><small>${Object.entries(item.cost).map(([r, a]) => `${r}: ${a}`).join("<br>")}${item.used_for ? `<br>used for: ${item.used_for}` : ''}</small>`;
-            button.onclick = () => attemptCraft(item, resources);
-            if (item.type === 'gear') gearContainer.appendChild(button);
-            else if (item.type === 'tool') toolContainer.appendChild(button);
-        });
-    }
-
-    function normalizeItemKey(name) {
-        return name.toLowerCase().replace(/ /g, '_');
-    }
-
-    function attemptCraft(item, resources) {
-        for (const [res, amt] of Object.entries(item.cost)) {
-            const resKey = normalizeItemKey(res);
-            const inUse = toolsInUse[resKey] || 0;
-            const available = (resources[resKey] || 0) - inUse;
-            if (available < amt) {
-                alert(`Not enough available ${res} to craft ${item.name}.\nIn use: ${inUse}, Available: ${available}`);
-                return;
-            }
-        }
-        for (const [res, amt] of Object.entries(item.cost)) resources[res] -= amt;
-        const itemKey = normalizeItemKey(item.name);
-        resources[itemKey] = (resources[itemKey] || 0) + 1;
-        updateResourceDisplay(resources, toolsInUse);
-        saveProgress();
     }
 })();
