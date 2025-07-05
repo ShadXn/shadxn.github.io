@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   toggleIcon = document.getElementById("sidebar-toggle-icon");
 
   const form = document.getElementById("sidebar-settings-form");
+  const allItemKeys = Object.keys(localStorage.getItem("idle_resources") || {});
 
   applySidebarPreferences();  // Loads and applies everything
 
@@ -27,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   renderSidebarContent();
+  buildSidebarItemDisplay(allItemKeys);
 });
 
 // Get sidebar preferences from the form
@@ -86,27 +88,84 @@ function applySidebarPreferences(prefs = getSavedPreferences()) {
 
 // Render sidebar content based on preferences
 function renderSidebarContent() {
-  const viewer = document.getElementById("sidebar-viewer");
   const prefs = getSavedPreferences();
   const resources = JSON.parse(localStorage.getItem("idle_resources") || "{}");
-  viewer.innerHTML = "";
 
-  const appendSection = (title, keys) => {
-    const section = document.createElement("div");
-    section.innerHTML = `<strong>${title}</strong>`;
-    keys.forEach(key => {
-      const value = resources[key] || 0;
-      const item = document.createElement("div");
-      item.textContent = `${key.replace(/_/g, ' ')}: ${value}`;
-      section.appendChild(item);
-    });
-    viewer.appendChild(section);
+  // Clear all sidebar sections first
+  ["sidebar-resource-display", "sidebar-gear-display", "sidebar-tool-display", "sidebar-recipe-display"]
+    .forEach(id => document.getElementById(id).innerHTML = "");
+
+  const keys = Object.keys(resources);
+
+  const filteredKeys = keys.filter(key => {
+    if (key === "gold") return false;
+    if (!prefs.show_resources && !key.startsWith("recipe_") && !/_pickaxe|_axe|_rod|_hammer|_gloves|_cape|_boots|_sword|_armor|_shield/.test(key)) {
+      return false;
+    }
+    if (!prefs.show_recipes && key.startsWith("recipe_")) return false;
+    if (!prefs.show_tools && /_pickaxe|_axe|_rod|_hammer|_gloves|_cape|_boots/.test(key)) return false;
+    if (!prefs.show_gear && /_sword|_armor|_shield/.test(key)) return false;
+    return true;
+  });
+
+  buildSidebarItemDisplay(filteredKeys);
+}
+
+function buildSidebarItemDisplay(itemKeys) {
+  const containers = {
+    default: document.getElementById("sidebar-resource-display"),
+    gear: document.getElementById("sidebar-gear-display"),
+    tool: document.getElementById("sidebar-tool-display"),
+    recipe: document.getElementById("sidebar-recipe-display"),
   };
 
-  if (prefs.show_resources) appendSection("Resources", ["logs", "ore", "fish", "cooked_fish", "gold", "ingot"]);
-  if (prefs.show_recipes) appendSection("Recipes", Object.keys(resources).filter(k => k.startsWith("recipe_")));
-  if (prefs.show_tools) appendSection("Tools", Object.keys(resources).filter(k => /_pickaxe|_axe|_rod|_hammer|_gloves|_boots/.test(k)));
-  if (prefs.show_gear) appendSection("Weapons & Armor", Object.keys(resources).filter(k => /_sword|_armor|_shield/.test(k)));
+  itemKeys.forEach(key => {
+    const card = document.createElement("div");
+    card.className = "sidebar-item-card";
+    card.id = `sidebar-item-card-${key}`;
+
+    const innerCard = document.createElement("div");
+    innerCard.className = "card bg-white border shadow-sm d-flex align-items-center";
+
+    const img = document.createElement("img");
+    let iconKey = key;
+    if (key.startsWith("recipe_")) {
+      const parts = key.split("_");
+      const tier = parts[1];
+      iconKey = `recipe_${tier}`;
+    }
+
+    img.src = `assets/icons/${iconKey}_icon.png`;
+    img.alt = key;
+    img.width = 24;
+    img.height = 24;
+
+    const text = document.createElement("div");
+    text.id = `sidebar-item-count-${key}`;
+    text.innerHTML = "0";
+
+    img.onerror = () => {
+      img.remove();
+      const fallback = document.createElement("div");
+      fallback.className = "fallback-text";
+      fallback.textContent = key.replace(/_/g, ' ');
+      innerCard.insertBefore(fallback, text);
+    };
+
+    innerCard.appendChild(img);
+    innerCard.appendChild(text);
+    card.appendChild(innerCard);
+
+    if (key.startsWith("recipe_")) {
+      containers.recipe.appendChild(card);
+    } else if (/sword|armor|shield/.test(key)) {
+      containers.gear.appendChild(card);
+    } else if (/pickaxe|axe|rod|hammer|gloves|cape|boots/.test(key)) {
+      containers.tool.appendChild(card);
+    } else if (key !== "gold") {
+      containers.default.appendChild(card);
+    }
+  });
 }
 
 // Get saved preferences from localStorage or return default values
