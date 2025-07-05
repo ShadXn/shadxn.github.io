@@ -1,21 +1,47 @@
 // display.js — shared logic for inventory/resource display
+window.GearParts = window.GearParts || [];
+window.ToolParts = window.ToolParts || [];
 
 window.updateResourceDisplay = function(resources, toolsInUse = {}) {
   Object.entries(updateResourceDisplay._elements).forEach(([key, element]) => {
     const value = resources[key] || 0;
     const inUse = toolsInUse[key] || 0;
-    const showInUse = inUse > 0 ? ` (${inUse})` : "";
-    element.innerHTML = `${value}${showInUse}`;
+    
+
+    const displayValue = inUse > 0 ? `${value} (${inUse})` : `${value}`;
+    
+    if (inUse > 0) {
+        console.log(`Item in use: ${key} → ${inUse}`);
+    }
+
+
+    if (updateResourceDisplay._lastValues[key] !== displayValue) {
+      element.innerHTML = displayValue;
+      updateResourceDisplay._lastValues[key] = displayValue;
+    }
   });
+
+  const goldEl = document.getElementById("gold-count");
+  if (goldEl) {
+    const goldValue = resources.gold || 0;
+    if (updateResourceDisplay._lastValues.gold !== goldValue) {
+      goldEl.textContent = goldValue;
+      updateResourceDisplay._lastValues.gold = goldValue;
+    }
+  }
 };
 
-window.prebuildItemDisplay = function(itemKeys, containers) {
+window.updateResourceDisplay._elements = {};
+window.updateResourceDisplay._lastValues = {};
+
+window.prebuildItemDisplay = function(itemKeys, containers, isSidebar = false) {
   updateResourceDisplay._elements = {};
+  updateResourceDisplay._lastValues = {};
 
   itemKeys.forEach(key => {
-    const createCard = (key, container, isSidebar = false) => {
+    const createCard = (key, container) => {
       const card = document.createElement("div");
-      card.className = "";
+      card.className = isSidebar ? "sidebar-item-card" : "";
       card.id = `item-card-${key}${isSidebar ? "-sidebar" : ""}`;
 
       const innerCard = document.createElement("div");
@@ -47,16 +73,32 @@ window.prebuildItemDisplay = function(itemKeys, containers) {
 
       const trackingKey = isSidebar ? `${key}_sidebar` : key;
       updateResourceDisplay._elements[trackingKey] = text;
+      updateResourceDisplay._lastValues[trackingKey] = null;
     };
 
+    // Determine the container based on the key
     if (key.startsWith("recipe_")) {
       createCard(key, containers.recipe);
-    } else if (/sword|armor|shield/.test(key)) {
+    } else if (window.GearParts.some(part => key.endsWith(`_${part}`))) {
       createCard(key, containers.gear);
-    } else if (/pickaxe|axe|rod|hammer|gloves|cape|boots/.test(key)) {
+    } else if (window.ToolParts.some(part => key.endsWith(`_${part}`))) {
       createCard(key, containers.tool);
     } else if (key !== "gold") {
       createCard(key, containers.default);
     }
   });
+};
+
+
+window.showToast = function(message, duration = 2500) {
+  const toast = document.getElementById("game-toast");
+  if (!toast) return;
+
+  toast.textContent = message;
+  toast.style.opacity = 1;
+
+  clearTimeout(window._toastTimeout);
+  window._toastTimeout = setTimeout(() => {
+    toast.style.opacity = 0;
+  }, duration);
 };

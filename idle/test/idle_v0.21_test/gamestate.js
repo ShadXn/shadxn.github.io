@@ -17,7 +17,6 @@ window.GameState = {
   },
 
   saveProgress() {
-    localStorage.setItem("idle_gold", this.resources.gold);
     localStorage.setItem(this.workersKey, this.workers);
     localStorage.setItem(this.assignmentsKey, JSON.stringify(this.assignments));
     localStorage.setItem("idle_resources", JSON.stringify(this.resources));

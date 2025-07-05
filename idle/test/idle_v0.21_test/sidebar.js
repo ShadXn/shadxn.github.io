@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   toggleIcon = document.getElementById("sidebar-toggle-icon");
 
   const form = document.getElementById("sidebar-settings-form");
-  const allItemKeys = Object.keys(localStorage.getItem("idle_resources") || {});
+
 
   applySidebarPreferences();  // Loads and applies everything
 
@@ -28,7 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   renderSidebarContent();
-  buildSidebarItemDisplay(allItemKeys);
 });
 
 // Get sidebar preferences from the form
@@ -102,7 +101,7 @@ function renderSidebarContent() {
   const keys = Object.keys(resources);
 
   const filteredKeys = keys.filter(key => {
-    if (!isNaN(Number(key))) return false; // Exclude numeric-only keys
+    if (!/^[a-z_]+$/i.test(key)) return false; // Only allow valid item keys (e.g., bronze_sword)
     if (key === "gold") return false;
     if (!prefs.show_resources && !key.startsWith("recipe_") && !/_pickaxe|_axe|_rod|_hammer|_gloves|_cape|_boots|_sword|_armor|_shield/.test(key)) {
       return false;
@@ -110,9 +109,11 @@ function renderSidebarContent() {
     if (!prefs.show_recipes && key.startsWith("recipe_")) return false;
     if (!prefs.show_tools && /_pickaxe|_axe|_rod|_hammer|_gloves|_cape|_boots/.test(key)) return false;
     if (!prefs.show_gear && /_sword|_armor|_shield/.test(key)) return false;
+
     return true;
   });
 
+  console.log("✅ Filtered keys for sidebar:", filteredKeys);
   buildSidebarItemDisplay(filteredKeys);
 }
 
@@ -128,8 +129,9 @@ function buildSidebarItemDisplay(itemKeys) {
   // Clear all containers first
   Object.values(containers).forEach(container => container.innerHTML = "");
 
+
   // Use shared function from display.js
-  prebuildItemDisplay(itemKeys, containers);
+  prebuildItemDisplay(itemKeys, containers, true);
 }
 
 // Get saved preferences from localStorage or return default values

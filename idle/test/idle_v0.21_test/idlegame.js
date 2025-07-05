@@ -12,14 +12,24 @@
     let goldDisplay, workerDisplay, idleDisplay, costDisplay, buyBtn, taskList, workerCost;
 
     const allItemKeys = new Set();
+    const lastState = {
+        gold: null,
+        workers: null,
+        idle: null,
+        assignments: {},
+    };
+
 
     fetch('game_data.json')
     .then(response => response.json())
     .then(data => {
         gameData = data;
+        window.gameData = data;
         jobs = gameData.jobs;
         gearData = gameData.gear || {};
         toolData = gameData.tools || {};
+        window.GearParts = gameData.gear_parts || [];
+        window.ToolParts = gameData.tools_parts || [];
 
         Object.keys(data.resources).forEach(k => allItemKeys.add(k));
         for (const tier in data.tools) for (const part in data.tools[tier]) allItemKeys.add(`${tier}_${part}`);
@@ -35,6 +45,26 @@
     .catch(error => console.error('Error loading game data:', error));
 
     function initializeGame() {
+        // watchdog for bad resource keys
+        const originalSetItem = localStorage.setItem;
+        localStorage.setItem = function(key, value) {
+        if (key === "idle_resources") {
+            try {
+            const parsed = JSON.parse(value);
+            const badKeys = Object.keys(parsed).filter(k => /^[0-9]+$/.test(k));
+            if (badKeys.length > 0) {
+                console.warn("⚠️ BAD RESOURCE KEYS DETECTED:", badKeys);
+                console.trace(); // Show where it happened
+            }
+            } catch (e) {
+            console.error("Failed to parse idle_resources:", e);
+            }
+        }
+        return originalSetItem.apply(this, arguments);
+        };
+
+
+
         GameState.loadProgress();  // This handles loading all state
         tasks.forEach(task => {
         if (!(task.id in GameState.assignments)) GameState.assignments[task.id] = 0;
@@ -67,10 +97,15 @@
             recipe: document.getElementById("recipe-display")
         });
 
-        updateUI();
+
         CraftingUI.showCraftingSection(buildCraftables(gearData, toolData), GameState.resources, GameState.toolsInUse);
         populateJobs(jobs);
-        setInterval(() => applyJobTick(GameState.assignments, tasks, jobs, GameState.resources, GameState.toolsInUse), 1000);
+        setInterval(() => {
+            applyJobTick(GameState.assignments, tasks, jobs, GameState.resources, GameState.toolsInUse);
+            updateResourceDisplay(GameState.resources, GameState.toolsInUse); // Refresh UI
+            updateUI(); // Update all displays
+            GameState.saveProgress(); // Save updated resources + assignments
+        }, 1000);
     }
 
     // GameState object to manage game state
@@ -80,19 +115,38 @@
     };
 
     function updateUI() {
-        goldDisplay.textContent = GameState.resources.gold;
-        workerDisplay.textContent = GameState.workers;
-        idleDisplay.textContent = GameState.getIdleWorkers();
-        costDisplay.textContent = workerCost;
-        buyBtn.disabled = GameState.resources.gold < workerCost;
+        const currentGold = GameState.resources.gold;
+        const currentWorkers = GameState.workers;
+        const currentIdle = GameState.getIdleWorkers();
+
+        if (currentGold !== lastState.gold) {
+            goldDisplay.textContent = currentGold;
+            buyBtn.disabled = currentGold < workerCost;
+            lastState.gold = currentGold;
+        }
+
+        if (currentWorkers !== lastState.workers) {
+            workerDisplay.textContent = currentWorkers;
+            costDisplay.textContent = workerCost;
+            lastState.workers = currentWorkers;
+        }
+
+        if (currentIdle !== lastState.idle) {
+            idleDisplay.textContent = currentIdle;
+            lastState.idle = currentIdle;
+        }
+
         tasks.forEach(task => {
+            const currentCount = GameState.assignments[task.id] || 0;
+            if (lastState.assignments[task.id] !== currentCount) {
             const countSpan = document.getElementById(`count-${task.id}`);
-            if (countSpan) countSpan.textContent = GameState.assignments[task.id];
+                if (countSpan) countSpan.textContent = currentCount;
+                lastState.assignments[task.id] = currentCount;
+            }
         });
     }
 
     GameState.saveProgress = function() {
-        localStorage.setItem("idle_gold", GameState.resources.gold);
         localStorage.setItem(GameState.workersKey, GameState.workers);
         localStorage.setItem(GameState.assignmentsKey, JSON.stringify(GameState.assignments));
         localStorage.setItem("idle_resources", JSON.stringify(GameState.resources));
@@ -134,11 +188,23 @@
             controls.innerHTML = `<button class="btn btn-sm btn-danger">−</button><span id="count-${jobId}" class="fw-bold">0</span><button class="btn btn-sm btn-success">+</button>`;
             const [minusBtn, plusBtn] = controls.querySelectorAll('button');
             minusBtn.onclick = () => { if (GameState.assignments[jobId] > 0) { GameState.assignments[jobId]--; updateUI(); GameState.saveProgress(); } };
-            plusBtn.onclick = () => { if (GameState.getIdleWorkers() > 0) {
-                GameState.assignments[jobId] = (GameState.assignments[jobId] || 0) + 1;
-                updateUI();
-                GameState.saveProgress();
-            } };
+            plusBtn.onclick = () => {
+            if (GameState.getIdleWorkers() <= 0) {
+                showToast("❌ No idle workers available to assign.");
+                return;
+            }
+
+
+            // 🚫 Check gear requirement for combat jobs
+            if (job.job_type === "combat" && !hasRequiredGear(jobId, GameState.resources)) {
+                showToast("❌ You don’t have the required gear to assign a worker to this combat job.");
+                return;
+            }
+
+            GameState.assignments[jobId] = (GameState.assignments[jobId] || 0) + 1;
+            updateUI();
+            GameState.saveProgress();
+            };
 
             card.appendChild(header);
             card.appendChild(details);
