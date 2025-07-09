@@ -70,7 +70,6 @@
         if (!(task.id in GameState.assignments)) GameState.assignments[task.id] = 0;
         });
 
-
         workerCost = 10 * Math.pow(2, GameState.workers);
 
         goldDisplay = document.getElementById('gold-count');
@@ -89,6 +88,9 @@
                 GameState.saveProgress();
             }
         });
+
+        // Remove any items that were removed from gameData
+        cleanupRemovedItems(gameData);
 
         prebuildItemDisplay(allItemKeys, {
             default: document.getElementById("resource-display"),
@@ -213,4 +215,24 @@
             taskList.appendChild(card);
         });
     }
+
+    function cleanupRemovedItems(gameData) {
+        if (!gameData.removed_items || !Array.isArray(gameData.removed_items)) return;
+
+        const storedResources = JSON.parse(localStorage.getItem("idle_resources") || "{}");
+        let cleaned = false;
+
+        gameData.removed_items.forEach(key => {
+            if (key in storedResources) {
+            delete storedResources[key];
+            cleaned = true;
+            console.log(`🧹 Removed obsolete item: ${key}`);
+            }
+        });
+
+        if (cleaned) {
+            localStorage.setItem("idle_resources", JSON.stringify(storedResources));
+        }
+    }
+
 })();
