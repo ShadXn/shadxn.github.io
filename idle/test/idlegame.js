@@ -117,15 +117,16 @@
             GameState.saveProgress(); // Save updated resources + assignments
         }, 1000);
 
-        const DEBUG_MODE = true; // or false in prod
+        const urlParams = new URLSearchParams(window.location.search);
+        const debugOverride = urlParams.get("debug") === "1";
+
+        const DEBUG_MODE = debugOverride || (window.location.hostname === "127.0.0.1");
         
         // check window.location.hostname for dev panel
         console.log("Current hostname:", window.location.hostname);
-        if (
-            DEBUG_MODE ||
-            window.location.hostname === "localhost" ||
-            window.location.hostname === "127.0.0.1"
-            ) {
+
+        // Only insert dev panel if dev mode
+        if (DEBUG_MODE) {
             // Insert dev panel HTML
             const panel = document.createElement("div");
             panel.id = "dev-panel";
