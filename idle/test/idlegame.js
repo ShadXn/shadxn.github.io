@@ -118,7 +118,9 @@
         }, 1000);
 
         const DEBUG_MODE = true; // or false in prod
-
+        
+        // check window.location.hostname for dev panel
+        console.log("Current hostname:", window.location.hostname);
         if (
             DEBUG_MODE ||
             window.location.hostname === "localhost" ||
