@@ -69,7 +69,7 @@
         
         // Remove any items that were removed from gameData
         cleanupRemovedItems(gameData);
-        // Initialize GameState after removing obsolete items
+        // Resync GameState.resources after cleaning localStorage
         GameState.resources = JSON.parse(localStorage.getItem("idle_resources") || "{}");
 
         // Initialize resources if not already set
