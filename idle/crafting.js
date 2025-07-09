@@ -1,6 +1,6 @@
 // crafting.js — logic for building and attempting crafts
 
-window.buildCraftables = function(gearData, toolData) {
+window.buildCraftables = function(gearData, toolData, miscData = {}) {
   const craftables = [];
 
   for (const tier in gearData) {
@@ -23,6 +23,14 @@ window.buildCraftables = function(gearData, toolData) {
     }
   }
 
+  for (const key in miscData) {
+    craftables.push({
+      name: key,
+      cost: miscData[key].cost,
+      type: "misc"
+    });
+  }
+
   return craftables;
 };
 
@@ -30,11 +38,13 @@ window.CraftingUI = {
   showCraftingSection(items, resources, toolsInUse = {}) {
     const gearContainer = document.getElementById("gear-craft");
     const toolContainer = document.getElementById("tools-craft");
+    const miscContainer = document.getElementById("misc-craft");
 
-    if (!gearContainer || !toolContainer) return;
+    if (!gearContainer || !toolContainer || !miscContainer) return;
 
     gearContainer.innerHTML = "";
     toolContainer.innerHTML = "";
+    miscContainer.innerHTML = "";
 
     items.forEach(item => {
       const button = document.createElement("button");
@@ -42,8 +52,17 @@ window.CraftingUI = {
       button.innerHTML = `${item.name}<br><small>${Object.entries(item.cost).map(([r, a]) => `${r}: ${a}`).join("<br>")}${item.used_for ? `<br>used for: ${item.used_for}` : ''}</small>`;
       button.onclick = () => this.attemptCraft(item, resources, toolsInUse);
 
-      (item.type === "gear" ? gearContainer : toolContainer).appendChild(button);
+      if (item.type === "gear") {
+        gearContainer.appendChild(button);
+      } else if (item.type === "tool") {
+        toolContainer.appendChild(button);
+      } else if (item.type === "misc") {
+        miscContainer.appendChild(button);
+      } else {
+        console.warn("Unknown crafting type:", item);
+      }
     });
+
   },
 
   attemptCraft(item, resources, toolsInUse = {}) {

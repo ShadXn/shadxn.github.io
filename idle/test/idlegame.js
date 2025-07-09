@@ -28,12 +28,14 @@
         jobs = gameData.jobs;
         gearData = gameData.gear || {};
         toolData = gameData.tools || {};
+        miscData = gameData.miscellaneous || {};
         window.GearParts = gameData.gear_parts || [];
         window.ToolParts = gameData.tools_parts || [];
 
         Object.keys(data.resources).forEach(k => allItemKeys.add(k));
         for (const tier in data.tools) for (const part in data.tools[tier]) allItemKeys.add(`${tier}_${part}`);
         for (const tier in data.gear) for (const part in data.gear[tier]) allItemKeys.add(`${tier}_${part}`);
+        for (const key in data.miscellaneous) {allItemKeys.add(key);}
 
         const recipeData = data.recipes || {};
         const tierOrder = ["bronze", "iron", "steel", "black", "mithril", "adamant", "rune", "dragon", "god", "victory"];
@@ -100,11 +102,12 @@
             default: document.getElementById("resource-display"),
             gear: document.getElementById("gear-display"),
             tool: document.getElementById("tool-display"),
-            recipe: document.getElementById("recipe-display")
+            recipe: document.getElementById("recipe-display"),
+            misc: document.getElementById("misc-display")
         });
 
 
-        CraftingUI.showCraftingSection(buildCraftables(gearData, toolData), GameState.resources, GameState.toolsInUse);
+        CraftingUI.showCraftingSection(buildCraftables(gearData, toolData, miscData), GameState.resources, GameState.toolsInUse);
         renderSidebarContent();
         populateJobs(jobs);
         setInterval(() => {
@@ -159,10 +162,11 @@
         localStorage.setItem("idle_resources", JSON.stringify(GameState.resources));
     }
 
-    function buildCraftables(gearData, toolData) {
+    function buildCraftables(gearData, toolData, miscData) {
         const craftables = [];
         for (const tier in gearData) for (const part in gearData[tier]) craftables.push({ name: `${tier} ${part}`, cost: gearData[tier][part].cost, type: 'gear' });
         for (const tier in toolData) for (const part in toolData[tier]) craftables.push({ name: `${tier} ${part}`, cost: toolData[tier][part].cost, type: 'tool' });
+        for (const key in miscData) craftables.push({ name: key, cost: miscData[key].cost, type: 'misc' });
         return craftables;
     }
 
