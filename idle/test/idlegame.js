@@ -293,26 +293,26 @@
     }
 
     // Dev tools for adding items
-    function addItem() {
-        const key = document.getElementById("dev-item-key").value;
+    window.addItem = function () {
+        const key = document.getElementById("dev-item-key").value.trim();
         const amount = parseInt(document.getElementById("dev-item-amount").value) || 0;
-        if (!key || amount === 0) return;
+
+        if (!key || amount <= 0) return alert("Invalid key or amount");
 
         GameState.resources[key] = (GameState.resources[key] || 0) + amount;
         updateResourceDisplay(GameState.resources, GameState.toolsInUse);
         GameState.saveProgress();
-    }
+    };
 
-    // Dev tools for removing items
-    function removeItem() {
-        const key = document.getElementById("dev-item-key").value;
+    window.removeItem = function () {
+        const key = document.getElementById("dev-item-key").value.trim();
         const amount = parseInt(document.getElementById("dev-item-amount").value) || 0;
-        if (!key || amount === 0) return;
+
+        if (!key || amount <= 0) return alert("Invalid key or amount");
 
         GameState.resources[key] = Math.max((GameState.resources[key] || 0) - amount, 0);
         updateResourceDisplay(GameState.resources, GameState.toolsInUse);
         GameState.saveProgress();
-    }
-
+    };
 
 })();
