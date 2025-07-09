@@ -66,6 +66,11 @@
 
 
         GameState.loadProgress();  // This handles loading all state
+        
+        // Remove any items that were removed from gameData
+        cleanupRemovedItems(gameData);
+
+        // Initialize resources if not already set
         tasks.forEach(task => {
         if (!(task.id in GameState.assignments)) GameState.assignments[task.id] = 0;
         });
@@ -88,9 +93,6 @@
                 GameState.saveProgress();
             }
         });
-
-        // Remove any items that were removed from gameData
-        cleanupRemovedItems(gameData);
 
         prebuildItemDisplay(allItemKeys, {
             default: document.getElementById("resource-display"),
