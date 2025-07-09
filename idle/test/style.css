@@ -182,7 +182,17 @@ body {
 /* Inventory item cards */
 .sidebar-item-card {
   width: 60px;
-  height: 54px;
+  height: 48px;
+  font-size: 0.75rem;
+}
+
+.sidebar-item-card .card {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Sidebar section titles */
