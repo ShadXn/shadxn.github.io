@@ -69,6 +69,8 @@
         
         // Remove any items that were removed from gameData
         cleanupRemovedItems(gameData);
+        // Initialize GameState after removing obsolete items
+        GameState.resources = JSON.parse(localStorage.getItem("idle_resources") || "{}");
 
         // Initialize resources if not already set
         tasks.forEach(task => {
