@@ -28,12 +28,14 @@
         jobs = gameData.jobs;
         gearData = gameData.gear || {};
         toolData = gameData.tools || {};
+        miscData = gameData.miscellaneous || {};
         window.GearParts = gameData.gear_parts || [];
         window.ToolParts = gameData.tools_parts || [];
 
         Object.keys(data.resources).forEach(k => allItemKeys.add(k));
         for (const tier in data.tools) for (const part in data.tools[tier]) allItemKeys.add(`${tier}_${part}`);
         for (const tier in data.gear) for (const part in data.gear[tier]) allItemKeys.add(`${tier}_${part}`);
+        for (const key in data.miscellaneous) {allItemKeys.add(key);}
 
         const recipeData = data.recipes || {};
         const tierOrder = ["bronze", "iron", "steel", "black", "mithril", "adamant", "rune", "dragon", "god", "victory"];
@@ -66,10 +68,16 @@
 
 
         GameState.loadProgress();  // This handles loading all state
+        
+        // Remove any items that were removed from gameData
+        cleanupRemovedItems(gameData);
+        // Resync GameState.resources after cleaning localStorage
+        GameState.resources = JSON.parse(localStorage.getItem("idle_resources") || "{}");
+
+        // Initialize resources if not already set
         tasks.forEach(task => {
         if (!(task.id in GameState.assignments)) GameState.assignments[task.id] = 0;
         });
-
 
         workerCost = 10 * Math.pow(2, GameState.workers);
 
@@ -94,11 +102,12 @@
             default: document.getElementById("resource-display"),
             gear: document.getElementById("gear-display"),
             tool: document.getElementById("tool-display"),
-            recipe: document.getElementById("recipe-display")
+            recipe: document.getElementById("recipe-display"),
+            misc: document.getElementById("misc-display")
         });
 
 
-        CraftingUI.showCraftingSection(buildCraftables(gearData, toolData), GameState.resources, GameState.toolsInUse);
+        CraftingUI.showCraftingSection(buildCraftables(gearData, toolData, miscData), GameState.resources, GameState.toolsInUse);
         renderSidebarContent();
         populateJobs(jobs);
         setInterval(() => {
@@ -107,6 +116,56 @@
             updateUI(); // Update all displays
             GameState.saveProgress(); // Save updated resources + assignments
         }, 1000);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const debugOverride = urlParams.get("debug") === "1";
+
+        const DEBUG_MODE = debugOverride || (window.location.hostname === "127.0.0.1");
+        
+        // check window.location.hostname for dev panel
+        console.log("Current hostname:", window.location.hostname);
+
+        // Only insert dev panel if dev mode
+        if (DEBUG_MODE) {
+            // Insert dev panel HTML
+            const panel = document.createElement("div");
+            panel.id = "dev-panel";
+            panel.style = `
+                display: none;
+                position: fixed;
+                bottom: 10px;
+                right: 10px;
+                background: #fff;
+                border: 1px solid #ccc;
+                padding: 10px;
+                z-index: 9999;
+                font-size: 14px;
+                font-family: sans-serif;
+                box-shadow: 0 0 10px rgba(0,0,0,0.2);
+                border-radius: 6px;
+            `;
+
+            panel.innerHTML = `
+                <h4 style="margin:0 0 6px;">🧪 Dev Panel</h4>
+                <input id="dev-item-key" placeholder="item_key (e.g., logs)" style="margin-bottom:4px; width:140px;"><br>
+                <input id="dev-item-amount" type="number" value="1" style="width:80px; margin-right:6px;">
+                <button onclick="addItem()">➕ Add</button>
+                <button onclick="removeItem()">➖ Remove</button>
+                <button onclick="document.getElementById('dev-panel').style.display='none'">❌ Close</button>
+            `;
+
+            document.body.appendChild(panel);
+
+            // Tilde (~) toggles dev panel
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "æ") {
+                const devPanel = document.getElementById("dev-panel");
+                if (devPanel) {
+                    devPanel.style.display = devPanel.style.display === "none" ? "block" : "none";
+                }
+                }
+            });
+        }
     }
 
     // GameState object to manage game state
@@ -153,10 +212,11 @@
         localStorage.setItem("idle_resources", JSON.stringify(GameState.resources));
     }
 
-    function buildCraftables(gearData, toolData) {
+    function buildCraftables(gearData, toolData, miscData) {
         const craftables = [];
         for (const tier in gearData) for (const part in gearData[tier]) craftables.push({ name: `${tier} ${part}`, cost: gearData[tier][part].cost, type: 'gear' });
         for (const tier in toolData) for (const part in toolData[tier]) craftables.push({ name: `${tier} ${part}`, cost: toolData[tier][part].cost, type: 'tool' });
+        for (const key in miscData) craftables.push({ name: key, cost: miscData[key].cost, type: 'misc' });
         return craftables;
     }
 
@@ -213,4 +273,47 @@
             taskList.appendChild(card);
         });
     }
+
+    function cleanupRemovedItems(gameData) {
+        if (!gameData.removed_items || !Array.isArray(gameData.removed_items)) return;
+
+        const storedResources = JSON.parse(localStorage.getItem("idle_resources") || "{}");
+        let cleaned = false;
+
+        gameData.removed_items.forEach(key => {
+            if (key in storedResources) {
+            delete storedResources[key];
+            cleaned = true;
+            console.log(`🧹 Removed obsolete item: ${key}`);
+            }
+        });
+
+        if (cleaned) {
+            localStorage.setItem("idle_resources", JSON.stringify(storedResources));
+        }
+    }
+
+    // Dev tools for adding items
+    window.addItem = function () {
+        const key = document.getElementById("dev-item-key").value.trim();
+        const amount = parseInt(document.getElementById("dev-item-amount").value) || 0;
+
+        if (!key || amount <= 0) return alert("Invalid key or amount");
+
+        GameState.resources[key] = (GameState.resources[key] || 0) + amount;
+        updateResourceDisplay(GameState.resources, GameState.toolsInUse);
+        GameState.saveProgress();
+    };
+
+    window.removeItem = function () {
+        const key = document.getElementById("dev-item-key").value.trim();
+        const amount = parseInt(document.getElementById("dev-item-amount").value) || 0;
+
+        if (!key || amount <= 0) return alert("Invalid key or amount");
+
+        GameState.resources[key] = Math.max((GameState.resources[key] || 0) - amount, 0);
+        updateResourceDisplay(GameState.resources, GameState.toolsInUse);
+        GameState.saveProgress();
+    };
+
 })();

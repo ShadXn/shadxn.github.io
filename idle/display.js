@@ -79,6 +79,8 @@ window.prebuildItemDisplay = function(itemKeys, containers, isSidebar = false) {
       createCard(key, containers.gear);
     } else if (window.ToolParts.some(part => key.endsWith(`_${part}`))) {
       createCard(key, containers.tool);
+    } else if (containers.misc && key in (window.gameData.miscellaneous || {})) {
+      createCard(key, containers.misc); // ✅ put misc items like victory_trophy here
     } else if (key !== "gold") {
       createCard(key, containers.default);
     }
