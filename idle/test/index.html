@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css?v=0.21">
   <link rel="icon" type="image/png" href="assets/icons/favicon.png">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <!-- Sidebar Toggle Button -->
 <body class="bg-light text-dark">
@@ -54,6 +55,17 @@
                 ➕ Buy Worker (<span id="worker-cost">10</span> gp)
               </button>
             </div>
+            
+            <!-- Dev Panel -->
+            <div id="dev-panel" style="display:none; position:fixed; bottom:10px; right:10px; background:#fff; border:1px solid #ccc; padding:10px; z-index:9999;">
+              <h4>Dev Panel</h4>
+              <input type="text" id="dev-item-key" placeholder="item_key (e.g., logs)">
+              <input type="number" id="dev-item-amount" placeholder="amount" style="width:80px;">
+              <button onclick="addItem()">➕ Add</button>
+              <button onclick="removeItem()">➖ Remove</button>
+              <button onclick="document.getElementById('dev-panel').style.display='none'">❌ Close</button>
+            </div>
+
 
             <!-- Tabs Nav -->
             <ul class="nav nav-tabs mt-3" id="gameTabs" role="tablist">

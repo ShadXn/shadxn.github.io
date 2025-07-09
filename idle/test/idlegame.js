@@ -116,6 +116,55 @@
             updateUI(); // Update all displays
             GameState.saveProgress(); // Save updated resources + assignments
         }, 1000);
+
+        const DEBUG_MODE = true; // or false in prod
+
+        if (
+            DEBUG_MODE ||
+            window.location.hostname === "localhost" ||
+            window.location.hostname === "127.0.0.1" ||
+            window.location.hostname.startsWith("192.168.") || // Optional: LAN testing
+            window.location.hostname === "0.0.0.0"
+            ) {
+            // Insert dev panel HTML
+            const panel = document.createElement("div");
+            panel.id = "dev-panel";
+            panel.style = `
+                display: none;
+                position: fixed;
+                bottom: 10px;
+                right: 10px;
+                background: #fff;
+                border: 1px solid #ccc;
+                padding: 10px;
+                z-index: 9999;
+                font-size: 14px;
+                font-family: sans-serif;
+                box-shadow: 0 0 10px rgba(0,0,0,0.2);
+                border-radius: 6px;
+            `;
+
+            panel.innerHTML = `
+                <h4 style="margin:0 0 6px;">🧪 Dev Panel</h4>
+                <input id="dev-item-key" placeholder="item_key (e.g., logs)" style="margin-bottom:4px; width:140px;"><br>
+                <input id="dev-item-amount" type="number" value="1" style="width:80px; margin-right:6px;">
+                <button onclick="addItem()">➕ Add</button>
+                <button onclick="removeItem()">➖ Remove</button>
+                <button onclick="document.getElementById('dev-panel').style.display='none'">❌ Close</button>
+            `;
+
+            document.body.appendChild(panel);
+
+            // Tilde (~) toggles dev panel
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "æ") {
+                const devPanel = document.getElementById("dev-panel");
+                if (devPanel) {
+                    devPanel.style.display = devPanel.style.display === "none" ? "block" : "none";
+                }
+                }
+            });
+        }
     }
 
     // GameState object to manage game state
@@ -242,5 +291,28 @@
             localStorage.setItem("idle_resources", JSON.stringify(storedResources));
         }
     }
+
+    // Dev tools for adding items
+    function addItem() {
+        const key = document.getElementById("dev-item-key").value;
+        const amount = parseInt(document.getElementById("dev-item-amount").value) || 0;
+        if (!key || amount === 0) return;
+
+        GameState.resources[key] = (GameState.resources[key] || 0) + amount;
+        updateResourceDisplay(GameState.resources, GameState.toolsInUse);
+        GameState.saveProgress();
+    }
+
+    // Dev tools for removing items
+    function removeItem() {
+        const key = document.getElementById("dev-item-key").value;
+        const amount = parseInt(document.getElementById("dev-item-amount").value) || 0;
+        if (!key || amount === 0) return;
+
+        GameState.resources[key] = Math.max((GameState.resources[key] || 0) - amount, 0);
+        updateResourceDisplay(GameState.resources, GameState.toolsInUse);
+        GameState.saveProgress();
+    }
+
 
 })();

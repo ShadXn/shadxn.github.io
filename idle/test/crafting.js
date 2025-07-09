@@ -86,6 +86,11 @@ window.CraftingUI = {
     const itemKey = normalize(item.name);
     resources[itemKey] = (resources[itemKey] || 0) + 1;
 
+    // 🏆 Show win popup if it's the victory trophy
+    if (itemKey === "victory_trophy") {
+      showWinPopup(); // 👈 Call this function
+    }
+
     updateResourceDisplay(resources, toolsInUse);
     GameState.saveProgress();
   }
@@ -111,3 +116,17 @@ window.resetProgress = function() {
   localStorage.setItem("resetting", "true");
   location.reload();
 };
+
+function showWinPopup() {
+  if (window.Swal) {
+    Swal.fire({
+      title: "🎉 You Won the Game!",
+      text: "Congratulations! You crafted the Victory Trophy!",
+      icon: "success",
+      confirmButtonText: "Awesome!",
+      confirmButtonColor: "#28a745"
+    });
+  } else {
+    alert("🎉 You Won the Game!\nCongratulations! You crafted the Victory Trophy!");
+  }
+}
