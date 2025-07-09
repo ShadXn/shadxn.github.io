@@ -21,6 +21,13 @@
       "god": { "chance": 0.01 },
       "victory": {"chance": 0.0001}
   },
+  "Miscellaneous": {
+    "victory_trophy": {
+      "type": "item",
+      "cost": {"gold": 10000000, "fish": 10000, "logs": 10000, "ore": 10000, "cooked_fish": 10000, "refined_wood": 10000, "fire_wood": 10000, "ingot": 10000, "recipe_victory": 1 },
+      "description": "A special item that signifies victory in the game."
+    }
+  },
   "gear": {
     "bronze": {
       "sword": {
