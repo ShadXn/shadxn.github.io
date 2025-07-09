@@ -47,7 +47,6 @@ body {
 .item-grid .card img {
   width: 32px;
   height: 32px;
-  margin-right: 4px;
 }
 
 /* === FALLBACK TEXT IF ICON FAILS === */
