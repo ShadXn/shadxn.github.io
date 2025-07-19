@@ -178,6 +178,7 @@
         const currentGold = GameState.resources.gold;
         const currentWorkers = GameState.workers;
         const currentIdle = GameState.getIdleWorkers();
+        const totalJobEl = document.getElementById("total-job-count");
 
         if (currentGold !== lastState.gold) {
             goldDisplay.textContent = currentGold;
@@ -194,6 +195,10 @@
         if (currentIdle !== lastState.idle) {
             idleDisplay.textContent = currentIdle;
             lastState.idle = currentIdle;
+        }
+        
+        if (totalJobEl) {
+            totalJobEl.textContent = GameState.getTotalJobCompletions();
         }
 
         tasks.forEach(task => {
@@ -221,58 +226,99 @@
     }
 
     function populateJobs(jobs) {
-        const taskList = document.getElementById('task-list');
-        taskList.innerHTML = '';
+        const skillingContainer = document.getElementById("skilling-jobs");
+        const combatContainer = document.getElementById("combat-jobs");
+        skillingContainer.innerHTML = '';
+        combatContainer.innerHTML = '';
+
         Object.entries(jobs).forEach(([jobId, job]) => {
             const jobName = jobId.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
             const card = document.createElement('div');
-            card.className = 'card border shadow-sm p-2';
+            card.className = 'card border shadow-sm p-2 job-card';
+
             const header = document.createElement('div');
             header.className = 'd-flex justify-content-between align-items-center';
             header.innerHTML = `<strong>${jobName}</strong><span class="text-muted">${job.gp_reward || 0} gp/sec</span>`;
 
             const requires = [];
-            if (job.required_resources) requires.push(Object.entries(job.required_resources).map(([r, a]) => `${r}: ${a}`).join(', '));
-            if (job.required_gear && job.required_gear !== "none") requires.push(`Armor: ${job.required_gear}`);
-            if (job.food_cost) requires.push(`Food: ${job.food_cost}`);
+            if (job.required_resources) {
+                requires.push(Object.entries(job.required_resources).map(([r, a]) => `${r}: ${a}`).join(', '));
+            }
+            if (job.required_gear && job.required_gear !== "none") {
+                requires.push(`Armor: ${job.required_gear}`);
+            }
+            if (job.food_cost) {
+                requires.push(`Food: ${job.food_cost}`);
+            }
 
             const produces = [];
-            if (job.produces) Object.entries(job.produces).forEach(([r, v]) => produces.push(typeof v === 'object' && v.chance ? `${r} (chance ${v.chance * 100}%)` : `${r}: ${v}`));
+            if (job.produces) {
+                Object.entries(job.produces).forEach(([r, v]) => {
+                    produces.push(typeof v === 'object' && v.chance ? `${r} (chance ${v.chance * 100}%)` : `${r}: ${v}`);
+                });
+            }
             if (job.gp_reward) produces.push(`gp: ${job.gp_reward}`);
 
             const details = document.createElement('div');
             details.className = 'small text-muted mt-1';
-            details.innerHTML = `<div>🎯 Requires: ${requires.join(', ') || 'None'}</div><div>🎁 Produces: ${produces.join(', ') || 'None'}</div>`;
+            details.innerHTML = `
+                <div>Job time: job_action_time </div>
+                <div>🎯 Requires: ${requires.join(', ') || 'None'}</div>
+                <div>🎁 Produces: ${produces.join(', ') || 'None'}</div>
+            `;
+
+            const tracker = document.createElement('div');
+            tracker.className = 'small text-muted mt-1';
+            tracker.id = `completed-${jobId}`;
+            const completed = GameState.jobCompletionCount?.[jobId] || 0;
+            tracker.textContent = `✅ Completed: ${completed}`;
+
 
             const controls = document.createElement('div');
             controls.className = 'd-flex align-items-center gap-2 mt-2';
-            controls.innerHTML = `<button class="btn btn-sm btn-danger">−</button><span id="count-${jobId}" class="fw-bold">0</span><button class="btn btn-sm btn-success">+</button>`;
+            controls.innerHTML = `
+                <button class="btn btn-sm btn-danger">−</button>
+                <span id="count-${jobId}" class="fw-bold">0</span>
+                <button class="btn btn-sm btn-success">+</button>
+            `;
             const [minusBtn, plusBtn] = controls.querySelectorAll('button');
-            minusBtn.onclick = () => { if (GameState.assignments[jobId] > 0) { GameState.assignments[jobId]--; updateUI(); GameState.saveProgress(); } };
+            minusBtn.onclick = () => {
+                if (GameState.assignments[jobId] > 0) {
+                    GameState.assignments[jobId]--;
+                    updateUI();
+                    GameState.saveProgress();
+                }
+            };
             plusBtn.onclick = () => {
-            if (GameState.getIdleWorkers() <= 0) {
-                showToast("❌ No idle workers available to assign.");
-                return;
-            }
+                if (GameState.getIdleWorkers() <= 0) {
+                    showToast("❌ No idle workers available to assign.");
+                    return;
+                }
 
+                if (job.job_type === "combat" && !hasRequiredGear(jobId, GameState.resources)) {
+                    showToast("❌ You don’t have the required gear to assign a worker to this combat job.");
+                    return;
+                }
 
-            // 🚫 Check gear requirement for combat jobs
-            if (job.job_type === "combat" && !hasRequiredGear(jobId, GameState.resources)) {
-                showToast("❌ You don’t have the required gear to assign a worker to this combat job.");
-                return;
-            }
-
-            GameState.assignments[jobId] = (GameState.assignments[jobId] || 0) + 1;
-            updateUI();
-            GameState.saveProgress();
+                GameState.assignments[jobId] = (GameState.assignments[jobId] || 0) + 1;
+                updateUI();
+                GameState.saveProgress();
             };
 
             card.appendChild(header);
             card.appendChild(details);
+            card.appendChild(tracker);
             card.appendChild(controls);
-            taskList.appendChild(card);
+
+            // ✅ Append to correct section
+            if (job.job_type === "combat") {
+                combatContainer.appendChild(card);
+            } else {
+                skillingContainer.appendChild(card);
+            }
         });
     }
+
 
     function cleanupRemovedItems(gameData) {
         if (!gameData.removed_items || !Array.isArray(gameData.removed_items)) return;

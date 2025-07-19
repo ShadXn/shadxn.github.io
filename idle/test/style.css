@@ -1,7 +1,14 @@
 /* Global styles */
 body {
-    font-family: 'Inter', sans-serif;
+  font-family: 'Inter', sans-serif;
 }
+
+/* Fixed-width number styles, make numbers align properly */
+.fixed-count {
+  font-family: 'Roboto Mono', monospace;
+  text-align: right;
+}
+
 
 #task-list .card {
     transition: transform 0.1s ease;
@@ -14,6 +21,7 @@ body {
     text-decoration: none !important;
     color: black !important;
 }
+
 
 /* Resource display styles */
 /* Suggested CSS overrides to make item cards more compact */

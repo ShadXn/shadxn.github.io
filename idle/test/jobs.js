@@ -180,6 +180,12 @@ window.applyJobTick = function(assignments, tasks, jobs, resources, toolsInUse) 
       if (job.gp_reward) {
         resources.gold += job.gp_reward;
       }
+
+      // Count job completion
+      GameState.incrementJobCount(taskId);
+      // Update UI
+      const el = document.getElementById(`completed-${taskId}`);
+      if (el) el.textContent = `✅ Completed: ${GameState.jobCompletionCount[taskId]}`;
     }
   }
 };
