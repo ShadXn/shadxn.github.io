@@ -41,7 +41,7 @@ window.getBestToolForJob = function(jobId) {
     }
   }
 
-  // 🔁 Sort descending by tier value
+  // Sort descending by tier value
   toolList.sort((a, b) => {
     const [tierA] = a.split('_');
     const [tierB] = b.split('_');
@@ -101,7 +101,7 @@ window.assignTools = function(jobId, count, resources, toolsInUse) {
   for (let i = 0; i < count; i++) {
     const allEquipped = [];
 
-    // ✅ Equip best single tool for this worker
+    // Equip best single tool for this worker
     let foundTool = null;
     for (const tool of toolList) {
       const available = availableItems[tool] || 0;
@@ -114,7 +114,7 @@ window.assignTools = function(jobId, count, resources, toolsInUse) {
     }
     allEquipped.push(foundTool);
 
-    // ✅ Gear logic (unchanged)
+    // Gear logic (unchanged)
     for (const gearSlot of gearSets) {
       let found = null;
       for (const gear of gearSlot) {
@@ -137,16 +137,35 @@ window.assignTools = function(jobId, count, resources, toolsInUse) {
 
 window.applyJobTick = function(assignments, tasks, jobs, resources, toolsInUse) {
   Object.keys(toolsInUse).forEach(tool => toolsInUse[tool] = 0);
+
   for (const task of tasks) {
     const taskId = task.id;
     const assigned = assignments[taskId] || 0;
     if (assigned <= 0) continue;
+
     const job = jobs[taskId];
     if (!job) continue;
 
+    const jobTime = job.job_action_time || 1;
+    GameState.jobTimers[taskId] = GameState.jobTimers[taskId] || [];
+
+    const timers = GameState.jobTimers[taskId];
+    while (timers.length < assigned) timers.push(jobTime); // fill in missing timers
+    while (timers.length > assigned) timers.pop();         // remove extra timers
+
     const toolSetsUsed = assignTools(taskId, assigned, resources, toolsInUse);
+
     for (let i = 0; i < assigned; i++) {
+      timers[i] -= 1;
+
+      // ⏳ Job not ready yet
+      if (timers[i] > 0) continue;
+
+      // ✅ Reset the timer
+      timers[i] = jobTime;
+
       if (job.food_cost && (resources["cooked_fish"] || 0) < job.food_cost) continue;
+
       let hasRequired = true;
       if (job.required_resources) {
         for (const [res, amt] of Object.entries(job.required_resources)) {
@@ -157,15 +176,20 @@ window.applyJobTick = function(assignments, tasks, jobs, resources, toolsInUse) 
         }
         if (!hasRequired) continue;
       }
+
+      // Consume resources
       if (job.food_cost) resources["cooked_fish"] -= job.food_cost;
       if (job.required_resources) {
         for (const [res, amt] of Object.entries(job.required_resources)) {
           resources[res] -= amt;
         }
       }
+
+      // Reward logic
       const toolSet = toolSetsUsed[i];
       const equippedCount = toolSet.filter(t => t !== null).length;
       const rewardMultiplier = 1.0 + equippedCount * 0.1;
+
       if (job.produces) {
         for (const [res, value] of Object.entries(job.produces)) {
           if (typeof value === "object" && value.chance) {
@@ -177,15 +201,22 @@ window.applyJobTick = function(assignments, tasks, jobs, resources, toolsInUse) 
           }
         }
       }
+
       if (job.gp_reward) {
         resources.gold += job.gp_reward;
       }
 
-      // Count job completion
       GameState.incrementJobCount(taskId);
-      // Update UI
       const el = document.getElementById(`completed-${taskId}`);
       if (el) el.textContent = `✅ Completed: ${GameState.jobCompletionCount[taskId]}`;
+    }
+
+    // 🔄 Update progress bar
+    if (timers.length > 0) {
+      const avg = timers.reduce((a, b) => a + (1 - b / jobTime), 0) / timers.length;
+      const percent = Math.max(0, Math.min(100, Math.round(avg * 100)));
+      const bar = document.getElementById(`progress-${taskId}`);
+      if (bar) bar.style.width = `${percent}%`;
     }
   }
 };

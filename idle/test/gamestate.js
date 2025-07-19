@@ -4,6 +4,7 @@ window.GameState = {
   workers: 0,
   assignments: {},
   toolsInUse: {},
+  jobTimers: {}, // Track job timers
   resources: JSON.parse(localStorage.getItem("idle_resources") || "{}"),
   workersKey: "idle_workers",
   assignmentsKey: "idle_assignments",
@@ -15,6 +16,7 @@ window.GameState = {
     this.workers = parseInt(localStorage.getItem(this.workersKey)) || 0;
     this.assignments = JSON.parse(localStorage.getItem(this.assignmentsKey) || '{}');
     this.jobCompletionCount = JSON.parse(localStorage.getItem(this.jobCompletionKey) || '{}');
+    this.jobTimers = {}; // Reset job timers
     if (typeof this.resources.gold !== "number") {
       this.resources.gold = this.workers === 0 ? 10 : 0;
     }

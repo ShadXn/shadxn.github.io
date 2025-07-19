@@ -9,6 +9,18 @@ body {
   text-align: right;
 }
 
+/* Card styles */
+/* progress bar styles */
+.progress {
+  background-color: #eee;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.progress-bar {
+  transition: width 0.3s ease;
+}
+
+
 
 #task-list .card {
     transition: transform 0.1s ease;

@@ -196,7 +196,7 @@
             idleDisplay.textContent = currentIdle;
             lastState.idle = currentIdle;
         }
-        
+
         if (totalJobEl) {
             totalJobEl.textContent = GameState.getTotalJobCompletions();
         }
@@ -236,35 +236,48 @@
             const card = document.createElement('div');
             card.className = 'card border shadow-sm p-2 job-card';
 
-            const header = document.createElement('div');
-            header.className = 'd-flex justify-content-between align-items-center';
-            header.innerHTML = `<strong>${jobName}</strong><span class="text-muted">${job.gp_reward || 0} gp/sec</span>`;
+            // Create header row container
+            const headerRow = document.createElement('div');
+            headerRow.className = 'd-flex justify-content-between align-items-center mb-1';
+
+            // Left side: job name
+            const jobTitle = document.createElement('strong');
+            jobTitle.textContent = jobName;
+
+            // Right side: controls
+            const controls = document.createElement('div');
+            controls.className = 'd-flex align-items-center gap-2';
+            controls.innerHTML = `
+            <button class="btn btn-sm btn-danger">−</button>
+            <span id="count-${jobId}" class="fw-bold">0</span>
+            <button class="btn btn-sm btn-success">+</button>
+            `;
 
             const requires = [];
             if (job.required_resources) {
-                requires.push(Object.entries(job.required_resources).map(([r, a]) => `${r}: ${a}`).join(', '));
+            requires.push(Object.entries(job.required_resources).map(([r, a]) => `${r}: ${a}`).join(', '));
             }
             if (job.required_gear && job.required_gear !== "none") {
-                requires.push(`Armor: ${job.required_gear}`);
+            requires.push(`Armor: ${job.required_gear}`);
             }
             if (job.food_cost) {
-                requires.push(`Food: ${job.food_cost}`);
+            requires.push(`Food: ${job.food_cost}`);
             }
 
             const produces = [];
             if (job.produces) {
-                Object.entries(job.produces).forEach(([r, v]) => {
-                    produces.push(typeof v === 'object' && v.chance ? `${r} (chance ${v.chance * 100}%)` : `${r}: ${v}`);
-                });
+            Object.entries(job.produces).forEach(([r, v]) => {
+                produces.push(typeof v === 'object' && v.chance ? `${r} (chance ${v.chance * 100}%)` : `${r}: ${v}`);
+            });
             }
             if (job.gp_reward) produces.push(`gp: ${job.gp_reward}`);
 
             const details = document.createElement('div');
             details.className = 'small text-muted mt-1';
             details.innerHTML = `
-                <div>Job time: job_action_time </div>
-                <div>🎯 Requires: ${requires.join(', ') || 'None'}</div>
-                <div>🎁 Produces: ${produces.join(', ') || 'None'}</div>
+            <div>⏱ Job Time: ${job.job_action_time || 1}s</div>
+            <div>🎯 Requires: ${requires.join(', ') || 'None'}</div>
+            <div>🎁 Produces: ${produces.join(', ') || 'None'}</div>
             `;
 
             const tracker = document.createElement('div');
@@ -274,41 +287,46 @@
             tracker.textContent = `✅ Completed: ${completed}`;
 
 
-            const controls = document.createElement('div');
-            controls.className = 'd-flex align-items-center gap-2 mt-2';
-            controls.innerHTML = `
-                <button class="btn btn-sm btn-danger">−</button>
-                <span id="count-${jobId}" class="fw-bold">0</span>
-                <button class="btn btn-sm btn-success">+</button>
-            `;
+
             const [minusBtn, plusBtn] = controls.querySelectorAll('button');
+
+            // Attach events
             minusBtn.onclick = () => {
-                if (GameState.assignments[jobId] > 0) {
-                    GameState.assignments[jobId]--;
-                    updateUI();
-                    GameState.saveProgress();
-                }
-            };
-            plusBtn.onclick = () => {
-                if (GameState.getIdleWorkers() <= 0) {
-                    showToast("❌ No idle workers available to assign.");
-                    return;
-                }
-
-                if (job.job_type === "combat" && !hasRequiredGear(jobId, GameState.resources)) {
-                    showToast("❌ You don’t have the required gear to assign a worker to this combat job.");
-                    return;
-                }
-
-                GameState.assignments[jobId] = (GameState.assignments[jobId] || 0) + 1;
+            if (GameState.assignments[jobId] > 0) {
+                GameState.assignments[jobId]--;
                 updateUI();
                 GameState.saveProgress();
+            }
+            };
+            plusBtn.onclick = () => {
+            if (GameState.getIdleWorkers() <= 0) {
+                showToast("❌ No idle workers available to assign.");
+                return;
+            }
+            if (job.job_type === "combat" && !hasRequiredGear(jobId, GameState.resources)) {
+                showToast("❌ You don’t have the required gear to assign a worker to this combat job.");
+                return;
+            }
+            GameState.assignments[jobId] = (GameState.assignments[jobId] || 0) + 1;
+            updateUI();
+            GameState.saveProgress();
             };
 
-            card.appendChild(header);
+            // Assemble header row
+            headerRow.appendChild(jobTitle);
+            headerRow.appendChild(controls);
+            card.appendChild(headerRow);
+
             card.appendChild(details);
             card.appendChild(tracker);
-            card.appendChild(controls);
+
+            // Progress bar container
+            const progressWrapper = document.createElement("div");
+            progressWrapper.className = "progress mt-1";
+            progressWrapper.style.height = "6px";
+            progressWrapper.innerHTML = `<div class="progress-bar bg-success" id="progress-${jobId}" role="progressbar" style="width: 0%"></div>`;
+            card.appendChild(progressWrapper);
+
 
             // ✅ Append to correct section
             if (job.job_type === "combat") {
