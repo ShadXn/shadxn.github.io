@@ -225,6 +225,31 @@
         return craftables;
     }
 
+
+    function renderItemIcon(key, amount = null) {
+        const img = document.createElement("img");
+        img.src = `assets/icons/${key}_icon.png`;
+        img.alt = key;
+        img.title = key;
+        img.style.width = "20px";
+        img.style.height = "20px";
+        img.style.objectFit = "contain";
+        img.style.marginRight = "4px";
+
+        const wrapper = document.createElement("span");
+        wrapper.className = "d-inline-flex align-items-center me-2";
+        wrapper.appendChild(img);
+
+        if (amount !== null) {
+            const text = document.createElement("span");
+            text.textContent = `x${amount}`;
+            text.className = "ms-1";
+            wrapper.appendChild(text);
+        }
+
+        return wrapper;
+    }
+
     function populateJobs(jobs) {
         const skillingContainer = document.getElementById("skilling-jobs");
         const combatContainer = document.getElementById("combat-jobs");
@@ -253,38 +278,75 @@
             <button class="btn btn-sm btn-success">+</button>
             `;
 
-            const requires = [];
+            const requiresIcons = document.createElement("div");
+            requiresIcons.className = "d-flex flex-wrap align-items-center gap-2";
+
             if (job.required_resources) {
-            requires.push(Object.entries(job.required_resources).map(([r, a]) => `${r}: ${a}`).join(', '));
+                for (const [key, amount] of Object.entries(job.required_resources)) {
+                    requiresIcons.appendChild(renderItemIcon(key, amount));
+                }
             }
             if (job.required_gear && job.required_gear !== "none") {
-            requires.push(`Armor: ${job.required_gear}`);
-            }
-            if (job.food_cost) {
-            requires.push(`Food: ${job.food_cost}`);
+                const parts = job.required_gear.split(",");
+                parts.forEach(req => {
+                    const key = req.trim(); // e.g., "iron_sword"
+                    const icon = renderItemIcon(key, null);
+                    icon.title = key.replace(/_/g, ' '); // Tooltip
+                    requiresIcons.appendChild(icon);
+                });
             }
 
-            const produces = [];
-            if (job.produces) {
-            Object.entries(job.produces).forEach(([r, v]) => {
-                produces.push(typeof v === 'object' && v.chance ? `${r} (chance ${v.chance * 100}%)` : `${r}: ${v}`);
-            });
+            if (job.food_cost) {
+                requiresIcons.appendChild(renderItemIcon("cooked_fish", job.food_cost));
             }
-            if (job.gp_reward) produces.push(`gp: ${job.gp_reward}`);
+
+
+            const producesIcons = document.createElement("div");
+            producesIcons.className = "d-flex flex-wrap align-items-center gap-2";
+
+            if (job.produces) {
+                for (const [key, val] of Object.entries(job.produces)) {
+                    if (typeof val === "object" && val.chance) {
+                        const icon = renderItemIcon(key);
+                        icon.title = `Chance: ${Math.round(val.chance * 100)}%`;
+                        producesIcons.appendChild(icon);
+                    } else {
+                        producesIcons.appendChild(renderItemIcon(key, val));
+                    }
+                }
+            }
+            if (job.gp_reward) {
+                producesIcons.appendChild(renderItemIcon("gold", job.gp_reward));
+            }
+
+            card.appendChild(requiresIcons);
+            card.appendChild(producesIcons);
+
+
+            const requires = [];
+            const produces = [];
+
 
             const details = document.createElement('div');
             details.className = 'small text-muted mt-1';
-            details.innerHTML = `
-            <div>⏱ Job Time: ${job.job_action_time || 1}s</div>
-            <div>🎯 Requires: ${requires.join(', ') || 'None'}</div>
-            <div>🎁 Produces: ${produces.join(', ') || 'None'}</div>
-            `;
+            details.innerHTML = `<div>Job Time: ${job.job_action_time || 1}s</div>`;
+
+            const requiresLabel = document.createElement("div");
+            requiresLabel.innerHTML = `Requires:`;
+            details.appendChild(requiresLabel);
+            details.appendChild(requiresIcons);
+
+            const producesLabel = document.createElement("div");
+            producesLabel.innerHTML = `Produces:`;
+            details.appendChild(producesLabel);
+            details.appendChild(producesIcons);
+
 
             const tracker = document.createElement('div');
             tracker.className = 'small text-muted mt-1';
             tracker.id = `completed-${jobId}`;
             const completed = GameState.jobCompletionCount?.[jobId] || 0;
-            tracker.textContent = `✅ Completed: ${completed}`;
+            tracker.textContent = `Completed: ${completed}`;
 
 
 

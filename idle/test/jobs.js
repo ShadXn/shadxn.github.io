@@ -158,10 +158,10 @@ window.applyJobTick = function(assignments, tasks, jobs, resources, toolsInUse) 
     for (let i = 0; i < assigned; i++) {
       timers[i] -= 1;
 
-      // ⏳ Job not ready yet
+      // Job not ready yet
       if (timers[i] > 0) continue;
 
-      // ✅ Reset the timer
+      // Reset the timer
       timers[i] = jobTime;
 
       if (job.food_cost && (resources["cooked_fish"] || 0) < job.food_cost) continue;
@@ -208,10 +208,10 @@ window.applyJobTick = function(assignments, tasks, jobs, resources, toolsInUse) 
 
       GameState.incrementJobCount(taskId);
       const el = document.getElementById(`completed-${taskId}`);
-      if (el) el.textContent = `✅ Completed: ${GameState.jobCompletionCount[taskId]}`;
+      if (el) el.textContent = `Completed: ${GameState.jobCompletionCount[taskId]}`;
     }
 
-    // 🔄 Update progress bar
+    // Update progress bar
     if (timers.length > 0) {
       const avg = timers.reduce((a, b) => a + (1 - b / jobTime), 0) / timers.length;
       const percent = Math.max(0, Math.min(100, Math.round(avg * 100)));
