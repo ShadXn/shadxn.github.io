@@ -8,9 +8,21 @@ localStorage.setItem = function(key, value) {
     return originalSetItem.apply(this, arguments);
 };
 
+// Constants
+const DEFAULT_DATE_FORMAT = "auto"; // auto, en-US, en-GB, etc.
+const DATE_FORMAT_KEY = "preferred_date_format";
+
+// Get/set user-preferred date format
+function getUserDateFormat() {
+  return localStorage.getItem(DATE_FORMAT_KEY) || DEFAULT_DATE_FORMAT;
+}
+
+function setUserDateFormat(value) {
+  localStorage.setItem(DATE_FORMAT_KEY, value);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const isTestVersion = window.location.pathname.includes("/idle/test/");
-
   const titleElement = document.getElementById("game-title");
   const versionButton = document.getElementById("version-button");
 
@@ -22,6 +34,21 @@ document.addEventListener("DOMContentLoaded", () => {
     titleElement.textContent = "Idle Worker - Version 0.21";
     versionButton.textContent = "Try Test Version 0.21";
     versionButton.href = "https://shadxn.github.io/idle/test/";
+  }
+
+  // 🗓️ Setup Date Format Selector
+  const dateFormatSelector = document.getElementById("date-format");
+  if (dateFormatSelector) {
+    dateFormatSelector.value = getUserDateFormat();
+
+  dateFormatSelector.addEventListener("change", () => {
+    setUserDateFormat(dateFormatSelector.value);
+
+    if (typeof renderNewsOverlay === "function") {
+      renderNewsOverlay(); // ✅ refresh news without reload
+    }
+  });
+
   }
 });
 

@@ -1,9 +1,31 @@
+// news.js — handles news display and version updates
 document.addEventListener("DOMContentLoaded", () => {
+    // Render news overlay
+    renderNewsOverlay();
+
+    document.getElementById("open-news-btn").addEventListener("click", () => {
+        document.getElementById("news-overlay").style.display = "block";
+        document.body.style.overflow = "hidden"; // ✅ prevent background scroll
+    });
+
+    document.getElementById("close-news-btn").addEventListener("click", () => {
+        document.getElementById("news-overlay").style.display = "none";
+        document.body.style.overflow = ""; // ✅ restore scroll
+    });
+
+});
+
+// Render news
+function renderNewsOverlay() {
     fetch('news.json')
     .then(res => res.json())
     .then(newsItems => {
         const container = document.getElementById("news-container");
         const nav = document.getElementById("news-sidebar");
+
+        // ✅ Clear old content to avoid duplicates
+        container.innerHTML = '';
+        nav.innerHTML = '';
 
         newsItems.forEach(item => {
         const versionId = `version-${item.version.replace('.', '')}`;
@@ -11,7 +33,13 @@ document.addEventListener("DOMContentLoaded", () => {
         // News section content
         const section = document.createElement("section");
         section.id = versionId;
-        section.innerHTML = `<h3>${item.title}</h3>${marked.parse(item.content)}<hr>`;
+        section.innerHTML = `
+            <h3>${item.title}</h3>
+            ${item.date ? `<div class="text-muted mb-2" style="font-size: 0.9rem;">🗓️ ${formatLocalizedDate(item.date)}</div>` : ''}
+            ${marked.parse(item.content)}
+            <hr>
+        `;
+
         container.appendChild(section);
 
         // Sidebar link
@@ -64,15 +92,31 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         });
     });
+}
 
-    document.getElementById("open-news-btn").addEventListener("click", () => {
-        document.getElementById("news-overlay").style.display = "block";
-        document.body.style.overflow = "hidden"; // ✅ prevent background scroll
-    });
+// Date formatting function
+function formatLocalizedDate(dateStr) {
+  if (!dateStr) return '';
 
-    document.getElementById("close-news-btn").addEventListener("click", () => {
-        document.getElementById("news-overlay").style.display = "none";
-        document.body.style.overflow = ""; // ✅ restore scroll
-    });
+  const date = new Date(dateStr);
+  let userPref = localStorage.getItem("preferred_date_format") || "auto";
+  let locale;
 
-});
+  switch (userPref) {
+    case "en-US":
+    case "en-GB":
+    case "fr-FR":
+    case "de-DE":
+      locale = userPref;
+      break;
+    case "auto":
+    default:
+      locale = navigator.language || 'en-US';
+  }
+
+  return date.toLocaleDateString(locale, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+}
