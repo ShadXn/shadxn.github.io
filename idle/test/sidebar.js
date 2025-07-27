@@ -1,3 +1,6 @@
+// sidebar.js - Sidebar to visualize inventory for the player while using the other tabs
+// Setup global Display object
+window.Sidebar = window.Sidebar || {};
 let wrapper, sidebar, toggleBtn, toggleIcon;
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -28,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // renderSidebarContent();
-  updateResourceDisplay(GameState.resources, GameState.toolsInUse);
+  Display.updateResourceDisplay();
 });
 
 // Get sidebar preferences from the form
@@ -98,7 +101,7 @@ function addSidebarTitle(container, text) {
 // Render sidebar content based on preferences
 function renderSidebarContent() {
   const prefs = getSavedPreferences();
-  const resources = GameState?.resources || {};  // ✅ use GameState directly
+  const resources = GameState.resources;
 
   const containers = {
     default: document.getElementById("sidebar-section-resources"),
@@ -107,6 +110,7 @@ function renderSidebarContent() {
     tool: document.getElementById("sidebar-section-tools"),
   };
 
+  // Clear old content
   Object.values(containers).forEach(container => {
     if (container) container.innerHTML = "";
   });
@@ -120,7 +124,7 @@ function renderSidebarContent() {
       container: containers.default,
       filter: key =>
         !key.startsWith("recipe_") &&
-        !/_pickaxe|_axe|_rod|_hammer|_gloves|_cape|_boots|_sword|_armor|_shield/.test(key) &&
+        !/_pickaxe|_axe|_rod|_hammer|_saw|_flint|_gloves|_cape|_boots|_sword|_armor|_shield/.test(key) &&
         key !== "gold",
     },
     {
@@ -139,7 +143,7 @@ function renderSidebarContent() {
       name: "Tools",
       enabled: prefs.show_tools,
       container: containers.tool,
-      filter: key => /_pickaxe|_axe|_rod|_hammer|_gloves|_cape|_boots/.test(key),
+      filter: key => /_pickaxe|_axe|_rod|_hammer|_saw|_flint|_gloves|_cape|_boots/.test(key),
     },
   ];
 
@@ -147,11 +151,17 @@ function renderSidebarContent() {
     if (!section.enabled || !section.container) continue;
 
     const filtered = keys.filter(key => /^[a-z_]+$/i.test(key) && section.filter(key));
+    if (filtered.length === 0) continue;
 
-    if (filtered.length > 0) {
-      addSidebarTitle(section.container, section.name);
-      prebuildItemDisplay(filtered, containers, true);  // true = sidebar mode
-    }
+    const grid = Sidebar.ensureSidebarSection(section.container.id, section.name);
+
+    Display.prebuildItemDisplay(filtered, {
+      default: grid,
+      recipe: grid,
+      gear: grid,
+      tool: grid,
+      misc: grid
+    }, true);
   }
 }
 
@@ -181,9 +191,9 @@ function getSavedPreferences() {
     show_recipes: true,
     show_tools: true,
     show_gear: true,
-    show_sidebar: true,
-    sidebar_position: "right",
-    sidebar_collapsed: false,
+    show_sidebar: false,
+    sidebar_position: "left",
+    sidebar_collapsed: true,
   };
 
   const saved = JSON.parse(localStorage.getItem("sidebar_preferences") || "{}");
@@ -197,3 +207,27 @@ function resetSidebarPreferences() {
   applySidebarPreferences();  // Reapply defaults
   renderSidebarContent();
 }
+
+// Ensures a sidebar section wrapper with title and grid exists, and returns the grid DOM element.
+Sidebar.ensureSidebarSection = function(containerId, titleText = "Section") {
+  const container = document.getElementById(containerId);
+  if (!container) return null;
+
+  let grid = container.querySelector(".item-section");
+  if (grid) return grid;
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "sidebar-item-wrapper";
+
+  const title = document.createElement("div");
+  title.className = "sidebar-section-title px-1";
+  title.textContent = titleText;
+  wrapper.appendChild(title);
+
+  grid = document.createElement("div");
+  grid.className = "item-section";
+  wrapper.appendChild(grid);
+
+  container.appendChild(wrapper);
+  return grid;
+};

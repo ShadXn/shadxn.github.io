@@ -16,14 +16,14 @@
   <div id="app-wrapper" class="">
     <!-- Sidebar (Inventory) Wrapper -->
     <div id="sidebar-wrapper" class="sidebar-wrapper sidebar-left">
-      <div id="sidebar" class="sidebar">
+      <div id="sidebar" class="sidebar border">
         <div id="sidebar-viewer"></div>
         <!-- Inside your #sidebar element -->
         <div id="sidebar-inventory-display">
-          <div id="sidebar-section-resources" class="item-section"></div>
-          <div id="sidebar-section-recipes" class="item-section"></div>
-          <div id="sidebar-section-gear" class="item-section"></div>
-          <div id="sidebar-section-tools" class="item-section"></div>
+          <div id="sidebar-section-resources"></div>
+          <div id="sidebar-section-recipes"></div>
+          <div id="sidebar-section-gear"></div>
+          <div id="sidebar-section-tools"></div>
         </div>
       </div>
       <button id="sidebar-visibility-toggle" class="sidebar-toggle-btn">
@@ -35,206 +35,210 @@
     <!-- Main content -->
     <main id="main-content">
       <!-- Your game content here -->
-      <div class="mb-3">
+      <div class="mb-2">
         <div class="" id="expandInfo">
-          <div class="card card-body bg-light border" id="idle-game">
-            <div class="d-flex align-items-center mb-2 gap-2">
-              <h4 id="game-title" class="mb-0">Idle Worker</h4>
-              <button id="open-news-btn" class="btn btn-outline-primary btn-sm">Update Log</button>
-              <a id="version-button" href="#" target="_blank" class="btn btn-outline-primary btn-sm ms-auto">Switch Version</a>
+          <div class="" id="idle-game">
+            <div class="bg-light sticky-top z-3 pt-2 px-3" id="idle-topbar">
+              <div class="d-flex align-items-center mb-2 gap-2">
+                <h4 id="game-title" class="mb-0">Idle Worker</h4>
+                <button id="open-news-btn" class="btn btn-outline-primary btn-sm">Update Log</button>
+                <a id="version-button" href="#" target="_blank" class="btn btn-outline-primary btn-sm ms-auto">Switch Version</a>
+              </div>
+              <div class="d-flex flex-wrap gap-3 align-items-center mb-3">
+                <div style="display: flex; align-items: center; gap: 4px;">
+                  <img src="assets/icons/gold_icon.png" alt="Gold" width="32" height="32">
+                  <strong>Gold:</strong> <span id="gold-count" class="fixed-count">0</span> gp
+                </div>
+                <div style="display: flex; align-items: center; gap: 4px;">
+                  <img src="assets/icons/worker_icon.png" alt="Workers" width="32" height="32">
+                  <strong>Workers:</strong> <span id="worker-count" class="fixed-count">0</span> (<span id="idle-count" class="fixed-count">0</span> idle)
+                </div>
+                <button class="btn btn-success btn-sm" id="buy-worker">
+                  ➕ Buy Worker (<span id="worker-cost" class="fixed-count">10</span> gp)
+                </button>
+                <div style="display: flex; align-items: center; gap: 4px;">
+                  <img src="assets/icons/jobs_icon.png" alt="Jobs" width="32" height="32">
+                  <strong>Jobs Completed:</strong> <span id="total-job-count" class="fixed-count">0</span>
+                </div>
+
+              </div>
+
+              <!-- Tabs Nav -->
+              <ul class="nav nav-tabs mt-3" id="gameTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link active" id="inventory-tab" data-bs-toggle="tab" data-bs-target="#inventory" type="button" role="tab">
+                    <img src="assets/icons/inventory_icon.png" alt="" width="32" height="32" style="vertical-align: middle; margin-right: 6px;">
+                    Inventory
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="jobs-tab" data-bs-toggle="tab" data-bs-target="#jobs" type="button" role="tab">
+                    <img src="assets/icons/jobs_icon.png" alt="" width="32" height="32" style="vertical-align: middle; margin-right: 6px;">
+                    Jobs
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="crafting-tab" data-bs-toggle="tab" data-bs-target="#crafting" type="button" role="tab">
+                    <img src="assets/icons/crafting_icon.png" alt="" width="32" height="32" style="vertical-align: middle; margin-right: 6px;">
+                    Crafting
+                  </button>
+                </li>
+                <!-- <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="achievements-tab" data-bs-toggle="tab" data-bs-target="#achievements" type="button" role="tab">
+                    <img src="assets/icons/achievements_icon.png" alt="" width="32" height="32" style="vertical-align: middle; margin-right: 6px;">
+                    Achievements
+                  </button>
+                </li> -->
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab">
+                    <img src="assets/icons/settings_icon.png" alt="" width="32" height="32" style="vertical-align: middle; margin-right: 6px;">
+                    Settings
+                  </button>
+                </li>
+              </ul>
+
             </div>
-            <div class="d-flex flex-wrap gap-3 align-items-center mb-3">
-              <div style="display: flex; align-items: center; gap: 4px;">
-                <img src="assets/icons/gold_icon.png" alt="Gold" width="32" height="32">
-                <strong>Gold:</strong> <span id="gold-count" class="fixed-count">0</span> gp
-              </div>
-              <div style="display: flex; align-items: center; gap: 4px;">
-                <img src="assets/icons/worker_icon.png" alt="Workers" width="32" height="32">
-                <strong>Workers:</strong> <span id="worker-count" class="fixed-count">0</span> (<span id="idle-count" class="fixed-count">0</span> idle)
-              </div>
-              <button class="btn btn-success btn-sm" id="buy-worker">
-                ➕ Buy Worker (<span id="worker-cost" class="fixed-count">10</span> gp)
-              </button>
-              <div style="display: flex; align-items: center; gap: 4px;">
-                <img src="assets/icons/jobs_icon.png" alt="Jobs" width="32" height="32">
-                <strong>Jobs Completed:</strong> <span id="total-job-count" class="fixed-count">0</span>
-              </div>
-
-            </div>
-
-            <!-- Tabs Nav -->
-            <ul class="nav nav-tabs mt-3" id="gameTabs" role="tablist">
-              <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="inventory-tab" data-bs-toggle="tab" data-bs-target="#inventory" type="button" role="tab">
-                  <img src="assets/icons/inventory_icon.png" alt="" width="32" height="32" style="vertical-align: middle; margin-right: 6px;">
-                  Inventory
-                </button>
-              </li>
-              <li class="nav-item" role="presentation">
-                <button class="nav-link" id="jobs-tab" data-bs-toggle="tab" data-bs-target="#jobs" type="button" role="tab">
-                  <img src="assets/icons/jobs_icon.png" alt="" width="32" height="32" style="vertical-align: middle; margin-right: 6px;">
-                  Jobs
-                </button>
-              </li>
-              <li class="nav-item" role="presentation">
-                <button class="nav-link" id="crafting-tab" data-bs-toggle="tab" data-bs-target="#crafting" type="button" role="tab">
-                  <img src="assets/icons/crafting_icon.png" alt="" width="32" height="32" style="vertical-align: middle; margin-right: 6px;">
-                  Crafting
-                </button>
-              </li>
-              <!-- <li class="nav-item" role="presentation">
-                <button class="nav-link" id="achievements-tab" data-bs-toggle="tab" data-bs-target="#achievements" type="button" role="tab">
-                  <img src="assets/icons/achievements_icon.png" alt="" width="32" height="32" style="vertical-align: middle; margin-right: 6px;">
-                  Achievements
-                </button>
-              </li> -->
-              <li class="nav-item" role="presentation">
-                <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab">
-                  <img src="assets/icons/settings_icon.png" alt="" width="32" height="32" style="vertical-align: middle; margin-right: 6px;">
-                  Settings
-                </button>
-              </li>
-            </ul>
-
-
-            <!-- Tabs Content -->
-            <div class="tab-content" id="gameTabsContent">
-              <!-- Inventory Tab -->
-              <div class="tab-pane fade show active" id="inventory" role="tabpanel">
-                <div id="item-section" class="mt-3">
-                  <div style="display: flex; align-items: center; gap: 6px;">
-                    <img src="assets/icons/resources_icon.png" alt="Inventory Icon" width="32" height="32">
-                    <h5 class="mb-0">Resources</h5>
-                  </div>
-                  <!-- Resources -->
-                  <div id="resource-display" class="item-grid"></div>
-                </div>
-
-                <div id="recipe-section" class="mt-3">
-                  <div style="display: flex; align-items: center; gap: 6px;">
-                    <img src="assets/icons/recipe_icon.png" alt="Recipe Icon" width="32" height="32">
-                    <h5 class="mb-0">Recipes</h5>
-                  </div>
-                  <!-- Recipes -->
-                  <div id="recipe-display" class="item-grid"></div>
-                </div>
-
-                <div id="gear-section" class="mt-3">
-                  <div style="display: flex; align-items: center; gap: 6px;">
-                    <img src="assets/icons/weapons_and_armor_icon.png" alt="Gear Icon" width="32" height="32">
-                    <h5 class="mb-0">Weapons & Armor</h5>
-                  </div>
-                  <!-- Weapons & Armor -->
-                  <div id="gear-display" class="item-grid"></div>
-                </div>
-
-                <div id="tool-section" class="mt-3">
-                  <div style="display: flex; align-items: center; gap: 6px;">
-                    <img src="assets/icons/crafting_icon.png" alt="Crafting Icon" width="32" height="32">
-                    <h5 class="mb-0">Tools</h5>
-                  </div>
-                  <!-- Tools -->
-                  <div id="tool-display" class="item-grid"></div>
-                </div>
-              </div>
-
-              <!-- Jobs Tab -->
-              <div class="tab-pane fade" id="jobs" role="tabpanel">
-                <div class="mt-3">
-
-                  <h5>Skilling Jobs</h5>
-                  <div id="skilling-jobs" class="d-flex flex-wrap gap-2 mb-3"></div>
-
-                  <h5>Combat Jobs</h5>
-                  <div id="combat-jobs" class="d-flex flex-wrap gap-2 mb-2"></div>
-
-                </div>
-              </div>
-
-              <!-- Crafting Tab -->
-              <div class="tab-pane fade" id="crafting" role="tabpanel">
-                <div id="crafting-station" class="mt-3">
-                  <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#craft-gear"><h5>Weapons & Armor</h5></button>
-                  <div id="craft-gear" class="collapse show">
-                    <div id="gear-craft" class="d-flex flex-wrap gap-2 mb-2"></div>
-                  </div>
-
-                  <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#craft-tools"><h5>Tools</h5></button>
-                  <div id="craft-tools" class="collapse show">
-                    <div id="tools-craft" class="d-flex flex-wrap gap-2 mb-2"></div>
-                  </div>
-
-                  <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#craft-misc"><h5>Miscellaneous</h5></button>
-                  <div id="craft-misc" class="collapse show">
-                    <div id="misc-craft" class="d-flex flex-wrap gap-2 mb-2"></div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Achievements Tab -->
-              <!-- <div class="tab-pane fade" id="achievements" role="tabpanel">
-                <div id="achievement-section" class="mt-3">
-                  Achievements will be displayed here.
-                </div>
-              </div> -->
-
-              <!-- Settings Tab -->
-              <div class="tab-pane fade" id="settings" role="tabpanel">
-                <div id="settings-section" class="mt-3">
-                  <h5>Sidebar Resource Display Options</h5>
-                  <form id="sidebar-settings-form">
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" id="show_resources" checked>
-                      <label class="form-check-label" for="show_resources">Resources</label>
+            <div class ="mx-3">
+              <!-- Tabs Content -->
+              <div class="tab-content" id="gameTabsContent">
+                <!-- Inventory Tab -->
+                <div class="tab-pane fade show active" id="inventory" role="tabpanel">
+                  <div id="item-section" class="mt-3">
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                      <img src="assets/icons/resources_icon.png" alt="Inventory Icon" width="32" height="32">
+                      <h5 class="mb-0">Resources</h5>
                     </div>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" id="show_recipes" checked>
-                      <label class="form-check-label" for="show_recipes">Recipes</label>
+                    <!-- Resources -->
+                    <div id="resource-display" class="item-grid"></div>
+                  </div>
+
+                  <div id="recipe-section" class="mt-3">
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                      <img src="assets/icons/recipe_icon.png" alt="Recipe Icon" width="32" height="32">
+                      <h5 class="mb-0">Recipes</h5>
                     </div>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" id="show_gear" checked>
-                      <label class="form-check-label" for="show_gear">Weapons & Armor</label>
+                    <!-- Recipes -->
+                    <div id="recipe-display" class="item-grid"></div>
+                  </div>
+
+                  <div id="gear-section" class="mt-3">
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                      <img src="assets/icons/weapons_and_armor_icon.png" alt="Gear Icon" width="32" height="32">
+                      <h5 class="mb-0">Weapons & Armor</h5>
                     </div>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" id="show_tools" checked>
-                      <label class="form-check-label" for="show_tools">Tools</label>
+                    <!-- Weapons & Armor -->
+                    <div id="gear-display" class="item-grid"></div>
+                  </div>
+
+                  <div id="tool-section" class="mt-3">
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                      <img src="assets/icons/crafting_icon.png" alt="Crafting Icon" width="32" height="32">
+                      <h5 class="mb-0">Tools</h5>
                     </div>
-                    <!-- Show or hide sidebar, default is hidden -->
-                    <div class="form-check mt-2">
-                      <input class="form-check-input" type="checkbox" id="show_sidebar" checked>
-                      <label class="form-check-label" for="show_sidebar">Show Sidebar & Toggle</label>
+                    <!-- Tools -->
+                    <div id="tool-display" class="item-grid"></div>
+                  </div>
+                </div>
+
+                <!-- Jobs Tab -->
+                <div class="tab-pane fade" id="jobs" role="tabpanel">
+                  <div class="mt-3">
+
+                    <h5>Skilling Jobs</h5>
+                    <div class="job-section">
+                      <div id="skilling-jobs" class="job-list-wrapper mb-3"></div>
                     </div>
+
+                    <h5>Combat Jobs</h5>
+                    <div class="job-section">
+                      <div id="combat-jobs" class="job-list-wrapper"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Crafting Tab -->
+                <div class="tab-pane fade" id="crafting" role="tabpanel">
+                  <div id="crafting-station" class="mt-3">
+                    <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#craft-gear"><h5>Weapons & Armor</h5></button>
+                    <div id="craft-gear" class="collapse show">
+                      <div id="gear-craft" class="d-flex flex-wrap gap-2 mb-2"></div>
+                    </div>
+
+                    <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#craft-tools"><h5>Tools</h5></button>
+                    <div id="craft-tools" class="collapse show">
+                      <div id="tools-craft" class="d-flex flex-wrap gap-2 mb-2"></div>
+                    </div>
+
+                    <button class="btn btn-link" data-bs-toggle="collapse" data-bs-target="#craft-misc"><h5>Miscellaneous</h5></button>
+                    <div id="craft-misc" class="collapse show">
+                      <div id="misc-craft" class="d-flex flex-wrap gap-2 mb-2"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Achievements Tab -->
+                <!-- <div class="tab-pane fade" id="achievements" role="tabpanel">
+                  <div id="achievement-section" class="mt-3">
+                    Achievements will be displayed here.
+                  </div>
+                </div> -->
+
+                <!-- Settings Tab -->
+                <div class="tab-pane fade" id="settings" role="tabpanel">
+                  <div id="settings-section" class="mt-3">
+                    <h5>Sidebar Resource Display Options</h5>
+                    <form id="sidebar-settings-form">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="show_resources" checked>
+                        <label class="form-check-label" for="show_resources">Resources</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="show_recipes" checked>
+                        <label class="form-check-label" for="show_recipes">Recipes</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="show_gear" checked>
+                        <label class="form-check-label" for="show_gear">Weapons & Armor</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="show_tools" checked>
+                        <label class="form-check-label" for="show_tools">Tools</label>
+                      </div>
+                      <!-- Show or hide sidebar, default is hidden -->
+                      <div class="form-check mt-2">
+                        <input class="form-check-input" type="checkbox" id="show_sidebar">
+                        <label class="form-check-label" for="show_sidebar">Show Sidebar & Toggle</label>
+                      </div>
+                      <div class="form-group mt-2">
+                        <label for="sidebar-position">Sidebar Position:</label>
+                        <select id="sidebar-position" name="sidebar_position" class="form-select form-select-sm w-auto">
+                          <option value="right">Right</option>
+                          <option value="left">Left</option>
+                        </select>
+                      </div>
+                    </form>
+
+                    <!-- Date Format Settings -->
+                    <hr>
                     <div class="form-group mt-2">
-                      <label for="sidebar-position">Sidebar Position:</label>
-                      <select id="sidebar-position" name="sidebar_position" class="form-select form-select-sm w-auto">
-                        <option value="right">Right</option>
-                        <option value="left">Left</option>
+                      <label for="date-format">Date Format:</label>
+                      <select id="date-format" class="form-select form-select-sm w-auto">
+                        <option value="auto">Auto (based on browser)</option>
+                        <option value="en-US">July 3, 2025</option>
+                        <option value="en-GB">3 July 2025</option>
                       </select>
                     </div>
-                  </form>
 
-                  <!-- Date Format Settings -->
-                  <hr>
-                  <div class="form-group mt-2">
-                    <label for="date-format">Date Format:</label>
-                    <select id="date-format" class="form-select form-select-sm w-auto">
-                      <option value="auto">Auto (based on browser)</option>
-                      <option value="en-US">July 3, 2025</option>
-                      <option value="en-GB">3 July 2025</option>
-                    </select>
+                    <!-- Reset Game Button -->
+                    <hr>
+                    <button class="btn btn-danger btn-sm" onclick="hardResetGame()">🔁 Reset Game</button>
+
                   </div>
-
-                  <!-- Reset Game Button -->
-                  <hr>
-                  <button class="btn btn-danger btn-sm" onclick="hardResetGame()">🔁 Reset Game</button>
-
                 </div>
               </div>
             </div>
           </div>
         </div>
-
-
       </div>
     </main>
   </div>
@@ -271,6 +275,19 @@
       </div>
     </div>
   </div>
+
+  <!-- Loading Overlay -->
+  <div id="loading-overlay">
+    <div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+      <div class="text-center">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="mt-2">Loading Idle Worker...</div>
+      </div>
+    </div>
+  </div>
+
 
   <!-- Toast for game messages -->
   <div id="game-toast"></div>

@@ -71,13 +71,22 @@ function hardResetGame() {
   localStorage.removeItem("idle_workers");
   localStorage.removeItem("idle_assignments");
   localStorage.removeItem("idle_resources");
+  localStorage.removeItem("worker_data");
+  localStorage.removeItem("idle_workers_owned");
+  localStorage.removeItem("job_completion_count");
 
   // 🔁 Also reset the in-memory game state
   if (window.GameState) {
-    GameState.workers = 0;
+    GameState.ownedWorkers = [];
+    GameState.workerData = {};
     GameState.assignments = {};
     GameState.resources = {};
-    GameState.toolsInUse = {};
+    GameState.gear = {};
+    GameState.tools = {};
+    GameState.recipes = {};
+    GameState.misc = {};
+    GameState.jobCompletionCount = {};
+    GameState.jobs = {};
   }
 
   localStorage.setItem("resetting", "true");

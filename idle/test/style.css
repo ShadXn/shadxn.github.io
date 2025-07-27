@@ -3,24 +3,29 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
+/* loading overlay styles */
+#loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #f8f9fa;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
 /* Fixed-width number styles, make numbers align properly */
 .fixed-count {
   font-family: 'Roboto Mono', monospace;
   text-align: right;
 }
-
-/* Card styles */
-/* progress bar styles */
-.progress {
-  background-color: #eee;
-  border-radius: 4px;
-  overflow: hidden;
-}
-.progress-bar {
-  transition: width 0.3s ease;
-}
-
-
 
 #task-list .card {
     transition: transform 0.1s ease;
@@ -92,6 +97,50 @@ body {
   font-size: 0.75rem;
 }
 
+/* Card styles */
+/* progress bar styles */
+.progress {
+  background-color: #eee;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.progress-bar {
+  transition: width 0.3s ease;
+}
+
+/* Job card container (you can add this around your job cards) */
+.job-list-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* All job cards */
+.job-card {
+  flex: 1 1 300px;         /* Grow to fill but max out at 300px */
+  max-width: 300px;
+  min-width: 260px;        /* Optional: prevent too small shrink */
+  box-sizing: border-box;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  cursor: pointer;
+}
+
+/* Job card hover effect */
+.job-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.job-card:active {
+  transform: scale(0.99);
+  opacity: 0.95;
+}
+
+.job-section {
+  display: flex;
+  justify-content: center;
+}
+/* Card styles */
 
 /* Sidebar styles */
 /* Sidebar wrapper */
@@ -183,29 +232,45 @@ body {
 }
 
 
-/* Sidebar Inventory content */
-/* Inventory display */
+/* Sidebar layout container */
 #sidebar-inventory-display {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-/* Inventory header */
-#sidebar-inventory-display .item-section {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin-bottom: 1rem;  /* Add some spacing below each section */
+/* Each section wrapper (title + grid) */
+.sidebar-item-wrapper {
+  margin-bottom: 1rem;
 }
 
-/* Inventory item cards */
+/* Section title styling */
+.sidebar-section-title {
+  display: block;
+  width: 100%;
+  margin: 0.5rem 0 0.25rem 0;
+  font-weight: bold;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #ccc;
+  text-align: left;
+}
+
+/* 🔥 KEY: force 4 cards per row, centered */
+.sidebar-item-wrapper .item-section {
+  display: grid;
+  grid-template-columns: repeat(4, 60px); /* Always 4 columns */
+  justify-content: center;                /* Center grid */
+  gap: 6px;
+}
+
+/* Sidebar card */
 .sidebar-item-card {
   width: 60px;
   height: 48px;
   font-size: 0.75rem;
 }
 
+/* Inside each card */
 .sidebar-item-card .card {
   height: 100%;
   width: 100%;
@@ -213,16 +278,6 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-}
-
-/* Sidebar section titles */
-.sidebar-section-title {
-  display: block;              /* ⬅️ Force it to take full row */
-  width: 100%;
-  margin: 0.5rem 0 0.25rem 0;
-  font-weight: bold;
-  font-size: 0.9rem;
-  border-bottom: 1px solid #ccc;
 }
 
 
