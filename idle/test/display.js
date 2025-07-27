@@ -351,6 +351,7 @@ Display.populateJobs = function() {
 };
 
 function renderItemIcon(key, amount = null) {
+  // TODO: CSS need to be added to style.css
   const img = document.createElement("img");
   img.src = `assets/icons/${key}_icon.png`;
   img.alt = key;
@@ -359,6 +360,24 @@ function renderItemIcon(key, amount = null) {
   img.style.height = "20px";
   img.style.objectFit = "contain";
   img.style.marginRight = "4px";
+
+  const fallback = document.createElement("div");
+  fallback.className = "fallback-text";
+  fallback.textContent = key.replace(/_/g, ' ');
+  fallback.style.width = "20px";
+  fallback.style.height = "20px";
+  fallback.style.fontSize = "0.6rem";
+  fallback.style.display = "flex";
+  fallback.style.alignItems = "center";
+  fallback.style.justifyContent = "center";
+  fallback.style.background = "#eee";
+  fallback.style.border = "1px solid #ccc";
+  fallback.style.borderRadius = "3px";
+
+  img.onerror = () => {
+    img.remove();
+    wrapper.insertBefore(fallback, wrapper.firstChild);
+  };
 
   const wrapper = document.createElement("span");
   wrapper.className = "d-inline-flex align-items-center me-2";
