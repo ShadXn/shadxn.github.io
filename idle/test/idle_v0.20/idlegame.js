@@ -3,10 +3,10 @@
         localStorage.removeItem("resetting");
 
         // Prevent loading old values
-        localStorage.removeItem("idle_gold");
-        localStorage.removeItem("idle_resources");
-        localStorage.removeItem("idle_workers");
-        localStorage.removeItem("idle_assignments");
+        localStorage.removeItem("idle_v0.20_gold");
+        localStorage.removeItem("idle_v0.20_resources");
+        localStorage.removeItem("idle_v0.20_workers");
+        localStorage.removeItem("idle_v0.20_assignments");
     }
 
     let gameData = {};
@@ -83,12 +83,12 @@
     .catch(error => console.error('Error loading game data:', error));
 
     // Game state variables
-    const workersKey = 'idle_workers';
-    const assignmentsKey = 'idle_assignments';
+    const workersKey = 'idle_v0.20_workers';
+    const assignmentsKey = 'idle_v0.20_assignments';
     const toolsInUse = {};  // Track how many of each tool is in use
 
     // Passive resources.gold income loop
-    const resources = JSON.parse(localStorage.getItem('idle_resources') || '{}');
+    const resources = JSON.parse(localStorage.getItem('idle_v0.20_resources') || '{}');
 
     function initializeGame() {
         workers = parseInt(localStorage.getItem(workersKey)) || 0;
@@ -149,7 +149,7 @@
     }
 
     function saveProgress() {
-        localStorage.setItem("idle_gold", resources.gold);
+        localStorage.setItem("idle_v0.20_gold", resources.gold);
         localStorage.setItem(workersKey, workers);
         localStorage.setItem(assignmentsKey, JSON.stringify(assignments));
     }
@@ -542,7 +542,7 @@
         updateResourceDisplay(resources);
         updateUI();
         saveProgress();
-        localStorage.setItem('idle_resources', JSON.stringify(resources));
+        localStorage.setItem('idle_v0.20_resources', JSON.stringify(resources));
     }
     setInterval(applyJobTick, 1000);
 

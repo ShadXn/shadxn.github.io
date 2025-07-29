@@ -350,6 +350,7 @@ Display.populateJobs = function() {
   });
 };
 
+// Render item icon in jobs tab cards
 function renderItemIcon(key, amount = null) {
   // TODO: CSS need to be added to style.css
   const img = document.createElement("img");
@@ -361,6 +362,8 @@ function renderItemIcon(key, amount = null) {
   img.style.objectFit = "contain";
   img.style.marginRight = "4px";
 
+  // TODO: CSS need to be added to style.css
+  // Fallback for missing icons in jobs tab
   const fallback = document.createElement("div");
   fallback.className = "fallback-text";
   fallback.textContent = key.replace(/_/g, ' ');
