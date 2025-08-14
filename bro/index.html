@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Web Demos Collection</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Main Menu -->
+    <div class="main-menu" id="mainMenu">
+        <div class="container">
+            <h1>🎮 Interactive Web Demos</h1>
+            <p class="subtitle">A collection of visual effects, games, and interactive toys</p>
+            
+            <div class="categories">
+                <!-- Quick & Visual Demos -->
+                <div class="category">
+                    <h2>⚡ Quick & Visual Demos</h2>
+                    <div class="demo-grid">
+                        <button class="demo-card" data-demo="cube3d">
+                            <div class="demo-icon">🎲</div>
+                            <h3>CSS 3D Cube</h3>
+                            <p>Rotating 3D cube with images</p>
+                        </button>
+                        <button class="demo-card" data-demo="typewriter">
+                            <div class="demo-icon">⌨️</div>
+                            <h3>Typewriter Effect</h3>
+                            <p>Text typing animation</p>
+                        </button>
+                        <button class="demo-card" data-demo="matrix">
+                            <div class="demo-icon">🟢</div>
+                            <h3>Matrix Code Rain</h3>
+                            <p>Falling green code effect</p>
+                        </button>
+                        <button class="demo-card" data-demo="glitch">
+                            <div class="demo-icon">📺</div>
+                            <h3>CSS Glitch Text</h3>
+                            <p>Glitching text effect</p>
+                        </button>
+                        <button class="demo-card" data-demo="parallax">
+                            <div class="demo-icon">🌄</div>
+                            <h3>Parallax Scrolling</h3>
+                            <p>Multi-layer scrolling</p>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Interactive Mini-Games -->
+                <div class="category">
+                    <h2>🎮 Interactive Mini-Games</h2>
+                    <div class="demo-grid">
+                        <button class="demo-card" data-demo="snake">
+                            <div class="demo-icon">🐍</div>
+                            <h3>Snake Game</h3>
+                            <p>Classic growing snake</p>
+                        </button>
+                        <button class="demo-card" data-demo="pong">
+                            <div class="demo-icon">🏓</div>
+                            <h3>Pong</h3>
+                            <p>Two-player paddle game</p>
+                        </button>
+                        <button class="demo-card" data-demo="memory">
+                            <div class="demo-icon">🃏</div>
+                            <h3>Memory Card Game</h3>
+                            <p>Match pairs of cards</p>
+                        </button>
+                        <button class="demo-card" data-demo="whackamole">
+                            <div class="demo-icon">🔨</div>
+                            <h3>Whack-a-Mole</h3>
+                            <p>Fast clicking game</p>
+                        </button>
+                        <button class="demo-card" data-demo="asteroids">
+                            <div class="demo-icon">🚀</div>
+                            <h3>Space Shooter</h3>
+                            <p>Ship shooting enemies</p>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Fun Interactive Toys -->
+                <div class="category">
+                    <h2>🧠 Fun Interactive Toys</h2>
+                    <div class="demo-grid">
+                        <button class="demo-card" data-demo="particles">
+                            <div class="demo-icon">✨</div>
+                            <h3>Particle System</h3>
+                            <p>Mouse-following particles</p>
+                        </button>
+                        <button class="demo-card" data-demo="drawing">
+                            <div class="demo-icon">🎨</div>
+                            <h3>Drawing App</h3>
+                            <p>Canvas drawing tool</p>
+                        </button>
+                        <button class="demo-card" data-demo="audio">
+                            <div class="demo-icon">🎵</div>
+                            <h3>Audio Visualizer</h3>
+                            <p>Music reactive bars</p>
+                        </button>
+                        <button class="demo-card" data-demo="clock">
+                            <div class="demo-icon">🕐</div>
+                            <h3>Animated Clock</h3>
+                            <p>Smooth analog clock</p>
+                        </button>
+                        <button class="demo-card" data-demo="weather">
+                            <div class="demo-icon">🌤️</div>
+                            <h3>Weather App</h3>
+                            <p>Live weather with animations</p>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- "How did you do that?!" Demos -->
+                <div class="category">
+                    <h2>🤯 "How did you do that?!" Demos</h2>
+                    <div class="demo-grid">
+                        <button class="demo-card" data-demo="illusion">
+                            <div class="demo-icon">👁️</div>
+                            <h3>Optical Illusion</h3>
+                            <p>CSS-only moving patterns</p>
+                        </button>
+                        <button class="demo-card" data-demo="facecursor">
+                            <div class="demo-icon">😄</div>
+                            <h3>Face Following Cursor</h3>
+                            <p>Eyes track your mouse</p>
+                        </button>
+                        <button class="demo-card" data-demo="fireworks">
+                            <div class="demo-icon">🎆</div>
+                            <h3>Fireworks Animation</h3>
+                            <p>Click to launch fireworks</p>
+                        </button>
+                        <button class="demo-card" data-demo="tiltcard">
+                            <div class="demo-icon">💳</div>
+                            <h3>3D Tilt Card</h3>
+                            <p>Mouse-reactive 3D card</p>
+                        </button>
+                        <button class="demo-card" data-demo="infinitezoom">
+                            <div class="demo-icon">🔍</div>
+                            <h3>Infinite Zoom</h3>
+                            <p>Endless zoom effect</p>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Demo Container -->
+    <div class="demo-container" id="demoContainer" style="display: none;">
+        <button class="back-btn" id="backBtn">← Back to Menu</button>
+        <div class="demo-content" id="demoContent">
+            <!-- Demo content will be loaded here -->
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
