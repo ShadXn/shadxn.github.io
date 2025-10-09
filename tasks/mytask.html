@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Tasks - View Only</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* View-only specific styles */
+        .status-bar {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .status-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #dc3545;
+        }
+        
+        .status-indicator.loaded {
+            background: #28a745;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .task-count {
+            background: #e3f2fd;
+            color: #1565c0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .last-updated {
+            font-size: 12px;
+            color: #6c757d;
+        }
+        
+        .view-only-notice {
+            background: #fff3cd;
+            color: #856404;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            border: 1px solid #ffeaa7;
+        }
+        
+        /* Hidden state for status bar */
+        .status-bar.hidden {
+            display: none;
+        }
+
+        /* Export Modal Styles */
+        .export-modal-content {
+            max-width: 500px;
+        }
+
+        .export-options h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .export-format-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .export-format-btn {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            width: 100%;
+        }
+
+        .export-format-btn:hover {
+            border-color: #007bff;
+            background: #f8f9ff;
+            transform: translateY(-1px);
+        }
+
+        .format-icon {
+            font-size: 24px;
+            width: 40px;
+            text-align: center;
+        }
+
+        .format-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .format-info strong {
+            color: #333;
+            font-size: 16px;
+        }
+
+        .format-info span {
+            color: #666;
+            font-size: 13px;
+        }
+
+        /* View-only overrides - Remove move cursor since items cannot be moved */
+        .task-item,
+        .step-item {
+            cursor: default !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>My Tasks</h1>
+            <div class="header-controls">
+                <button id="import-info-btn" class="btn btn-outline">ℹ️ Import Info</button>
+                <button id="export-btn" class="btn btn-outline">📤 Export</button>
+                <button id="settings-btn" class="btn btn-outline">⚙️ Settings</button>
+            </div>
+        </header>
+
+        <!-- Status Bar (Hidden by default) -->
+        <div class="status-bar hidden" id="status-bar">
+            <div class="status-info">
+                <div class="status-indicator" id="status-indicator"></div>
+                <span id="status-text">Loading mytask.json...</span>
+                <span class="task-count" id="task-count" style="display: none;">0 items</span>
+            </div>
+            <div class="view-only-notice">
+                📖 View Only - You can mark items complete and hide completed items
+            </div>
+            <div class="last-updated" id="last-updated" style="display: none;"></div>
+        </div>
+
+        <main>
+            <!-- Statistics Bar -->
+            <div class="statistics-bar" id="statistics-bar">
+                <div class="stat-item">
+                    <span class="stat-icon">📁</span>
+                    <span class="stat-label">Categories</span>
+                    <span class="stat-count" id="categories-count">0/0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">🎯</span>
+                    <span class="stat-label">Tasks</span>
+                    <span class="stat-count" id="tasks-count">0/0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">📝</span>
+                    <span class="stat-label">Steps</span>
+                    <span class="stat-count" id="steps-count">0/0</span>
+                </div>
+                <div class="stat-item total">
+                    <span class="stat-icon">📊</span>
+                    <span class="stat-label">Total</span>
+                    <span class="stat-count" id="total-count">0/0</span>
+                </div>
+                <div class="stat-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text">0%</span>
+                </div>
+            </div>
+
+            <!-- Task List Container -->
+            <div class="task-list-container">
+                <div id="task-list"></div>
+                
+                <!-- Empty State -->
+                <div id="empty-state" class="empty-state">
+                    <div class="empty-icon">📁</div>
+                    <h3>Load a JSON file to get started</h3>
+                    <p>Select a JSON file with your tasks to automatically import and manage them.</p>
+                </div>
+            </div>
+        </main>
+
+
+
+        <!-- Settings Modal -->
+        <div id="settings-modal" class="modal hidden">
+            <div class="modal-content settings-modal-content">
+                <div class="modal-header">
+                    <h2>Settings & Help</h2>
+                    <button id="close-settings" class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="settings-section">
+                        <h3>Display Settings</h3>
+                        <div class="setting-item">
+                            <label class="toggle-label">
+                                <input type="checkbox" id="show-main-numbers" checked>
+                                <span class="toggle-slider"></span>
+                                Show main item numbers
+                            </label>
+                            <p class="setting-description">Display numbers for top-level items (categories, tasks, steps)</p>
+                        </div>
+                        <div class="setting-item">
+                            <label class="toggle-label">
+                                <input type="checkbox" id="show-indent-numbers" checked>
+                                <span class="toggle-slider"></span>
+                                Show indented item numbers
+                            </label>
+                            <p class="setting-description">Display numbers for sub-items and nested content</p>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h3>Hide Completed Items</h3>
+                        <div class="setting-item">
+                            <label class="toggle-label">
+                                <input type="checkbox" id="hide-completed-steps">
+                                <span class="toggle-slider"></span>
+                                Hide completed steps
+                            </label>
+                            <p class="setting-description">Hide steps when they are marked as completed</p>
+                        </div>
+                        <div class="setting-item">
+                            <label class="toggle-label">
+                                <input type="checkbox" id="hide-completed-tasks">
+                                <span class="toggle-slider"></span>
+                                Hide completed tasks
+                            </label>
+                            <p class="setting-description">Hide tasks when they are completed (only if all sub-items are also completed)</p>
+                        </div>
+                        <div class="setting-item">
+                            <label class="toggle-label">
+                                <input type="checkbox" id="hide-completed-categories">
+                                <span class="toggle-slider"></span>
+                                Hide completed categories
+                            </label>
+                            <p class="setting-description">Hide categories when they are completed (only if all sub-items are also completed)</p>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h3>View-Only Features</h3>
+                        <div class="help-content">
+                            <div class="help-item">
+                                <h4>� View Only Mode</h4>
+                                <p>This is a read-only view of your tasks. You can mark items as complete and hide completed items, but cannot add, edit, or delete tasks.</p>
+                            </div>
+                            <div class="help-item">
+                                <h4>✅ Completion Tracking</h4>
+                                <p>Your completion status is saved locally and persists even when the task list is updated from mytask.json.</p>
+                            </div>
+                            <div class="help-item">
+                                <h4>🔄 Auto-Refresh</h4>
+                                <p>The task list automatically refreshes every 10 seconds to load any updates from mytask.json.</p>
+                            </div>
+                            <div class="help-item">
+                                <h4>� Export</h4>
+                                <p>Export your current view including completion states to save your progress or share with others.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Export Modal -->
+        <div id="export-modal" class="modal hidden">
+            <div class="modal-content export-modal-content">
+                <div class="modal-header">
+                    <h2>Export Tasks</h2>
+                    <button id="close-export-modal" class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="export-options">
+                        <h3>Choose Export Format</h3>
+                        <div class="export-format-grid">
+                            <button class="export-format-btn" data-format="json">
+                                <div class="format-icon">📄</div>
+                                <div class="format-info">
+                                    <strong>JSON</strong>
+                                    <span>Full data with settings and completion states</span>
+                                </div>
+                            </button>
+                            <button class="export-format-btn" data-format="csv">
+                                <div class="format-icon">📊</div>
+                                <div class="format-info">
+                                    <strong>CSV</strong>
+                                    <span>Spreadsheet format for Excel/Google Sheets</span>
+                                </div>
+                            </button>
+                            <button class="export-format-btn" data-format="txt">
+                                <div class="format-icon">📝</div>
+                                <div class="format-info">
+                                    <strong>TXT</strong>
+                                    <span>Plain text with hierarchy and checkboxes</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Modal -->
+        <div id="image-modal" class="modal hidden">
+            <div class="modal-content image-modal-content">
+                <div class="modal-header">
+                    <h2>Image Preview</h2>
+                    <button id="close-image-modal" class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <img id="modal-image" src="" alt="Full size image">
+                </div>
+            </div>
+        </div>
+
+        <!-- Drag Drop Indicator -->
+        <div id="drop-indicator" class="drop-indicator hidden"></div>
+    </div>
+
+    <script src="mytask.js"></script>
+</body>
+</html>

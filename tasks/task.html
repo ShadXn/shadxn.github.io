@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Task Manager</h1>
+            <div class="header-controls">
+                <button id="settings-btn" class="btn btn-outline">⚙️ Settings</button>
+                <button id="add-category-btn" class="btn btn-success">Add Category</button>
+                <button id="add-task-btn" class="btn btn-primary">Add Task</button>
+                <button id="add-step-btn" class="btn btn-secondary">Add Step</button>
+            </div>
+        </header>
+
+        <main>
+            <!-- Add Task/Step Modal -->
+            <div id="modal" class="modal hidden">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 id="modal-title">Add Task</h2>
+                        <button id="close-modal" class="close-btn">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="task-form">
+                            <div class="form-group">
+                                <label for="title">Title:</label>
+                                <input type="text" id="title" name="title" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="description">Description:</label>
+                                <textarea id="description" name="description" rows="3"></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="link">Link (optional):</label>
+                                <input type="url" id="link" name="link" placeholder="https://example.com">
+                                <small class="field-hint">Make the title clickable by adding a URL</small>
+                            </div>
+                            
+                            <div class="form-group" id="reward-group">
+                                <label for="reward">Reward:</label>
+                                <input type="text" id="reward" name="reward">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="image">Image:</label>
+                                <input type="file" id="image" name="image" accept="image/*">
+                                <div id="image-preview" class="image-preview hidden">
+                                    <img id="preview-img" src="" alt="Preview">
+                                    <button type="button" id="remove-image" class="btn btn-danger">Remove Image</button>
+                                </div>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Save</button>
+                                <button type="button" id="cancel-btn" class="btn btn-secondary">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Bar -->
+            <div class="statistics-bar" id="statistics-bar">
+                <div class="stat-item">
+                    <span class="stat-icon">📁</span>
+                    <span class="stat-label">Categories</span>
+                    <span class="stat-count" id="categories-count">0/0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">🎯</span>
+                    <span class="stat-label">Tasks</span>
+                    <span class="stat-count" id="tasks-count">0/0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">📝</span>
+                    <span class="stat-label">Steps</span>
+                    <span class="stat-count" id="steps-count">0/0</span>
+                </div>
+                <div class="stat-item total">
+                    <span class="stat-icon">📊</span>
+                    <span class="stat-label">Total</span>
+                    <span class="stat-count" id="total-count">0/0</span>
+                </div>
+                <div class="stat-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text">0%</span>
+                </div>
+            </div>
+
+            <!-- Task List -->
+            <div class="task-list-container">
+                <div id="task-list" class="task-list">
+                    <!-- Tasks and steps will be dynamically added here -->
+                </div>
+                <div class="empty-state hidden" id="empty-state">
+                    <p>No tasks yet. Click "Add Task" to get started!</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Context Menu -->
+        <div id="context-menu" class="context-menu hidden">
+            <ul>
+                <li id="edit-item">Edit</li>
+                <li id="delete-item">Delete</li>
+                <li id="add-substep">Add Sub-step</li>
+                <li id="toggle-complete">Toggle Complete</li>
+                <li id="indent-item">Indent</li>
+                <li id="outdent-item">Outdent</li>
+            </ul>
+        </div>
+
+        <!-- Welcome Modal for First-Time Users -->
+        <div id="welcome-modal" class="modal hidden">
+            <div class="modal-content welcome-modal-content">
+                <div class="modal-header">
+                    <h2>🎉 Welcome to Task Manager!</h2>
+                    <button id="close-welcome" class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="welcome-content">
+                        <div class="welcome-message">
+                            <h3>Get Started Quickly</h3>
+                            <p>Choose how you'd like to begin your productivity journey:</p>
+                        </div>
+                        
+                        <div class="welcome-options">
+                            <div class="welcome-option">
+                                <button id="welcome-template-std" class="btn-welcome-template">
+                                    <span class="welcome-icon">📋</span>
+                                    <div class="welcome-info">
+                                        <strong>Standard Grid Master Tasks</strong>
+                                        <span>Complete productivity system with discipline-building tasks</span>
+                                    </div>
+                                </button>
+                            </div>
+                            
+                            <div class="welcome-option">
+                                <button id="welcome-template-my" class="btn-welcome-template">
+                                    <span class="welcome-icon">⭐</span>
+                                    <div class="welcome-info">
+                                        <strong>My Grid Master Tasklist</strong>
+                                        <span>Personal growth template with customizable goals</span>
+                                    </div>
+                                </button>
+                            </div>
+                            
+                            <div class="welcome-option">
+                                <button id="welcome-create-own" class="btn-welcome-create">
+                                    <span class="welcome-icon">✨</span>
+                                    <div class="welcome-info">
+                                        <strong>Start From Scratch</strong>
+                                        <span>Create your own custom task list</span>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="welcome-footer">
+                            <p><small>💡 You can always import templates later from Settings → Starter Templates</small></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Drag Drop Indicator -->
+        <div id="drop-indicator" class="drop-indicator hidden"></div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal hidden">
+        <div class="modal-content settings-modal-content">
+            <div class="modal-header">
+                <h2>Settings & Help</h2>
+                <button id="close-settings" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <h3>Display Settings</h3>
+                    <div class="setting-item">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="show-main-numbers" checked>
+                            <span class="toggle-slider"></span>
+                            Show main item numbers
+                        </label>
+                        <p class="setting-description">Display numbers for top-level items (categories, tasks, steps)</p>
+                    </div>
+                    <div class="setting-item">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="show-indent-numbers" checked>
+                            <span class="toggle-slider"></span>
+                            Show indented item numbers
+                        </label>
+                        <p class="setting-description">Display numbers for sub-items and nested content</p>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>Hide Completed Items</h3>
+                    <div class="setting-item">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="hide-completed-steps">
+                            <span class="toggle-slider"></span>
+                            Hide completed steps
+                        </label>
+                        <p class="setting-description">Hide steps when they are marked as completed</p>
+                    </div>
+                    <div class="setting-item">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="hide-completed-tasks">
+                            <span class="toggle-slider"></span>
+                            Hide completed tasks
+                        </label>
+                        <p class="setting-description">Hide tasks when they are completed (only if all sub-items are also completed)</p>
+                    </div>
+                    <div class="setting-item">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="hide-completed-categories">
+                            <span class="toggle-slider"></span>
+                            Hide completed categories
+                        </label>
+                        <p class="setting-description">Hide categories when they are completed (only if all sub-items are also completed)</p>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>📤 Export & Import</h3>
+                    <div class="export-import-controls">
+                        <div class="control-group">
+                            <h4>Export Your Data</h4>
+                            <p class="setting-description">Save your tasks and settings to share or backup:</p>
+                            <div class="export-buttons">
+                                <button id="export-json-btn" class="btn btn-primary">📄 Export JSON</button>
+                                <button id="export-csv-btn" class="btn btn-primary">📊 Export CSV</button>
+                                <button id="export-txt-btn" class="btn btn-primary">📝 Export Text</button>
+                            </div>
+                        </div>
+                        
+                        <div class="control-group">
+                            <h4>Import Data</h4>
+                            <p class="setting-description">Load tasks from files or other sources:</p>
+                            <div class="import-buttons">
+                                <button id="import-btn" class="btn btn-success">📥 Import Data</button>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <h4>🚀 Starter Templates</h4>
+                            <p class="setting-description">Get started quickly with pre-built task templates:</p>
+                            <div class="template-buttons">
+                                <div class="template-option">
+                                    <button id="template-std-grid-btn" class="btn btn-template">
+                                        <span class="template-icon">📋</span>
+                                        <div class="template-info">
+                                            <strong>Standard Grid Master Tasks</strong>
+                                            <span>Complete grid master system with core discipline tasks</span>
+                                        </div>
+                                    </button>
+                                </div>
+                                <div class="template-option">
+                                    <button id="template-my-grid-btn" class="btn btn-template">
+                                        <span class="template-icon">⭐</span>
+                                        <div class="template-info">
+                                            <strong>My Grid Master Tasklist</strong>
+                                            <span>Personal growth starter template with customizable goals</span>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="help-content">
+                        <div class="help-item">
+                            <h4>📄 JSON Export</h4>
+                            <p><strong>Complete backup</strong> - Includes all tasks, settings, images, and structure. Best for backing up or transferring to another device.</p>
+                        </div>
+                        <div class="help-item">
+                            <h4>📊 CSV Export</h4>
+                            <p><strong>Spreadsheet format</strong> - Opens in Excel, Google Sheets, etc. Good for analysis or sharing with others who don't use this app.</p>
+                        </div>
+                        <div class="help-item">
+                            <h4>📝 Text Export</h4>
+                            <p><strong>Human readable</strong> - Simple text format with indentation and icons. Perfect for printing or sharing as plain text.</p>
+                        </div>
+                        <div class="help-item">
+                            <h4>📥 Import Options</h4>
+                            <p><strong>Multiple formats supported:</strong></p>
+                            <ul class="help-list">
+                                <li>• <strong>Paste Text:</strong> Copy and paste JSON, CSV, or structured text</li>
+                                <li>• <strong>Upload Files:</strong> Select .json, .csv, or .txt files from your computer</li>
+                                <li>• <strong>Drag & Drop:</strong> Drag files directly into the import area</li>
+                            </ul>
+                        </div>
+                        <div class="help-item">
+                            <h4>⚠️ Import Notes</h4>
+                            <p><strong>Important:</strong> Importing will replace all current tasks. Export your current data first if you want to keep it!</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>How to Use</h3>
+                    <div class="help-content">
+                        <div class="help-item">
+                            <h4>📁 Categories</h4>
+                            <p>Use categories to organize your work into sections or chapters. They have titles and descriptions but no rewards.</p>
+                        </div>
+                        <div class="help-item">
+                            <h4>🎯 Tasks</h4>
+                            <p>Tasks are main items that have rewards when completed. They represent deliverables or goals.</p>
+                        </div>
+                        <div class="help-item">
+                            <h4>📝 Steps</h4>
+                            <p>Steps break down work into smaller actions. They can only be indented under tasks or categories, not other steps.</p>
+                        </div>
+                        <div class="help-item">
+                            <h4>🔄 Drag & Drop</h4>
+                            <p>Drag items to reorder them. Drop on the middle of items to indent, top/bottom to place above/below.</p>
+                        </div>
+                        <div class="help-item">
+                            <h4>🖼️ Images</h4>
+                            <p>Add images to any item. Click thumbnails to view full size. Images are saved locally in your browser.</p>
+                        </div>
+                        <div class="help-item">
+                            <h4>🔗 Links</h4>
+                            <p>Add links to make titles clickable. Perfect for references, documentation, or related resources. Links open in a new tab/window.</p>
+                        </div>
+                        <div class="help-item">
+                            <h4>💾 Storage</h4>
+                            <p>All data is saved locally in your browser. Your tasks, steps, and images persist between sessions.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import/Export Modal -->
+    <div id="import-modal" class="modal hidden">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h2>Import & Export Data</h2>
+                <button id="close-import-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="tab-container">
+                    <div class="tab-nav">
+                        <button class="tab-btn active" data-tab="export">Export</button>
+                        <!-- <button class="tab-btn" data-tab="import-text">Import Text</button> -->
+                        <button class="tab-btn" data-tab="import-file">Import File</button>
+                    </div>
+                    
+                    <!-- Export Tab -->
+                    <div id="export-tab" class="tab-content active">
+                        <div class="export-section">
+                            <h3>Export Your Data</h3>
+                            <p>Choose a format to export your tasks, categories, and steps:</p>
+                            <div class="export-buttons">
+                                <button id="export-json-btn" class="btn btn-primary">📄 Export as JSON</button>
+                                <button id="export-csv-btn" class="btn btn-primary">📊 Export as CSV</button>
+                                <button id="export-txt-btn" class="btn btn-primary">📝 Export as Text</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Import Text Tab - DISABLED -->
+                    <!--
+                    <div id="import-text-tab" class="tab-content">
+                        <div class="import-section">
+                            <h3>Import from Text</h3>
+                            <p>Paste your data below. Supports JSON, CSV, or structured text formats:</p>
+                            <textarea id="import-text-area" placeholder="Paste your data here...&#10;&#10;Supported formats:&#10;- JSON exported from this app&#10;- CSV with columns: type,title,description,parent&#10;- Simple text with indentation for hierarchy"></textarea>
+                            <div class="import-controls">
+                                <button id="import-text-btn" class="btn btn-success">Import Data</button>
+                                <button id="clear-text-btn" class="btn btn-secondary">Clear</button>
+                            </div>
+                        </div>
+                    </div>
+                    -->
+                    
+                    <!-- Import File Tab -->
+                    <div id="import-file-tab" class="tab-content">
+                        <div class="import-section">
+                            <h3>Import from File</h3>
+                            <p>Select a file to import. Supports .json, .csv, .txt, and .xlsx files:</p>
+                            <div class="file-upload-area" id="file-upload-area">
+                                <div class="upload-content">
+                                    <div class="upload-icon">📁</div>
+                                    <p>Drop files here or click to select</p>
+                                    <p class="file-types">Supported: .json, .csv, .txt, .xlsx</p>
+                                </div>
+                                <input type="file" id="file-input" accept=".json,.csv,.txt,.xlsx" hidden>
+                            </div>
+                            <div class="file-info" id="file-info" style="display: none;">
+                                <p id="file-name"></p>
+                                <button id="import-file-btn" class="btn btn-success">Import File</button>
+                                <button id="clear-file-btn" class="btn btn-secondary">Clear</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="task.js"></script>
+</body>
+</html>

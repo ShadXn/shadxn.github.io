@@ -1,0 +1,104 @@
+{
+  "exportDate": "2025-10-09T12:00:00.000Z",
+  "version": "1.0",
+  "tasks": [
+    {
+      "id": "item_1728456789123_abc123",
+      "type": "category",
+      "title": "Project Setup",
+      "description": "Initial project configuration and setup tasks",
+      "completed": false,
+      "createdAt": "2025-10-09T10:00:00.000Z",
+      "children": [
+        {
+          "id": "item_1728456789124_def456",
+          "type": "task",
+          "title": "Create repository",
+          "description": "Set up the GitHub repository for the project",
+          "reward": "Repository created and configured",
+          "link": "https://github.com/example/project",
+          "completed": true,
+          "createdAt": "2025-10-09T10:15:00.000Z",
+          "children": []
+        },
+        {
+          "id": "item_1728456789125_ghi789",
+          "type": "task",
+          "title": "Setup development environment",
+          "description": "Install all necessary tools and dependencies",
+          "reward": "Development environment ready",
+          "completed": false,
+          "createdAt": "2025-10-09T10:30:00.000Z",
+          "children": [
+            {
+              "id": "item_1728456789126_jkl012",
+              "type": "step",
+              "title": "Install Node.js",
+              "description": "Download and install the latest LTS version",
+              "completed": true,
+              "createdAt": "2025-10-09T10:35:00.000Z",
+              "children": []
+            },
+            {
+              "id": "item_1728456789127_mno345",
+              "type": "step",
+              "title": "Setup VS Code",
+              "description": "Install VS Code and recommended extensions",
+              "completed": false,
+              "createdAt": "2025-10-09T10:40:00.000Z",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "item_1728456789128_pqr678",
+      "type": "category",
+      "title": "Documentation",
+      "description": "Project documentation and guides",
+      "completed": false,
+      "createdAt": "2025-10-09T11:00:00.000Z",
+      "children": [
+        {
+          "id": "item_1728456789129_stu901",
+          "type": "task",
+          "title": "Write README",
+          "description": "Create comprehensive README file",
+          "reward": "Clear project documentation",
+          "completed": false,
+          "createdAt": "2025-10-09T11:15:00.000Z",
+          "children": []
+        },
+        {
+          "id": "item_1728456789130_vwx234",
+          "type": "task",
+          "title": "API Documentation",
+          "description": "Document all API endpoints and usage",
+          "reward": "Complete API reference",
+          "link": "https://docs.example.com/api",
+          "completed": false,
+          "createdAt": "2025-10-09T11:30:00.000Z",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "item_1728456789131_yza567",
+      "type": "task",
+      "title": "Deploy to production",
+      "description": "Deploy the application to production environment",
+      "reward": "Application live and accessible",
+      "completed": false,
+      "createdAt": "2025-10-09T12:00:00.000Z",
+      "children": []
+    }
+  ],
+  "settings": {
+    "showMainNumbers": true,
+    "showIndentNumbers": true,
+    "hideCompletedSteps": false,
+    "hideCompletedTasks": false,
+    "hideCompletedCategories": false
+  }
+}
