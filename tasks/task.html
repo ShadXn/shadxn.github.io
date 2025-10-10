@@ -6,8 +6,13 @@
     <title>Task Manager</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <div class="container">
+<bod                <div class="settings-section">
+                                   <div class="settings-section">
+                    <h3>Export & Import</h3>
+                    <div class="export-import-controls">3>Statistics & Progress Control</h3>
+                    <p class="setting-description">Customize what items count towards your progress and what's visible in the statistics bar.</p>
+    <!-- Fixed Header Container -->
+    <div class="fixed-header-container">
         <header>
             <h1>Task Manager</h1>
             <div class="header-controls">
@@ -17,7 +22,39 @@
                 <button id="add-step-btn" class="btn btn-secondary">Add Step</button>
             </div>
         </header>
+        
+        <!-- Statistics Bar -->
+        <div class="statistics-bar" id="statistics-bar">
+            <div class="stat-item">
+                <span class="stat-icon">📁</span>
+                <span class="stat-label">Categories</span>
+                <span class="stat-count" id="categories-count">0/0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-icon">🎯</span>
+                <span class="stat-label">Tasks</span>
+                <span class="stat-count" id="tasks-count">0/0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-icon">📝</span>
+                <span class="stat-label">Steps</span>
+                <span class="stat-count" id="steps-count">0/0</span>
+            </div>
+            <div class="stat-item total">
+                <span class="stat-icon">📊</span>
+                <span class="stat-label">Total</span>
+                <span class="stat-count" id="total-count">0/0</span>
+            </div>
+            <div class="stat-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <span class="progress-text" id="progress-text">0%</span>
+            </div>
+        </div>
+    </div>
 
+    <div class="container">
         <main>
             <!-- Add Task/Step Modal -->
             <div id="modal" class="modal hidden">
@@ -46,7 +83,7 @@
                             
                             <div class="form-group" id="reward-group">
                                 <label for="reward">Reward:</label>
-                                <input type="text" id="reward" name="reward">
+                                <textarea id="reward" name="reward" rows="3"></textarea>
                             </div>
                             
                             <div class="form-group">
@@ -64,36 +101,6 @@
                             </div>
                         </form>
                     </div>
-                </div>
-            </div>
-
-            <!-- Statistics Bar -->
-            <div class="statistics-bar" id="statistics-bar">
-                <div class="stat-item">
-                    <span class="stat-icon">📁</span>
-                    <span class="stat-label">Categories</span>
-                    <span class="stat-count" id="categories-count">0/0</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-icon">🎯</span>
-                    <span class="stat-label">Tasks</span>
-                    <span class="stat-count" id="tasks-count">0/0</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-icon">📝</span>
-                    <span class="stat-label">Steps</span>
-                    <span class="stat-count" id="steps-count">0/0</span>
-                </div>
-                <div class="stat-item total">
-                    <span class="stat-icon">📊</span>
-                    <span class="stat-label">Total</span>
-                    <span class="stat-count" id="total-count">0/0</span>
-                </div>
-                <div class="stat-progress">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progress-fill"></div>
-                    </div>
-                    <span class="progress-text" id="progress-text">0%</span>
                 </div>
             </div>
 
@@ -235,7 +242,72 @@
                 </div>
                 
                 <div class="settings-section">
-                    <h3>📤 Export & Import</h3>
+                    <h3>Statistics & Progress Control</h3>
+                    <p class="setting-description">Customize what items count towards your progress and what's visible in the statistics bar.</p>
+                    
+                    <div class="stats-control-group">
+                        <h4>Categories</h4>
+                        <div class="setting-item">
+                            <label class="toggle-label">
+                                <input type="checkbox" id="count-categories-progress" checked>
+                                <span class="toggle-slider"></span>
+                                Count in progress & total
+                            </label>
+                            <p class="setting-description">Include categories in progress calculation and total count</p>
+                        </div>
+                        <div class="setting-item">
+                            <label class="toggle-label">
+                                <input type="checkbox" id="show-categories-stats" checked>
+                                <span class="toggle-slider"></span>
+                                Show in statistics bar
+                            </label>
+                            <p class="setting-description">Display categories counter in the statistics bar</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-control-group">
+                        <h4>Tasks</h4>
+                        <div class="setting-item">
+                            <label class="toggle-label">
+                                <input type="checkbox" id="count-tasks-progress" checked>
+                                <span class="toggle-slider"></span>
+                                Count in progress & total
+                            </label>
+                            <p class="setting-description">Include tasks in progress calculation and total count</p>
+                        </div>
+                        <div class="setting-item">
+                            <label class="toggle-label">
+                                <input type="checkbox" id="show-tasks-stats" checked>
+                                <span class="toggle-slider"></span>
+                                Show in statistics bar
+                            </label>
+                            <p class="setting-description">Display tasks counter in the statistics bar</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-control-group">
+                        <h4>Steps</h4>
+                        <div class="setting-item">
+                            <label class="toggle-label">
+                                <input type="checkbox" id="count-steps-progress" checked>
+                                <span class="toggle-slider"></span>
+                                Count in progress & total
+                            </label>
+                            <p class="setting-description">Include steps in progress calculation and total count</p>
+                        </div>
+                        <div class="setting-item">
+                            <label class="toggle-label">
+                                <input type="checkbox" id="show-steps-stats" checked>
+                                <span class="toggle-slider"></span>
+                                Show in statistics bar
+                            </label>
+                            <p class="setting-description">Display steps counter in the statistics bar</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>Export & Import</h3>
                     <div class="export-import-controls">
                         <div class="control-group">
                             <h4>Export Your Data</h4>

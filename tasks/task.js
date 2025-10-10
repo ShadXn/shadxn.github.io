@@ -12,6 +12,18 @@ class TaskManager {
         this.hideCompletedTasks = false;
         this.hideCompletedCategories = false;
         
+        // Statistics control settings
+        this.countCategoriesProgress = true;
+        this.countTasksProgress = true;
+        this.countStepsProgress = true;
+        this.showCategoriesStats = true;
+        this.showTasksStats = true;
+        this.showStepsStats = true;
+        
+        // Auto-scroll variables
+        this.autoScrollInterval = null;
+        this.currentMouseY = null;
+        
         this.init();
     }
 
@@ -447,6 +459,15 @@ class TaskManager {
         document.getElementById('hide-completed-steps').addEventListener('change', (e) => this.toggleHideCompletedSteps(e.target.checked));
         document.getElementById('hide-completed-tasks').addEventListener('change', (e) => this.toggleHideCompletedTasks(e.target.checked));
         document.getElementById('hide-completed-categories').addEventListener('change', (e) => this.toggleHideCompletedCategories(e.target.checked));
+        
+        // Statistics control toggles
+        document.getElementById('count-categories-progress').addEventListener('change', (e) => this.toggleCountCategoriesProgress(e.target.checked));
+        document.getElementById('count-tasks-progress').addEventListener('change', (e) => this.toggleCountTasksProgress(e.target.checked));
+        document.getElementById('count-steps-progress').addEventListener('change', (e) => this.toggleCountStepsProgress(e.target.checked));
+        document.getElementById('show-categories-stats').addEventListener('change', (e) => this.toggleShowCategoriesStats(e.target.checked));
+        document.getElementById('show-tasks-stats').addEventListener('change', (e) => this.toggleShowTasksStats(e.target.checked));
+        document.getElementById('show-steps-stats').addEventListener('change', (e) => this.toggleShowStepsStats(e.target.checked));
+        
         document.getElementById('cancel-btn').addEventListener('click', () => this.closeModal());
         document.getElementById('task-form').addEventListener('submit', (e) => this.handleSubmit(e));
 
@@ -709,7 +730,19 @@ class TaskManager {
         if (this.currentItemId) {
             const item = this.tasks.find(item => item.id === this.currentItemId);
             if (item && item.indentLevel < 5) {
+                // Find all children of this item
+                const children = this.findAllChildren(item);
+                
+                // Indent the parent
                 item.indentLevel++;
+                
+                // Indent all children maintaining their relative levels
+                children.forEach(child => {
+                    if (child.indentLevel < 5) {
+                        child.indentLevel++;
+                    }
+                });
+                
                 this.saveToStorage();
                 this.render();
             }
@@ -721,7 +754,19 @@ class TaskManager {
         if (this.currentItemId) {
             const item = this.tasks.find(item => item.id === this.currentItemId);
             if (item && item.indentLevel > 0) {
+                // Find all children of this item
+                const children = this.findAllChildren(item);
+                
+                // Outdent the parent
                 item.indentLevel--;
+                
+                // Outdent all children maintaining their relative levels
+                children.forEach(child => {
+                    if (child.indentLevel > 0) {
+                        child.indentLevel--;
+                    }
+                });
+                
                 this.saveToStorage();
                 this.render();
             }
@@ -758,6 +803,7 @@ class TaskManager {
             this.draggedItem = item;
             element.classList.add('dragging');
             e.dataTransfer.effectAllowed = 'move';
+            this.startAutoScroll();
         });
 
         element.addEventListener('dragend', (e) => {
@@ -765,6 +811,7 @@ class TaskManager {
             this.draggedItem = null;
             this.hideDropIndicator();
             this.clearDropZones();
+            this.stopAutoScroll();
         });
 
         element.addEventListener('dragover', (e) => {
@@ -868,21 +915,130 @@ class TaskManager {
         dropZones.forEach(zone => zone.remove());
     }
 
+    // Auto-scroll functionality for drag and drop
+    startAutoScroll() {
+        this.autoScrollInterval = setInterval(() => {
+            if (this.draggedItem && this.currentMouseY) {
+                this.handleAutoScroll(this.currentMouseY);
+            }
+        }, 16); // ~60fps
+        
+        // Enable scroll wheel during drag
+        document.addEventListener('wheel', this.handleDragScroll, { passive: false });
+        
+        // Track mouse position for auto-scroll
+        document.addEventListener('dragover', this.trackMousePosition);
+    }
+    
+    stopAutoScroll() {
+        if (this.autoScrollInterval) {
+            clearInterval(this.autoScrollInterval);
+            this.autoScrollInterval = null;
+        }
+        
+        // Remove scroll wheel listener
+        document.removeEventListener('wheel', this.handleDragScroll);
+        document.removeEventListener('dragover', this.trackMousePosition);
+        this.currentMouseY = null;
+    }
+    
+    trackMousePosition = (e) => {
+        this.currentMouseY = e.clientY;
+    }
+    
+    handleDragScroll = (e) => {
+        if (this.draggedItem) {
+            e.preventDefault();
+            window.scrollBy(0, e.deltaY * 0.5); // Smooth scroll with reduced speed
+        }
+    }
+    
+    handleAutoScroll(mouseY) {
+        const scrollThreshold = 100; // Distance from edge to start scrolling
+        const scrollSpeed = 10;
+        const fixedHeaderHeight = 100; // Account for fixed header
+        
+        const viewportHeight = window.innerHeight;
+        const effectiveTop = fixedHeaderHeight;
+        const effectiveBottom = viewportHeight - 50;
+        
+        // Scroll up if mouse is near top (accounting for fixed header)
+        if (mouseY < effectiveTop + scrollThreshold) {
+            const intensity = Math.max(0, (effectiveTop + scrollThreshold - mouseY) / scrollThreshold);
+            window.scrollBy(0, -scrollSpeed * intensity);
+        }
+        // Scroll down if mouse is near bottom
+        else if (mouseY > effectiveBottom - scrollThreshold) {
+            const intensity = Math.max(0, (mouseY - (effectiveBottom - scrollThreshold)) / scrollThreshold);
+            window.scrollBy(0, scrollSpeed * intensity);
+        }
+    }
+
+    // Helper method to find all children of an item (recursive)
+    findAllChildren(parentItem) {
+        const children = [];
+        const parentIndex = this.tasks.findIndex(item => item.id === parentItem.id);
+        
+        // Look for items that come after this parent and have higher indent level
+        for (let i = parentIndex + 1; i < this.tasks.length; i++) {
+            const currentItem = this.tasks[i];
+            
+            // If we hit an item at the same or lower level as parent, stop
+            // This means we've reached a sibling or higher-level item
+            if (currentItem.indentLevel <= parentItem.indentLevel) {
+                break;
+            }
+            
+            // This is a child or descendant of the parent
+            children.push(currentItem);
+        }
+        
+        return children;
+    }
+
     moveItemWithPosition(draggedItem, targetItem, position, newIndentLevel) {
-        // Remove dragged item from its current position
-        this.tasks = this.tasks.filter(item => item.id !== draggedItem.id);
+        // Store original array state for debugging
+        const originalTasks = [...this.tasks];
+        
+        // Find all children of the dragged item BEFORE any modifications
+        const children = this.findAllChildren(draggedItem);
+        const indentDifference = newIndentLevel - draggedItem.indentLevel;
+        
+        // Create list of items to move (parent + children)
+        const itemsToMove = [draggedItem, ...children];
+        const itemIdsToMove = new Set(itemsToMove.map(item => item.id));
+        
+        // Find target index BEFORE removing items
+        const originalTargetIndex = this.tasks.findIndex(item => item.id === targetItem.id);
+        
+        // Remove dragged item and all its children from their current positions
+        this.tasks = this.tasks.filter(item => !itemIdsToMove.has(item.id));
         
         // Update the dragged item's indent level
         draggedItem.indentLevel = newIndentLevel;
         
-        // Find the target item's index
-        const targetIndex = this.tasks.findIndex(item => item.id === targetItem.id);
+        // Update children's indent levels to maintain relative hierarchy
+        children.forEach(child => {
+            child.indentLevel = Math.max(0, Math.min(5, child.indentLevel + indentDifference));
+        });
+        
+        // Calculate insertion index based on target position
+        let insertIndex;
+        const newTargetIndex = this.tasks.findIndex(item => item.id === targetItem.id);
         
         if (position === 'above') {
-            this.tasks.splice(targetIndex, 0, draggedItem);
-        } else if (position === 'below' || position === 'on') {
-            this.tasks.splice(targetIndex + 1, 0, draggedItem);
+            insertIndex = newTargetIndex;
+        } else if (position === 'below') {
+            // When dropping below, we need to insert after the target AND all its children
+            const targetChildren = this.findAllChildren(targetItem);
+            insertIndex = newTargetIndex + 1 + targetChildren.length;
+        } else if (position === 'on') {
+            // When dropping on (indenting), insert right after the target
+            insertIndex = newTargetIndex + 1;
         }
+        
+        // Insert parent first, then children in original order
+        this.tasks.splice(insertIndex, 0, ...itemsToMove);
         
         // Update orders
         this.tasks.forEach((item, index) => {
@@ -949,32 +1105,50 @@ class TaskManager {
             categories: { total: 0, completed: 0 },
             tasks: { total: 0, completed: 0 },
             steps: { total: 0, completed: 0 },
-            total: { total: 0, completed: 0 }
+            progress: { total: 0, completed: 0 }
         };
 
         const countItems = (items) => {
             items.forEach(item => {
-                // Increment totals
-                stats.total.total++;
-                
-                // Fix: Handle different item types properly
+                // Count each type
                 if (item.type === 'category') {
                     stats.categories.total++;
                     if (item.completed) {
                         stats.categories.completed++;
-                        stats.total.completed++;
+                    }
+                    
+                    // Add to progress if enabled
+                    if (this.countCategoriesProgress) {
+                        stats.progress.total++;
+                        if (item.completed) {
+                            stats.progress.completed++;
+                        }
                     }
                 } else if (item.type === 'task') {
                     stats.tasks.total++;
                     if (item.completed) {
                         stats.tasks.completed++;
-                        stats.total.completed++;
+                    }
+                    
+                    // Add to progress if enabled
+                    if (this.countTasksProgress) {
+                        stats.progress.total++;
+                        if (item.completed) {
+                            stats.progress.completed++;
+                        }
                     }
                 } else if (item.type === 'step') {
                     stats.steps.total++;
                     if (item.completed) {
                         stats.steps.completed++;
-                        stats.total.completed++;
+                    }
+                    
+                    // Add to progress if enabled
+                    if (this.countStepsProgress) {
+                        stats.progress.total++;
+                        if (item.completed) {
+                            stats.progress.completed++;
+                        }
                     }
                 }
 
@@ -996,13 +1170,34 @@ class TaskManager {
         const progressFill = document.getElementById('progress-fill');
         const progressText = document.getElementById('progress-text');
 
-        if (categoriesCount) categoriesCount.textContent = `${stats.categories.completed}/${stats.categories.total}`;
-        if (tasksCount) tasksCount.textContent = `${stats.tasks.completed}/${stats.tasks.total}`;
-        if (stepsCount) stepsCount.textContent = `${stats.steps.completed}/${stats.steps.total}`;
-        if (totalCount) totalCount.textContent = `${stats.total.completed}/${stats.total.total}`;
+        // Update statistics bar visibility and content
+        const categoriesItem = categoriesCount?.closest('.stat-item');
+        const tasksItem = tasksCount?.closest('.stat-item');
+        const stepsItem = stepsCount?.closest('.stat-item');
 
-        // Calculate and update progress
-        const progressPercent = stats.total.total > 0 ? Math.round((stats.total.completed / stats.total.total) * 100) : 0;
+        // Show/hide and update categories
+        if (categoriesItem) {
+            categoriesItem.style.display = this.showCategoriesStats ? 'flex' : 'none';
+        }
+        if (categoriesCount) categoriesCount.textContent = `${stats.categories.completed}/${stats.categories.total}`;
+
+        // Show/hide and update tasks
+        if (tasksItem) {
+            tasksItem.style.display = this.showTasksStats ? 'flex' : 'none';
+        }
+        if (tasksCount) tasksCount.textContent = `${stats.tasks.completed}/${stats.tasks.total}`;
+
+        // Show/hide and update steps
+        if (stepsItem) {
+            stepsItem.style.display = this.showStepsStats ? 'flex' : 'none';
+        }
+        if (stepsCount) stepsCount.textContent = `${stats.steps.completed}/${stats.steps.total}`;
+
+        // Update total (based on progress calculation)
+        if (totalCount) totalCount.textContent = `${stats.progress.completed}/${stats.progress.total}`;
+
+        // Calculate and update progress bar
+        const progressPercent = stats.progress.total > 0 ? Math.round((stats.progress.completed / stats.progress.total) * 100) : 0;
         
         if (progressFill) {
             progressFill.style.width = `${progressPercent}%`;
@@ -1154,7 +1349,13 @@ class TaskManager {
                     showIndentNumbers: this.showIndentNumbers,
                     hideCompletedSteps: this.hideCompletedSteps,
                     hideCompletedTasks: this.hideCompletedTasks,
-                    hideCompletedCategories: this.hideCompletedCategories
+                    hideCompletedCategories: this.hideCompletedCategories,
+                    countCategoriesProgress: this.countCategoriesProgress,
+                    countTasksProgress: this.countTasksProgress,
+                    countStepsProgress: this.countStepsProgress,
+                    showCategoriesStats: this.showCategoriesStats,
+                    showTasksStats: this.showTasksStats,
+                    showStepsStats: this.showStepsStats
                 }
             };
             localStorage.setItem('taskManagerData', JSON.stringify(data));
@@ -1180,6 +1381,14 @@ class TaskManager {
                         this.hideCompletedSteps = parsed.settings.hideCompletedSteps || false;
                         this.hideCompletedTasks = parsed.settings.hideCompletedTasks || false;
                         this.hideCompletedCategories = parsed.settings.hideCompletedCategories || false;
+                        
+                        // Statistics control settings
+                        this.countCategoriesProgress = parsed.settings.countCategoriesProgress !== undefined ? parsed.settings.countCategoriesProgress : true;
+                        this.countTasksProgress = parsed.settings.countTasksProgress !== undefined ? parsed.settings.countTasksProgress : true;
+                        this.countStepsProgress = parsed.settings.countStepsProgress !== undefined ? parsed.settings.countStepsProgress : true;
+                        this.showCategoriesStats = parsed.settings.showCategoriesStats !== undefined ? parsed.settings.showCategoriesStats : true;
+                        this.showTasksStats = parsed.settings.showTasksStats !== undefined ? parsed.settings.showTasksStats : true;
+                        this.showStepsStats = parsed.settings.showStepsStats !== undefined ? parsed.settings.showStepsStats : true;
                     }
                 }
             }
@@ -1314,6 +1523,14 @@ class TaskManager {
         document.getElementById('hide-completed-steps').checked = this.hideCompletedSteps;
         document.getElementById('hide-completed-tasks').checked = this.hideCompletedTasks;
         document.getElementById('hide-completed-categories').checked = this.hideCompletedCategories;
+        
+        // Update statistics control toggle states
+        document.getElementById('count-categories-progress').checked = this.countCategoriesProgress;
+        document.getElementById('count-tasks-progress').checked = this.countTasksProgress;
+        document.getElementById('count-steps-progress').checked = this.countStepsProgress;
+        document.getElementById('show-categories-stats').checked = this.showCategoriesStats;
+        document.getElementById('show-tasks-stats').checked = this.showTasksStats;
+        document.getElementById('show-steps-stats').checked = this.showStepsStats;
     }
 
     closeSettings() {
@@ -1524,6 +1741,43 @@ class TaskManager {
         this.hideCompletedCategories = hide;
         this.saveToStorage();
         this.render();
+    }
+
+    // Statistics control toggle methods
+    toggleCountCategoriesProgress(count) {
+        this.countCategoriesProgress = count;
+        this.saveToStorage();
+        this.updateStatistics();
+    }
+
+    toggleCountTasksProgress(count) {
+        this.countTasksProgress = count;
+        this.saveToStorage();
+        this.updateStatistics();
+    }
+
+    toggleCountStepsProgress(count) {
+        this.countStepsProgress = count;
+        this.saveToStorage();
+        this.updateStatistics();
+    }
+
+    toggleShowCategoriesStats(show) {
+        this.showCategoriesStats = show;
+        this.saveToStorage();
+        this.updateStatistics();
+    }
+
+    toggleShowTasksStats(show) {
+        this.showTasksStats = show;
+        this.saveToStorage();
+        this.updateStatistics();
+    }
+
+    toggleShowStepsStats(show) {
+        this.showStepsStats = show;
+        this.saveToStorage();
+        this.updateStatistics();
     }
 
     // Check if item and all its children are completed
