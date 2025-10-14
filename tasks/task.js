@@ -336,7 +336,9 @@ class TaskManager {
         }
 
         try {
-            const response = await fetch(templateFile);
+            // Add cache-busting parameter to ensure fresh data
+            const cacheBuster = `?v=${Date.now()}`;
+            const response = await fetch(templateFile + cacheBuster);
             if (!response.ok) {
                 throw new Error(`Failed to load template: ${response.status}`);
             }
@@ -377,7 +379,9 @@ class TaskManager {
 
     async importTemplateFromWelcome(templateFile) {
         try {
-            const response = await fetch(templateFile);
+            // Add cache-busting parameter to ensure fresh data
+            const cacheBuster = `?v=${Date.now()}`;
+            const response = await fetch(templateFile + cacheBuster);
             if (!response.ok) {
                 throw new Error(`Failed to load template: ${response.status}`);
             }
