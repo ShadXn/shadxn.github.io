@@ -790,8 +790,13 @@ class TaskManager {
 
     showContextMenu(x, y) {
         const contextMenu = document.getElementById('context-menu');
-        contextMenu.style.left = x + 'px';
-        contextMenu.style.top = y + 'px';
+        
+        // Account for page scroll position
+        const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
+        const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+        
+        contextMenu.style.left = (x + scrollX) + 'px';
+        contextMenu.style.top = (y + scrollY) + 'px';
         contextMenu.classList.remove('hidden');
     }
 
