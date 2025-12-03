@@ -38,8 +38,8 @@ class IdleGame {
                 name: 'Clicking',
                 icon: '👆',
                 description: 'Click to gain progress!',
-                baseXP: 5,
-                baseGold: 2,
+                baseXP: 15,
+                baseGold: 10,
                 unlockLevel: 1,
                 type: 'clicker',
                 clicksNeeded: 10
@@ -144,7 +144,7 @@ class IdleGame {
                 type: 'xp',
                 baseCost: 15,
                 costMultiplier: 1.4,
-                effect: 3
+                effect: 8
             },
             clickingGold: {
                 id: 'clickingGold',
@@ -155,7 +155,7 @@ class IdleGame {
                 type: 'gold',
                 baseCost: 20,
                 costMultiplier: 1.4,
-                effect: 2
+                effect: 6
             },
             clickingSpeed: {
                 id: 'clickingSpeed',
