@@ -1266,18 +1266,18 @@ class IdleGame {
                             <div class="skill-progress-bar">
                                 <div class="skill-progress-fill" style="width: ${(actionStats.xp / actionStats.xpNeeded) * 100}%"></div>
                             </div>
-                            <div class="skill-progress-text">${actionStats.xp}/${actionStats.xpNeeded} Skill XP</div>
+                            <div class="skill-progress-text">${actionStats.xp}/${actionStats.xpNeeded} XP</div>
                         </div>
                     ` : ''}
                     <div class="card-rewards">
                         <span class="reward xp">+${xpReward} XP</span>
                         <span class="reward gold">+${goldReward} Gold</span>
-                        ${isUnlocked ? `<span class="reward skill">+${actionXpReward} Skill XP</span>` : ''}
+                        ${isUnlocked ? `<span class="reward skill">+${actionXpReward} Clicking XP</span>` : ''}
                     </div>
                     <div class="clicker-progress-bar">
                         <div class="clicker-progress-fill" id="clicker-fill-${action.id}" style="width: ${(currentProgress / clicksNeeded) * 100}%"></div>
                     </div>
-                    <div class="clicker-progress-text">${currentProgress}/${clicksNeeded} clicks</div>
+                    <div class="clicker-progress-text">${currentProgress}/${clicksNeeded} Clicks</div>
                     <button class="action-btn clicker-btn" id="action-${action.id}" ${!isUnlocked ? 'disabled' : ''}>
                         ${!isUnlocked ? '🔒 Locked' : 'Click Me!'}
                     </button>
@@ -1423,7 +1423,7 @@ class IdleGame {
             const skillProgressText = card.querySelector('.skill-progress-text');
             if (skillProgressText) {
                 if (action.type === 'clicker') {
-                    skillProgressText.textContent = `${actionStats.xp}/${actionStats.xpNeeded} Skill XP`;
+                    skillProgressText.textContent = `${actionStats.xp}/${actionStats.xpNeeded} XP`;
                 } else {
                     skillProgressText.textContent = `${actionStats.xp}/${actionStats.xpNeeded} XP`;
                 }
@@ -1439,7 +1439,7 @@ class IdleGame {
                 rewardElements[0].textContent = `+${xpReward} XP`;
                 rewardElements[1].textContent = `+${goldReward} Gold`;
                 if (action.type === 'clicker') {
-                    rewardElements[2].textContent = `+${actionXpReward} Skill XP`;
+                    rewardElements[2].textContent = `+${actionXpReward} Clicking XP`;
                 } else {
                     rewardElements[2].textContent = `+${actionXpReward} ${action.name} XP`;
                 }
