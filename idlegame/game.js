@@ -2116,8 +2116,27 @@ class IdleGame {
         document.getElementById('gems').textContent = this.gameState.gems;
 
         const achievementCount = this.gameState.unlockedAchievements.length;
-        const totalAchievements = Object.keys(this.achievements).length;
+        // Prefer counting rendered achievement cards so the UI counter matches what's shown
+        let totalAchievements = Object.keys(this.achievements).length;
+        const achievementsContainer = document.getElementById('achievements');
+        if (achievementsContainer) {
+            const renderedCards = achievementsContainer.querySelectorAll('.achievement-card').length;
+            // If cards were rendered, use that as the authoritative total (fallback to object keys)
+            if (renderedCards > 0) totalAchievements = renderedCards;
+        }
         document.getElementById('achievementCount').textContent = `${achievementCount}/${totalAchievements}`;
+
+        // Debug helper: log any achievements whose requirement is met but not present in unlockedAchievements
+        try {
+            const missingButEligible = Object.values(this.achievements).filter(a => {
+                try { return a && a.requirement && a.requirement() && !this.gameState.unlockedAchievements.includes(a.id); } catch (e) { return false; }
+            }).map(a => a.id);
+            if (missingButEligible.length) {
+                console.debug('Achievements eligible but not unlocked (IDs):', missingButEligible);
+            }
+        } catch (e) {
+            // ignore
+        }
 
         if (this.gameState.level >= 30 && !this.gameState.maxLevelNotificationShown) {
             this.gameState.maxLevelNotificationShown = true;
