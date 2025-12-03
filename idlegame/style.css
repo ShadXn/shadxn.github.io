@@ -262,7 +262,7 @@ section h2 {
 
 .skill-progress-text {
     font-size: 0.75rem;
-    color: #666;
+    color: var(--text-secondary);
 }
 
 .card-description {
@@ -374,7 +374,7 @@ section h2 {
 
 .clicker-progress-text {
     font-size: 0.85rem;
-    color: #666;
+    color: var(--text-secondary);
     margin-top: 5px;
     text-align: center;
 }
@@ -396,7 +396,7 @@ section h2 {
 
 .upgrade-level {
     font-size: 0.85rem;
-    color: #666;
+    color: var(--text-secondary);
     margin-top: 5px;
 }
 
@@ -662,7 +662,7 @@ footer {
 }
 
 .settings-section h4 {
-    color: #333;
+    color: var(--text-primary);
     font-size: 1.2rem;
     margin-bottom: 15px;
 }
