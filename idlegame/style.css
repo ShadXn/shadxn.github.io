@@ -181,8 +181,20 @@ section h2 {
 
 .achievements-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 15px;
+}
+
+.achievement-category-divider {
+    grid-column: 1 / -1;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #667eea;
+    padding: 8px 12px;
+    margin: 5px 0;
+    background: var(--progress-overlay);
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
 }
 
 .action-card,
@@ -642,6 +654,59 @@ footer {
 .action-stat-highlight {
     font-weight: bold;
     color: #667eea;
+}
+
+.completion-stats-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    color: white;
+    margin-top: 20px;
+}
+
+.completion-stats-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.completion-stats-icon {
+    font-size: 2.5rem;
+}
+
+.completion-stats-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+.completion-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.completion-stat-item {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    backdrop-filter: blur(10px);
+}
+
+.completion-stat-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.completion-stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
 }
 
 .settings-card {

@@ -24,6 +24,8 @@ class IdleGame {
             upgrades: {},
             totalGoldEarned: 0,
             totalActionsCompleted: 0,
+            totalClicks: 0,
+            totalUpgradesBought: 0,
             clickerProgress: 0,
             activeActionIds: [],
             startTime: Date.now(),
@@ -456,6 +458,15 @@ class IdleGame {
         };
 
         this.achievements = {
+            // First Time Achievements
+            firstClick: {
+                id: 'firstClick',
+                name: 'First Click',
+                icon: '👆',
+                description: 'Click for the first time',
+                requirement: () => this.gameState.totalClicks >= 1,
+                reward: { type: 'gold', amount: 25 }
+            },
             firstStep: {
                 id: 'firstStep',
                 name: 'First Steps',
@@ -464,6 +475,16 @@ class IdleGame {
                 requirement: () => this.gameState.totalActionsCompleted >= 1,
                 reward: { type: 'gold', amount: 50 }
             },
+            firstUpgrade: {
+                id: 'firstUpgrade',
+                name: 'First Upgrade',
+                icon: '⬆️',
+                description: 'Purchase your first upgrade',
+                requirement: () => this.gameState.totalUpgradesBought >= 1,
+                reward: { type: 'gold', amount: 50 }
+            },
+
+            // Level Achievements
             level5: {
                 id: 'level5',
                 name: 'Getting Started',
@@ -528,134 +549,7 @@ class IdleGame {
                 requirement: () => this.gameState.totalActionsCompleted >= 500,
                 reward: { type: 'gems', amount: 3 }
             },
-            foragingNovice: {
-                id: 'foragingNovice',
-                name: 'Foraging Novice',
-                icon: '🌿',
-                description: 'Reach foraging level 5',
-                requirement: () => this.gameState.actionStats.foraging.level >= 5,
-                reward: { type: 'gold', amount: 75 }
-            },
-            foragingMaster: {
-                id: 'foragingMaster',
-                name: 'Foraging Master',
-                icon: '🌳',
-                description: 'Reach foraging level 10',
-                requirement: () => this.gameState.actionStats.foraging.level >= 10,
-                reward: { type: 'gems', amount: 2 }
-            },
-            huntingNovice: {
-                id: 'huntingNovice',
-                name: 'Hunting Novice',
-                icon: '🏹',
-                description: 'Reach hunting level 5',
-                requirement: () => this.gameState.actionStats.hunting.level >= 5,
-                reward: { type: 'gold', amount: 100 }
-            },
-            huntingMaster: {
-                id: 'huntingMaster',
-                name: 'Hunting Master',
-                icon: '🎯',
-                description: 'Reach hunting level 10',
-                requirement: () => this.gameState.actionStats.hunting.level >= 10,
-                reward: { type: 'gems', amount: 2 }
-            },
-            miningNovice: {
-                id: 'miningNovice',
-                name: 'Mining Novice',
-                icon: '⛏️',
-                description: 'Reach mining level 5',
-                requirement: () => this.gameState.actionStats.mining.level >= 5,
-                reward: { type: 'gold', amount: 150 }
-            },
-            miningMaster: {
-                id: 'miningMaster',
-                name: 'Mining Master',
-                icon: '💎',
-                description: 'Reach mining level 10',
-                requirement: () => this.gameState.actionStats.mining.level >= 10,
-                reward: { type: 'gems', amount: 3 }
-            },
-            questingNovice: {
-                id: 'questingNovice',
-                name: 'Questing Novice',
-                icon: '⚔️',
-                description: 'Reach questing level 5',
-                requirement: () => this.gameState.actionStats.questing.level >= 5,
-                reward: { type: 'gold', amount: 200 }
-            },
-            questingMaster: {
-                id: 'questingMaster',
-                name: 'Questing Master',
-                icon: '🛡️',
-                description: 'Reach questing level 10',
-                requirement: () => this.gameState.actionStats.questing.level >= 10,
-                reward: { type: 'gems', amount: 3 }
-            },
-            fishingNovice: {
-                id: 'fishingNovice',
-                name: 'Fishing Novice',
-                icon: '🎣',
-                description: 'Reach fishing level 5',
-                requirement: () => this.gameState.actionStats.fishing.level >= 5,
-                reward: { type: 'gold', amount: 75 }
-            },
-            fishingMaster: {
-                id: 'fishingMaster',
-                name: 'Fishing Master',
-                icon: '🐟',
-                description: 'Reach fishing level 10',
-                requirement: () => this.gameState.actionStats.fishing.level >= 10,
-                reward: { type: 'gems', amount: 2 }
-            },
-            craftingNovice: {
-                id: 'craftingNovice',
-                name: 'Crafting Novice',
-                icon: '🔨',
-                description: 'Reach crafting level 5',
-                requirement: () => this.gameState.actionStats.crafting.level >= 5,
-                reward: { type: 'gold', amount: 125 }
-            },
-            craftingMaster: {
-                id: 'craftingMaster',
-                name: 'Crafting Master',
-                icon: '🛠️',
-                description: 'Reach crafting level 10',
-                requirement: () => this.gameState.actionStats.crafting.level >= 10,
-                reward: { type: 'gems', amount: 2 }
-            },
-            tradingNovice: {
-                id: 'tradingNovice',
-                name: 'Trading Novice',
-                icon: '💼',
-                description: 'Reach trading level 5',
-                requirement: () => this.gameState.actionStats.trading.level >= 5,
-                reward: { type: 'gold', amount: 175 }
-            },
-            tradingMaster: {
-                id: 'tradingMaster',
-                name: 'Trading Master',
-                icon: '💹',
-                description: 'Reach trading level 10',
-                requirement: () => this.gameState.actionStats.trading.level >= 10,
-                reward: { type: 'gems', amount: 3 }
-            },
-            exploringNovice: {
-                id: 'exploringNovice',
-                name: 'Exploring Novice',
-                icon: '🗺️',
-                description: 'Reach exploring level 5',
-                requirement: () => this.gameState.actionStats.exploring.level >= 5,
-                reward: { type: 'gold', amount: 200 }
-            },
-            exploringMaster: {
-                id: 'exploringMaster',
-                name: 'Exploring Master',
-                icon: '🧭',
-                description: 'Reach exploring level 10',
-                requirement: () => this.gameState.actionStats.exploring.level >= 10,
-                reward: { type: 'gems', amount: 3 }
-            },
+            // Clicking Skill Achievements
             clickingEnthusiast: {
                 id: 'clickingEnthusiast',
                 name: 'Clicking Enthusiast',
@@ -672,6 +566,418 @@ class IdleGame {
                 requirement: () => this.gameState.actionStats.clicking.level >= 10,
                 reward: { type: 'gems', amount: 2 }
             },
+            clickingExpert: {
+                id: 'clickingExpert',
+                name: 'Clicking Expert',
+                icon: '🖱️',
+                description: 'Reach clicking level 20',
+                requirement: () => this.gameState.actionStats.clicking.level >= 20,
+                reward: { type: 'gems', amount: 5 }
+            },
+
+            // Foraging Skill Achievements
+            foragingNovice: {
+                id: 'foragingNovice',
+                name: 'Foraging Novice',
+                icon: '🌿',
+                description: 'Reach foraging level 5',
+                requirement: () => this.gameState.actionStats.foraging.level >= 5,
+                reward: { type: 'gold', amount: 75 }
+            },
+            foragingMaster: {
+                id: 'foragingMaster',
+                name: 'Foraging Master',
+                icon: '🌳',
+                description: 'Reach foraging level 10',
+                requirement: () => this.gameState.actionStats.foraging.level >= 10,
+                reward: { type: 'gems', amount: 2 }
+            },
+            foragingExpert: {
+                id: 'foragingExpert',
+                name: 'Foraging Expert',
+                icon: '🍃',
+                description: 'Reach foraging level 20',
+                requirement: () => this.gameState.actionStats.foraging.level >= 20,
+                reward: { type: 'gems', amount: 5 }
+            },
+
+            // Hunting Skill Achievements
+            huntingNovice: {
+                id: 'huntingNovice',
+                name: 'Hunting Novice',
+                icon: '🏹',
+                description: 'Reach hunting level 5',
+                requirement: () => this.gameState.actionStats.hunting.level >= 5,
+                reward: { type: 'gold', amount: 100 }
+            },
+            huntingMaster: {
+                id: 'huntingMaster',
+                name: 'Hunting Master',
+                icon: '🎯',
+                description: 'Reach hunting level 10',
+                requirement: () => this.gameState.actionStats.hunting.level >= 10,
+                reward: { type: 'gems', amount: 2 }
+            },
+            huntingExpert: {
+                id: 'huntingExpert',
+                name: 'Hunting Expert',
+                icon: '🦌',
+                description: 'Reach hunting level 20',
+                requirement: () => this.gameState.actionStats.hunting.level >= 20,
+                reward: { type: 'gems', amount: 5 }
+            },
+
+            // Mining Skill Achievements
+            miningNovice: {
+                id: 'miningNovice',
+                name: 'Mining Novice',
+                icon: '⛏️',
+                description: 'Reach mining level 5',
+                requirement: () => this.gameState.actionStats.mining.level >= 5,
+                reward: { type: 'gold', amount: 150 }
+            },
+            miningMaster: {
+                id: 'miningMaster',
+                name: 'Mining Master',
+                icon: '💎',
+                description: 'Reach mining level 10',
+                requirement: () => this.gameState.actionStats.mining.level >= 10,
+                reward: { type: 'gems', amount: 3 }
+            },
+            miningExpert: {
+                id: 'miningExpert',
+                name: 'Mining Expert',
+                icon: '⛰️',
+                description: 'Reach mining level 20',
+                requirement: () => this.gameState.actionStats.mining.level >= 20,
+                reward: { type: 'gems', amount: 5 }
+            },
+
+            // Questing Skill Achievements
+            questingNovice: {
+                id: 'questingNovice',
+                name: 'Questing Novice',
+                icon: '⚔️',
+                description: 'Reach questing level 5',
+                requirement: () => this.gameState.actionStats.questing.level >= 5,
+                reward: { type: 'gold', amount: 200 }
+            },
+            questingMaster: {
+                id: 'questingMaster',
+                name: 'Questing Master',
+                icon: '🛡️',
+                description: 'Reach questing level 10',
+                requirement: () => this.gameState.actionStats.questing.level >= 10,
+                reward: { type: 'gems', amount: 3 }
+            },
+            questingExpert: {
+                id: 'questingExpert',
+                name: 'Questing Expert',
+                icon: '🗡️',
+                description: 'Reach questing level 20',
+                requirement: () => this.gameState.actionStats.questing.level >= 20,
+                reward: { type: 'gems', amount: 5 }
+            },
+
+            // Fishing Skill Achievements
+            fishingNovice: {
+                id: 'fishingNovice',
+                name: 'Fishing Novice',
+                icon: '🎣',
+                description: 'Reach fishing level 5',
+                requirement: () => this.gameState.actionStats.fishing.level >= 5,
+                reward: { type: 'gold', amount: 75 }
+            },
+            fishingMaster: {
+                id: 'fishingMaster',
+                name: 'Fishing Master',
+                icon: '🐟',
+                description: 'Reach fishing level 10',
+                requirement: () => this.gameState.actionStats.fishing.level >= 10,
+                reward: { type: 'gems', amount: 2 }
+            },
+            fishingExpert: {
+                id: 'fishingExpert',
+                name: 'Fishing Expert',
+                icon: '🐠',
+                description: 'Reach fishing level 20',
+                requirement: () => this.gameState.actionStats.fishing.level >= 20,
+                reward: { type: 'gems', amount: 5 }
+            },
+
+            // Crafting Skill Achievements
+            craftingNovice: {
+                id: 'craftingNovice',
+                name: 'Crafting Novice',
+                icon: '🔨',
+                description: 'Reach crafting level 5',
+                requirement: () => this.gameState.actionStats.crafting.level >= 5,
+                reward: { type: 'gold', amount: 125 }
+            },
+            craftingMaster: {
+                id: 'craftingMaster',
+                name: 'Crafting Master',
+                icon: '🛠️',
+                description: 'Reach crafting level 10',
+                requirement: () => this.gameState.actionStats.crafting.level >= 10,
+                reward: { type: 'gems', amount: 2 }
+            },
+            craftingExpert: {
+                id: 'craftingExpert',
+                name: 'Crafting Expert',
+                icon: '⚒️',
+                description: 'Reach crafting level 20',
+                requirement: () => this.gameState.actionStats.crafting.level >= 20,
+                reward: { type: 'gems', amount: 5 }
+            },
+
+            // Trading Skill Achievements
+            tradingNovice: {
+                id: 'tradingNovice',
+                name: 'Trading Novice',
+                icon: '💼',
+                description: 'Reach trading level 5',
+                requirement: () => this.gameState.actionStats.trading.level >= 5,
+                reward: { type: 'gold', amount: 175 }
+            },
+            tradingMaster: {
+                id: 'tradingMaster',
+                name: 'Trading Master',
+                icon: '💹',
+                description: 'Reach trading level 10',
+                requirement: () => this.gameState.actionStats.trading.level >= 10,
+                reward: { type: 'gems', amount: 3 }
+            },
+            tradingExpert: {
+                id: 'tradingExpert',
+                name: 'Trading Expert',
+                icon: '📈',
+                description: 'Reach trading level 20',
+                requirement: () => this.gameState.actionStats.trading.level >= 20,
+                reward: { type: 'gems', amount: 5 }
+            },
+
+            // Exploring Skill Achievements
+            exploringNovice: {
+                id: 'exploringNovice',
+                name: 'Exploring Novice',
+                icon: '🗺️',
+                description: 'Reach exploring level 5',
+                requirement: () => this.gameState.actionStats.exploring.level >= 5,
+                reward: { type: 'gold', amount: 200 }
+            },
+            exploringMaster: {
+                id: 'exploringMaster',
+                name: 'Exploring Master',
+                icon: '🧭',
+                description: 'Reach exploring level 10',
+                requirement: () => this.gameState.actionStats.exploring.level >= 10,
+                reward: { type: 'gems', amount: 3 }
+            },
+            exploringExpert: {
+                id: 'exploringExpert',
+                name: 'Exploring Expert',
+                icon: '🌍',
+                description: 'Reach exploring level 20',
+                requirement: () => this.gameState.actionStats.exploring.level >= 20,
+                reward: { type: 'gems', amount: 5 }
+            },
+
+            // Gold Achievements
+            goldCollector: {
+                id: 'goldCollector',
+                name: 'Gold Collector',
+                icon: '💰',
+                description: 'Earn 1,000 total gold',
+                requirement: () => this.gameState.totalGoldEarned >= 1000,
+                reward: { type: 'gold', amount: 200 }
+            },
+            goldMerchant: {
+                id: 'goldMerchant',
+                name: 'Gold Merchant',
+                icon: '💵',
+                description: 'Earn 10,000 total gold',
+                requirement: () => this.gameState.totalGoldEarned >= 10000,
+                reward: { type: 'gems', amount: 3 }
+            },
+            goldMagnate: {
+                id: 'goldMagnate',
+                name: 'Gold Magnate',
+                icon: '💸',
+                description: 'Earn 100,000 total gold',
+                requirement: () => this.gameState.totalGoldEarned >= 100000,
+                reward: { type: 'gems', amount: 5 }
+            },
+            goldTycoon: {
+                id: 'goldTycoon',
+                name: 'Gold Tycoon',
+                icon: '🤑',
+                description: 'Earn 250,000 total gold',
+                requirement: () => this.gameState.totalGoldEarned >= 250000,
+                reward: { type: 'gems', amount: 10 }
+            },
+            goldBillionaire: {
+                id: 'goldBillionaire',
+                name: 'Gold Billionaire',
+                icon: '💎',
+                description: 'Earn 500,000 total gold',
+                requirement: () => this.gameState.totalGoldEarned >= 500000,
+                reward: { type: 'gems', amount: 15 }
+            },
+            goldLegend: {
+                id: 'goldLegend',
+                name: 'Gold Legend',
+                icon: '👑',
+                description: 'Earn 1,000,000 total gold',
+                requirement: () => this.gameState.totalGoldEarned >= 1000000,
+                reward: { type: 'gems', amount: 25 }
+            },
+
+            // Action Completion Achievements
+            actionAddict: {
+                id: 'actionAddict',
+                name: 'Action Addict',
+                icon: '🔥',
+                description: 'Complete 100 actions',
+                requirement: () => this.gameState.totalActionsCompleted >= 100,
+                reward: { type: 'gold', amount: 300 }
+            },
+            actionHero: {
+                id: 'actionHero',
+                name: 'Action Hero',
+                icon: '⚡',
+                description: 'Complete 500 actions',
+                requirement: () => this.gameState.totalActionsCompleted >= 500,
+                reward: { type: 'gems', amount: 3 }
+            },
+            actionVeteran: {
+                id: 'actionVeteran',
+                name: 'Action Veteran',
+                icon: '💪',
+                description: 'Complete 1,000 actions',
+                requirement: () => this.gameState.totalActionsCompleted >= 1000,
+                reward: { type: 'gems', amount: 5 }
+            },
+            actionLegend: {
+                id: 'actionLegend',
+                name: 'Action Legend',
+                icon: '💫',
+                description: 'Complete 2,500 actions',
+                requirement: () => this.gameState.totalActionsCompleted >= 2500,
+                reward: { type: 'gems', amount: 10 }
+            },
+            actionMaster: {
+                id: 'actionMaster',
+                name: 'Action Master',
+                icon: '🌟',
+                description: 'Complete 5,000 actions',
+                requirement: () => this.gameState.totalActionsCompleted >= 5000,
+                reward: { type: 'gems', amount: 15 }
+            },
+            actionGod: {
+                id: 'actionGod',
+                name: 'Action God',
+                icon: '✨',
+                description: 'Complete 10,000 actions',
+                requirement: () => this.gameState.totalActionsCompleted >= 10000,
+                reward: { type: 'gems', amount: 25 }
+            },
+
+            // Click Achievements
+            clickNovice: {
+                id: 'clickNovice',
+                name: 'Click Novice',
+                icon: '👆',
+                description: 'Click 100 times',
+                requirement: () => this.gameState.totalClicks >= 100,
+                reward: { type: 'gold', amount: 100 }
+            },
+            clickMaster: {
+                id: 'clickMaster',
+                name: 'Click Master',
+                icon: '🖱️',
+                description: 'Click 500 times',
+                requirement: () => this.gameState.totalClicks >= 500,
+                reward: { type: 'gems', amount: 2 }
+            },
+            clickExpert: {
+                id: 'clickExpert',
+                name: 'Click Expert',
+                icon: '👍',
+                description: 'Click 1,000 times',
+                requirement: () => this.gameState.totalClicks >= 1000,
+                reward: { type: 'gems', amount: 5 }
+            },
+            clickLegend: {
+                id: 'clickLegend',
+                name: 'Click Legend',
+                icon: '🔥',
+                description: 'Click 2,500 times',
+                requirement: () => this.gameState.totalClicks >= 2500,
+                reward: { type: 'gems', amount: 10 }
+            },
+
+            // Upgrade Achievements
+            upgradeApprentice: {
+                id: 'upgradeApprentice',
+                name: 'Upgrade Apprentice',
+                icon: '⬆️',
+                description: 'Purchase 50 upgrades',
+                requirement: () => this.gameState.totalUpgradesBought >= 50,
+                reward: { type: 'gems', amount: 3 }
+            },
+            upgradeExpert: {
+                id: 'upgradeExpert',
+                name: 'Upgrade Expert',
+                icon: '📈',
+                description: 'Purchase 100 upgrades',
+                requirement: () => this.gameState.totalUpgradesBought >= 100,
+                reward: { type: 'gems', amount: 5 }
+            },
+            upgradeMaster: {
+                id: 'upgradeMaster',
+                name: 'Upgrade Master',
+                icon: '🚀',
+                description: 'Purchase 200 upgrades',
+                requirement: () => this.gameState.totalUpgradesBought >= 200,
+                reward: { type: 'gems', amount: 10 }
+            },
+            upgradeLegend: {
+                id: 'upgradeLegend',
+                name: 'Upgrade Legend',
+                icon: '⭐',
+                description: 'Purchase 450 upgrades',
+                requirement: () => this.gameState.totalUpgradesBought >= 450,
+                reward: { type: 'gems', amount: 15 }
+            },
+
+            // Gem Achievements
+            gemCollector: {
+                id: 'gemCollector',
+                name: 'Gem Collector',
+                icon: '💎',
+                description: 'Collect 50 gems',
+                requirement: () => this.gameState.gems >= 50,
+                reward: { type: 'gems', amount: 10 }
+            },
+            gemHoarder: {
+                id: 'gemHoarder',
+                name: 'Gem Hoarder',
+                icon: '💍',
+                description: 'Collect 100 gems',
+                requirement: () => this.gameState.gems >= 100,
+                reward: { type: 'gems', amount: 15 }
+            },
+            gemMaster: {
+                id: 'gemMaster',
+                name: 'Gem Master',
+                icon: '👑',
+                description: 'Collect 200 gems',
+                requirement: () => this.gameState.gems >= 200,
+                reward: { type: 'gems', amount: 25 }
+            },
+
+            // Special Achievement
             allRounder: {
                 id: 'allRounder',
                 name: 'All-Rounder',
@@ -679,35 +985,12 @@ class IdleGame {
                 description: 'Unlock all actions',
                 requirement: () => this.gameState.unlockedActions.length === Object.keys(this.actions).length,
                 reward: { type: 'gems', amount: 5 }
-            },
-            wealthyAdventurer: {
-                id: 'wealthyAdventurer',
-                name: 'Wealthy Adventurer',
-                icon: '💵',
-                description: 'Earn 5,000 total gold',
-                requirement: () => this.gameState.totalGoldEarned >= 5000,
-                reward: { type: 'gems', amount: 2 }
-            },
-            actionHero: {
-                id: 'actionHero',
-                name: 'Action Hero',
-                icon: '⚡',
-                description: 'Complete 250 actions',
-                requirement: () => this.gameState.totalActionsCompleted >= 250,
-                reward: { type: 'gold', amount: 200 }
-            },
-            gemCollector: {
-                id: 'gemCollector',
-                name: 'Gem Collector',
-                icon: '💎',
-                description: 'Collect 20 gems',
-                requirement: () => this.gameState.gems >= 20,
-                reward: { type: 'gems', amount: 5 }
             }
         };
 
         this.activeActions = {};
         this.keysPressed = new Set();
+        this.statisticsUpdateInterval = null;
         this.init();
     }
 
@@ -840,6 +1123,106 @@ class IdleGame {
 
         document.getElementById(`${tab}Tab`).classList.add('active');
         document.getElementById(`${tab}-section`).classList.add('active');
+
+        // Start live updates for statistics tab
+        if (tab === 'statistics') {
+            this.startStatisticsLiveUpdate();
+        } else {
+            this.stopStatisticsLiveUpdate();
+        }
+    }
+
+    startStatisticsLiveUpdate() {
+        // Clear any existing interval
+        this.stopStatisticsLiveUpdate();
+
+        // Update immediately
+        this.updateLiveStatistics();
+
+        // Set up interval to update every second
+        this.statisticsUpdateInterval = setInterval(() => {
+            this.updateLiveStatistics();
+        }, 1000);
+    }
+
+    stopStatisticsLiveUpdate() {
+        if (this.statisticsUpdateInterval) {
+            clearInterval(this.statisticsUpdateInterval);
+            this.statisticsUpdateInterval = null;
+        }
+    }
+
+    updateLiveStatistics() {
+        // Update stat cards
+        const statCards = document.querySelectorAll('.stat-card');
+        if (statCards.length > 0) {
+            const stats = [
+                this.gameState.totalActionsCompleted,
+                this.gameState.totalClicks || 0,
+                this.gameState.totalGoldEarned,
+                this.gameState.totalUpgradesBought || 0,
+                this.gameState.level,
+                `${this.gameState.unlockedAchievements.length}/${Object.keys(this.achievements).length}`,
+                `${this.gameState.unlockedActions.length}/${Object.keys(this.actions).length}`,
+                `${this.gameState.maxActiveActions}`,
+            ];
+
+            statCards.forEach((card, index) => {
+                const valueElement = card.querySelector('.stat-value');
+                if (valueElement) {
+                    valueElement.textContent = stats[index];
+                }
+            });
+        }
+
+        // Update action stats
+        Object.values(this.actions).forEach(action => {
+            const isUnlocked = this.gameState.unlockedActions.includes(action.id);
+            if (!isUnlocked) return;
+
+            const actionStats = this.gameState.actionStats[action.id];
+            const actionStatCards = document.querySelectorAll('.action-stat-card');
+
+            actionStatCards.forEach(card => {
+                const nameElement = card.querySelector('.action-stat-name');
+                if (nameElement && nameElement.textContent === action.name) {
+                    const highlights = card.querySelectorAll('.action-stat-highlight');
+                    if (highlights.length >= 3) {
+                        highlights[0].textContent = actionStats.level;
+                        highlights[1].textContent = actionStats.timesCompleted;
+                        highlights[2].textContent = `${actionStats.xp}/${actionStats.xpNeeded} XP`;
+                    }
+                }
+            });
+        });
+
+        // Update completion stats playtime
+        const livePlaytimeElement = document.getElementById('live-playtime');
+        if (livePlaytimeElement) {
+            const playTime = Date.now() - this.gameState.startTime;
+            const hours = Math.floor(playTime / (1000 * 60 * 60));
+            const minutes = Math.floor((playTime % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((playTime % (1000 * 60)) / 1000);
+
+            let playTimeText = '';
+            if (hours > 0) {
+                playTimeText = `${hours}h ${minutes}m ${seconds}s`;
+            } else if (minutes > 0) {
+                playTimeText = `${minutes}m ${seconds}s`;
+            } else {
+                playTimeText = `${seconds}s`;
+            }
+            livePlaytimeElement.textContent = playTimeText;
+
+            // Update other completion stats
+            const completionStatValues = document.querySelectorAll('.completion-stat-value');
+            if (completionStatValues.length >= 6) {
+                completionStatValues[1].textContent = this.gameState.level;
+                completionStatValues[2].textContent = this.gameState.totalGoldEarned;
+                completionStatValues[3].textContent = this.gameState.totalActionsCompleted;
+                completionStatValues[4].textContent = this.gameState.totalClicks || 0;
+            }
+        }
     }
 
     renderActions() {
@@ -1068,29 +1451,116 @@ class IdleGame {
         const achievementsContainer = document.getElementById('achievements');
         achievementsContainer.innerHTML = '';
 
-        Object.values(this.achievements).forEach(achievement => {
-            const isUnlocked = this.gameState.unlockedAchievements.includes(achievement.id);
-            const canUnlock = achievement.requirement();
+        // Ensure the container uses the grid styles (matches other tabs)
+        achievementsContainer.classList.add('achievements-grid');
 
-            const card = document.createElement('div');
-            card.className = `achievement-card ${isUnlocked ? 'unlocked' : canUnlock ? 'ready' : 'locked'}`;
+        // Define achievement categories in display order
+        const categories = [
+            {
+                name: '🎯 First Time',
+                ids: ['firstClick', 'firstStep', 'firstUpgrade']
+            },
+            {
+                name: '⭐ Level',
+                ids: ['level5', 'level10', 'level20', 'level30']
+            },
+            {
+                name: '👆 Clicking',
+                ids: ['clickingEnthusiast', 'clickingMaster', 'clickingExpert']
+            },
+            {
+                name: '🌿 Foraging',
+                ids: ['foragingNovice', 'foragingMaster', 'foragingExpert']
+            },
+            {
+                name: '🏹 Hunting',
+                ids: ['huntingNovice', 'huntingMaster', 'huntingExpert']
+            },
+            {
+                name: '⛏️ Mining',
+                ids: ['miningNovice', 'miningMaster', 'miningExpert']
+            },
+            {
+                name: '🗡️ Questing',
+                ids: ['questingNovice', 'questingMaster', 'questingExpert']
+            },
+            {
+                name: '🎣 Fishing',
+                ids: ['fishingNovice', 'fishingMaster', 'fishingExpert']
+            },
+            {
+                name: '🔨 Crafting',
+                ids: ['craftingNovice', 'craftingMaster', 'craftingExpert']
+            },
+            {
+                name: '🤝 Trading',
+                ids: ['tradingNovice', 'tradingMaster', 'tradingExpert']
+            },
+            {
+                name: '🗺️ Exploring',
+                ids: ['exploringNovice', 'exploringMaster', 'exploringExpert']
+            },
+            {
+                name: '💰 Gold',
+                ids: ['goldCollector', 'goldMerchant', 'goldMagnate', 'goldTycoon', 'goldBillionaire', 'goldLegend']
+            },
+            {
+                name: '🎮 Actions',
+                ids: ['actionAddict', 'actionHero', 'actionVeteran', 'actionLegend', 'actionMaster', 'actionGod']
+            },
+            {
+                name: '🖱️ Clicks',
+                ids: ['clickNovice', 'clickMaster', 'clickExpert', 'clickLegend']
+            },
+            {
+                name: '⬆️ Upgrades',
+                ids: ['upgradeApprentice', 'upgradeExpert', 'upgradeMaster', 'upgradeLegend']
+            },
+            {
+                name: '💎 Gems',
+                ids: ['gemCollector', 'gemHoarder', 'gemMaster']
+            },
+            {
+                name: '🏆 Special',
+                ids: ['allRounder']
+            }
+        ];
 
-            const rewardText = achievement.reward.type === 'gold'
-                ? `${achievement.reward.amount} Gold`
-                : `${achievement.reward.amount} Gems`;
+        categories.forEach((category) => {
+            // Add category divider that spans full grid width
+            const categoryDivider = document.createElement('div');
+            categoryDivider.className = 'achievement-category-divider';
+            categoryDivider.textContent = category.name;
+            achievementsContainer.appendChild(categoryDivider);
 
-            card.innerHTML = `
-                <div class="achievement-icon">${achievement.icon}</div>
-                <div class="achievement-content">
-                    <div class="achievement-title">${achievement.name}</div>
-                    <div class="achievement-description">${achievement.description}</div>
-                    <div class="achievement-reward">
-                        ${isUnlocked ? '✅ Unlocked!' : `🎁 Reward: ${rewardText}`}
+            // Add achievement cards for this category
+            category.ids.forEach(achievementId => {
+                const achievement = this.achievements[achievementId];
+                if (!achievement) return;
+
+                const isUnlocked = this.gameState.unlockedAchievements.includes(achievement.id);
+                const canUnlock = achievement.requirement();
+
+                const card = document.createElement('div');
+                card.className = `achievement-card ${isUnlocked ? 'unlocked' : canUnlock ? 'ready' : 'locked'}`;
+
+                const rewardText = achievement.reward.type === 'gold'
+                    ? `${achievement.reward.amount} Gold`
+                    : `${achievement.reward.amount} Gems`;
+
+                card.innerHTML = `
+                    <div class="achievement-icon">${achievement.icon}</div>
+                    <div class="achievement-content">
+                        <div class="achievement-title">${achievement.name}</div>
+                        <div class="achievement-description">${achievement.description}</div>
+                        <div class="achievement-reward">
+                            ${isUnlocked ? '✅ Unlocked!' : `🎁 Reward: ${rewardText}`}
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
 
-            achievementsContainer.appendChild(card);
+                achievementsContainer.appendChild(card);
+            });
         });
     }
 
@@ -1100,7 +1570,9 @@ class IdleGame {
 
         const stats = [
             { label: 'Total Actions Completed', value: this.gameState.totalActionsCompleted, icon: '🎯' },
+            { label: 'Total Clicks', value: this.gameState.totalClicks || 0, icon: '👆' },
             { label: 'Total Gold Earned', value: this.gameState.totalGoldEarned, icon: '💰' },
+            { label: 'Total Upgrades Bought', value: this.gameState.totalUpgradesBought || 0, icon: '⬆️' },
             { label: 'Current Level', value: this.gameState.level, icon: '⭐' },
             { label: 'Achievements Unlocked', value: `${this.gameState.unlockedAchievements.length}/${Object.keys(this.achievements).length}`, icon: '🏆' },
             { label: 'Actions Unlocked', value: `${this.gameState.unlockedActions.length}/${Object.keys(this.actions).length}`, icon: '🔓' },
@@ -1167,6 +1639,66 @@ class IdleGame {
         });
 
         statsContainer.appendChild(actionStatsGrid);
+
+        // Add completion stats if all achievements are unlocked
+        if (this.gameState.unlockedAchievements.length === Object.keys(this.achievements).length) {
+            const completionTitle = document.createElement('h3');
+            completionTitle.textContent = '🎉 Game Completion Stats';
+            completionTitle.style.marginTop = '30px';
+            completionTitle.style.marginBottom = '15px';
+            completionTitle.style.color = '#667eea';
+            statsContainer.appendChild(completionTitle);
+
+            const playTime = Date.now() - this.gameState.startTime;
+            const hours = Math.floor(playTime / (1000 * 60 * 60));
+            const minutes = Math.floor((playTime % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((playTime % (1000 * 60)) / 1000);
+
+            let playTimeText = '';
+            if (hours > 0) {
+                playTimeText = `${hours}h ${minutes}m ${seconds}s`;
+            } else if (minutes > 0) {
+                playTimeText = `${minutes}m ${seconds}s`;
+            } else {
+                playTimeText = `${seconds}s`;
+            }
+
+            const completionCard = document.createElement('div');
+            completionCard.className = 'completion-stats-card';
+            completionCard.innerHTML = `
+                <div class="completion-stats-header">
+                    <span class="completion-stats-icon">🏆</span>
+                    <span class="completion-stats-title">Congratulations! All Achievements Completed!</span>
+                </div>
+                <div class="completion-stats-grid">
+                    <div class="completion-stat-item">
+                        <span class="completion-stat-label">Playtime:</span>
+                        <span class="completion-stat-value" id="live-playtime">${playTimeText}</span>
+                    </div>
+                    <div class="completion-stat-item">
+                        <span class="completion-stat-label">Final Level:</span>
+                        <span class="completion-stat-value">${this.gameState.level}</span>
+                    </div>
+                    <div class="completion-stat-item">
+                        <span class="completion-stat-label">Total Gold Earned:</span>
+                        <span class="completion-stat-value">${this.gameState.totalGoldEarned}</span>
+                    </div>
+                    <div class="completion-stat-item">
+                        <span class="completion-stat-label">Total Actions:</span>
+                        <span class="completion-stat-value">${this.gameState.totalActionsCompleted}</span>
+                    </div>
+                    <div class="completion-stat-item">
+                        <span class="completion-stat-label">Total Clicks:</span>
+                        <span class="completion-stat-value">${this.gameState.totalClicks || 0}</span>
+                    </div>
+                    <div class="completion-stat-item">
+                        <span class="completion-stat-label">Achievements:</span>
+                        <span class="completion-stat-value">${this.gameState.unlockedAchievements.length}/${Object.keys(this.achievements).length}</span>
+                    </div>
+                </div>
+            `;
+            statsContainer.appendChild(completionCard);
+        }
     }
 
     renderSettings() {
@@ -1300,6 +1832,7 @@ class IdleGame {
     handleClick(action) {
         const clicksNeeded = this.getClicksNeeded(action);
         this.gameState.clickerProgress = (this.gameState.clickerProgress || 0) + 1;
+        this.gameState.totalClicks = (this.gameState.totalClicks || 0) + 1;
 
         const progressFill = document.getElementById(`clicker-fill-${action.id}`);
         const progressText = document.querySelector('.clicker-progress-text');
@@ -1562,6 +2095,8 @@ class IdleGame {
         if (this.gameState.gold >= cost) {
             this.gameState.gold -= cost;
             this.gameState.upgrades[upgrade.id] = currentLevel + 1;
+            this.gameState.totalUpgradesBought = (this.gameState.totalUpgradesBought || 0) + 1;
+            this.checkAchievements();
             this.updateUI();
 
             const activeActionsCopy = { ...this.activeActions };
@@ -1635,6 +2170,19 @@ class IdleGame {
                     };
                 }
             });
+
+            // Repair/initialize totalUpgradesBought from saved upgrades object
+            try {
+                const upgradesObj = this.gameState.upgrades || {};
+                const computedTotalUpgrades = Object.values(upgradesObj).reduce((sum, v) => sum + (Number(v) || 0), 0);
+                // If the saved total is missing or less than the computed sum, update it
+                if (!this.gameState.totalUpgradesBought || this.gameState.totalUpgradesBought < computedTotalUpgrades) {
+                    this.gameState.totalUpgradesBought = computedTotalUpgrades;
+                }
+            } catch (e) {
+                // If anything goes wrong, ensure the field exists
+                this.gameState.totalUpgradesBought = this.gameState.totalUpgradesBought || 0;
+            }
         }
     }
 
@@ -1667,6 +2215,7 @@ class IdleGame {
             <div><strong>Final Level:</strong> ${this.gameState.level}</div>
             <div><strong>Total Gold Earned:</strong> ${this.gameState.totalGoldEarned}</div>
             <div><strong>Total Actions Completed:</strong> ${this.gameState.totalActionsCompleted}</div>
+            <div><strong>Total Clicks:</strong> ${this.gameState.totalClicks}</div>
             <div><strong>Achievements:</strong> ${this.gameState.unlockedAchievements.length}/${Object.keys(this.achievements).length}</div>
         `;
 
