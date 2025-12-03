@@ -103,6 +103,13 @@ section h2 {
     padding-bottom: 10px;
 }
 
+.slots-display {
+    font-size: 1.2rem;
+    color: #10b981;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
 .actions-grid,
 .upgrades-grid {
     display: grid;
@@ -226,16 +233,6 @@ section h2 {
 
 .reward.skill {
     color: #10b981;
-}
-
-.slots-info {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    text-align: center;
-    font-size: 1.2rem;
 }
 
 .action-card.active {
@@ -495,6 +492,150 @@ footer {
     font-weight: bold;
 }
 
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.action-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.action-stat-card {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.action-stat-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.action-stat-icon {
+    font-size: 2rem;
+}
+
+.action-stat-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.action-stat-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.action-stat-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95rem;
+    color: #666;
+}
+
+.action-stat-highlight {
+    font-weight: bold;
+    color: #667eea;
+}
+
+.settings-card {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.settings-card h3 {
+    color: #667eea;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.settings-section {
+    margin-bottom: 30px;
+}
+
+.settings-section h4 {
+    color: #333;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+
+.settings-btn {
+    padding: 12px 24px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.settings-btn:hover {
+    background: linear-gradient(135deg, #5568d3 0%, #653a8b 100%);
+    transform: translateY(-2px);
+}
+
+.settings-btn.danger-btn {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.settings-btn.danger-btn:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+.settings-warning {
+    color: #ef4444;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    font-style: italic;
+}
+
 @media (max-width: 768px) {
     .stats {
         flex-direction: column;
@@ -503,7 +644,9 @@ footer {
 
     .actions-grid,
     .upgrades-grid,
-    .achievements-grid {
+    .achievements-grid,
+    .stats-grid,
+    .action-stats-grid {
         grid-template-columns: 1fr;
     }
 

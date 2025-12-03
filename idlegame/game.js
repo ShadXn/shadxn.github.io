@@ -573,6 +573,8 @@ class IdleGame {
         this.renderActions();
         this.renderUpgrades();
         this.renderAchievements();
+        this.renderStatistics();
+        this.renderSettings();
         this.updateUI();
         this.setupEventListeners();
         this.startAutoSave();
@@ -603,6 +605,15 @@ class IdleGame {
 
         document.getElementById('upgradesTab').addEventListener('click', () => {
             this.showTab('upgrades');
+        });
+
+        document.getElementById('statisticsTab').addEventListener('click', () => {
+            this.showTab('statistics');
+            this.renderStatistics();
+        });
+
+        document.getElementById('settingsTab').addEventListener('click', () => {
+            this.showTab('settings');
         });
     }
 
@@ -793,6 +804,156 @@ class IdleGame {
 
             achievementsContainer.appendChild(card);
         });
+    }
+
+    renderStatistics() {
+        const statsContainer = document.getElementById('statistics');
+        statsContainer.innerHTML = '';
+
+        const stats = [
+            { label: 'Total Actions Completed', value: this.gameState.totalActionsCompleted, icon: '🎯' },
+            { label: 'Total Gold Earned', value: this.gameState.totalGoldEarned, icon: '💰' },
+            { label: 'Current Level', value: this.gameState.level, icon: '⭐' },
+            { label: 'Achievements Unlocked', value: `${this.gameState.unlockedAchievements.length}/${Object.keys(this.achievements).length}`, icon: '🏆' },
+            { label: 'Actions Unlocked', value: `${this.gameState.unlockedActions.length}/${Object.keys(this.actions).length}`, icon: '🔓' },
+            { label: 'Active Slots', value: `${this.gameState.maxActiveActions}`, icon: '🎰' },
+        ];
+
+        const statsGrid = document.createElement('div');
+        statsGrid.className = 'stats-grid';
+
+        stats.forEach(stat => {
+            const statCard = document.createElement('div');
+            statCard.className = 'stat-card';
+            statCard.innerHTML = `
+                <div class="stat-icon">${stat.icon}</div>
+                <div class="stat-content">
+                    <div class="stat-label">${stat.label}</div>
+                    <div class="stat-value">${stat.value}</div>
+                </div>
+            `;
+            statsGrid.appendChild(statCard);
+        });
+
+        statsContainer.appendChild(statsGrid);
+
+        const actionStatsTitle = document.createElement('h3');
+        actionStatsTitle.textContent = 'Action Statistics';
+        actionStatsTitle.style.marginTop = '30px';
+        actionStatsTitle.style.marginBottom = '15px';
+        actionStatsTitle.style.color = '#667eea';
+        statsContainer.appendChild(actionStatsTitle);
+
+        const actionStatsGrid = document.createElement('div');
+        actionStatsGrid.className = 'action-stats-grid';
+
+        Object.values(this.actions).forEach(action => {
+            const actionStats = this.gameState.actionStats[action.id];
+            const isUnlocked = this.gameState.unlockedActions.includes(action.id);
+
+            if (isUnlocked) {
+                const actionStatCard = document.createElement('div');
+                actionStatCard.className = 'action-stat-card';
+                actionStatCard.innerHTML = `
+                    <div class="action-stat-header">
+                        <span class="action-stat-icon">${action.icon}</span>
+                        <span class="action-stat-name">${action.name}</span>
+                    </div>
+                    <div class="action-stat-details">
+                        <div class="action-stat-row">
+                            <span>Level:</span>
+                            <span class="action-stat-highlight">${actionStats.level}</span>
+                        </div>
+                        <div class="action-stat-row">
+                            <span>Times Completed:</span>
+                            <span class="action-stat-highlight">${actionStats.timesCompleted}</span>
+                        </div>
+                        <div class="action-stat-row">
+                            <span>Progress:</span>
+                            <span class="action-stat-highlight">${actionStats.xp}/${actionStats.xpNeeded} XP</span>
+                        </div>
+                    </div>
+                `;
+                actionStatsGrid.appendChild(actionStatCard);
+            }
+        });
+
+        statsContainer.appendChild(actionStatsGrid);
+    }
+
+    renderSettings() {
+        const settingsContainer = document.getElementById('settings');
+        settingsContainer.innerHTML = '';
+
+        const settingsCard = document.createElement('div');
+        settingsCard.className = 'settings-card';
+        settingsCard.innerHTML = `
+            <h3>Game Settings</h3>
+            <div class="settings-section">
+                <h4>Save Management</h4>
+                <button id="exportSaveBtn" class="settings-btn">📤 Export Save</button>
+                <button id="importSaveBtn" class="settings-btn">📥 Import Save</button>
+                <input type="file" id="importFileInput" style="display: none;" accept=".json">
+            </div>
+            <div class="settings-section">
+                <h4>Danger Zone</h4>
+                <button id="resetGameBtn" class="settings-btn danger-btn">🔄 Reset Game</button>
+                <p class="settings-warning">This will delete all progress. This cannot be undone!</p>
+            </div>
+        `;
+
+        settingsContainer.appendChild(settingsCard);
+
+        document.getElementById('exportSaveBtn').addEventListener('click', () => {
+            this.exportSave();
+        });
+
+        document.getElementById('importSaveBtn').addEventListener('click', () => {
+            document.getElementById('importFileInput').click();
+        });
+
+        document.getElementById('importFileInput').addEventListener('change', (e) => {
+            this.importSave(e);
+        });
+
+        document.getElementById('resetGameBtn').addEventListener('click', () => {
+            if (confirm('Are you sure you want to reset your game? This cannot be undone!')) {
+                localStorage.removeItem('idleGameSave');
+                location.reload();
+            }
+        });
+    }
+
+    exportSave() {
+        const saveData = JSON.stringify(this.gameState, null, 2);
+        const blob = new Blob([saveData], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `adventure-idle-save-${Date.now()}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        this.showNotification('Save exported successfully!');
+    }
+
+    importSave(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const importedState = JSON.parse(e.target.result);
+                this.gameState = { ...this.gameState, ...importedState };
+                this.saveGame();
+                location.reload();
+            } catch (error) {
+                alert('Invalid save file!');
+            }
+        };
+        reader.readAsText(file);
     }
 
     calculateReward(action, type) {
