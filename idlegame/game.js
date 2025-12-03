@@ -517,7 +517,7 @@ class IdleGame {
                 requirement: () => this.gameState.level >= 30,
                 reward: { type: 'gems', amount: 5 }
             },
-            
+
             // Clicking Skill Achievements
             clickingEnthusiast: {
                 id: 'clickingEnthusiast',
@@ -1177,6 +1177,36 @@ class IdleGame {
         // Update completion stats playtime
         const livePlaytimeElement = document.getElementById('live-playtime');
         if (livePlaytimeElement) {
+            const snap = this.gameState.completionSnapshot;
+            if (snap) {
+                // Use snapshot (static) values for completion stats if present
+                const playTime = snap.playTime || 0;
+                const hours = Math.floor(playTime / (1000 * 60 * 60));
+                const minutes = Math.floor((playTime % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((playTime % (1000 * 60)) / 1000);
+
+                let playTimeText = '';
+                if (hours > 0) {
+                    playTimeText = `${hours}h ${minutes}m ${seconds}s`;
+                } else if (minutes > 0) {
+                    playTimeText = `${minutes}m ${seconds}s`;
+                } else {
+                    playTimeText = `${seconds}s`;
+                }
+                livePlaytimeElement.textContent = playTimeText;
+
+                const completionStatValues = document.querySelectorAll('.completion-stat-value');
+                if (completionStatValues.length >= 6) {
+                    completionStatValues[1].textContent = snap.finalLevel;
+                    completionStatValues[2].textContent = snap.totalGoldEarned;
+                    completionStatValues[3].textContent = snap.totalActionsCompleted;
+                    completionStatValues[4].textContent = snap.totalClicks || 0;
+                }
+
+                // When a snapshot exists, keep completion stats static — skip dynamic updates
+                return;
+            }
+
             const playTime = Date.now() - this.gameState.startTime;
             const hours = Math.floor(playTime / (1000 * 60 * 60));
             const minutes = Math.floor((playTime % (1000 * 60 * 60)) / (1000 * 60));
@@ -1637,7 +1667,24 @@ class IdleGame {
             completionTitle.style.color = '#667eea';
             statsContainer.appendChild(completionTitle);
 
-            const playTime = Date.now() - this.gameState.startTime;
+            // If a completion snapshot exists, prefer those static values.
+            const snap = this.gameState.completionSnapshot;
+            let playTime = Date.now() - this.gameState.startTime;
+            let finalLevel = this.gameState.level;
+            let totalGold = this.gameState.totalGoldEarned;
+            let totalActions = this.gameState.totalActionsCompleted;
+            let totalClicks = this.gameState.totalClicks || 0;
+            let achCountText = `${this.gameState.unlockedAchievements.length}/${allCurrentAchIds.length}`;
+
+            if (snap) {
+                playTime = snap.playTime || 0;
+                finalLevel = snap.finalLevel;
+                totalGold = snap.totalGoldEarned;
+                totalActions = snap.totalActionsCompleted;
+                totalClicks = snap.totalClicks;
+                achCountText = `${snap.achievementsCount}/${snap.achievementsTotal}`;
+            }
+
             const hours = Math.floor(playTime / (1000 * 60 * 60));
             const minutes = Math.floor((playTime % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((playTime % (1000 * 60)) / 1000);
@@ -1665,23 +1712,23 @@ class IdleGame {
                     </div>
                     <div class="completion-stat-item">
                         <span class="completion-stat-label">Final Level:</span>
-                        <span class="completion-stat-value">${this.gameState.level}</span>
+                        <span class="completion-stat-value">${finalLevel}</span>
                     </div>
                     <div class="completion-stat-item">
                         <span class="completion-stat-label">Total Gold Earned:</span>
-                        <span class="completion-stat-value">${this.gameState.totalGoldEarned}</span>
+                        <span class="completion-stat-value">${totalGold}</span>
                     </div>
                     <div class="completion-stat-item">
                         <span class="completion-stat-label">Total Actions:</span>
-                        <span class="completion-stat-value">${this.gameState.totalActionsCompleted}</span>
+                        <span class="completion-stat-value">${totalActions}</span>
                     </div>
                     <div class="completion-stat-item">
                         <span class="completion-stat-label">Total Clicks:</span>
-                        <span class="completion-stat-value">${this.gameState.totalClicks || 0}</span>
+                        <span class="completion-stat-value">${totalClicks}</span>
                     </div>
                     <div class="completion-stat-item">
                         <span class="completion-stat-label">Achievements:</span>
-                        <span class="completion-stat-value">${this.gameState.unlockedAchievements.length}/${Object.keys(this.achievements).length}</span>
+                        <span class="completion-stat-value">${achCountText}</span>
                     </div>
                 </div>
             `;
@@ -2041,10 +2088,32 @@ class IdleGame {
             }
         });
 
-        // If all current achievements are unlocked, show completion popup.
+        // If all current achievements are unlocked, take a one-time snapshot of final stats
+        // and show completion popup. Snapshotting ensures completion stats remain static
+        // (reflecting the moment of completion) instead of continuously changing.
         const allCurrentAchIds = Object.keys(this.achievements);
         const allUnlockedNow = allCurrentAchIds.every(id => this.gameState.unlockedAchievements.includes(id));
         if (newlyUnlocked && allUnlockedNow) {
+            // Store a snapshot once (preserve final values at completion time)
+            if (!this.gameState.completionSnapshot) {
+                const now = Date.now();
+                const playTime = now - (this.gameState.startTime || now);
+                this.gameState.completionSnapshot = {
+                    timestamp: now,
+                    playTime: playTime,
+                    finalLevel: this.gameState.level,
+                    totalGoldEarned: this.gameState.totalGoldEarned,
+                    totalActionsCompleted: this.gameState.totalActionsCompleted,
+                    totalClicks: this.gameState.totalClicks || 0,
+                    totalUpgradesBought: this.gameState.totalUpgradesBought || 0,
+                    achievementsCount: this.gameState.unlockedAchievements.length,
+                    achievementsTotal: allCurrentAchIds.length,
+                    unlockedActionsCount: this.gameState.unlockedActions.length
+                };
+                // Persist the snapshot immediately so it survives reloads
+                this.saveGame();
+            }
+
             if (!this.gameState.completionPopupShown) {
                 this.gameState.completionPopupShown = true;
                 setTimeout(() => this.showCompletionPopup(), 2000);
@@ -2230,28 +2299,55 @@ class IdleGame {
         const popup = document.getElementById('completionPopup');
         const statsContainer = document.getElementById('completionStats');
 
-        const playTime = Date.now() - this.gameState.startTime;
-        const hours = Math.floor(playTime / (1000 * 60 * 60));
-        const minutes = Math.floor((playTime % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((playTime % (1000 * 60)) / 1000);
+        // Prefer the stored completion snapshot if available (static final values)
+        const snap = this.gameState.completionSnapshot;
+        if (snap) {
+            const playTime = snap.playTime || 0;
+            const hours = Math.floor(playTime / (1000 * 60 * 60));
+            const minutes = Math.floor((playTime % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((playTime % (1000 * 60)) / 1000);
 
-        let playTimeText = '';
-        if (hours > 0) {
-            playTimeText = `${hours}h ${minutes}m ${seconds}s`;
-        } else if (minutes > 0) {
-            playTimeText = `${minutes}m ${seconds}s`;
+            let playTimeText = '';
+            if (hours > 0) {
+                playTimeText = `${hours}h ${minutes}m ${seconds}s`;
+            } else if (minutes > 0) {
+                playTimeText = `${minutes}m ${seconds}s`;
+            } else {
+                playTimeText = `${seconds}s`;
+            }
+
+            statsContainer.innerHTML = `
+                <div><strong>Playtime:</strong> ${playTimeText}</div>
+                <div><strong>Final Level:</strong> ${snap.finalLevel}</div>
+                <div><strong>Total Gold Earned:</strong> ${snap.totalGoldEarned}</div>
+                <div><strong>Total Actions Completed:</strong> ${snap.totalActionsCompleted}</div>
+                <div><strong>Total Clicks:</strong> ${snap.totalClicks}</div>
+                <div><strong>Achievements:</strong> ${snap.achievementsCount}/${snap.achievementsTotal}</div>
+            `;
         } else {
-            playTimeText = `${seconds}s`;
-        }
+            const playTime = Date.now() - this.gameState.startTime;
+            const hours = Math.floor(playTime / (1000 * 60 * 60));
+            const minutes = Math.floor((playTime % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((playTime % (1000 * 60)) / 1000);
 
-        statsContainer.innerHTML = `
-            <div><strong>Playtime:</strong> ${playTimeText}</div>
-            <div><strong>Final Level:</strong> ${this.gameState.level}</div>
-            <div><strong>Total Gold Earned:</strong> ${this.gameState.totalGoldEarned}</div>
-            <div><strong>Total Actions Completed:</strong> ${this.gameState.totalActionsCompleted}</div>
-            <div><strong>Total Clicks:</strong> ${this.gameState.totalClicks}</div>
-            <div><strong>Achievements:</strong> ${this.gameState.unlockedAchievements.length}/${Object.keys(this.achievements).length}</div>
-        `;
+            let playTimeText = '';
+            if (hours > 0) {
+                playTimeText = `${hours}h ${minutes}m ${seconds}s`;
+            } else if (minutes > 0) {
+                playTimeText = `${minutes}m ${seconds}s`;
+            } else {
+                playTimeText = `${seconds}s`;
+            }
+
+            statsContainer.innerHTML = `
+                <div><strong>Playtime:</strong> ${playTimeText}</div>
+                <div><strong>Final Level:</strong> ${this.gameState.level}</div>
+                <div><strong>Total Gold Earned:</strong> ${this.gameState.totalGoldEarned}</div>
+                <div><strong>Total Actions Completed:</strong> ${this.gameState.totalActionsCompleted}</div>
+                <div><strong>Total Clicks:</strong> ${this.gameState.totalClicks}</div>
+                <div><strong>Achievements:</strong> ${this.gameState.unlockedAchievements.length}/${Object.keys(this.achievements).length}</div>
+            `;
+        }
 
         popup.classList.add('show');
     }
