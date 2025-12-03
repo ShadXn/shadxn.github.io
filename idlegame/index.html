@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adventure Idle - Quick Quest</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <header>
+            <h1>⚔️ Adventure Idle</h1>
+            <div class="stats">
+                <div class="stat">
+                    <span class="label">Level:</span>
+                    <span id="level">1</span>
+                </div>
+                <div class="stat">
+                    <span class="label">XP:</span>
+                    <span id="xp">0</span> / <span id="xpNeeded">100</span>
+                </div>
+                <div class="stat gold">
+                    <span class="label">💰 Gold:</span>
+                    <span id="gold">0</span>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section class="actions-section">
+                <h2>Actions</h2>
+                <div id="actions" class="actions-grid"></div>
+            </section>
+
+            <section class="upgrades-section">
+                <h2>Upgrades</h2>
+                <div id="upgrades" class="upgrades-grid"></div>
+            </section>
+        </main>
+
+        <footer>
+            <button id="saveBtn" class="save-btn">💾 Save Game</button>
+            <button id="resetBtn" class="reset-btn">🔄 Reset Game</button>
+            <div class="auto-save">Auto-saves every 10 seconds</div>
+        </footer>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script src="game.js"></script>
+</body>
+</html>
