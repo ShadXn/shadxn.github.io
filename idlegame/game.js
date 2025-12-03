@@ -517,6 +517,7 @@ class IdleGame {
                 requirement: () => this.gameState.level >= 30,
                 reward: { type: 'gems', amount: 5 }
             },
+            
             // Clicking Skill Achievements
             clickingEnthusiast: {
                 id: 'clickingEnthusiast',
