@@ -23,7 +23,9 @@ class IdleGame {
             upgrades: {},
             totalGoldEarned: 0,
             totalActionsCompleted: 0,
-            clickerProgress: 0
+            clickerProgress: 0,
+            activeActionIds: [],
+            startTime: Date.now()
         };
 
         this.actions = {
@@ -129,6 +131,40 @@ class IdleGame {
         };
 
         this.upgradeDefinitions = {
+            clickingPower: {
+                id: 'clickingPower',
+                name: 'Clicking Mastery',
+                icon: '👆',
+                description: 'Increase XP from clicking',
+                action: 'clicking',
+                type: 'xp',
+                baseCost: 15,
+                costMultiplier: 1.4,
+                effect: 3
+            },
+            clickingGold: {
+                id: 'clickingGold',
+                name: 'Clicking Profits',
+                icon: '💰',
+                description: 'Increase gold from clicking',
+                action: 'clicking',
+                type: 'gold',
+                baseCost: 20,
+                costMultiplier: 1.4,
+                effect: 2
+            },
+            clickingSpeed: {
+                id: 'clickingSpeed',
+                name: 'Fast Clicking',
+                icon: '⚡',
+                description: 'Reduce clicks needed',
+                action: 'clicking',
+                type: 'speed',
+                baseCost: 25,
+                costMultiplier: 1.5,
+                effect: 1,
+                unlockLevel: 3
+            },
             foragingPower: {
                 id: 'foragingPower',
                 name: 'Foraging Mastery',
@@ -554,12 +590,116 @@ class IdleGame {
                 requirement: () => this.gameState.actionStats.questing.level >= 10,
                 reward: { type: 'gems', amount: 3 }
             },
+            fishingNovice: {
+                id: 'fishingNovice',
+                name: 'Fishing Novice',
+                icon: '🎣',
+                description: 'Reach fishing level 5',
+                requirement: () => this.gameState.actionStats.fishing.level >= 5,
+                reward: { type: 'gold', amount: 75 }
+            },
+            fishingMaster: {
+                id: 'fishingMaster',
+                name: 'Fishing Master',
+                icon: '🐟',
+                description: 'Reach fishing level 10',
+                requirement: () => this.gameState.actionStats.fishing.level >= 10,
+                reward: { type: 'gems', amount: 2 }
+            },
+            craftingNovice: {
+                id: 'craftingNovice',
+                name: 'Crafting Novice',
+                icon: '🔨',
+                description: 'Reach crafting level 5',
+                requirement: () => this.gameState.actionStats.crafting.level >= 5,
+                reward: { type: 'gold', amount: 125 }
+            },
+            craftingMaster: {
+                id: 'craftingMaster',
+                name: 'Crafting Master',
+                icon: '🛠️',
+                description: 'Reach crafting level 10',
+                requirement: () => this.gameState.actionStats.crafting.level >= 10,
+                reward: { type: 'gems', amount: 2 }
+            },
+            tradingNovice: {
+                id: 'tradingNovice',
+                name: 'Trading Novice',
+                icon: '💼',
+                description: 'Reach trading level 5',
+                requirement: () => this.gameState.actionStats.trading.level >= 5,
+                reward: { type: 'gold', amount: 175 }
+            },
+            tradingMaster: {
+                id: 'tradingMaster',
+                name: 'Trading Master',
+                icon: '💹',
+                description: 'Reach trading level 10',
+                requirement: () => this.gameState.actionStats.trading.level >= 10,
+                reward: { type: 'gems', amount: 3 }
+            },
+            exploringNovice: {
+                id: 'exploringNovice',
+                name: 'Exploring Novice',
+                icon: '🗺️',
+                description: 'Reach exploring level 5',
+                requirement: () => this.gameState.actionStats.exploring.level >= 5,
+                reward: { type: 'gold', amount: 200 }
+            },
+            exploringMaster: {
+                id: 'exploringMaster',
+                name: 'Exploring Master',
+                icon: '🧭',
+                description: 'Reach exploring level 10',
+                requirement: () => this.gameState.actionStats.exploring.level >= 10,
+                reward: { type: 'gems', amount: 3 }
+            },
+            clickingEnthusiast: {
+                id: 'clickingEnthusiast',
+                name: 'Clicking Enthusiast',
+                icon: '👆',
+                description: 'Reach clicking level 5',
+                requirement: () => this.gameState.actionStats.clicking.level >= 5,
+                reward: { type: 'gold', amount: 50 }
+            },
+            clickingMaster: {
+                id: 'clickingMaster',
+                name: 'Clicking Master',
+                icon: '👍',
+                description: 'Reach clicking level 10',
+                requirement: () => this.gameState.actionStats.clicking.level >= 10,
+                reward: { type: 'gems', amount: 2 }
+            },
             allRounder: {
                 id: 'allRounder',
                 name: 'All-Rounder',
                 icon: '🌟',
                 description: 'Unlock all actions',
                 requirement: () => this.gameState.unlockedActions.length === Object.keys(this.actions).length,
+                reward: { type: 'gems', amount: 5 }
+            },
+            wealthyAdventurer: {
+                id: 'wealthyAdventurer',
+                name: 'Wealthy Adventurer',
+                icon: '💵',
+                description: 'Earn 5,000 total gold',
+                requirement: () => this.gameState.totalGoldEarned >= 5000,
+                reward: { type: 'gems', amount: 2 }
+            },
+            actionHero: {
+                id: 'actionHero',
+                name: 'Action Hero',
+                icon: '⚡',
+                description: 'Complete 250 actions',
+                requirement: () => this.gameState.totalActionsCompleted >= 250,
+                reward: { type: 'gold', amount: 200 }
+            },
+            gemCollector: {
+                id: 'gemCollector',
+                name: 'Gem Collector',
+                icon: '💎',
+                description: 'Collect 20 gems',
+                requirement: () => this.gameState.gems >= 20,
                 reward: { type: 'gems', amount: 5 }
             }
         };
@@ -580,6 +720,7 @@ class IdleGame {
         this.startAutoSave();
         this.checkLevelUnlocks();
         this.checkAchievements();
+        this.restoreActiveActionsFromSave();
     }
 
     setupEventListeners() {
@@ -614,6 +755,10 @@ class IdleGame {
 
         document.getElementById('settingsTab').addEventListener('click', () => {
             this.showTab('settings');
+        });
+
+        document.getElementById('closeCompletionBtn').addEventListener('click', () => {
+            this.hideCompletionPopup();
         });
     }
 
@@ -747,7 +892,11 @@ class IdleGame {
 
             let effectText = '';
             if (upgrade.type === 'speed') {
-                effectText = `-${upgrade.effect * (currentLevel + 1)}ms duration`;
+                if (upgrade.action === 'clicking') {
+                    effectText = `-${upgrade.effect * (currentLevel + 1)} clicks needed`;
+                } else {
+                    effectText = `-${upgrade.effect * (currentLevel + 1)}ms duration`;
+                }
             } else {
                 effectText = `+${upgrade.effect * (currentLevel + 1)} ${upgrade.type}`;
             }
@@ -773,6 +922,22 @@ class IdleGame {
                     this.purchaseUpgrade(upgrade);
                 });
             }
+        });
+    }
+
+    updateUpgradeButtons() {
+        Object.values(this.upgradeDefinitions).forEach(upgrade => {
+            const btn = document.getElementById(`upgrade-${upgrade.id}`);
+            if (!btn) return;
+
+            const currentLevel = this.gameState.upgrades[upgrade.id] || 0;
+            const cost = this.calculateUpgradeCost(upgrade, currentLevel);
+            const canAfford = this.gameState.gold >= cost;
+            const isUnlocked = !upgrade.unlockLevel || this.gameState.level >= upgrade.unlockLevel;
+            const maxLevel = 30;
+            const isMaxed = currentLevel >= maxLevel;
+
+            btn.disabled = !canAfford || !isUnlocked || isMaxed;
         });
     }
 
@@ -988,7 +1153,16 @@ class IdleGame {
 
     getClicksNeeded(action) {
         const skillLevel = this.gameState.actionStats[action.id]?.level || 1;
-        return Math.floor(action.clicksNeeded * Math.pow(1.1, skillLevel - 1));
+        const baseClicks = Math.floor(action.clicksNeeded * Math.pow(1.1, skillLevel - 1));
+
+        const speedUpgradeKey = `${action.id}Speed`;
+        const upgradeLevel = this.gameState.upgrades[speedUpgradeKey] || 0;
+        const upgrade = this.upgradeDefinitions[speedUpgradeKey];
+
+        if (!upgrade) return baseClicks;
+
+        const reduction = upgrade.effect * upgradeLevel;
+        return Math.max(baseClicks - reduction, 3);
     }
 
     handleClick(action) {
@@ -1029,25 +1203,31 @@ class IdleGame {
 
         if (this.activeActions[action.id]) return;
 
-        const startTime = Date.now();
         const duration = this.calculateDuration(action);
+        const startTime = Date.now();
+        const endTime = startTime + duration;
 
         this.activeActions[action.id] = {
             startTime: startTime,
+            endTime: endTime,
             duration: duration,
             interval: setInterval(() => {
-                const elapsed = Date.now() - startTime;
-                const progress = Math.min((elapsed / duration) * 100, 100);
+                const now = Date.now();
+                const elapsed = now - startTime;
+                const progress = (elapsed / duration) * 100;
 
                 const progressFill = document.getElementById(`progress-fill-${action.id}`);
                 if (progressFill) {
-                    progressFill.style.width = `${progress}%`;
+                    progressFill.style.width = `${Math.min(progress, 100)}%`;
                 }
 
                 if (progress >= 100) {
+                    if (progressFill) {
+                        progressFill.style.width = '100%';
+                    }
                     this.completeAction(action);
                 }
-            }, 50)
+            }, 16)
         };
 
         const activeActionsCopy = { ...this.activeActions };
@@ -1090,33 +1270,54 @@ class IdleGame {
         this.checkLevelUp();
         this.checkAchievements();
         this.updateUI();
+        this.updateUpgradeButtons();
 
         if (action.type === 'idle' && this.activeActions[action.id]) {
             clearInterval(this.activeActions[action.id].interval);
-            const startTime = Date.now();
+
+            const progressFill = document.getElementById(`progress-fill-${action.id}`);
+            if (progressFill) {
+                progressFill.style.width = '0%';
+            }
+
             const duration = this.calculateDuration(action);
+            const startTime = Date.now();
+            const endTime = startTime + duration;
 
             this.activeActions[action.id] = {
                 startTime: startTime,
+                endTime: endTime,
                 duration: duration,
                 interval: setInterval(() => {
-                    const elapsed = Date.now() - startTime;
-                    const progress = Math.min((elapsed / duration) * 100, 100);
+                    const now = Date.now();
+                    const elapsed = now - startTime;
+                    const progress = (elapsed / duration) * 100;
 
                     const progressFill = document.getElementById(`progress-fill-${action.id}`);
                     if (progressFill) {
-                        progressFill.style.width = `${progress}%`;
+                        progressFill.style.width = `${Math.min(progress, 100)}%`;
                     }
 
                     if (progress >= 100) {
+                        if (progressFill) {
+                            progressFill.style.width = '100%';
+                        }
                         this.completeAction(action);
                     }
-                }, 50)
+                }, 16)
             };
         } else if (action.type === 'clicker') {
-            const activeActionsCopy = { ...this.activeActions };
-            this.renderActions();
-            this.restoreActiveActions(activeActionsCopy);
+            // For clicker actions, just update the clicker card without re-rendering everything
+            const clicksNeeded = this.getClicksNeeded(action);
+            const progressFill = document.getElementById(`clicker-fill-${action.id}`);
+            const progressText = document.querySelector('.clicker-progress-text');
+
+            if (progressFill) {
+                progressFill.style.width = '0%';
+            }
+            if (progressText) {
+                progressText.textContent = `0/${clicksNeeded} clicks`;
+            }
         }
     }
 
@@ -1162,10 +1363,13 @@ class IdleGame {
     }
 
     checkAchievements() {
+        let newlyUnlocked = false;
+
         Object.values(this.achievements).forEach(achievement => {
             if (!this.gameState.unlockedAchievements.includes(achievement.id) &&
                 achievement.requirement()) {
                 this.gameState.unlockedAchievements.push(achievement.id);
+                newlyUnlocked = true;
 
                 if (achievement.reward.type === 'gold') {
                     this.gameState.gold += achievement.reward.amount;
@@ -1182,6 +1386,13 @@ class IdleGame {
                 this.updateUI();
             }
         });
+
+        if (newlyUnlocked && this.gameState.unlockedAchievements.length === Object.keys(this.achievements).length) {
+            if (!this.gameState.completionPopupShown) {
+                this.gameState.completionPopupShown = true;
+                setTimeout(() => this.showCompletionPopup(), 2000);
+            }
+        }
     }
 
     restoreActiveActions(activeActionsCopy) {
@@ -1194,6 +1405,19 @@ class IdleGame {
                 if (progressBar) {
                     progressBar.style.display = 'block';
                 }
+            }
+        });
+    }
+
+    restoreActiveActionsFromSave() {
+        if (!this.gameState.activeActionIds || this.gameState.activeActionIds.length === 0) {
+            return;
+        }
+
+        this.gameState.activeActionIds.forEach(actionId => {
+            const action = this.actions[actionId];
+            if (action && action.type === 'idle' && this.gameState.unlockedActions.includes(actionId)) {
+                this.startAction(action);
             }
         });
     }
@@ -1244,6 +1468,7 @@ class IdleGame {
     }
 
     saveGame() {
+        this.gameState.activeActionIds = Object.keys(this.activeActions);
         localStorage.setItem('idleGameSave', JSON.stringify(this.gameState));
     }
 
@@ -1258,6 +1483,12 @@ class IdleGame {
             }
             if (!this.gameState.clickerProgress) {
                 this.gameState.clickerProgress = 0;
+            }
+            if (!this.gameState.activeActionIds) {
+                this.gameState.activeActionIds = [];
+            }
+            if (!this.gameState.startTime) {
+                this.gameState.startTime = Date.now();
             }
 
             Object.keys(this.actions).forEach(actionId => {
@@ -1277,6 +1508,40 @@ class IdleGame {
         setInterval(() => {
             this.saveGame();
         }, 10000);
+    }
+
+    showCompletionPopup() {
+        const popup = document.getElementById('completionPopup');
+        const statsContainer = document.getElementById('completionStats');
+
+        const playTime = Date.now() - this.gameState.startTime;
+        const hours = Math.floor(playTime / (1000 * 60 * 60));
+        const minutes = Math.floor((playTime % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((playTime % (1000 * 60)) / 1000);
+
+        let playTimeText = '';
+        if (hours > 0) {
+            playTimeText = `${hours}h ${minutes}m ${seconds}s`;
+        } else if (minutes > 0) {
+            playTimeText = `${minutes}m ${seconds}s`;
+        } else {
+            playTimeText = `${seconds}s`;
+        }
+
+        statsContainer.innerHTML = `
+            <div><strong>Playtime:</strong> ${playTimeText}</div>
+            <div><strong>Final Level:</strong> ${this.gameState.level}</div>
+            <div><strong>Total Gold Earned:</strong> ${this.gameState.totalGoldEarned}</div>
+            <div><strong>Total Actions Completed:</strong> ${this.gameState.totalActionsCompleted}</div>
+            <div><strong>Achievements:</strong> ${this.gameState.unlockedAchievements.length}/${Object.keys(this.achievements).length}</div>
+        `;
+
+        popup.classList.add('show');
+    }
+
+    hideCompletionPopup() {
+        const popup = document.getElementById('completionPopup');
+        popup.classList.remove('show');
     }
 }
 
