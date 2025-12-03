@@ -517,38 +517,6 @@ class IdleGame {
                 requirement: () => this.gameState.level >= 30,
                 reward: { type: 'gems', amount: 5 }
             },
-            goldCollector: {
-                id: 'goldCollector',
-                name: 'Gold Collector',
-                icon: '💰',
-                description: 'Earn 1,000 total gold',
-                requirement: () => this.gameState.totalGoldEarned >= 1000,
-                reward: { type: 'gold', amount: 200 }
-            },
-            goldMaster: {
-                id: 'goldMaster',
-                name: 'Gold Master',
-                icon: '💎',
-                description: 'Earn 10,000 total gold',
-                requirement: () => this.gameState.totalGoldEarned >= 10000,
-                reward: { type: 'gems', amount: 5 }
-            },
-            actionAddict: {
-                id: 'actionAddict',
-                name: 'Action Addict',
-                icon: '🔥',
-                description: 'Complete 100 actions',
-                requirement: () => this.gameState.totalActionsCompleted >= 100,
-                reward: { type: 'gold', amount: 300 }
-            },
-            actionMaster: {
-                id: 'actionMaster',
-                name: 'Action Master',
-                icon: '💪',
-                description: 'Complete 500 actions',
-                requirement: () => this.gameState.totalActionsCompleted >= 500,
-                reward: { type: 'gems', amount: 3 }
-            },
             // Clicking Skill Achievements
             clickingEnthusiast: {
                 id: 'clickingEnthusiast',
@@ -1162,7 +1130,16 @@ class IdleGame {
                 this.gameState.totalGoldEarned,
                 this.gameState.totalUpgradesBought || 0,
                 this.gameState.level,
-                `${this.gameState.unlockedAchievements.length}/${Object.keys(this.achievements).length}`,
+                (() => {
+                    const achCount = this.gameState.unlockedAchievements.length;
+                    let total = Object.keys(this.achievements).length;
+                    const achContainer = document.getElementById('achievements');
+                    if (achContainer) {
+                        const rendered = achContainer.querySelectorAll('.achievement-card').length;
+                        if (rendered > 0) total = rendered;
+                    }
+                    return `${achCount}/${total}`;
+                })(),
                 `${this.gameState.unlockedActions.length}/${Object.keys(this.actions).length}`,
                 `${this.gameState.maxActiveActions}`,
             ];
@@ -1568,13 +1545,21 @@ class IdleGame {
         const statsContainer = document.getElementById('statistics');
         statsContainer.innerHTML = '';
 
+        // Determine authoritative total achievements from rendered DOM if possible (fallback to object keys)
+        let totalAchievements = Object.keys(this.achievements).length;
+        const achContainer = document.getElementById('achievements');
+        if (achContainer) {
+            const rendered = achContainer.querySelectorAll('.achievement-card').length;
+            if (rendered > 0) totalAchievements = rendered;
+        }
+
         const stats = [
             { label: 'Total Actions Completed', value: this.gameState.totalActionsCompleted, icon: '🎯' },
             { label: 'Total Clicks', value: this.gameState.totalClicks || 0, icon: '👆' },
             { label: 'Total Gold Earned', value: this.gameState.totalGoldEarned, icon: '💰' },
             { label: 'Total Upgrades Bought', value: this.gameState.totalUpgradesBought || 0, icon: '⬆️' },
             { label: 'Current Level', value: this.gameState.level, icon: '⭐' },
-            { label: 'Achievements Unlocked', value: `${this.gameState.unlockedAchievements.length}/${Object.keys(this.achievements).length}`, icon: '🏆' },
+            { label: 'Achievements Unlocked', value: `${this.gameState.unlockedAchievements.length}/${totalAchievements}`, icon: '🏆' },
             { label: 'Actions Unlocked', value: `${this.gameState.unlockedActions.length}/${Object.keys(this.actions).length}`, icon: '🔓' },
             { label: 'Active Slots', value: `${this.gameState.maxActiveActions}`, icon: '🎰' },
         ];
@@ -1640,8 +1625,10 @@ class IdleGame {
 
         statsContainer.appendChild(actionStatsGrid);
 
-        // Add completion stats if all achievements are unlocked
-        if (this.gameState.unlockedAchievements.length === Object.keys(this.achievements).length) {
+    // Add completion stats if all current achievements are unlocked
+    const allCurrentAchIds = Object.keys(this.achievements);
+    const allUnlockedNow = allCurrentAchIds.length > 0 && allCurrentAchIds.every(id => this.gameState.unlockedAchievements.includes(id));
+    if (allUnlockedNow) {
             const completionTitle = document.createElement('h3');
             completionTitle.textContent = '🎉 Game Completion Stats';
             completionTitle.style.marginTop = '30px';
@@ -2053,7 +2040,10 @@ class IdleGame {
             }
         });
 
-        if (newlyUnlocked && this.gameState.unlockedAchievements.length === Object.keys(this.achievements).length) {
+        // If all current achievements are unlocked, show completion popup.
+        const allCurrentAchIds = Object.keys(this.achievements);
+        const allUnlockedNow = allCurrentAchIds.every(id => this.gameState.unlockedAchievements.includes(id));
+        if (newlyUnlocked && allUnlockedNow) {
             if (!this.gameState.completionPopupShown) {
                 this.gameState.completionPopupShown = true;
                 setTimeout(() => this.showCompletionPopup(), 2000);
@@ -2201,6 +2191,30 @@ class IdleGame {
             } catch (e) {
                 // If anything goes wrong, ensure the field exists
                 this.gameState.totalUpgradesBought = this.gameState.totalUpgradesBought || 0;
+            }
+
+            // Sanitize unlockedAchievements: remove any IDs that don't exist in current achievements
+            try {
+                const validAchievementIds = new Set(Object.keys(this.achievements));
+                const originalUnlocked = Array.isArray(this.gameState.unlockedAchievements) ? this.gameState.unlockedAchievements : [];
+                // Filter to valid ids and remove duplicates while preserving order
+                const seen = new Set();
+                const sanitized = [];
+                originalUnlocked.forEach(id => {
+                    if (validAchievementIds.has(id) && !seen.has(id)) {
+                        seen.add(id);
+                        sanitized.push(id);
+                    }
+                });
+                if (sanitized.length !== originalUnlocked.length) {
+                    this.gameState.unlockedAchievements = sanitized;
+                    // Persist corrected save immediately so old invalid entries are removed
+                    this.saveGame();
+                } else {
+                    this.gameState.unlockedAchievements = sanitized;
+                }
+            } catch (e) {
+                this.gameState.unlockedAchievements = this.gameState.unlockedAchievements || [];
             }
         }
     }
