@@ -946,8 +946,8 @@ class IdleGame {
                 id: 'upgradeLegend',
                 name: 'Upgrade Legend',
                 icon: '⭐',
-                description: 'Purchase 450 upgrades',
-                requirement: () => this.gameState.totalUpgradesBought >= 450,
+                description: 'Purchase 400 upgrades',
+                requirement: () => this.gameState.totalUpgradesBought >= 400,
                 reward: { type: 'gems', amount: 15 }
             },
 
