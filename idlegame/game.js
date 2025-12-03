@@ -9,6 +9,7 @@ class IdleGame {
             maxActiveActions: 1,
             unlockedActions: ['foraging', 'clicking'],
             unlockedAchievements: [],
+            darkMode: false,
             actionStats: {
                 clicking: { level: 1, xp: 0, xpNeeded: 30, timesCompleted: 0 },
                 foraging: { level: 1, xp: 0, xpNeeded: 50, timesCompleted: 0 },
@@ -705,11 +706,13 @@ class IdleGame {
         };
 
         this.activeActions = {};
+        this.keysPressed = new Set();
         this.init();
     }
 
     init() {
         this.loadGame();
+        this.applyDarkMode();
         this.renderActions();
         this.renderUpgrades();
         this.renderAchievements();
@@ -760,6 +763,74 @@ class IdleGame {
         document.getElementById('closeCompletionBtn').addEventListener('click', () => {
             this.hideCompletionPopup();
         });
+
+        document.getElementById('darkModeToggle').addEventListener('click', () => {
+            this.toggleDarkMode();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            this.handleKeyboardShortcut(e);
+        });
+
+        document.addEventListener('keyup', (e) => {
+            this.keysPressed.delete(e.key.toLowerCase());
+        });
+    }
+
+    handleKeyboardShortcut(e) {
+        // Don't trigger if user is typing in an input field
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+        // Don't trigger if user is focused on a button (prevents double-click with space)
+        if (e.target.tagName === 'BUTTON') return;
+
+        const key = e.key.toLowerCase();
+
+        // Prevent key repeat for space bar
+        if (key === ' ') {
+            if (this.keysPressed.has(' ')) return;
+            this.keysPressed.add(' ');
+        }
+
+        switch(key) {
+            case ' ':
+                e.preventDefault();
+                const clickBtn = document.getElementById('action-clicking');
+                if (clickBtn && !clickBtn.disabled) {
+                    clickBtn.click();
+                }
+                break;
+            case '1':
+                e.preventDefault();
+                this.showTab('actions');
+                break;
+            case '2':
+                e.preventDefault();
+                this.showTab('upgrades');
+                break;
+            case '3':
+                e.preventDefault();
+                this.showTab('achievements');
+                break;
+            case '4':
+                e.preventDefault();
+                this.showTab('statistics');
+                this.renderStatistics();
+                break;
+            case '5':
+                e.preventDefault();
+                this.showTab('settings');
+                break;
+            case 's':
+                e.preventDefault();
+                this.saveGame();
+                this.showNotification('Game saved!');
+                break;
+            case 'd':
+                e.preventDefault();
+                this.toggleDarkMode();
+                break;
+        }
     }
 
     showTab(tab) {
@@ -941,6 +1012,57 @@ class IdleGame {
         });
     }
 
+    updateActionCards() {
+        Object.values(this.actions).forEach(action => {
+            const isUnlocked = this.gameState.unlockedActions.includes(action.id);
+            if (!isUnlocked) return;
+
+            const actionStats = this.gameState.actionStats[action.id];
+
+            // Update skill level text
+            const card = document.getElementById(`action-${action.id}`)?.closest('.action-card');
+            if (!card) return;
+
+            const skillLevelElement = card.querySelector('.skill-level');
+            if (skillLevelElement) {
+                skillLevelElement.textContent = `Skill Lv.${actionStats.level}`;
+            }
+
+            // Update skill progress bar
+            const skillProgressFill = card.querySelector('.skill-progress-fill');
+            if (skillProgressFill) {
+                const progressPercent = (actionStats.xp / actionStats.xpNeeded) * 100;
+                skillProgressFill.style.width = `${progressPercent}%`;
+            }
+
+            // Update skill progress text
+            const skillProgressText = card.querySelector('.skill-progress-text');
+            if (skillProgressText) {
+                if (action.type === 'clicker') {
+                    skillProgressText.textContent = `${actionStats.xp}/${actionStats.xpNeeded} Skill XP`;
+                } else {
+                    skillProgressText.textContent = `${actionStats.xp}/${actionStats.xpNeeded} XP`;
+                }
+            }
+
+            // Update rewards display
+            const xpReward = this.calculateReward(action, 'xp');
+            const goldReward = this.calculateReward(action, 'gold');
+            const actionXpReward = Math.floor(xpReward * 0.5);
+
+            const rewardElements = card.querySelectorAll('.reward');
+            if (rewardElements.length >= 3) {
+                rewardElements[0].textContent = `+${xpReward} XP`;
+                rewardElements[1].textContent = `+${goldReward} Gold`;
+                if (action.type === 'clicker') {
+                    rewardElements[2].textContent = `+${actionXpReward} Skill XP`;
+                } else {
+                    rewardElements[2].textContent = `+${actionXpReward} ${action.name} XP`;
+                }
+            }
+        });
+    }
+
     renderAchievements() {
         const achievementsContainer = document.getElementById('achievements');
         achievementsContainer.innerHTML = '';
@@ -1055,13 +1177,22 @@ class IdleGame {
         settingsCard.innerHTML = `
             <h3>Game Settings</h3>
             <div class="settings-section">
-                <h4>Save Management</h4>
+                <h4>⌨️ Keyboard Shortcuts</h4>
+                <div class="keyboard-shortcuts">
+                    <div class="shortcut-item"><kbd>Space</kbd> Click action</div>
+                    <div class="shortcut-item"><kbd>1-5</kbd> Switch tabs</div>
+                    <div class="shortcut-item"><kbd>S</kbd> Save game</div>
+                    <div class="shortcut-item"><kbd>D</kbd> Toggle dark mode</div>
+                </div>
+            </div>
+            <div class="settings-section">
+                <h4>💾 Save Management</h4>
                 <button id="exportSaveBtn" class="settings-btn">📤 Export Save</button>
                 <button id="importSaveBtn" class="settings-btn">📥 Import Save</button>
                 <input type="file" id="importFileInput" style="display: none;" accept=".json">
             </div>
             <div class="settings-section">
-                <h4>Danger Zone</h4>
+                <h4>⚠️ Danger Zone</h4>
                 <button id="resetGameBtn" class="settings-btn danger-btn">🔄 Reset Game</button>
                 <p class="settings-warning">This will delete all progress. This cannot be undone!</p>
             </div>
@@ -1271,6 +1402,7 @@ class IdleGame {
         this.checkAchievements();
         this.updateUI();
         this.updateUpgradeButtons();
+        this.updateActionCards();
 
         if (action.type === 'idle' && this.activeActions[action.id]) {
             clearInterval(this.activeActions[action.id].interval);
@@ -1542,6 +1674,23 @@ class IdleGame {
     hideCompletionPopup() {
         const popup = document.getElementById('completionPopup');
         popup.classList.remove('show');
+    }
+
+    toggleDarkMode() {
+        this.gameState.darkMode = !this.gameState.darkMode;
+        this.applyDarkMode();
+        this.saveGame();
+    }
+
+    applyDarkMode() {
+        const toggle = document.getElementById('darkModeToggle');
+        if (this.gameState.darkMode) {
+            document.body.classList.add('dark-mode');
+            toggle.textContent = '☀️';
+        } else {
+            document.body.classList.remove('dark-mode');
+            toggle.textContent = '🌙';
+        }
     }
 }
 

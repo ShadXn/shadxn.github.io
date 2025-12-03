@@ -4,21 +4,55 @@
     box-sizing: border-box;
 }
 
+:root {
+    --bg-primary: #667eea;
+    --bg-secondary: #764ba2;
+    --card-bg: white;
+    --card-gradient-start: #f5f7fa;
+    --card-gradient-end: #c3cfe2;
+    --text-primary: #333;
+    --text-secondary: #666;
+    --border-color: #e0e0e0;
+    --locked-bg: #e0e0e0;
+    --active-bg-start: #d1fae5;
+    --active-bg-end: #a7f3d0;
+    --progress-overlay: rgba(0, 0, 0, 0.1);
+    --header-overlay: rgba(255, 255, 255, 0.2);
+}
+
+body.dark-mode {
+    --bg-primary: #1a1a2e;
+    --bg-secondary: #16213e;
+    --card-bg: #0f3460;
+    --card-gradient-start: #1a1a2e;
+    --card-gradient-end: #16213e;
+    --text-primary: #e0e0e0;
+    --text-secondary: #b0b0b0;
+    --border-color: #2a2a3e;
+    --locked-bg: #2a2a3e;
+    --active-bg-start: #0f4c3a;
+    --active-bg-end: #0a3d2e;
+    --progress-overlay: rgba(255, 255, 255, 0.1);
+    --header-overlay: rgba(0, 0, 0, 0.3);
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
     min-height: 100vh;
     padding: 20px;
-    color: #333;
+    color: var(--text-primary);
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
 .game-container {
     max-width: 1200px;
     margin: 0 auto;
-    background: white;
+    background: var(--card-bg);
     border-radius: 20px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     overflow: hidden;
+    transition: background 0.3s ease;
 }
 
 header {
@@ -28,10 +62,35 @@ header {
     text-align: center;
 }
 
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
 header h1 {
     font-size: 2.5rem;
-    margin-bottom: 20px;
+    margin: 0;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode-toggle {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    font-size: 1.5rem;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.dark-mode-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1) rotate(20deg);
 }
 
 .stats {
@@ -42,11 +101,12 @@ header h1 {
 }
 
 .stat {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--header-overlay);
     padding: 10px 15px;
     border-radius: 10px;
     font-size: 1.1rem;
     backdrop-filter: blur(10px);
+    transition: background 0.3s ease;
 }
 
 .stat .label {
@@ -56,8 +116,9 @@ header h1 {
 
 .tabs {
     display: flex;
-    background: #f5f5f5;
-    border-bottom: 2px solid #e0e0e0;
+    background: var(--card-gradient-start);
+    border-bottom: 2px solid var(--border-color);
+    transition: background 0.3s ease, border-color 0.3s ease;
 }
 
 .tab-btn {
@@ -69,14 +130,15 @@ header h1 {
     cursor: pointer;
     transition: all 0.2s;
     border-bottom: 3px solid transparent;
+    color: var(--text-primary);
 }
 
 .tab-btn:hover {
-    background: #e8e8e8;
+    background: var(--progress-overlay);
 }
 
 .tab-btn.active {
-    background: white;
+    background: var(--card-bg);
     border-bottom-color: #667eea;
     font-weight: bold;
     color: #667eea;
@@ -125,11 +187,11 @@ section h2 {
 
 .action-card,
 .upgrade-card {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background: linear-gradient(135deg, var(--card-gradient-start) 0%, var(--card-gradient-end) 100%);
     border-radius: 15px;
     padding: 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s, background 0.3s ease;
     border: 2px solid transparent;
 }
 
@@ -142,7 +204,8 @@ section h2 {
 .action-card.locked,
 .upgrade-card.locked {
     opacity: 0.5;
-    background: #e0e0e0;
+    background: var(--locked-bg);
+    transition: background 0.3s ease;
 }
 
 .action-card.locked:hover,
@@ -166,7 +229,8 @@ section h2 {
 .card-title {
     font-size: 1.3rem;
     font-weight: bold;
-    color: #333;
+    color: var(--text-primary);
+    transition: color 0.3s ease;
 }
 
 .skill-level {
@@ -202,9 +266,10 @@ section h2 {
 }
 
 .card-description {
-    color: #666;
+    color: var(--text-secondary);
     font-size: 0.9rem;
     margin-bottom: 10px;
+    transition: color 0.3s ease;
 }
 
 .card-rewards {
@@ -237,7 +302,8 @@ section h2 {
 
 .action-card.active {
     border-color: #10b981;
-    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    background: linear-gradient(135deg, var(--active-bg-start) 0%, var(--active-bg-end) 100%);
+    transition: background 0.3s ease;
 }
 
 .action-btn,
@@ -633,6 +699,102 @@ footer {
     font-size: 0.9rem;
     margin-top: 10px;
     font-style: italic;
+}
+
+.keyboard-shortcuts {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.shortcut-item {
+    padding: 10px;
+    background: var(--progress-overlay);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    transition: background 0.2s ease, color 0.3s ease;
+}
+
+.shortcut-item kbd {
+    background: #667eea;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-weight: bold;
+    margin-right: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode .shortcut-item kbd {
+    background: #5568d3;
+}
+
+body.dark-mode footer {
+    background: #0f3460;
+    border-top: 2px solid #2a2a3e;
+}
+
+body.dark-mode .save-btn {
+    background: #047857;
+}
+
+body.dark-mode .save-btn:hover {
+    background: #065f46;
+}
+
+body.dark-mode .reset-btn {
+    background: #991b1b;
+}
+
+body.dark-mode .reset-btn:hover {
+    background: #7f1d1d;
+}
+
+body.dark-mode .settings-card {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+body.dark-mode .achievement-card {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+body.dark-mode .achievement-card.unlocked {
+    background: linear-gradient(135deg, #0f4c3a 0%, #0a3d2e 100%);
+}
+
+body.dark-mode .achievement-card.ready {
+    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+}
+
+body.dark-mode .achievement-title {
+    color: #e0e0e0;
+}
+
+body.dark-mode .achievement-description {
+    color: #b0b0b0;
+}
+
+body.dark-mode .stat-card {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+body.dark-mode .action-stat-card {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+body.dark-mode .action-stat-name {
+    color: #e0e0e0;
+}
+
+body.dark-mode .stat-label {
+    color: #b0b0b0;
+}
+
+body.dark-mode .action-stat-row {
+    color: #b0b0b0;
 }
 
 .completion-popup {
