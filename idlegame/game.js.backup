@@ -618,102 +618,55 @@ class IdleGame {
         const actionsContainer = document.getElementById('actions');
         actionsContainer.innerHTML = '';
 
-        const activeIdleCount = Object.keys(this.activeActions).filter(id => this.actions[id]?.type === 'idle').length;
-        const slotsDisplay = document.getElementById('active-slots-display');
-        if (slotsDisplay) {
-            slotsDisplay.textContent = `(${activeIdleCount}/${this.gameState.maxActiveActions} Active)`;
-        }
-
         Object.values(this.actions).forEach(action => {
             const isUnlocked = this.gameState.unlockedActions.includes(action.id);
             const canUnlock = this.gameState.level >= action.unlockLevel;
             const actionStats = this.gameState.actionStats[action.id];
-            const isActive = this.activeActions[action.id] !== undefined;
 
             const card = document.createElement('div');
-            card.className = `action-card ${!isUnlocked && !canUnlock ? 'locked' : ''} ${isActive ? 'active' : ''}`;
+            card.className = `action-card ${!isUnlocked && !canUnlock ? 'locked' : ''}`;
 
             const xpReward = this.calculateReward(action, 'xp');
             const goldReward = this.calculateReward(action, 'gold');
             const actionXpReward = Math.floor(xpReward * 0.5);
 
-            if (action.type === 'clicker') {
-                const clicksNeeded = this.getClicksNeeded(action);
-                const currentProgress = this.gameState.clickerProgress || 0;
-
-                card.innerHTML = `
-                    <div class="card-header">
-                        <div class="card-icon">${action.icon}</div>
-                        <div>
-                            <div class="card-title">${action.name}</div>
-                            ${isUnlocked ? `<div class="skill-level">Skill Lv.${actionStats.level}</div>` : ''}
+            card.innerHTML = `
+                <div class="card-header">
+                    <div class="card-icon">${action.icon}</div>
+                    <div>
+                        <div class="card-title">${action.name}</div>
+                        ${isUnlocked ? `<div class="skill-level">Skill Lv.${actionStats.level}</div>` : ''}
+                    </div>
+                    ${!isUnlocked && canUnlock ? '<span class="unlock-badge">NEW!</span>' : ''}
+                </div>
+                <div class="card-description">${action.description}</div>
+                ${isUnlocked ? `
+                    <div class="skill-progress">
+                        <div class="skill-progress-bar">
+                            <div class="skill-progress-fill" style="width: ${(actionStats.xp / actionStats.xpNeeded) * 100}%"></div>
                         </div>
+                        <div class="skill-progress-text">${actionStats.xp}/${actionStats.xpNeeded} XP</div>
                     </div>
-                    <div class="card-description">${action.description}</div>
-                    ${isUnlocked ? `
-                        <div class="skill-progress">
-                            <div class="skill-progress-bar">
-                                <div class="skill-progress-fill" style="width: ${(actionStats.xp / actionStats.xpNeeded) * 100}%"></div>
-                            </div>
-                            <div class="skill-progress-text">${actionStats.xp}/${actionStats.xpNeeded} Skill XP</div>
-                        </div>
-                    ` : ''}
-                    <div class="card-rewards">
-                        <span class="reward xp">+${xpReward} XP</span>
-                        <span class="reward gold">+${goldReward} Gold</span>
-                        ${isUnlocked ? `<span class="reward skill">+${actionXpReward} Skill XP</span>` : ''}
-                    </div>
-                    <div class="clicker-progress-bar">
-                        <div class="clicker-progress-fill" id="clicker-fill-${action.id}" style="width: ${(currentProgress / clicksNeeded) * 100}%"></div>
-                    </div>
-                    <div class="clicker-progress-text">${currentProgress}/${clicksNeeded} clicks</div>
-                    <button class="action-btn clicker-btn" id="action-${action.id}" ${!isUnlocked ? 'disabled' : ''}>
-                        ${!isUnlocked ? '🔒 Locked' : 'Click Me!'}
-                    </button>
-                `;
-            } else {
-                card.innerHTML = `
-                    <div class="card-header">
-                        <div class="card-icon">${action.icon}</div>
-                        <div>
-                            <div class="card-title">${action.name}</div>
-                            ${isUnlocked ? `<div class="skill-level">Skill Lv.${actionStats.level}</div>` : ''}
-                        </div>
-                        ${!isUnlocked && canUnlock ? '<span class="unlock-badge">NEW!</span>' : ''}
-                    </div>
-                    <div class="card-description">${action.description}</div>
-                    ${isUnlocked ? `
-                        <div class="skill-progress">
-                            <div class="skill-progress-bar">
-                                <div class="skill-progress-fill" style="width: ${(actionStats.xp / actionStats.xpNeeded) * 100}%"></div>
-                            </div>
-                            <div class="skill-progress-text">${actionStats.xp}/${actionStats.xpNeeded} XP</div>
-                        </div>
-                    ` : ''}
-                    <div class="card-rewards">
-                        <span class="reward xp">+${xpReward} XP</span>
-                        <span class="reward gold">+${goldReward} Gold</span>
-                        ${isUnlocked ? `<span class="reward skill">+${actionXpReward} ${action.name} XP</span>` : ''}
-                    </div>
-                    ${!isUnlocked ? `<div style="color: #ef4444; font-size: 0.85rem;">Unlocks at level ${action.unlockLevel}</div>` : ''}
-                    <button class="action-btn ${isActive ? 'stop-btn' : ''}" id="action-${action.id}" ${!isUnlocked ? 'disabled' : ''}>
-                        ${!isUnlocked ? '🔒 Locked' : isActive ? 'Stop' : 'Start'}
-                    </button>
-                    <div class="progress-bar" id="progress-${action.id}" style="display: ${isActive ? 'block' : 'none'};">
-                        <div class="progress-fill" id="progress-fill-${action.id}"></div>
-                    </div>
-                `;
-            }
+                ` : ''}
+                <div class="card-rewards">
+                    <span class="reward xp">+${xpReward} XP</span>
+                    <span class="reward gold">+${goldReward} Gold</span>
+                    ${isUnlocked ? `<span class="reward skill">+${actionXpReward} ${action.name} XP</span>` : ''}
+                </div>
+                ${!isUnlocked ? `<div style="color: #ef4444; font-size: 0.85rem;">Unlocks at level ${action.unlockLevel}</div>` : ''}
+                <button class="action-btn" id="action-${action.id}" ${!isUnlocked ? 'disabled' : ''}>
+                    ${!isUnlocked ? '🔒 Locked' : 'Start'}
+                </button>
+                <div class="progress-bar" id="progress-${action.id}" style="display: none;">
+                    <div class="progress-fill" id="progress-fill-${action.id}"></div>
+                </div>
+            `;
 
             actionsContainer.appendChild(card);
 
             if (isUnlocked) {
                 document.getElementById(`action-${action.id}`).addEventListener('click', () => {
-                    if (action.type === 'clicker') {
-                        this.handleClick(action);
-                    } else {
-                        this.toggleAction(action);
-                    }
+                    this.startAction(action);
                 });
             }
         });
@@ -825,87 +778,34 @@ class IdleGame {
         return Math.floor(upgrade.baseCost * Math.pow(upgrade.costMultiplier, currentLevel));
     }
 
-    getClicksNeeded(action) {
-        const skillLevel = this.gameState.actionStats[action.id]?.level || 1;
-        return Math.floor(action.clicksNeeded * Math.pow(1.1, skillLevel - 1));
-    }
-
-    handleClick(action) {
-        const clicksNeeded = this.getClicksNeeded(action);
-        this.gameState.clickerProgress = (this.gameState.clickerProgress || 0) + 1;
-
-        const progressFill = document.getElementById(`clicker-fill-${action.id}`);
-        const progressText = document.querySelector('.clicker-progress-text');
-
-        if (progressFill) {
-            progressFill.style.width = `${(this.gameState.clickerProgress / clicksNeeded) * 100}%`;
-        }
-        if (progressText) {
-            progressText.textContent = `${this.gameState.clickerProgress}/${clicksNeeded} clicks`;
-        }
-
-        if (this.gameState.clickerProgress >= clicksNeeded) {
-            this.gameState.clickerProgress = 0;
-            this.completeAction(action);
-        }
-    }
-
-    toggleAction(action) {
-        if (this.activeActions[action.id]) {
-            this.stopAction(action);
-        } else {
-            this.startAction(action);
-        }
-    }
-
     startAction(action) {
-        const activeIdleCount = Object.keys(this.activeActions).filter(id => this.actions[id]?.type === 'idle').length;
-
-        if (activeIdleCount >= this.gameState.maxActiveActions) {
-            this.showNotification('Maximum active actions reached! Stop an action or unlock more slots.');
-            return;
-        }
-
         if (this.activeActions[action.id]) return;
+
+        const button = document.getElementById(`action-${action.id}`);
+        const progressBar = document.getElementById(`progress-${action.id}`);
+        const progressFill = document.getElementById(`progress-fill-${action.id}`);
+
+        button.disabled = true;
+        progressBar.style.display = 'block';
 
         const startTime = Date.now();
         const duration = this.calculateDuration(action);
 
-        this.activeActions[action.id] = {
-            startTime: startTime,
-            duration: duration,
-            interval: setInterval(() => {
-                const elapsed = Date.now() - startTime;
-                const progress = Math.min((elapsed / duration) * 100, 100);
+        this.activeActions[action.id] = setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min((elapsed / duration) * 100, 100);
+            progressFill.style.width = `${progress}%`;
 
-                const progressFill = document.getElementById(`progress-fill-${action.id}`);
-                if (progressFill) {
-                    progressFill.style.width = `${progress}%`;
-                }
-
-                if (progress >= 100) {
-                    this.completeAction(action);
-                }
-            }, 50)
-        };
-
-        const activeActionsCopy = { ...this.activeActions };
-        this.renderActions();
-        this.restoreActiveActions(activeActionsCopy);
-    }
-
-    stopAction(action) {
-        if (this.activeActions[action.id]) {
-            clearInterval(this.activeActions[action.id].interval);
-            delete this.activeActions[action.id];
-
-            const activeActionsCopy = { ...this.activeActions };
-            this.renderActions();
-            this.restoreActiveActions(activeActionsCopy);
-        }
+            if (progress >= 100) {
+                this.completeAction(action);
+            }
+        }, 50);
     }
 
     completeAction(action) {
+        clearInterval(this.activeActions[action.id]);
+        delete this.activeActions[action.id];
+
         const xpGained = this.calculateReward(action, 'xp');
         const goldGained = this.calculateReward(action, 'gold');
         const actionXpGained = Math.floor(xpGained * 0.5);
@@ -930,33 +830,12 @@ class IdleGame {
         this.checkAchievements();
         this.updateUI();
 
-        if (action.type === 'idle' && this.activeActions[action.id]) {
-            clearInterval(this.activeActions[action.id].interval);
-            const startTime = Date.now();
-            const duration = this.calculateDuration(action);
+        const activeActionsCopy = { ...this.activeActions };
 
-            this.activeActions[action.id] = {
-                startTime: startTime,
-                duration: duration,
-                interval: setInterval(() => {
-                    const elapsed = Date.now() - startTime;
-                    const progress = Math.min((elapsed / duration) * 100, 100);
+        this.renderActions();
+        this.renderUpgrades();
 
-                    const progressFill = document.getElementById(`progress-fill-${action.id}`);
-                    if (progressFill) {
-                        progressFill.style.width = `${progress}%`;
-                    }
-
-                    if (progress >= 100) {
-                        this.completeAction(action);
-                    }
-                }, 50)
-            };
-        } else if (action.type === 'clicker') {
-            const activeActionsCopy = { ...this.activeActions };
-            this.renderActions();
-            this.restoreActiveActions(activeActionsCopy);
-        }
+        this.restoreActiveActions(activeActionsCopy);
     }
 
     checkLevelUp() {
@@ -972,16 +851,6 @@ class IdleGame {
 
     checkLevelUnlocks() {
         let unlocked = false;
-        let slotsUnlocked = false;
-
-        const slotUnlockLevels = [1, 5, 10, 15, 20, 25];
-        const targetSlots = slotUnlockLevels.filter(lvl => lvl <= this.gameState.level).length;
-
-        if (targetSlots > this.gameState.maxActiveActions) {
-            this.gameState.maxActiveActions = targetSlots;
-            this.showNotification(`🎁 New action slot unlocked! You can now run ${targetSlots} actions simultaneously!`, true);
-            slotsUnlocked = true;
-        }
 
         Object.values(this.actions).forEach(action => {
             if (this.gameState.level >= action.unlockLevel &&
@@ -992,7 +861,7 @@ class IdleGame {
             }
         });
 
-        if (unlocked || slotsUnlocked) {
+        if (unlocked) {
             const activeActionsCopy = { ...this.activeActions };
             this.renderActions();
             this.renderUpgrades();
@@ -1025,14 +894,12 @@ class IdleGame {
 
     restoreActiveActions(activeActionsCopy) {
         Object.keys(activeActionsCopy).forEach(actionId => {
-            const action = this.actions[actionId];
-            if (!action) return;
+            const button = document.getElementById(`action-${actionId}`);
+            const progressBar = document.getElementById(`progress-${actionId}`);
 
-            if (action.type === 'idle') {
-                const progressBar = document.getElementById(`progress-${actionId}`);
-                if (progressBar) {
-                    progressBar.style.display = 'block';
-                }
+            if (button && progressBar) {
+                button.disabled = true;
+                progressBar.style.display = 'block';
             }
         });
     }
@@ -1092,19 +959,12 @@ class IdleGame {
             const loadedState = JSON.parse(saved);
             this.gameState = { ...this.gameState, ...loadedState };
 
-            if (!this.gameState.maxActiveActions) {
-                this.gameState.maxActiveActions = 1;
-            }
-            if (!this.gameState.clickerProgress) {
-                this.gameState.clickerProgress = 0;
-            }
-
             Object.keys(this.actions).forEach(actionId => {
                 if (!this.gameState.actionStats[actionId]) {
                     this.gameState.actionStats[actionId] = {
                         level: 1,
                         xp: 0,
-                        xpNeeded: actionId === 'clicking' ? 30 : 50,
+                        xpNeeded: 50,
                         timesCompleted: 0
                     };
                 }
