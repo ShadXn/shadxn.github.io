@@ -26,7 +26,8 @@ class IdleGame {
             totalActionsCompleted: 0,
             clickerProgress: 0,
             activeActionIds: [],
-            startTime: Date.now()
+            startTime: Date.now(),
+            maxLevelNotificationShown: false
         };
 
         this.actions = {
@@ -1583,7 +1584,8 @@ class IdleGame {
         const totalAchievements = Object.keys(this.achievements).length;
         document.getElementById('achievementCount').textContent = `${achievementCount}/${totalAchievements}`;
 
-        if (this.gameState.level >= 30) {
+        if (this.gameState.level >= 30 && !this.gameState.maxLevelNotificationShown) {
+            this.gameState.maxLevelNotificationShown = true;
             this.showNotification('🏆 Congratulations! You\'ve mastered the game! Keep playing to max out all skills and achievements!', true);
         }
     }
