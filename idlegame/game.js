@@ -368,6 +368,7 @@ class IdleGame {
             this.gameState.gold -= cost;
             this.gameState.upgrades[upgrade.id] = currentLevel + 1;
             this.updateUI();
+            this.renderActions();
             this.renderUpgrades();
             this.showNotification(`⬆️ Upgraded ${upgrade.name}!`);
         }
