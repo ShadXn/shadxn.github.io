@@ -5,17 +5,22 @@ class IdleGame {
             xp: 0,
             xpNeeded: 100,
             gold: 0,
+            gems: 0,
             unlockedActions: ['foraging'],
-            upgrades: {
-                foragingPower: 0,
-                foragingGold: 0,
-                huntingPower: 0,
-                huntingGold: 0,
-                miningPower: 0,
-                miningGold: 0,
-                questingPower: 0,
-                questingGold: 0
-            }
+            unlockedAchievements: [],
+            actionStats: {
+                foraging: { level: 1, xp: 0, xpNeeded: 50, timesCompleted: 0 },
+                hunting: { level: 1, xp: 0, xpNeeded: 75, timesCompleted: 0 },
+                mining: { level: 1, xp: 0, xpNeeded: 100, timesCompleted: 0 },
+                questing: { level: 1, xp: 0, xpNeeded: 150, timesCompleted: 0 },
+                fishing: { level: 1, xp: 0, xpNeeded: 60, timesCompleted: 0 },
+                crafting: { level: 1, xp: 0, xpNeeded: 80, timesCompleted: 0 },
+                exploring: { level: 1, xp: 0, xpNeeded: 120, timesCompleted: 0 },
+                trading: { level: 1, xp: 0, xpNeeded: 90, timesCompleted: 0 }
+            },
+            upgrades: {},
+            totalGoldEarned: 0,
+            totalActionsCompleted: 0
         };
 
         this.actions = {
@@ -29,6 +34,16 @@ class IdleGame {
                 unlockLevel: 1,
                 duration: 1000
             },
+            fishing: {
+                id: 'fishing',
+                name: 'Fishing',
+                icon: '🎣',
+                description: 'Catch fish from rivers',
+                baseXP: 15,
+                baseGold: 8,
+                unlockLevel: 2,
+                duration: 1500
+            },
             hunting: {
                 id: 'hunting',
                 name: 'Hunting',
@@ -36,8 +51,18 @@ class IdleGame {
                 description: 'Hunt wild animals',
                 baseXP: 25,
                 baseGold: 15,
-                unlockLevel: 3,
+                unlockLevel: 4,
                 duration: 2000
+            },
+            crafting: {
+                id: 'crafting',
+                name: 'Crafting',
+                icon: '🔨',
+                description: 'Craft valuable items',
+                baseXP: 35,
+                baseGold: 20,
+                unlockLevel: 7,
+                duration: 2500
             },
             mining: {
                 id: 'mining',
@@ -46,25 +71,45 @@ class IdleGame {
                 description: 'Mine precious ores',
                 baseXP: 50,
                 baseGold: 30,
-                unlockLevel: 6,
+                unlockLevel: 10,
                 duration: 3000
+            },
+            trading: {
+                id: 'trading',
+                name: 'Trading',
+                icon: '💼',
+                description: 'Trade goods for profit',
+                baseXP: 70,
+                baseGold: 45,
+                unlockLevel: 14,
+                duration: 3500
+            },
+            exploring: {
+                id: 'exploring',
+                name: 'Exploring',
+                icon: '🗺️',
+                description: 'Explore dangerous dungeons',
+                baseXP: 90,
+                baseGold: 55,
+                unlockLevel: 18,
+                duration: 4000
             },
             questing: {
                 id: 'questing',
                 name: 'Questing',
                 icon: '⚔️',
                 description: 'Complete epic quests',
-                baseXP: 100,
-                baseGold: 60,
-                unlockLevel: 10,
-                duration: 4000
+                baseXP: 120,
+                baseGold: 70,
+                unlockLevel: 22,
+                duration: 4500
             }
         };
 
         this.upgradeDefinitions = {
             foragingPower: {
                 id: 'foragingPower',
-                name: 'Better Foraging',
+                name: 'Foraging Mastery',
                 icon: '🌿',
                 description: 'Increase XP from foraging',
                 action: 'foraging',
@@ -84,9 +129,57 @@ class IdleGame {
                 costMultiplier: 1.5,
                 effect: 3
             },
+            foragingSpeed: {
+                id: 'foragingSpeed',
+                name: 'Fast Foraging',
+                icon: '⚡',
+                description: 'Reduce foraging time',
+                action: 'foraging',
+                type: 'speed',
+                baseCost: 30,
+                costMultiplier: 1.6,
+                effect: 50,
+                unlockLevel: 3
+            },
+            fishingPower: {
+                id: 'fishingPower',
+                name: 'Fishing Mastery',
+                icon: '🎣',
+                description: 'Increase XP from fishing',
+                action: 'fishing',
+                type: 'xp',
+                baseCost: 30,
+                costMultiplier: 1.5,
+                effect: 6,
+                unlockLevel: 2
+            },
+            fishingGold: {
+                id: 'fishingGold',
+                name: 'Fishing Profits',
+                icon: '💰',
+                description: 'Increase gold from fishing',
+                action: 'fishing',
+                type: 'gold',
+                baseCost: 35,
+                costMultiplier: 1.5,
+                effect: 4,
+                unlockLevel: 2
+            },
+            fishingSpeed: {
+                id: 'fishingSpeed',
+                name: 'Fast Fishing',
+                icon: '⚡',
+                description: 'Reduce fishing time',
+                action: 'fishing',
+                type: 'speed',
+                baseCost: 40,
+                costMultiplier: 1.6,
+                effect: 75,
+                unlockLevel: 5
+            },
             huntingPower: {
                 id: 'huntingPower',
-                name: 'Better Hunting',
+                name: 'Hunting Mastery',
                 icon: '🏹',
                 description: 'Increase XP from hunting',
                 action: 'hunting',
@@ -94,7 +187,7 @@ class IdleGame {
                 baseCost: 50,
                 costMultiplier: 1.6,
                 effect: 10,
-                unlockLevel: 3
+                unlockLevel: 4
             },
             huntingGold: {
                 id: 'huntingGold',
@@ -106,11 +199,59 @@ class IdleGame {
                 baseCost: 60,
                 costMultiplier: 1.6,
                 effect: 8,
-                unlockLevel: 3
+                unlockLevel: 4
+            },
+            huntingSpeed: {
+                id: 'huntingSpeed',
+                name: 'Fast Hunting',
+                icon: '⚡',
+                description: 'Reduce hunting time',
+                action: 'hunting',
+                type: 'speed',
+                baseCost: 70,
+                costMultiplier: 1.7,
+                effect: 100,
+                unlockLevel: 8
+            },
+            craftingPower: {
+                id: 'craftingPower',
+                name: 'Crafting Mastery',
+                icon: '🔨',
+                description: 'Increase XP from crafting',
+                action: 'crafting',
+                type: 'xp',
+                baseCost: 75,
+                costMultiplier: 1.6,
+                effect: 15,
+                unlockLevel: 7
+            },
+            craftingGold: {
+                id: 'craftingGold',
+                name: 'Crafting Profits',
+                icon: '💰',
+                description: 'Increase gold from crafting',
+                action: 'crafting',
+                type: 'gold',
+                baseCost: 85,
+                costMultiplier: 1.6,
+                effect: 10,
+                unlockLevel: 7
+            },
+            craftingSpeed: {
+                id: 'craftingSpeed',
+                name: 'Fast Crafting',
+                icon: '⚡',
+                description: 'Reduce crafting time',
+                action: 'crafting',
+                type: 'speed',
+                baseCost: 95,
+                costMultiplier: 1.7,
+                effect: 125,
+                unlockLevel: 11
             },
             miningPower: {
                 id: 'miningPower',
-                name: 'Better Mining',
+                name: 'Mining Mastery',
                 icon: '⛏️',
                 description: 'Increase XP from mining',
                 action: 'mining',
@@ -118,7 +259,7 @@ class IdleGame {
                 baseCost: 100,
                 costMultiplier: 1.7,
                 effect: 20,
-                unlockLevel: 6
+                unlockLevel: 10
             },
             miningGold: {
                 id: 'miningGold',
@@ -130,19 +271,103 @@ class IdleGame {
                 baseCost: 120,
                 costMultiplier: 1.7,
                 effect: 15,
-                unlockLevel: 6
+                unlockLevel: 10
+            },
+            miningSpeed: {
+                id: 'miningSpeed',
+                name: 'Fast Mining',
+                icon: '⚡',
+                description: 'Reduce mining time',
+                action: 'mining',
+                type: 'speed',
+                baseCost: 140,
+                costMultiplier: 1.8,
+                effect: 150,
+                unlockLevel: 15
+            },
+            tradingPower: {
+                id: 'tradingPower',
+                name: 'Trading Mastery',
+                icon: '💼',
+                description: 'Increase XP from trading',
+                action: 'trading',
+                type: 'xp',
+                baseCost: 150,
+                costMultiplier: 1.7,
+                effect: 25,
+                unlockLevel: 14
+            },
+            tradingGold: {
+                id: 'tradingGold',
+                name: 'Trading Profits',
+                icon: '💰',
+                description: 'Increase gold from trading',
+                action: 'trading',
+                type: 'gold',
+                baseCost: 175,
+                costMultiplier: 1.7,
+                effect: 20,
+                unlockLevel: 14
+            },
+            tradingSpeed: {
+                id: 'tradingSpeed',
+                name: 'Fast Trading',
+                icon: '⚡',
+                description: 'Reduce trading time',
+                action: 'trading',
+                type: 'speed',
+                baseCost: 200,
+                costMultiplier: 1.8,
+                effect: 175,
+                unlockLevel: 19
+            },
+            exploringPower: {
+                id: 'exploringPower',
+                name: 'Exploring Mastery',
+                icon: '🗺️',
+                description: 'Increase XP from exploring',
+                action: 'exploring',
+                type: 'xp',
+                baseCost: 200,
+                costMultiplier: 1.8,
+                effect: 30,
+                unlockLevel: 18
+            },
+            exploringGold: {
+                id: 'exploringGold',
+                name: 'Exploring Profits',
+                icon: '💰',
+                description: 'Increase gold from exploring',
+                action: 'exploring',
+                type: 'gold',
+                baseCost: 225,
+                costMultiplier: 1.8,
+                effect: 25,
+                unlockLevel: 18
+            },
+            exploringSpeed: {
+                id: 'exploringSpeed',
+                name: 'Fast Exploring',
+                icon: '⚡',
+                description: 'Reduce exploring time',
+                action: 'exploring',
+                type: 'speed',
+                baseCost: 250,
+                costMultiplier: 1.9,
+                effect: 200,
+                unlockLevel: 23
             },
             questingPower: {
                 id: 'questingPower',
-                name: 'Better Questing',
+                name: 'Questing Mastery',
                 icon: '⚔️',
                 description: 'Increase XP from questing',
                 action: 'questing',
                 type: 'xp',
-                baseCost: 200,
+                baseCost: 250,
                 costMultiplier: 1.8,
                 effect: 40,
-                unlockLevel: 10
+                unlockLevel: 22
             },
             questingGold: {
                 id: 'questingGold',
@@ -151,10 +376,169 @@ class IdleGame {
                 description: 'Increase gold from questing',
                 action: 'questing',
                 type: 'gold',
-                baseCost: 250,
+                baseCost: 300,
                 costMultiplier: 1.8,
                 effect: 30,
-                unlockLevel: 10
+                unlockLevel: 22
+            },
+            questingSpeed: {
+                id: 'questingSpeed',
+                name: 'Fast Questing',
+                icon: '⚡',
+                description: 'Reduce questing time',
+                action: 'questing',
+                type: 'speed',
+                baseCost: 350,
+                costMultiplier: 1.9,
+                effect: 225,
+                unlockLevel: 27
+            }
+        };
+
+        this.achievements = {
+            firstStep: {
+                id: 'firstStep',
+                name: 'First Steps',
+                icon: '👣',
+                description: 'Complete your first action',
+                requirement: () => this.gameState.totalActionsCompleted >= 1,
+                reward: { type: 'gold', amount: 50 }
+            },
+            level5: {
+                id: 'level5',
+                name: 'Getting Started',
+                icon: '🎯',
+                description: 'Reach level 5',
+                requirement: () => this.gameState.level >= 5,
+                reward: { type: 'gold', amount: 100 }
+            },
+            level10: {
+                id: 'level10',
+                name: 'Rising Star',
+                icon: '⭐',
+                description: 'Reach level 10',
+                requirement: () => this.gameState.level >= 10,
+                reward: { type: 'gems', amount: 1 }
+            },
+            level20: {
+                id: 'level20',
+                name: 'Champion',
+                icon: '🏆',
+                description: 'Reach level 20',
+                requirement: () => this.gameState.level >= 20,
+                reward: { type: 'gems', amount: 3 }
+            },
+            level30: {
+                id: 'level30',
+                name: 'Legend',
+                icon: '👑',
+                description: 'Reach level 30',
+                requirement: () => this.gameState.level >= 30,
+                reward: { type: 'gems', amount: 5 }
+            },
+            goldCollector: {
+                id: 'goldCollector',
+                name: 'Gold Collector',
+                icon: '💰',
+                description: 'Earn 1,000 total gold',
+                requirement: () => this.gameState.totalGoldEarned >= 1000,
+                reward: { type: 'gold', amount: 200 }
+            },
+            goldMaster: {
+                id: 'goldMaster',
+                name: 'Gold Master',
+                icon: '💎',
+                description: 'Earn 10,000 total gold',
+                requirement: () => this.gameState.totalGoldEarned >= 10000,
+                reward: { type: 'gems', amount: 5 }
+            },
+            actionAddict: {
+                id: 'actionAddict',
+                name: 'Action Addict',
+                icon: '🔥',
+                description: 'Complete 100 actions',
+                requirement: () => this.gameState.totalActionsCompleted >= 100,
+                reward: { type: 'gold', amount: 300 }
+            },
+            actionMaster: {
+                id: 'actionMaster',
+                name: 'Action Master',
+                icon: '💪',
+                description: 'Complete 500 actions',
+                requirement: () => this.gameState.totalActionsCompleted >= 500,
+                reward: { type: 'gems', amount: 3 }
+            },
+            foragingNovice: {
+                id: 'foragingNovice',
+                name: 'Foraging Novice',
+                icon: '🌿',
+                description: 'Reach foraging level 5',
+                requirement: () => this.gameState.actionStats.foraging.level >= 5,
+                reward: { type: 'gold', amount: 75 }
+            },
+            foragingMaster: {
+                id: 'foragingMaster',
+                name: 'Foraging Master',
+                icon: '🌳',
+                description: 'Reach foraging level 10',
+                requirement: () => this.gameState.actionStats.foraging.level >= 10,
+                reward: { type: 'gems', amount: 2 }
+            },
+            huntingNovice: {
+                id: 'huntingNovice',
+                name: 'Hunting Novice',
+                icon: '🏹',
+                description: 'Reach hunting level 5',
+                requirement: () => this.gameState.actionStats.hunting.level >= 5,
+                reward: { type: 'gold', amount: 100 }
+            },
+            huntingMaster: {
+                id: 'huntingMaster',
+                name: 'Hunting Master',
+                icon: '🎯',
+                description: 'Reach hunting level 10',
+                requirement: () => this.gameState.actionStats.hunting.level >= 10,
+                reward: { type: 'gems', amount: 2 }
+            },
+            miningNovice: {
+                id: 'miningNovice',
+                name: 'Mining Novice',
+                icon: '⛏️',
+                description: 'Reach mining level 5',
+                requirement: () => this.gameState.actionStats.mining.level >= 5,
+                reward: { type: 'gold', amount: 150 }
+            },
+            miningMaster: {
+                id: 'miningMaster',
+                name: 'Mining Master',
+                icon: '💎',
+                description: 'Reach mining level 10',
+                requirement: () => this.gameState.actionStats.mining.level >= 10,
+                reward: { type: 'gems', amount: 3 }
+            },
+            questingNovice: {
+                id: 'questingNovice',
+                name: 'Questing Novice',
+                icon: '⚔️',
+                description: 'Reach questing level 5',
+                requirement: () => this.gameState.actionStats.questing.level >= 5,
+                reward: { type: 'gold', amount: 200 }
+            },
+            questingMaster: {
+                id: 'questingMaster',
+                name: 'Questing Master',
+                icon: '🛡️',
+                description: 'Reach questing level 10',
+                requirement: () => this.gameState.actionStats.questing.level >= 10,
+                reward: { type: 'gems', amount: 3 }
+            },
+            allRounder: {
+                id: 'allRounder',
+                name: 'All-Rounder',
+                icon: '🌟',
+                description: 'Unlock all actions',
+                requirement: () => this.gameState.unlockedActions.length === Object.keys(this.actions).length,
+                reward: { type: 'gems', amount: 5 }
             }
         };
 
@@ -166,10 +550,12 @@ class IdleGame {
         this.loadGame();
         this.renderActions();
         this.renderUpgrades();
+        this.renderAchievements();
         this.updateUI();
         this.setupEventListeners();
         this.startAutoSave();
         this.checkLevelUnlocks();
+        this.checkAchievements();
     }
 
     setupEventListeners() {
@@ -184,6 +570,26 @@ class IdleGame {
                 location.reload();
             }
         });
+
+        document.getElementById('achievementsTab').addEventListener('click', () => {
+            this.showTab('achievements');
+        });
+
+        document.getElementById('actionsTab').addEventListener('click', () => {
+            this.showTab('actions');
+        });
+
+        document.getElementById('upgradesTab').addEventListener('click', () => {
+            this.showTab('upgrades');
+        });
+    }
+
+    showTab(tab) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+        document.getElementById(`${tab}Tab`).classList.add('active');
+        document.getElementById(`${tab}-section`).classList.add('active');
     }
 
     renderActions() {
@@ -193,23 +599,37 @@ class IdleGame {
         Object.values(this.actions).forEach(action => {
             const isUnlocked = this.gameState.unlockedActions.includes(action.id);
             const canUnlock = this.gameState.level >= action.unlockLevel;
+            const actionStats = this.gameState.actionStats[action.id];
 
             const card = document.createElement('div');
             card.className = `action-card ${!isUnlocked && !canUnlock ? 'locked' : ''}`;
 
             const xpReward = this.calculateReward(action, 'xp');
             const goldReward = this.calculateReward(action, 'gold');
+            const actionXpReward = Math.floor(xpReward * 0.5);
 
             card.innerHTML = `
                 <div class="card-header">
                     <div class="card-icon">${action.icon}</div>
-                    <div class="card-title">${action.name}</div>
+                    <div>
+                        <div class="card-title">${action.name}</div>
+                        ${isUnlocked ? `<div class="skill-level">Skill Lv.${actionStats.level}</div>` : ''}
+                    </div>
                     ${!isUnlocked && canUnlock ? '<span class="unlock-badge">NEW!</span>' : ''}
                 </div>
                 <div class="card-description">${action.description}</div>
+                ${isUnlocked ? `
+                    <div class="skill-progress">
+                        <div class="skill-progress-bar">
+                            <div class="skill-progress-fill" style="width: ${(actionStats.xp / actionStats.xpNeeded) * 100}%"></div>
+                        </div>
+                        <div class="skill-progress-text">${actionStats.xp}/${actionStats.xpNeeded} XP</div>
+                    </div>
+                ` : ''}
                 <div class="card-rewards">
                     <span class="reward xp">+${xpReward} XP</span>
                     <span class="reward gold">+${goldReward} Gold</span>
+                    ${isUnlocked ? `<span class="reward skill">+${actionXpReward} ${action.name} XP</span>` : ''}
                 </div>
                 ${!isUnlocked ? `<div style="color: #ef4444; font-size: 0.85rem;">Unlocks at level ${action.unlockLevel}</div>` : ''}
                 <button class="action-btn" id="action-${action.id}" ${!isUnlocked ? 'disabled' : ''}>
@@ -239,11 +659,18 @@ class IdleGame {
             const cost = this.calculateUpgradeCost(upgrade, currentLevel);
             const canAfford = this.gameState.gold >= cost;
             const isUnlocked = !upgrade.unlockLevel || this.gameState.level >= upgrade.unlockLevel;
-            const maxLevel = 20;
+            const maxLevel = 30;
             const isMaxed = currentLevel >= maxLevel;
 
             const card = document.createElement('div');
             card.className = `upgrade-card ${!isUnlocked ? 'locked' : ''}`;
+
+            let effectText = '';
+            if (upgrade.type === 'speed') {
+                effectText = `-${upgrade.effect * (currentLevel + 1)}ms duration`;
+            } else {
+                effectText = `+${upgrade.effect * (currentLevel + 1)} ${upgrade.type}`;
+            }
 
             card.innerHTML = `
                 <div class="card-header">
@@ -252,7 +679,7 @@ class IdleGame {
                 </div>
                 <div class="card-description">${upgrade.description}</div>
                 <div class="upgrade-level">Level: ${currentLevel}/${maxLevel}</div>
-                <div style="margin-top: 5px; color: #10b981; font-weight: bold;">+${upgrade.effect * (currentLevel + 1)} ${upgrade.type}</div>
+                <div style="margin-top: 5px; color: #10b981; font-weight: bold;">${effectText}</div>
                 ${!isUnlocked ? `<div style="color: #ef4444; font-size: 0.85rem; margin-top: 5px;">Unlocks at level ${upgrade.unlockLevel}</div>` : ''}
                 <button class="upgrade-btn" id="upgrade-${upgrade.id}" ${!canAfford || !isUnlocked || isMaxed ? 'disabled' : ''}>
                     ${isMaxed ? 'MAX' : `Upgrade (${cost} gold)`}
@@ -269,6 +696,36 @@ class IdleGame {
         });
     }
 
+    renderAchievements() {
+        const achievementsContainer = document.getElementById('achievements');
+        achievementsContainer.innerHTML = '';
+
+        Object.values(this.achievements).forEach(achievement => {
+            const isUnlocked = this.gameState.unlockedAchievements.includes(achievement.id);
+            const canUnlock = achievement.requirement();
+
+            const card = document.createElement('div');
+            card.className = `achievement-card ${isUnlocked ? 'unlocked' : canUnlock ? 'ready' : 'locked'}`;
+
+            const rewardText = achievement.reward.type === 'gold'
+                ? `${achievement.reward.amount} Gold`
+                : `${achievement.reward.amount} Gems`;
+
+            card.innerHTML = `
+                <div class="achievement-icon">${achievement.icon}</div>
+                <div class="achievement-content">
+                    <div class="achievement-title">${achievement.name}</div>
+                    <div class="achievement-description">${achievement.description}</div>
+                    <div class="achievement-reward">
+                        ${isUnlocked ? '✅ Unlocked!' : `🎁 Reward: ${rewardText}`}
+                    </div>
+                </div>
+            `;
+
+            achievementsContainer.appendChild(card);
+        });
+    }
+
     calculateReward(action, type) {
         const base = type === 'xp' ? action.baseXP : action.baseGold;
         const upgradeKey = `${action.id}${type === 'xp' ? 'Power' : 'Gold'}`;
@@ -277,7 +734,22 @@ class IdleGame {
 
         if (!upgrade) return base;
 
-        return base + (upgrade.effect * upgradeLevel);
+        const upgradeBonus = upgrade.effect * upgradeLevel;
+        const skillLevel = this.gameState.actionStats[action.id]?.level || 1;
+        const skillBonus = Math.floor(base * (skillLevel - 1) * 0.1);
+
+        return base + upgradeBonus + skillBonus;
+    }
+
+    calculateDuration(action) {
+        const speedUpgradeKey = `${action.id}Speed`;
+        const upgradeLevel = this.gameState.upgrades[speedUpgradeKey] || 0;
+        const upgrade = this.upgradeDefinitions[speedUpgradeKey];
+
+        if (!upgrade) return action.duration;
+
+        const reduction = upgrade.effect * upgradeLevel;
+        return Math.max(action.duration - reduction, 500);
     }
 
     calculateUpgradeCost(upgrade, currentLevel) {
@@ -295,7 +767,7 @@ class IdleGame {
         progressBar.style.display = 'block';
 
         const startTime = Date.now();
-        const duration = action.duration;
+        const duration = this.calculateDuration(action);
 
         this.activeActions[action.id] = setInterval(() => {
             const elapsed = Date.now() - startTime;
@@ -314,12 +786,28 @@ class IdleGame {
 
         const xpGained = this.calculateReward(action, 'xp');
         const goldGained = this.calculateReward(action, 'gold');
+        const actionXpGained = Math.floor(xpGained * 0.5);
 
         this.gameState.xp += xpGained;
         this.gameState.gold += goldGained;
+        this.gameState.totalGoldEarned += goldGained;
+        this.gameState.totalActionsCompleted += 1;
+
+        const actionStats = this.gameState.actionStats[action.id];
+        actionStats.timesCompleted += 1;
+        actionStats.xp += actionXpGained;
+
+        while (actionStats.xp >= actionStats.xpNeeded) {
+            actionStats.xp -= actionStats.xpNeeded;
+            actionStats.level += 1;
+            actionStats.xpNeeded = Math.floor(actionStats.xpNeeded * 1.3);
+            this.showNotification(`${action.icon} ${action.name} leveled up to ${actionStats.level}!`, true);
+        }
 
         this.checkLevelUp();
+        this.checkAchievements();
         this.updateUI();
+        this.renderActions();
         this.renderUpgrades();
 
         const button = document.getElementById(`action-${action.id}`);
@@ -335,7 +823,7 @@ class IdleGame {
         while (this.gameState.xp >= this.gameState.xpNeeded) {
             this.gameState.xp -= this.gameState.xpNeeded;
             this.gameState.level++;
-            this.gameState.xpNeeded = Math.floor(this.gameState.xpNeeded * 1.5);
+            this.gameState.xpNeeded = Math.floor(this.gameState.xpNeeded * 1.4);
 
             this.showNotification(`🎉 Level Up! You are now level ${this.gameState.level}!`, true);
             this.checkLevelUnlocks();
@@ -360,6 +848,29 @@ class IdleGame {
         }
     }
 
+    checkAchievements() {
+        Object.values(this.achievements).forEach(achievement => {
+            if (!this.gameState.unlockedAchievements.includes(achievement.id) &&
+                achievement.requirement()) {
+                this.gameState.unlockedAchievements.push(achievement.id);
+
+                if (achievement.reward.type === 'gold') {
+                    this.gameState.gold += achievement.reward.amount;
+                } else if (achievement.reward.type === 'gems') {
+                    this.gameState.gems += achievement.reward.amount;
+                }
+
+                const rewardText = achievement.reward.type === 'gold'
+                    ? `${achievement.reward.amount} Gold`
+                    : `${achievement.reward.amount} Gems`;
+
+                this.showNotification(`🏆 Achievement Unlocked: ${achievement.name}! (+${rewardText})`, true);
+                this.renderAchievements();
+                this.updateUI();
+            }
+        });
+    }
+
     purchaseUpgrade(upgrade) {
         const currentLevel = this.gameState.upgrades[upgrade.id] || 0;
         const cost = this.calculateUpgradeCost(upgrade, currentLevel);
@@ -379,9 +890,14 @@ class IdleGame {
         document.getElementById('xp').textContent = Math.floor(this.gameState.xp);
         document.getElementById('xpNeeded').textContent = this.gameState.xpNeeded;
         document.getElementById('gold').textContent = Math.floor(this.gameState.gold);
+        document.getElementById('gems').textContent = this.gameState.gems;
 
-        if (this.gameState.level >= 15) {
-            this.showNotification('🏆 Congratulations! You\'ve completed the game! Feel free to keep playing or reset for a new run.', true);
+        const achievementCount = this.gameState.unlockedAchievements.length;
+        const totalAchievements = Object.keys(this.achievements).length;
+        document.getElementById('achievementCount').textContent = `${achievementCount}/${totalAchievements}`;
+
+        if (this.gameState.level >= 30) {
+            this.showNotification('🏆 Congratulations! You\'ve mastered the game! Keep playing to max out all skills and achievements!', true);
         }
     }
 
@@ -403,7 +919,19 @@ class IdleGame {
     loadGame() {
         const saved = localStorage.getItem('idleGameSave');
         if (saved) {
-            this.gameState = JSON.parse(saved);
+            const loadedState = JSON.parse(saved);
+            this.gameState = { ...this.gameState, ...loadedState };
+
+            Object.keys(this.actions).forEach(actionId => {
+                if (!this.gameState.actionStats[actionId]) {
+                    this.gameState.actionStats[actionId] = {
+                        level: 1,
+                        xp: 0,
+                        xpNeeded: 50,
+                        timesCompleted: 0
+                    };
+                }
+            });
         }
     }
 

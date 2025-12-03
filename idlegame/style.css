@@ -13,7 +13,7 @@ body {
 }
 
 .game-container {
-    max-width: 1000px;
+    max-width: 1200px;
     margin: 0 auto;
     background: white;
     border-radius: 20px;
@@ -37,15 +37,15 @@ header h1 {
 .stats {
     display: flex;
     justify-content: center;
-    gap: 30px;
+    gap: 15px;
     flex-wrap: wrap;
 }
 
 .stat {
     background: rgba(255, 255, 255, 0.2);
-    padding: 10px 20px;
+    padding: 10px 15px;
     border-radius: 10px;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     backdrop-filter: blur(10px);
 }
 
@@ -54,12 +54,45 @@ header h1 {
     margin-right: 5px;
 }
 
-main {
-    padding: 30px;
+.tabs {
+    display: flex;
+    background: #f5f5f5;
+    border-bottom: 2px solid #e0e0e0;
 }
 
-section {
-    margin-bottom: 30px;
+.tab-btn {
+    flex: 1;
+    padding: 15px;
+    border: none;
+    background: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-bottom: 3px solid transparent;
+}
+
+.tab-btn:hover {
+    background: #e8e8e8;
+}
+
+.tab-btn.active {
+    background: white;
+    border-bottom-color: #667eea;
+    font-weight: bold;
+    color: #667eea;
+}
+
+main {
+    padding: 30px;
+    min-height: 500px;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
 }
 
 section h2 {
@@ -73,7 +106,13 @@ section h2 {
 .actions-grid,
 .upgrades-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 15px;
 }
 
@@ -109,6 +148,7 @@ section h2 {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
+    justify-content: space-between;
 }
 
 .card-icon {
@@ -122,6 +162,38 @@ section h2 {
     color: #333;
 }
 
+.skill-level {
+    font-size: 0.85rem;
+    color: #10b981;
+    font-weight: bold;
+    margin-top: 3px;
+}
+
+.skill-progress {
+    margin: 10px 0;
+}
+
+.skill-progress-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.skill-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+    transition: width 0.3s ease;
+    border-radius: 3px;
+}
+
+.skill-progress-text {
+    font-size: 0.75rem;
+    color: #666;
+}
+
 .card-description {
     color: #666;
     font-size: 0.9rem;
@@ -130,14 +202,18 @@ section h2 {
 
 .card-rewards {
     display: flex;
-    gap: 15px;
+    gap: 10px;
     margin-bottom: 10px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: #444;
+    flex-wrap: wrap;
 }
 
 .reward {
     font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 5px;
+    background: rgba(0, 0, 0, 0.05);
 }
 
 .reward.xp {
@@ -146,6 +222,10 @@ section h2 {
 
 .reward.gold {
     color: #f59e0b;
+}
+
+.reward.skill {
+    color: #10b981;
 }
 
 .action-btn,
@@ -213,6 +293,71 @@ section h2 {
     border-radius: 4px;
 }
 
+.achievement-card {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 2px solid transparent;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.achievement-card.unlocked {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    border-color: #10b981;
+}
+
+.achievement-card.ready {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-color: #f59e0b;
+    animation: pulse 2s infinite;
+}
+
+.achievement-card.locked {
+    opacity: 0.6;
+    background: #e0e0e0;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
+}
+
+.achievement-icon {
+    font-size: 3rem;
+    flex-shrink: 0;
+}
+
+.achievement-content {
+    flex: 1;
+}
+
+.achievement-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.achievement-description {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.achievement-reward {
+    font-size: 0.85rem;
+    color: #10b981;
+    font-weight: bold;
+}
+
 footer {
     background: #f5f5f5;
     padding: 20px;
@@ -268,6 +413,7 @@ footer {
     transition: transform 0.3s ease;
     font-weight: bold;
     z-index: 1000;
+    max-width: 300px;
 }
 
 .notification.show {
@@ -287,7 +433,6 @@ footer {
     border-radius: 5px;
     font-size: 0.75rem;
     font-weight: bold;
-    margin-left: 5px;
 }
 
 @media (max-width: 768px) {
@@ -297,11 +442,24 @@ footer {
     }
 
     .actions-grid,
-    .upgrades-grid {
+    .upgrades-grid,
+    .achievements-grid {
         grid-template-columns: 1fr;
     }
 
     header h1 {
         font-size: 2rem;
+    }
+
+    .tabs {
+        flex-direction: column;
+    }
+
+    .tab-btn {
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .tab-btn.active {
+        border-bottom: 3px solid #667eea;
     }
 }

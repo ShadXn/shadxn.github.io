@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adventure Idle - Quick Quest</title>
+    <title>Adventure Idle - Extended Quest</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -19,22 +19,41 @@
                     <span class="label">XP:</span>
                     <span id="xp">0</span> / <span id="xpNeeded">100</span>
                 </div>
-                <div class="stat gold">
+                <div class="stat">
                     <span class="label">💰 Gold:</span>
                     <span id="gold">0</span>
+                </div>
+                <div class="stat">
+                    <span class="label">💎 Gems:</span>
+                    <span id="gems">0</span>
+                </div>
+                <div class="stat">
+                    <span class="label">🏆 Achievements:</span>
+                    <span id="achievementCount">0/19</span>
                 </div>
             </div>
         </header>
 
+        <nav class="tabs">
+            <button id="actionsTab" class="tab-btn active">⚔️ Actions</button>
+            <button id="upgradesTab" class="tab-btn">⬆️ Upgrades</button>
+            <button id="achievementsTab" class="tab-btn">🏆 Achievements</button>
+        </nav>
+
         <main>
-            <section class="actions-section">
+            <section id="actions-section" class="tab-content active">
                 <h2>Actions</h2>
                 <div id="actions" class="actions-grid"></div>
             </section>
 
-            <section class="upgrades-section">
+            <section id="upgrades-section" class="tab-content">
                 <h2>Upgrades</h2>
                 <div id="upgrades" class="upgrades-grid"></div>
+            </section>
+
+            <section id="achievements-section" class="tab-content">
+                <h2>Achievements</h2>
+                <div id="achievements" class="achievements-grid"></div>
             </section>
         </main>
 
