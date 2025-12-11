@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Bingo Board</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Custom Bingo Board</h1>
+        </header>
+
+        <div class="controls">
+            <div class="setup-section">
+                <h2>Board Setup</h2>
+                <div class="input-group">
+                    <label for="rows">Rows:</label>
+                    <input type="number" id="rows" min="1" max="10" value="5">
+                </div>
+                <div class="input-group">
+                    <label for="columns">Columns:</label>
+                    <input type="number" id="columns" min="1" max="10" value="5">
+                </div>
+                <div class="input-group">
+                    <label for="pointsPerTile">Points per Tile:</label>
+                    <input type="number" id="pointsPerTile" min="1" value="10">
+                </div>
+                <div class="input-group">
+                    <label for="bonusPoints">Bonus Points (Row/Column):</label>
+                    <input type="number" id="bonusPoints" min="0" value="50">
+                </div>
+                <button id="createBoard">Create Board</button>
+            </div>
+
+            <div class="modify-section">
+                <h2>Modify Board</h2>
+                <button id="addRow">Add Row</button>
+                <button id="addColumn">Add Column</button>
+            </div>
+
+            <div class="import-export-section">
+                <h2>Import/Export</h2>
+                <button id="exportBoard">Export Board</button>
+                <button id="importBoard">Import Board</button>
+                <input type="file" id="fileInput" accept=".json" style="display: none;">
+            </div>
+
+            <div class="score-section">
+                <h2>Score</h2>
+                <div class="score-display">
+                    <div class="score-item">
+                        <span class="score-label">Total Points:</span>
+                        <span id="totalScore">0</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="score-label">Completed Rows:</span>
+                        <span id="completedRows">0</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="score-label">Completed Columns:</span>
+                        <span id="completedColumns">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="boardContainer">
+            <div id="bingoBoard"></div>
+        </div>
+    </div>
+
+    <!-- Modal for editing tile -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h2>Edit Tile</h2>
+            <textarea id="tileTask" placeholder="Enter task description..." rows="4"></textarea>
+            <div class="modal-buttons">
+                <button id="saveTask">Save</button>
+                <button id="cancelEdit">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
