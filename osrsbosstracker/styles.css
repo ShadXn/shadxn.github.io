@@ -876,6 +876,7 @@ header h1 {
     gap: 10px;
     margin-bottom: 20px;
     border-bottom: 2px solid var(--border-color);
+    flex-wrap: wrap;
 }
 
 .main-tab {
@@ -888,6 +889,7 @@ header h1 {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s;
+    white-space: nowrap;
 }
 
 .main-tab:hover {
@@ -1339,5 +1341,39 @@ footer a:hover {
 
     .form-actions button {
         width: 100%;
+    }
+
+    .main-tab {
+        padding: 10px 16px;
+        font-size: 0.9em;
+    }
+
+    .boss-kc-list {
+        grid-template-columns: 1fr;
+    }
+
+    .titles-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-tab {
+        padding: 8px 12px;
+        font-size: 0.85em;
+    }
+
+    .compact-header-content {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .compact-header-actions {
+        width: 100%;
+        justify-content: stretch;
+    }
+
+    .btn-change-user {
+        flex: 1;
     }
 }
