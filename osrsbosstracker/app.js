@@ -1452,7 +1452,9 @@ function handleImportFile(event) {
             }
 
             // Get current API data to check for abuse
-            await updateCurrentGoalsFromAPI();
+            showLoading(true, 'Validating import data...');
+            const freshPlayerData = await fetchPlayerData(currentUsername);
+            currentPlayerData = freshPlayerData;
             const currentBosses = currentPlayerData?.latestSnapshot?.data?.bosses || {};
 
             let importedCount = 0;
@@ -1522,8 +1524,9 @@ function handleImportFile(event) {
 
             // Save and update
             saveGoalsToStorage(currentUsername, currentGoals);
-            await updateCurrentGoalsFromAPI();
+            updateGoalsProgress();
             renderGoalsOverview();
+            showLoading(false);
 
             // Show results
             let message = `Import complete! Imported: ${importedCount}`;
