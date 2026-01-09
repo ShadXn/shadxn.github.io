@@ -100,10 +100,16 @@ function formatDate(dateString) {
     }
 }
 
-function showError(message) {
+function showError(message, isError = true) {
     errorMessage.textContent = message;
     errorMessage.style.display = 'block';
+    errorMessage.style.backgroundColor = isError ? 'var(--error-color)' : 'var(--success-color)';
+    errorMessage.style.color = isError ? '#fff' : '#fff';
     setTimeout(() => { errorMessage.style.display = 'none'; }, 5000);
+}
+
+function hideError() {
+    errorMessage.style.display = 'none';
 }
 
 function showLoading(show, text = 'Loading...') {
@@ -1301,7 +1307,8 @@ function renderTitles() {
     // Update current title display
     const selectedTitle = titlesData.find(t => t.id === currentTitleId);
     if (selectedTitle && currentTitleDisplay) {
-        currentTitleDisplay.textContent = `Current: ${formatTitleWithUsername(selectedTitle, currentUsername).replace(/<[^>]*>/g, '')}`;
+        const formattedTitle = formatTitleWithUsername(selectedTitle, currentUsername).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+        currentTitleDisplay.textContent = `Current: ${formattedTitle}`;
     }
 
     titlesList.innerHTML = titlesData.map(title => {
@@ -1385,6 +1392,159 @@ function handleSaveSettings() {
     }
 }
 
+// Export/Import Functions
+function exportGoals() {
+    if (!currentUsername || currentGoals.length === 0) {
+        showError('No goals to export. Create some goals first!');
+        return;
+    }
+
+    // Create export data with metadata to prevent abuse
+    const exportData = {
+        version: '1.0',
+        username: currentUsername,
+        exportDate: new Date().toISOString(),
+        goals: currentGoals.map(goal => ({
+            ...goal,
+            // Store the current actual KC from API at time of export
+            exportKillCount: currentPlayerData?.latestSnapshot?.data?.bosses?.[goal.boss]?.kills || 0
+        }))
+    };
+
+    // Create and download file
+    const dataStr = JSON.stringify(exportData, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `osrs-goals-${currentUsername}-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    showError('Goals exported successfully!', false);
+    setTimeout(() => hideError(), 3000);
+}
+
+function importGoals() {
+    if (!currentUsername) {
+        showError('Please set your username first!');
+        return;
+    }
+
+    document.getElementById('importFileInput').click();
+}
+
+function handleImportFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        try {
+            const importData = JSON.parse(e.target.result);
+
+            // Validate import data
+            if (!importData.version || !importData.goals || !Array.isArray(importData.goals)) {
+                showError('Invalid import file format!');
+                return;
+            }
+
+            // Get current API data to check for abuse
+            await updateCurrentGoalsFromAPI();
+            const currentBosses = currentPlayerData?.latestSnapshot?.data?.bosses || {};
+
+            let importedCount = 0;
+            let skippedCount = 0;
+            let preventedAbuse = 0;
+
+            for (const importedGoal of importData.goals) {
+                // Check if goal already exists (by boss)
+                const existingGoal = currentGoals.find(g => g.boss === importedGoal.boss);
+
+                if (existingGoal) {
+                    // Goal exists, check for abuse prevention
+                    const currentKC = currentBosses[importedGoal.boss]?.kills || 0;
+                    const exportedKC = importedGoal.exportKillCount || 0;
+
+                    // If current KC is less than when exported, this is abuse (user went backwards)
+                    if (currentKC < exportedKC) {
+                        preventedAbuse++;
+                        continue;
+                    }
+
+                    // If the imported goal has MORE progress than existing, skip it (potential abuse)
+                    if (importedGoal.killsGained > existingGoal.killsGained) {
+                        skippedCount++;
+                        continue;
+                    }
+
+                    skippedCount++;
+                } else {
+                    // New goal, check for abuse
+                    const currentKC = currentBosses[importedGoal.boss]?.kills || 0;
+                    const exportedKC = importedGoal.exportKillCount || 0;
+
+                    // If current KC is significantly less than exported KC, potential abuse
+                    if (currentKC < exportedKC - 5) { // Allow 5 KC difference for API delays
+                        preventedAbuse++;
+                        continue;
+                    }
+
+                    // Create new goal with fresh data from API
+                    const newGoal = {
+                        id: generateId(),
+                        boss: importedGoal.boss,
+                        bossName: importedGoal.bossName,
+                        targetKills: importedGoal.targetKills,
+                        milestoneInterval: importedGoal.milestoneInterval,
+                        status: importedGoal.status,
+                        hidden: importedGoal.hidden || false,
+                        startKills: currentKC, // Use current KC as start
+                        killsGained: 0,
+                        progress: 0,
+                        currentMilestone: 0,
+                        nextMilestone: importedGoal.milestoneInterval,
+                        milestonesCompleted: [],
+                        history: [{
+                            date: new Date().toISOString(),
+                            kills: currentKC,
+                            note: 'Goal imported'
+                        }],
+                        createdAt: new Date().toISOString()
+                    };
+
+                    currentGoals.push(newGoal);
+                    importedCount++;
+                }
+            }
+
+            // Save and update
+            saveGoalsToStorage(currentUsername, currentGoals);
+            await updateCurrentGoalsFromAPI();
+            renderGoalsOverview();
+
+            // Show results
+            let message = `Import complete! Imported: ${importedCount}`;
+            if (skippedCount > 0) message += `, Skipped (duplicates): ${skippedCount}`;
+            if (preventedAbuse > 0) message += `, Blocked (abuse detected): ${preventedAbuse}`;
+
+            showError(message, false);
+            setTimeout(() => hideError(), 5000);
+
+        } catch (error) {
+            console.error('Import error:', error);
+            showError('Failed to import goals. Invalid file format!');
+        }
+
+        // Reset file input
+        event.target.value = '';
+    };
+
+    reader.readAsText(file);
+}
+
 // Settings Event Listeners
 settingsBtn.addEventListener('click', openSettingsModal);
 closeSettingsModal.addEventListener('click', closeSettings);
@@ -1393,6 +1553,11 @@ saveSettingsBtn.addEventListener('click', handleSaveSettings);
 settingsModal.addEventListener('click', (e) => {
     if (e.target === settingsModal) closeSettings();
 });
+
+// Export/Import Event Listeners
+document.getElementById('exportGoals').addEventListener('click', exportGoals);
+document.getElementById('importGoals').addEventListener('click', importGoals);
+document.getElementById('importFileInput').addEventListener('change', handleImportFile);
 
 // Tab switching
 document.querySelectorAll('.main-tab').forEach(tab => {

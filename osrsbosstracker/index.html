@@ -203,6 +203,16 @@
                             <small>Display username and title in level section</small>
                         </div>
 
+                        <div class="form-group">
+                            <label>Import/Export Goals</label>
+                            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                <button id="exportGoals" class="btn-secondary" style="flex: 1;">Export Goals</button>
+                                <button id="importGoals" class="btn-secondary" style="flex: 1;">Import Goals</button>
+                            </div>
+                            <small>Export your goals to use on other devices. Importing will merge with existing goals (prevents duplicates and abuse).</small>
+                            <input type="file" id="importFileInput" accept=".json" style="display: none;">
+                        </div>
+
                         <div class="form-actions">
                             <button id="saveSettings" class="btn-primary">Save Settings</button>
                         </div>
