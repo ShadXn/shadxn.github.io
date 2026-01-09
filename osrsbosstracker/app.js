@@ -1466,55 +1466,65 @@ function handleImportFile(event) {
                 const existingGoal = currentGoals.find(g => g.boss === importedGoal.boss);
 
                 if (existingGoal) {
-                    // Goal exists, check for abuse prevention
-                    const currentKC = currentBosses[importedGoal.boss]?.kills || 0;
-                    const exportedKC = importedGoal.exportKillCount || 0;
-
-                    // If current KC is less than when exported, this is abuse (user went backwards)
-                    if (currentKC < exportedKC) {
-                        preventedAbuse++;
-                        continue;
-                    }
-
-                    // If the imported goal has MORE progress than existing, skip it (potential abuse)
-                    if (importedGoal.killsGained > existingGoal.killsGained) {
-                        skippedCount++;
-                        continue;
-                    }
-
+                    // Goal already exists, skip it
                     skippedCount++;
                 } else {
-                    // New goal, check for abuse
+                    // New goal - validate and import with preserved progress
                     const currentKC = currentBosses[importedGoal.boss]?.kills || 0;
-                    const exportedKC = importedGoal.exportKillCount || 0;
+                    const startKills = importedGoal.startKills || 0;
 
-                    // If current KC is significantly less than exported KC, potential abuse
-                    if (currentKC < exportedKC - 5) { // Allow 5 KC difference for API delays
+                    // Abuse check: if current KC is significantly less than when goal was started, reject it
+                    // This prevents someone from creating a goal at 1000 KC, then importing it on an account with only 50 KC
+                    if (currentKC < startKills - 10) { // Allow 10 KC tolerance for API delays/inconsistencies
                         preventedAbuse++;
                         continue;
                     }
 
-                    // Create new goal with fresh data from API
+                    // Calculate current progress based on actual KC
+                    const killsGained = Math.max(0, currentKC - startKills);
+                    const progress = importedGoal.targetKills > 0 ? (killsGained / importedGoal.targetKills) * 100 : 0;
+
+                    // Calculate milestones
+                    const currentMilestone = Math.floor(killsGained / importedGoal.milestoneInterval) * importedGoal.milestoneInterval;
+                    const nextMilestone = currentMilestone + importedGoal.milestoneInterval;
+
+                    // Recreate milestones array
+                    const milestonesCompleted = [];
+                    for (let i = importedGoal.milestoneInterval; i <= currentMilestone; i += importedGoal.milestoneInterval) {
+                        milestonesCompleted.push({
+                            kills: i,
+                            date: new Date().toISOString(),
+                            note: 'Milestone restored from import'
+                        });
+                    }
+
+                    // Determine status
+                    let status = importedGoal.status;
+                    if (progress >= 100) {
+                        status = 'completed';
+                    }
+
+                    // Create new goal with preserved progress
                     const newGoal = {
                         id: generateId(),
                         boss: importedGoal.boss,
                         bossName: importedGoal.bossName,
                         targetKills: importedGoal.targetKills,
                         milestoneInterval: importedGoal.milestoneInterval,
-                        status: importedGoal.status,
+                        status: status,
                         hidden: importedGoal.hidden || false,
-                        startKills: currentKC, // Use current KC as start
-                        killsGained: 0,
-                        progress: 0,
-                        currentMilestone: 0,
-                        nextMilestone: importedGoal.milestoneInterval,
-                        milestonesCompleted: [],
+                        startKills: startKills, // Preserve original start KC
+                        killsGained: killsGained, // Calculate based on current KC
+                        progress: progress,
+                        currentMilestone: currentMilestone,
+                        nextMilestone: nextMilestone,
+                        milestonesCompleted: milestonesCompleted,
                         history: [{
                             date: new Date().toISOString(),
                             kills: currentKC,
                             note: 'Goal imported'
                         }],
-                        createdAt: new Date().toISOString()
+                        createdAt: importedGoal.createdAt || new Date().toISOString()
                     };
 
                     currentGoals.push(newGoal);
