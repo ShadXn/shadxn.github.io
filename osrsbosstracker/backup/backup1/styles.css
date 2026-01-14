@@ -112,8 +112,6 @@ header h1 {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
-    flex-wrap: wrap;
-    gap: 10px;
 }
 
 .level-number {
@@ -154,41 +152,6 @@ header h1 {
     font-size: 0.85em;
     color: var(--text-muted);
     font-weight: 600;
-}
-
-.xp-gains {
-    margin-top: 12px;
-    padding: 10px 15px;
-    background: rgba(76, 175, 80, 0.15);
-    border: 2px solid var(--success-color);
-    border-radius: 8px;
-    color: var(--success-color);
-    font-weight: 700;
-    font-size: 0.95em;
-    text-align: center;
-    animation: pulseGlow 2s ease-in-out infinite;
-}
-
-@keyframes pulseGlow {
-    0%, 100% {
-        box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
-    }
-    50% {
-        box-shadow: 0 0 15px rgba(76, 175, 80, 0.6);
-    }
-}
-
-.xp-gains-inline {
-    padding: 6px 12px;
-    background: rgba(76, 175, 80, 0.15);
-    border: 2px solid var(--success-color);
-    border-radius: 6px;
-    color: var(--success-color);
-    font-weight: 700;
-    font-size: 0.85em;
-    white-space: nowrap;
-    animation: pulseGlow 2s ease-in-out infinite;
-    margin-left: auto;
 }
 
 /* Username Section */
@@ -1024,29 +987,10 @@ header h1 {
     font-size: 1.2em;
 }
 
-.boss-kc-xp-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 4px;
-    flex-wrap: wrap;
-}
-
 .boss-kc-xp {
     color: var(--text-muted);
     font-size: 0.85em;
-}
-
-.boss-kc-xp-gain {
-    color: var(--success-color);
-    font-size: 0.75em;
-    font-weight: 700;
-    padding: 2px 8px;
-    background: rgba(76, 175, 80, 0.1);
-    border: 1px solid var(--success-color);
-    border-radius: 4px;
-    display: inline-block;
-    white-space: nowrap;
+    margin-top: 4px;
 }
 
 /* Titles */
@@ -1359,58 +1303,6 @@ footer a:hover {
     text-decoration: underline;
 }
 
-/* Milestone Notification Toast */
-.milestone-notification {
-    position: fixed;
-    top: 100px;
-    right: -400px;
-    background: linear-gradient(135deg, var(--success-color), #66bb6a);
-    color: white;
-    padding: 20px 25px;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(76, 175, 80, 0.4), 0 0 20px rgba(76, 175, 80, 0.3);
-    z-index: 10000;
-    min-width: 320px;
-    max-width: 400px;
-    transition: right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.milestone-notification.show {
-    right: 30px;
-}
-
-.milestone-notification-content {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.milestone-notification-icon {
-    font-size: 2.5em;
-    animation: celebrationBounce 0.6s ease-in-out;
-}
-
-.milestone-notification-text strong {
-    display: block;
-    font-size: 1.1em;
-    margin-bottom: 5px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.milestone-notification-text p {
-    margin: 0;
-    font-size: 0.95em;
-    opacity: 0.95;
-}
-
-@keyframes celebrationBounce {
-    0%, 100% { transform: scale(1) rotate(0deg); }
-    25% { transform: scale(1.2) rotate(-10deg); }
-    50% { transform: scale(1.3) rotate(10deg); }
-    75% { transform: scale(1.2) rotate(-5deg); }
-}
-
 /* Responsive */
 @media (max-width: 768px) {
     header h1 {
@@ -1480,15 +1372,6 @@ footer a:hover {
     .titles-list {
         grid-template-columns: 1fr;
     }
-
-    .milestone-notification {
-        min-width: 280px;
-        right: -350px;
-    }
-
-    .milestone-notification.show {
-        right: 15px;
-    }
 }
 
 @media (max-width: 480px) {
@@ -1509,23 +1392,5 @@ footer a:hover {
 
     .btn-change-user {
         flex: 1;
-    }
-
-    .milestone-notification {
-        min-width: 260px;
-        padding: 15px 20px;
-        top: 80px;
-    }
-
-    .milestone-notification.show {
-        right: 10px;
-    }
-
-    .milestone-notification-icon {
-        font-size: 2em;
-    }
-
-    .milestone-notification-text strong {
-        font-size: 1em;
     }
 }

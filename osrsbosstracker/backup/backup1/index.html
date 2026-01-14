@@ -135,40 +135,21 @@
                     </div>
                     <form id="goalForm">
                         <div class="form-group">
-                            <label for="goalType">Goal Type *</label>
-                            <select id="goalType" required>
-                                <option value="kc">Kill Count Goal</option>
-                                <option value="xp">XP Goal</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
                             <label for="goalBoss">Select Boss *</label>
                             <select id="goalBoss" required>
                                 <option value="">Choose a boss...</option>
                             </select>
                         </div>
 
-                        <div class="form-group" id="kcTargetGroup">
+                        <div class="form-group">
                             <label for="goalTarget">Target Kills *</label>
                             <input type="number" id="goalTarget" min="1" required placeholder="e.g., 5000">
                         </div>
 
-                        <div class="form-group" id="xpTargetGroup" style="display: none;">
-                            <label for="goalXPTarget">Target XP *</label>
-                            <input type="number" id="goalXPTarget" min="1" placeholder="e.g., 100000">
-                        </div>
-
-                        <div class="form-group" id="kcMilestoneGroup">
+                        <div class="form-group">
                             <label for="goalMilestone">Milestone Interval *</label>
                             <input type="number" id="goalMilestone" min="1" required placeholder="e.g., 100">
                             <small>Number of kills between each milestone</small>
-                        </div>
-
-                        <div class="form-group" id="xpMilestoneGroup" style="display: none;">
-                            <label for="goalXPMilestone">Milestone Interval (XP) *</label>
-                            <input type="number" id="goalXPMilestone" min="1" placeholder="e.g., 10000">
-                            <small>Amount of XP between each milestone</small>
                         </div>
 
                         <div class="form-actions">
@@ -223,44 +204,6 @@
                                 <span>Show Username with Title</span>
                             </label>
                             <small>Display username and title in level section</small>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="showXPGains" checked>
-                                <span>Show XP Gains</span>
-                            </label>
-                            <small>Display XP gained in header and Boss KC tab</small>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="xpGainsPeriod">XP Gains Time Period</label>
-                            <select id="xpGainsPeriod" class="settings-select">
-                                <option value="last_update">Since Last Update</option>
-                                <option value="today">Today</option>
-                                <option value="7days">Past 7 Days</option>
-                                <option value="30days">Past 30 Days</option>
-                                <option value="365days">Past Year</option>
-                                <option value="current_month">Current Month</option>
-                                <option value="current_year">Current Year</option>
-                            </select>
-                            <small>Choose time period for XP gains display</small>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="showMilestonesInCard" checked>
-                                <span>Show Milestones in Goal Cards</span>
-                            </label>
-                            <small>Display milestone progress in goal overview cards</small>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="showDetailsInCard" checked>
-                                <span>Show Details in Goal Cards</span>
-                            </label>
-                            <small>Display started at, current KC, target KC and remaining in goal overview cards</small>
                         </div>
 
                         <div class="form-group">

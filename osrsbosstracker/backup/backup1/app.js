@@ -39,11 +39,7 @@ let currentPlayerType = 'regular';
 let userSettings = {
     dateFormat: 'default',
     showLevel: true,
-    showUsernameWithTitle: true,
-    showXPGains: true,
-    xpGainsPeriod: 'last_update', // Options: 'last_update', 'today', '7days', '30days', '365days', 'current_month', 'current_year'
-    showMilestonesInCard: true,
-    showDetailsInCard: true
+    showUsernameWithTitle: true
 };
 
 // DOM Elements
@@ -126,30 +122,6 @@ function showError(message, isError = true) {
 
 function hideError() {
     errorMessage.style.display = 'none';
-}
-
-function showMilestoneNotification(goal) {
-    const notification = document.createElement('div');
-    notification.className = 'milestone-notification';
-    notification.innerHTML = `
-        <div class="milestone-notification-content">
-            <div class="milestone-notification-icon">🎉</div>
-            <div class="milestone-notification-text">
-                <strong>Milestone Reached!</strong>
-                <p>${goal.bossName}: ${formatNumber(goal.currentMilestone)} kills</p>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(notification);
-
-    // Trigger animation
-    setTimeout(() => notification.classList.add('show'), 10);
-
-    // Remove after 4 seconds
-    setTimeout(() => {
-        notification.classList.remove('show');
-        setTimeout(() => notification.remove(), 500);
-    }, 4000);
 }
 
 function showLoading(show, text = 'Loading...') {
@@ -272,11 +244,7 @@ function loadSettings() {
     return saved ? JSON.parse(saved) : {
         dateFormat: 'default',
         showLevel: true,
-        showUsernameWithTitle: true,
-        showXPGains: true,
-        xpGainsPeriod: 'last_update',
-        showMilestonesInCard: true,
-        showDetailsInCard: true
+        showUsernameWithTitle: true
     };
 }
 
@@ -288,107 +256,6 @@ function saveSelectedTitle(username, titleId) {
 function loadSelectedTitle(username) {
     const key = `osrs_title_${username.toLowerCase()}`;
     return localStorage.getItem(key) || 'novice';
-}
-
-function saveXPHistory(username, xpData) {
-    const key = `osrs_xp_history_${username.toLowerCase()}`;
-    const history = loadXPHistory(username);
-
-    // Add new entry
-    history.push({
-        timestamp: Date.now(),
-        date: new Date().toISOString(),
-        totalXP: xpData.totalXP,
-        bosses: xpData.bosses // { boss_key: xp_value }
-    });
-
-    // Keep only last 400 days of history to prevent localStorage bloat
-    const cutoffDate = Date.now() - (400 * 24 * 60 * 60 * 1000);
-    const filteredHistory = history.filter(entry => entry.timestamp > cutoffDate);
-
-    localStorage.setItem(key, JSON.stringify(filteredHistory));
-}
-
-function loadXPHistory(username) {
-    const key = `osrs_xp_history_${username.toLowerCase()}`;
-    const saved = localStorage.getItem(key);
-    return saved ? JSON.parse(saved) : [];
-}
-
-function calculateXPGains(username, period) {
-    const history = loadXPHistory(username);
-    if (history.length === 0) return { totalGain: 0, bossGains: {} };
-
-    const now = Date.now();
-    const currentEntry = history[history.length - 1];
-    let compareEntry = null;
-
-    switch (period) {
-        case 'last_update':
-            // Compare to second-to-last entry
-            compareEntry = history.length >= 2 ? history[history.length - 2] : history[0];
-            break;
-
-        case 'today':
-            // Compare to last entry from start of today
-            const todayStart = new Date();
-            todayStart.setHours(0, 0, 0, 0);
-            compareEntry = history.find(e => e.timestamp >= todayStart.getTime()) || history[0];
-            break;
-
-        case '7days':
-            const sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000);
-            compareEntry = history.find(e => e.timestamp >= sevenDaysAgo) || history[0];
-            break;
-
-        case '30days':
-            const thirtyDaysAgo = now - (30 * 24 * 60 * 60 * 1000);
-            compareEntry = history.find(e => e.timestamp >= thirtyDaysAgo) || history[0];
-            break;
-
-        case '365days':
-            const yearAgo = now - (365 * 24 * 60 * 60 * 1000);
-            compareEntry = history.find(e => e.timestamp >= yearAgo) || history[0];
-            break;
-
-        case 'current_month':
-            // First day of current month
-            const monthStart = new Date();
-            monthStart.setDate(1);
-            monthStart.setHours(0, 0, 0, 0);
-            compareEntry = history.find(e => e.timestamp >= monthStart.getTime()) || history[0];
-            break;
-
-        case 'current_year':
-            // First day of current year
-            const yearStart = new Date();
-            yearStart.setMonth(0, 1);
-            yearStart.setHours(0, 0, 0, 0);
-            compareEntry = history.find(e => e.timestamp >= yearStart.getTime()) || history[0];
-            break;
-
-        default:
-            compareEntry = history[0];
-    }
-
-    if (!compareEntry) {
-        return { totalGain: 0, bossGains: {} };
-    }
-
-    // Calculate total XP gain
-    const totalGain = currentEntry.totalXP - compareEntry.totalXP;
-
-    // Calculate per-boss XP gains
-    const bossGains = {};
-    for (const [bossKey, currentXP] of Object.entries(currentEntry.bosses)) {
-        const previousXP = compareEntry.bosses[bossKey] || 0;
-        const gain = currentXP - previousXP;
-        if (gain > 0) {
-            bossGains[bossKey] = gain;
-        }
-    }
-
-    return { totalGain: Math.max(0, totalGain), bossGains };
 }
 
 // API Functions
@@ -461,16 +328,6 @@ async function handleSubmitUsername() {
         const totalXP = calculateTotalXP(playerData);
         const levelProgress = getLevelProgress(totalXP);
         renderLevelDisplay(levelProgress, totalXP);
-
-        // Save XP history
-        const bosses = playerData.latestSnapshot.data.bosses;
-        const bossXP = {};
-        for (const [bossKey, bossData] of Object.entries(bosses)) {
-            const kills = bossData.kills || 0;
-            const pointsPerKC = bossPointsData[bossKey]?.points_per_kc || 0;
-            bossXP[bossKey] = kills * pointsPerKC;
-        }
-        saveXPHistory(username, { totalXP, bosses: bossXP });
 
         // Hide main header and username section
         mainHeader.style.display = 'none';
@@ -565,27 +422,18 @@ function updateGoalsProgress() {
         // Calculate progress
         goal.currentKills = currentKills;
         goal.startKills = goal.startKills || currentKills;
-
-        // Cap kills gained at target kills for completed goals
-        const actualKillsGained = goal.currentKills - goal.startKills;
-        goal.killsGained = Math.min(actualKillsGained, goal.targetKills);
+        goal.killsGained = goal.currentKills - goal.startKills;
         goal.progress = Math.min((goal.killsGained / goal.targetKills) * 100, 100);
 
         // Check if completed
-        if (actualKillsGained >= goal.targetKills && goal.status === 'active') {
+        if (goal.killsGained >= goal.targetKills && goal.status === 'active') {
             goal.status = 'completed';
             goal.completedAt = Date.now();
         }
 
-        // Calculate current milestone and check for milestone completion
-        const previousMilestone = goal.currentMilestone || 0;
+        // Calculate current milestone
         goal.currentMilestone = Math.floor(goal.killsGained / goal.milestoneInterval) * goal.milestoneInterval;
         goal.nextMilestone = goal.currentMilestone + goal.milestoneInterval;
-
-        // Check if a new milestone was just reached
-        if (goal.currentMilestone > previousMilestone && goal.currentMilestone > 0) {
-            showMilestoneNotification(goal);
-        }
     });
 
     saveGoalsToStorage(currentUsername, currentGoals);
@@ -666,25 +514,6 @@ function renderLevelDisplay(levelProgress, totalXP) {
     const selectedTitle = titlesData.find(t => t.id === currentTitleId);
     const titleDisplay = selectedTitle ? formatTitleWithUsername(selectedTitle, currentUsername) : '';
 
-    // Calculate XP gains if enabled
-    let xpGainsHTML = '';
-    if (userSettings.showXPGains && currentUsername) {
-        const gains = calculateXPGains(currentUsername, userSettings.xpGainsPeriod);
-        if (gains.totalGain > 0) {
-            const periodLabels = {
-                'last_update': 'Since Last Update',
-                'today': 'Today',
-                '7days': 'Past 7 Days',
-                '30days': 'Past 30 Days',
-                '365days': 'Past Year',
-                'current_month': 'This Month',
-                'current_year': 'This Year'
-            };
-            const periodLabel = periodLabels[userSettings.xpGainsPeriod] || 'XP Gained';
-            xpGainsHTML = `<div class="xp-gains-inline">+${formatNumber(gains.totalGain)} XP ${periodLabel}</div>`;
-        }
-    }
-
     levelDisplay.innerHTML = `
         ${userSettings.showUsernameWithTitle && titleDisplay ? `
             <div class="username-title-display">
@@ -694,7 +523,6 @@ function renderLevelDisplay(levelProgress, totalXP) {
         <div class="level-info">
             <div class="level-number">Level ${levelProgress.level}</div>
             <div class="level-xp-text">${formatNumber(levelProgress.xpIntoLevel)} / ${formatNumber(levelProgress.xpNeededForNext)} XP</div>
-            ${xpGainsHTML}
         </div>
         <div class="level-progress-container">
             <div class="level-progress-bar" style="width: ${levelProgress.percent * 100}%"></div>
@@ -815,43 +643,39 @@ function createGoalCard(goal) {
             </div>
         </div>
 
-        ${userSettings.showMilestonesInCard ? `
-            <div class="goal-milestone-compact">
-                <div class="milestone-compact-header">
-                    <span class="milestone-compact-title">Milestones (${completedMilestones} / ${totalMilestones})</span>
-                </div>
-                <div class="milestone-compact-info">
-                    <span>Current: ${formatNumber(goal.killsGained % goal.milestoneInterval)} / ${formatNumber(goal.milestoneInterval)}</span>
-                    <span>${formatNumber(remainingToNextMilestone)} remaining</span>
-                </div>
-                <div class="progress-bar-container" style="height: 15px; margin-top: 8px;">
-                    <div class="progress-bar" style="width: ${milestoneProgress}%; font-size: 0.7em;">
-                        ${milestoneProgress > 20 ? milestoneProgress.toFixed(0) + '%' : ''}
-                    </div>
+        <div class="goal-milestone-compact">
+            <div class="milestone-compact-header">
+                <span class="milestone-compact-title">Milestones (${completedMilestones} / ${totalMilestones})</span>
+            </div>
+            <div class="milestone-compact-info">
+                <span>Current: ${formatNumber(goal.killsGained % goal.milestoneInterval)} / ${formatNumber(goal.milestoneInterval)}</span>
+                <span>${formatNumber(remainingToNextMilestone)} remaining</span>
+            </div>
+            <div class="progress-bar-container" style="height: 15px; margin-top: 8px;">
+                <div class="progress-bar" style="width: ${milestoneProgress}%; font-size: 0.7em;">
+                    ${milestoneProgress > 20 ? milestoneProgress.toFixed(0) + '%' : ''}
                 </div>
             </div>
-        ` : ''}
+        </div>
 
-        ${userSettings.showDetailsInCard ? `
-            <div class="goal-stats">
-                <div class="stat">
-                    <div class="stat-label">Started at</div>
-                    <div class="stat-value">${formatNumber(goal.startKills)} KC</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">Current KC</div>
-                    <div class="stat-value">${formatNumber(goal.currentKills)}</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">Target KC</div>
-                    <div class="stat-value">${formatNumber(goal.startKills + goal.targetKills)}</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">Remaining</div>
-                    <div class="stat-value">${formatNumber(goal.targetKills - goal.killsGained)}</div>
-                </div>
+        <div class="goal-stats">
+            <div class="stat">
+                <div class="stat-label">Started at</div>
+                <div class="stat-value">${formatNumber(goal.startKills)} KC</div>
             </div>
-        ` : ''}
+            <div class="stat">
+                <div class="stat-label">Current KC</div>
+                <div class="stat-value">${formatNumber(goal.currentKills)}</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Target KC</div>
+                <div class="stat-value">${formatNumber(goal.startKills + goal.targetKills)}</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Remaining</div>
+                <div class="stat-value">${formatNumber(goal.targetKills - goal.killsGained)}</div>
+            </div>
+        </div>
     `;
 
     // Event listeners
@@ -1301,66 +1125,8 @@ function openCreateGoalModal() {
     modalTitle.textContent = 'Create New Goal';
     saveGoal.textContent = 'Create Goal';
     goalForm.reset();
-
-    // Set up goal type toggle
-    const goalType = document.getElementById('goalType');
-    goalType.value = 'kc';
-    toggleGoalTypeFields('kc');
-
-    // Add event listener for goal type change
-    goalType.removeEventListener('change', handleGoalTypeChange);
-    goalType.addEventListener('change', handleGoalTypeChange);
-
     populateBossSelect();
     goalModal.style.display = 'flex';
-}
-
-function handleGoalTypeChange(e) {
-    toggleGoalTypeFields(e.target.value);
-}
-
-function toggleGoalTypeFields(goalType) {
-    const kcTargetGroup = document.getElementById('kcTargetGroup');
-    const xpTargetGroup = document.getElementById('xpTargetGroup');
-    const kcMilestoneGroup = document.getElementById('kcMilestoneGroup');
-    const xpMilestoneGroup = document.getElementById('xpMilestoneGroup');
-    const bossGroup = document.querySelector('#goalBoss').closest('.form-group');
-
-    const goalBoss = document.getElementById('goalBoss');
-    const goalTarget = document.getElementById('goalTarget');
-    const goalXPTarget = document.getElementById('goalXPTarget');
-    const goalMilestone = document.getElementById('goalMilestone');
-    const goalXPMilestone = document.getElementById('goalXPMilestone');
-
-    if (goalType === 'xp') {
-        // Show XP fields, hide KC fields
-        kcTargetGroup.style.display = 'none';
-        xpTargetGroup.style.display = 'block';
-        kcMilestoneGroup.style.display = 'none';
-        xpMilestoneGroup.style.display = 'block';
-        bossGroup.style.display = 'none';
-
-        // Update required attributes
-        goalBoss.removeAttribute('required');
-        goalTarget.removeAttribute('required');
-        goalMilestone.removeAttribute('required');
-        goalXPTarget.setAttribute('required', 'required');
-        goalXPMilestone.setAttribute('required', 'required');
-    } else {
-        // Show KC fields, hide XP fields
-        kcTargetGroup.style.display = 'block';
-        xpTargetGroup.style.display = 'none';
-        kcMilestoneGroup.style.display = 'block';
-        xpMilestoneGroup.style.display = 'none';
-        bossGroup.style.display = 'block';
-
-        // Update required attributes
-        goalBoss.setAttribute('required', 'required');
-        goalTarget.setAttribute('required', 'required');
-        goalMilestone.setAttribute('required', 'required');
-        goalXPTarget.removeAttribute('required');
-        goalXPMilestone.removeAttribute('required');
-    }
 }
 
 function openEditGoalModal(goal) {
@@ -1545,30 +1311,15 @@ function displayBossKC(bossesToDisplay) {
         return;
     }
 
-    // Get XP gains for the selected period
-    const gains = userSettings.showXPGains && currentUsername
-        ? calculateXPGains(currentUsername, userSettings.xpGainsPeriod)
-        : { totalGain: 0, bossGains: {} };
-
-    bossKCList.innerHTML = bossesToDisplay.map(boss => {
-        const xpGain = gains.bossGains[boss.key] || 0;
-        const xpGainHTML = userSettings.showXPGains && xpGain > 0
-            ? `<span class="boss-kc-xp-gain">+${formatNumber(xpGain)} XP</span>`
-            : '';
-
-        return `
-            <div class="boss-kc-item">
-                <div>
-                    <div class="boss-kc-name">${boss.name}</div>
-                    <div class="boss-kc-xp-row">
-                        <span class="boss-kc-xp">${formatNumber(boss.xp)} XP</span>
-                        ${xpGainHTML}
-                    </div>
-                </div>
-                <div class="boss-kc-kills">${formatNumber(boss.kills)}</div>
+    bossKCList.innerHTML = bossesToDisplay.map(boss => `
+        <div class="boss-kc-item">
+            <div>
+                <div class="boss-kc-name">${boss.name}</div>
+                <div class="boss-kc-xp">${formatNumber(boss.xp)} XP</div>
             </div>
-        `;
-    }).join('');
+            <div class="boss-kc-kills">${formatNumber(boss.kills)}</div>
+        </div>
+    `).join('');
 }
 
 // Titles Tab Functions
@@ -1638,10 +1389,6 @@ function openSettingsModal() {
     dateFormatSelect.value = userSettings.dateFormat;
     document.getElementById('showLevel').checked = userSettings.showLevel;
     document.getElementById('showUsernameWithTitle').checked = userSettings.showUsernameWithTitle;
-    document.getElementById('showXPGains').checked = userSettings.showXPGains;
-    document.getElementById('xpGainsPeriod').value = userSettings.xpGainsPeriod;
-    document.getElementById('showMilestonesInCard').checked = userSettings.showMilestonesInCard;
-    document.getElementById('showDetailsInCard').checked = userSettings.showDetailsInCard;
     settingsModal.style.display = 'flex';
 }
 
@@ -1653,10 +1400,6 @@ function handleSaveSettings() {
     userSettings.dateFormat = dateFormatSelect.value;
     userSettings.showLevel = document.getElementById('showLevel').checked;
     userSettings.showUsernameWithTitle = document.getElementById('showUsernameWithTitle').checked;
-    userSettings.showXPGains = document.getElementById('showXPGains').checked;
-    userSettings.xpGainsPeriod = document.getElementById('xpGainsPeriod').value;
-    userSettings.showMilestonesInCard = document.getElementById('showMilestonesInCard').checked;
-    userSettings.showDetailsInCard = document.getElementById('showDetailsInCard').checked;
     saveSettings(userSettings);
     closeSettings();
 
@@ -1664,12 +1407,6 @@ function handleSaveSettings() {
     const totalXP = calculateTotalXP(currentPlayerData);
     const levelProgress = getLevelProgress(totalXP);
     renderLevelDisplay(levelProgress, totalXP);
-
-    // Refresh Boss KC tab if it's currently visible
-    const bossKCTab = document.getElementById('bosskcTabContent');
-    if (bossKCTab && bossKCTab.classList.contains('active')) {
-        renderBossKC();
-    }
 
     // Refresh the current view to apply new date format
     if (goalDetailView.style.display === 'block') {
