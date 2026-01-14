@@ -24,11 +24,6 @@
                 >
                 <button id="submitUsername" class="btn-primary">Set Username</button>
             </div>
-            <button id="goBackToUser" class="btn-secondary" style="display: none; margin-top: 15px;">← Go Back to Current User</button>
-            <div id="usernameHistory" class="username-history" style="display: none;">
-                <h3>Recent Usernames</h3>
-                <div id="usernameHistoryList" class="username-history-list"></div>
-            </div>
         </div>
 
         <!-- Compact Header (shown after username is set) -->
@@ -36,7 +31,6 @@
             <div class="compact-header-content">
                 <h2>OSRS Boss Goal Tracker</h2>
                 <div class="compact-header-actions">
-                    <button id="updateDataBtn" class="btn-change-user">🔄 Update</button>
                     <button id="settingsBtn" class="btn-change-user">⚙️ Settings</button>
                     <button id="changeUsername" class="btn-change-user">Change Username</button>
                 </div>
@@ -72,30 +66,12 @@
                     </div>
                 </div>
 
-                <div class="tabs-and-sort">
-                    <div id="mainTabs" class="main-tabs">
-                        <button class="main-tab active" data-tab="active">Active</button>
-                        <button class="main-tab" data-tab="paused">Paused</button>
-                        <button class="main-tab" data-tab="completed">Completed</button>
-                        <button class="main-tab" data-tab="bosskc">Boss KC</button>
-                        <button class="main-tab" data-tab="titles">Titles</button>
-                    </div>
-                    <div class="sort-wrapper">
-                        <button id="sortToggleBtn" class="btn-sort-toggle" title="Sort options">
-                            <span class="filter-icon">🔍</span>
-                        </button>
-                        <div class="sort-container" id="sortContainer" style="display: none;">
-                            <label for="goalSort">Sort by:</label>
-                            <select id="goalSort" class="sort-select">
-                                <option value="newest">Newest First</option>
-                                <option value="oldest">Oldest First</option>
-                                <option value="progress_desc">Progress (High to Low)</option>
-                                <option value="progress_asc">Progress (Low to High)</option>
-                                <option value="name_asc">Name (A-Z)</option>
-                                <option value="name_desc">Name (Z-A)</option>
-                            </select>
-                        </div>
-                    </div>
+                <div id="mainTabs" class="main-tabs">
+                    <button class="main-tab active" data-tab="active">Active</button>
+                    <button class="main-tab" data-tab="paused">Paused</button>
+                    <button class="main-tab" data-tab="completed">Completed</button>
+                    <button class="main-tab" data-tab="bosskc">Boss KC</button>
+                    <button class="main-tab" data-tab="titles">Titles</button>
                 </div>
 
                 <!-- Active Goals Tab Content -->

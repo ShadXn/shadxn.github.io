@@ -36,15 +36,6 @@ let currentFilter = 'active';
 let editingGoalId = null;
 let currentPlayerData = null;
 let currentPlayerType = 'regular';
-let updateCooldownEnd = 0; // Timestamp when cooldown ends
-let currentSortOption = 'newest'; // Default sort option
-
-// API Rate Limiting
-let apiRequestHistory = []; // Array of timestamps
-const API_RATE_LIMIT = 5; // Maximum requests
-const API_RATE_WINDOW = 120000; // 2 minutes in milliseconds
-let playerDataCache = {}; // Cache player data by username
-
 let userSettings = {
     dateFormat: 'default',
     showLevel: true,
@@ -59,10 +50,6 @@ let userSettings = {
 const usernameInput = document.getElementById('usernameInput');
 const submitUsername = document.getElementById('submitUsername');
 const changeUsername = document.getElementById('changeUsername');
-const goBackToUser = document.getElementById('goBackToUser');
-const usernameHistory = document.getElementById('usernameHistory');
-const usernameHistoryList = document.getElementById('usernameHistoryList');
-const updateDataBtn = document.getElementById('updateDataBtn');
 const displayUsername = document.getElementById('displayUsername');
 const gamemodeDisplay = document.getElementById('gamemodeDisplay');
 const mainHeader = document.getElementById('mainHeader');
@@ -92,10 +79,6 @@ const settingsModal = document.getElementById('settingsModal');
 const closeSettingsModal = document.getElementById('closeSettingsModal');
 const saveSettingsBtn = document.getElementById('saveSettings');
 const dateFormatSelect = document.getElementById('dateFormat');
-const goalSortSelect = document.getElementById('goalSort');
-const sortToggleBtn = document.getElementById('sortToggleBtn');
-const sortContainer = document.getElementById('sortContainer');
-const sortWrapper = document.querySelector('.sort-wrapper');
 
 // Utility Functions
 function formatBossName(bossKey) {
@@ -139,10 +122,8 @@ function getGamemodeDisplay(playerType) {
 function showError(message, isError = true) {
     errorMessage.textContent = message;
     errorMessage.style.display = 'block';
-    errorMessage.style.backgroundColor = isError ? 'var(--error-color)' : 'rgba(76, 175, 80, 0.2)';
-    errorMessage.style.color = isError ? '#fff' : 'var(--success-color)';
-    errorMessage.style.border = isError ? 'none' : '2px solid var(--success-color)';
-    errorMessage.style.fontWeight = '600';
+    errorMessage.style.backgroundColor = isError ? 'var(--error-color)' : 'var(--success-color)';
+    errorMessage.style.color = isError ? '#fff' : '#fff';
     setTimeout(() => { errorMessage.style.display = 'none'; }, 5000);
 }
 
@@ -441,86 +422,9 @@ function calculateXPGains(username, period) {
     return { totalGain: Math.max(0, totalGain), bossGains };
 }
 
-// API Rate Limiting Functions
-function canMakeAPIRequest() {
-    const now = Date.now();
-
-    // Remove requests older than the rate window
-    apiRequestHistory = apiRequestHistory.filter(timestamp => now - timestamp < API_RATE_WINDOW);
-
-    // Check if we're under the limit
-    return apiRequestHistory.length < API_RATE_LIMIT;
-}
-
-function recordAPIRequest() {
-    apiRequestHistory.push(Date.now());
-}
-
-function getRateLimitInfo() {
-    const now = Date.now();
-    apiRequestHistory = apiRequestHistory.filter(timestamp => now - timestamp < API_RATE_WINDOW);
-
-    const remaining = API_RATE_LIMIT - apiRequestHistory.length;
-    const oldestRequest = apiRequestHistory[0];
-    const resetTime = oldestRequest ? oldestRequest + API_RATE_WINDOW : now;
-    const secondsUntilReset = Math.ceil((resetTime - now) / 1000);
-
-    return {
-        remaining,
-        secondsUntilReset: secondsUntilReset > 0 ? secondsUntilReset : 0,
-        isLimited: remaining <= 0
-    };
-}
-
-// Cache Functions
-function savePlayerDataToCache(username, playerData) {
-    playerDataCache[username.toLowerCase()] = {
-        data: playerData,
-        timestamp: Date.now()
-    };
-
-    // Save to localStorage
-    try {
-        localStorage.setItem('playerDataCache', JSON.stringify(playerDataCache));
-    } catch (e) {
-        console.warn('Could not save to localStorage:', e);
-    }
-}
-
-function loadPlayerDataFromCache(username) {
-    const cached = playerDataCache[username.toLowerCase()];
-    if (cached) {
-        return cached.data;
-    }
-    return null;
-}
-
-function loadCacheFromStorage() {
-    try {
-        const cached = localStorage.getItem('playerDataCache');
-        if (cached) {
-            playerDataCache = JSON.parse(cached);
-        }
-    } catch (e) {
-        console.warn('Could not load from localStorage:', e);
-    }
-}
-
 // API Functions
 async function fetchPlayerData(username) {
-    // Check rate limit first
-    if (!canMakeAPIRequest()) {
-        const rateLimitInfo = getRateLimitInfo();
-        const minutes = Math.floor(rateLimitInfo.secondsUntilReset / 60);
-        const seconds = rateLimitInfo.secondsUntilReset % 60;
-        const timeStr = minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
-        throw new Error(`Rate limit reached. You can look up 5 usernames every 2 minutes. Please wait ${timeStr} before trying again.`);
-    }
-
     try {
-        // Record the API request
-        recordAPIRequest();
-
         // Try to update player data first
         await fetch(`${API_BASE_URL}/players/${encodeURIComponent(username)}`, {
             method: 'POST',
@@ -540,12 +444,7 @@ async function fetchPlayerData(username) {
             throw new Error(`API error: ${response.status}`);
         }
 
-        const playerData = await response.json();
-
-        // Cache the player data
-        savePlayerDataToCache(username, playerData);
-
-        return playerData;
+        return await response.json();
     } catch (error) {
         console.error('Error fetching player data:', error);
         throw error;
@@ -574,7 +473,6 @@ async function handleSubmitUsername() {
         currentUsername = username;
         currentPlayerType = playerData.type || 'regular';
         saveUsername(username);
-        saveUsernameToHistory(username);
 
         displayUsername.textContent = username;
 
@@ -628,9 +526,6 @@ async function handleSubmitUsername() {
 }
 
 function handleChangeUsername() {
-    // Store current username before clearing
-    const previousUsername = currentUsername;
-
     currentUsername = null;
     currentPlayerData = null;
     currentPlayerType = 'regular';
@@ -668,202 +563,7 @@ function handleChangeUsername() {
     compactHeader.style.display = 'none';
     mainContent.style.display = 'none';
 
-    // Show go back button and username history if we had a previous username
-    if (previousUsername) {
-        goBackToUser.style.display = 'block';
-        goBackToUser.dataset.previousUsername = previousUsername;
-        renderUsernameHistory();
-        usernameHistory.style.display = 'block';
-    } else {
-        goBackToUser.style.display = 'none';
-        usernameHistory.style.display = 'none';
-    }
-
     usernameInput.focus();
-}
-
-function saveUsernameToHistory(username) {
-    let history = JSON.parse(localStorage.getItem('usernameHistory') || '[]');
-
-    // Remove username if it already exists (to avoid duplicates)
-    history = history.filter(item => item.username.toLowerCase() !== username.toLowerCase());
-
-    // Add new entry at the beginning
-    history.unshift({
-        username: username,
-        timestamp: Date.now()
-    });
-
-    // Keep only last 10
-    history = history.slice(0, 10);
-
-    localStorage.setItem('usernameHistory', JSON.stringify(history));
-}
-
-function renderUsernameHistory() {
-    const history = JSON.parse(localStorage.getItem('usernameHistory') || '[]');
-
-    if (history.length === 0) {
-        usernameHistory.style.display = 'none';
-        return;
-    }
-
-    usernameHistoryList.innerHTML = history.map(item => {
-        const date = new Date(item.timestamp);
-        const dateStr = formatDate(date);
-        return `
-            <div class="username-history-item" data-username="${item.username}">
-                <span class="username-text">${item.username}</span>
-                <span class="username-date">${dateStr}</span>
-            </div>
-        `;
-    }).join('');
-
-    // Add click handlers
-    document.querySelectorAll('.username-history-item').forEach(item => {
-        item.addEventListener('click', () => {
-            const username = item.dataset.username;
-            usernameInput.value = username;
-            handleSubmitUsername();
-        });
-    });
-}
-
-async function handleGoBackToUser() {
-    const previousUsername = goBackToUser.dataset.previousUsername;
-    if (!previousUsername) return;
-
-    // Try to load from cache first
-    const cachedData = loadPlayerDataFromCache(previousUsername);
-    if (cachedData) {
-        // Use cached data without making API request
-        currentPlayerData = cachedData;
-        currentUsername = previousUsername;
-        currentPlayerType = cachedData.type || 'regular';
-
-        displayUsername.textContent = previousUsername;
-
-        // Update gamemode display
-        const gamemodeText = getGamemodeDisplay(currentPlayerType);
-        if (gamemodeText) {
-            gamemodeDisplay.textContent = gamemodeText;
-            gamemodeDisplay.style.display = 'inline-block';
-        } else {
-            gamemodeDisplay.style.display = 'none';
-        }
-
-        // Load user's selected title
-        currentTitleId = loadSelectedTitle(previousUsername);
-
-        // Calculate and display level
-        const totalXP = calculateTotalXP(cachedData);
-        const levelProgress = getLevelProgress(totalXP);
-        renderLevelDisplay(levelProgress, totalXP);
-
-        // Hide main header and username section
-        mainHeader.style.display = 'none';
-        usernameSection.style.display = 'none';
-
-        // Show compact header
-        compactHeader.style.display = 'block';
-
-        // Load goals for this user
-        currentGoals = loadGoalsFromStorage(previousUsername);
-
-        // Update all goals with current kill counts
-        updateGoalsProgress();
-
-        mainContent.style.display = 'block';
-        renderGoalsOverview();
-    } else {
-        // If no cache, fall back to API request
-        usernameInput.value = previousUsername;
-        await handleSubmitUsername();
-    }
-}
-
-async function handleManualUpdate() {
-    const now = Date.now();
-
-    // Check if on cooldown
-    if (now < updateCooldownEnd) {
-        const remainingSeconds = Math.ceil((updateCooldownEnd - now) / 1000);
-        const minutes = Math.floor(remainingSeconds / 60);
-        const seconds = remainingSeconds % 60;
-        const timeStr = minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
-        showError(`Please wait ${timeStr} before updating again.`, false);
-        return;
-    }
-
-    if (!currentUsername) {
-        showError('No username set.');
-        return;
-    }
-
-    try {
-        showLoading(true, 'Updating player data...');
-
-        // Fetch fresh player data
-        const playerData = await fetchPlayerData(currentUsername);
-        currentPlayerData = playerData;
-        currentPlayerType = playerData.type || 'regular';
-
-        // Update goals with new data
-        updateGoalsProgress();
-
-        // Refresh the UI
-        if (goalDetailView.style.display === 'block') {
-            // If in detail view, refresh it
-            const currentGoalId = [...currentGoals].find(g =>
-                document.getElementById('goalDetailView')?.innerHTML.includes(g.id)
-            )?.id;
-            if (currentGoalId) {
-                showGoalDetail(currentGoalId);
-            }
-        } else {
-            // Otherwise refresh overview
-            renderGoalsOverview();
-        }
-
-        // Refresh Boss KC tab if visible
-        const bossKCTab = document.querySelector('.main-tab[data-tab="bosskc"]');
-        if (bossKCTab?.classList.contains('active')) {
-            renderBossKC();
-        }
-
-        // Set cooldown (2 minutes = 120000 ms)
-        updateCooldownEnd = now + 120000;
-
-        // Update button text to show cooldown
-        updateButtonCooldown();
-
-        showError('Data updated successfully!', false);
-    } catch (error) {
-        showError(error.message);
-    } finally {
-        showLoading(false);
-    }
-}
-
-function updateButtonCooldown() {
-    if (!updateDataBtn) return;
-
-    const now = Date.now();
-
-    if (now < updateCooldownEnd) {
-        const remainingSeconds = Math.ceil((updateCooldownEnd - now) / 1000);
-        const minutes = Math.floor(remainingSeconds / 60);
-        const seconds = remainingSeconds % 60;
-
-        updateDataBtn.disabled = true;
-        updateDataBtn.textContent = `🔄 ${minutes}:${seconds.toString().padStart(2, '0')}`;
-
-        // Update every second
-        setTimeout(updateButtonCooldown, 1000);
-    } else {
-        updateDataBtn.disabled = false;
-        updateDataBtn.textContent = '🔄 Update';
-    }
 }
 
 // Goals Management
@@ -1164,52 +864,11 @@ function renderGoalsOverview() {
     }
 }
 
-function sortGoals(goals, sortOption) {
-    const sorted = [...goals]; // Create a copy to avoid mutating original
-
-    switch (sortOption) {
-        case 'newest':
-            sorted.sort((a, b) => b.createdAt - a.createdAt);
-            break;
-        case 'oldest':
-            sorted.sort((a, b) => a.createdAt - b.createdAt);
-            break;
-        case 'progress_desc':
-            sorted.sort((a, b) => b.progress - a.progress);
-            break;
-        case 'progress_asc':
-            sorted.sort((a, b) => a.progress - b.progress);
-            break;
-        case 'name_asc':
-            sorted.sort((a, b) => {
-                const nameA = a.bossName || a.goalType;
-                const nameB = b.bossName || b.goalType;
-                return nameA.localeCompare(nameB);
-            });
-            break;
-        case 'name_desc':
-            sorted.sort((a, b) => {
-                const nameA = a.bossName || a.goalType;
-                const nameB = b.bossName || b.goalType;
-                return nameB.localeCompare(nameA);
-            });
-            break;
-        default:
-            // Default to newest
-            sorted.sort((a, b) => b.createdAt - a.createdAt);
-    }
-
-    return sorted;
-}
-
 function renderGoalsForStatus(status) {
     const filteredGoals = currentGoals.filter(goal => {
         if (goal.hidden) return false;
         return goal.status === status;
     });
-
-    // Sort the filtered goals
-    const sortedGoals = sortGoals(filteredGoals, currentSortOption);
 
     let listElement, emptyElement;
 
@@ -1228,14 +887,14 @@ function renderGoalsForStatus(status) {
 
     listElement.innerHTML = '';
 
-    if (sortedGoals.length === 0) {
+    if (filteredGoals.length === 0) {
         if (emptyElement) emptyElement.style.display = 'block';
         listElement.style.display = 'none';
     } else {
         if (emptyElement) emptyElement.style.display = 'none';
         listElement.style.display = 'grid';
 
-        sortedGoals.forEach(goal => {
+        filteredGoals.forEach(goal => {
             const card = createGoalCard(goal);
             listElement.appendChild(card);
         });
@@ -1966,24 +1625,21 @@ function calculateBossKillsBreakdown(goal) {
         return [];
     }
 
-    // Get first and current entries
+    // Get first and last entries
     const firstEntry = goal.progressHistory[0];
-    const currentEntry = goal.progressHistory[goal.progressHistory.length - 1];
+    const lastEntry = goal.progressHistory[goal.progressHistory.length - 1];
 
-    if (!firstEntry.bossKCs) {
+    if (!firstEntry.bossKCs || !lastEntry.bossKCs) {
         return [];
     }
 
-    // Get current boss KCs from player data (in case not yet updated in history)
-    const currentBossKCs = currentEntry.bossKCs || getBossKCSnapshot(currentPlayerData);
-
     // Calculate kills gained for each boss
     const breakdown = [];
-    const allBosses = new Set([...Object.keys(firstEntry.bossKCs), ...Object.keys(currentBossKCs)]);
+    const allBosses = new Set([...Object.keys(firstEntry.bossKCs), ...Object.keys(lastEntry.bossKCs)]);
 
     allBosses.forEach(bossKey => {
         const startKC = firstEntry.bossKCs[bossKey] || 0;
-        const currentKC = currentBossKCs[bossKey] || 0;
+        const currentKC = lastEntry.bossKCs[bossKey] || 0;
         const gained = currentKC - startKC;
 
         if (gained > 0) {
@@ -2503,8 +2159,6 @@ function showHiddenGoalsModal() {
 // Event Listeners
 submitUsername.addEventListener('click', handleSubmitUsername);
 changeUsername.addEventListener('click', handleChangeUsername);
-goBackToUser.addEventListener('click', handleGoBackToUser);
-updateDataBtn.addEventListener('click', handleManualUpdate);
 usernameInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') handleSubmitUsername();
 });
@@ -2927,22 +2581,6 @@ document.querySelectorAll('.main-tab').forEach(tab => {
             targetContent.style.display = 'block';
         }
 
-        // Show/hide sort wrapper based on tab
-        if (sortWrapper) {
-            if (tabName === 'active' || tabName === 'paused' || tabName === 'completed') {
-                sortWrapper.style.display = 'flex';
-            } else {
-                sortWrapper.style.display = 'none';
-                // Also hide the sort container if it was open
-                if (sortContainer) {
-                    sortContainer.style.display = 'none';
-                }
-                if (sortToggleBtn) {
-                    sortToggleBtn.classList.remove('active');
-                }
-            }
-        }
-
         // Render content for the selected tab
         if (tabName === 'bosskc') {
             renderBossKC();
@@ -2954,40 +2592,6 @@ document.querySelectorAll('.main-tab').forEach(tab => {
     });
 });
 
-// Sort toggle functionality
-if (sortToggleBtn && sortContainer) {
-    sortToggleBtn.addEventListener('click', () => {
-        const isVisible = sortContainer.style.display !== 'none';
-
-        if (isVisible) {
-            sortContainer.style.display = 'none';
-            sortToggleBtn.classList.remove('active');
-        } else {
-            sortContainer.style.display = 'flex';
-            sortToggleBtn.classList.add('active');
-        }
-    });
-}
-
-// Goal sorting event listener
-if (goalSortSelect) {
-    goalSortSelect.addEventListener('change', (e) => {
-        currentSortOption = e.target.value;
-
-        // Save to local storage
-        localStorage.setItem('goalSortPreference', currentSortOption);
-
-        // Re-render the current tab's goals
-        const activeTab = document.querySelector('.main-tab.active');
-        if (activeTab) {
-            const tabName = activeTab.dataset.tab;
-            if (tabName === 'active' || tabName === 'paused' || tabName === 'completed') {
-                renderGoalsForStatus(tabName);
-            }
-        }
-    });
-}
-
 // Initialize app
 window.addEventListener('DOMContentLoaded', async () => {
     // Load boss points data and titles
@@ -2997,66 +2601,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     // Load settings
     userSettings = loadSettings();
 
-    // Load player data cache from localStorage
-    loadCacheFromStorage();
-
-    // Load saved sort preference
-    const savedSort = localStorage.getItem('goalSortPreference');
-    if (savedSort) {
-        currentSortOption = savedSort;
-        if (goalSortSelect) {
-            goalSortSelect.value = savedSort;
-        }
-    }
-
     const savedUsername = loadSavedUsername();
     if (savedUsername) {
-        // Try to load from cache first to avoid API call on page refresh
-        const cachedData = loadPlayerDataFromCache(savedUsername);
-        if (cachedData) {
-            // Use cached data without making API request
-            currentPlayerData = cachedData;
-            currentUsername = savedUsername;
-            currentPlayerType = cachedData.type || 'regular';
-
-            displayUsername.textContent = savedUsername;
-
-            // Update gamemode display
-            const gamemodeText = getGamemodeDisplay(currentPlayerType);
-            if (gamemodeText) {
-                gamemodeDisplay.textContent = gamemodeText;
-                gamemodeDisplay.style.display = 'inline-block';
-            } else {
-                gamemodeDisplay.style.display = 'none';
-            }
-
-            // Load user's selected title
-            currentTitleId = loadSelectedTitle(savedUsername);
-
-            // Calculate and display level
-            const totalXP = calculateTotalXP(cachedData);
-            const levelProgress = getLevelProgress(totalXP);
-            renderLevelDisplay(levelProgress, totalXP);
-
-            // Hide main header and username section
-            mainHeader.style.display = 'none';
-            usernameSection.style.display = 'none';
-
-            // Show compact header
-            compactHeader.style.display = 'block';
-
-            // Load goals for this user
-            currentGoals = loadGoalsFromStorage(savedUsername);
-
-            // Update all goals with current kill counts
-            updateGoalsProgress();
-
-            mainContent.style.display = 'block';
-            renderGoalsOverview();
-        } else {
-            // If no cache exists, fall back to API request (first time user)
-            usernameInput.value = savedUsername;
-            handleSubmitUsername();
-        }
+        usernameInput.value = savedUsername;
+        handleSubmitUsername();
     }
 });
