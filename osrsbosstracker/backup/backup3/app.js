@@ -2743,24 +2743,14 @@ function exportGoals() {
 
     // Create export data with metadata to prevent abuse
     const exportData = {
-        version: '1.1',
+        version: '1.0',
         username: currentUsername,
         exportDate: new Date().toISOString(),
-        goals: currentGoals.map(goal => {
-            if (goal.goalType === 'xp') {
-                // For XP goals, store current total XP
-                return {
-                    ...goal,
-                    exportTotalXP: goal.currentXP || 0
-                };
-            } else {
-                // For KC goals, store the current actual KC from API at time of export
-                return {
-                    ...goal,
-                    exportKillCount: currentPlayerData?.latestSnapshot?.data?.bosses?.[goal.boss]?.kills || 0
-                };
-            }
-        })
+        goals: currentGoals.map(goal => ({
+            ...goal,
+            // Store the current actual KC from API at time of export
+            exportKillCount: currentPlayerData?.latestSnapshot?.data?.bosses?.[goal.boss]?.kills || 0
+        }))
     };
 
     // Create and download file
@@ -2815,239 +2805,73 @@ function handleImportFile(event) {
             let preventedAbuse = 0;
 
             for (const importedGoal of importData.goals) {
-                // Determine if this is an XP or KC goal
-                const isXPGoal = importedGoal.goalType === 'xp';
-
-                // Check for duplicates based on status
-                let existingGoal;
-                if (isXPGoal) {
-                    // Only one XP goal allowed in active + paused (completed goals are allowed)
-                    if (importedGoal.status === 'completed') {
-                        // Allow multiple completed XP goals, no duplicate check needed
-                        existingGoal = null;
-                    } else {
-                        // Check if there's already an active or paused XP goal
-                        existingGoal = currentGoals.find(g => g.goalType === 'xp' && (g.status === 'active' || g.status === 'paused'));
-                    }
-                } else {
-                    // For KC goals, check if same boss exists in active + paused
-                    if (importedGoal.status === 'completed') {
-                        // Allow multiple completed goals for same boss, no duplicate check needed
-                        existingGoal = null;
-                    } else {
-                        // Check if there's already an active or paused goal for this boss
-                        existingGoal = currentGoals.find(g => g.boss === importedGoal.boss && (g.status === 'active' || g.status === 'paused'));
-                    }
-                }
+                // Check if goal already exists (by boss)
+                const existingGoal = currentGoals.find(g => g.boss === importedGoal.boss);
 
                 if (existingGoal) {
-                    // Goal already exists in active/paused, skip it to prevent duplicates
+                    // Goal already exists, skip it
                     skippedCount++;
-                    continue;
-                }
-
-                // Import based on goal type
-                if (isXPGoal) {
-                    // XP Goal Import - preserve exact progress from export
-                    const currentTotalXP = calculateTotalXP(currentPlayerData);
-                    const startXP = importedGoal.startXP || 0;
-
-                    // For completed goals, validate against actual API data to prevent cheating
-                    if (importedGoal.status === 'completed') {
-                        // Abuse check: User must have AT LEAST the XP claimed in the completed goal
-                        // If they claim to have completed a goal ending at 500k XP but only have 50k XP, reject it
-                        const completedXP = startXP + (importedGoal.xpGained || 0);
-                        if (currentTotalXP < completedXP - 1000) { // Allow 1000 XP tolerance
-                            preventedAbuse++;
-                            continue;
-                        }
-
-                        // Use imported values for completed goals (validated above)
-                        const newGoal = {
-                            id: generateId(),
-                            goalType: 'xp',
-                            targetXP: importedGoal.targetXP,
-                            xpMilestoneInterval: importedGoal.xpMilestoneInterval,
-                            status: 'completed',
-                            hidden: importedGoal.hidden || false,
-                            startXP: importedGoal.startXP || 0,
-                            currentXP: importedGoal.currentXP || 0,
-                            xpGained: importedGoal.xpGained || 0,
-                            progress: importedGoal.progress || 100,
-                            currentMilestone: importedGoal.currentMilestone || 0,
-                            nextMilestone: importedGoal.nextMilestone || 0,
-                            milestonesCompleted: importedGoal.milestonesCompleted || [],
-                            bossBreakdown: importedGoal.bossBreakdown || {},
-                            history: importedGoal.history || [],
-                            createdAt: importedGoal.createdAt || new Date().toISOString(),
-                            completedAt: importedGoal.completedAt
-                        };
-                        currentGoals.push(newGoal);
-                        importedCount++;
-                    } else {
-                        // For active/paused goals, validate and recalculate based on current data
-                        // Abuse check: if current total XP is significantly less than when goal was started, reject it
-                        if (currentTotalXP < startXP - 1000) { // Allow 1000 XP tolerance
-                            preventedAbuse++;
-                            continue;
-                        }
-
-                        // Calculate current progress
-                        const xpGained = Math.max(0, currentTotalXP - startXP);
-                        const progress = importedGoal.targetXP > 0 ? (xpGained / importedGoal.targetXP) * 100 : 0;
-
-                        // Calculate milestones for XP
-                        const currentMilestone = Math.floor(xpGained / importedGoal.xpMilestoneInterval) * importedGoal.xpMilestoneInterval;
-                        const nextMilestone = currentMilestone + importedGoal.xpMilestoneInterval;
-
-                        // Recreate milestones array
-                        const milestonesCompleted = [];
-                        for (let i = importedGoal.xpMilestoneInterval; i <= currentMilestone; i += importedGoal.xpMilestoneInterval) {
-                            milestonesCompleted.push({
-                                xp: i,
-                                date: new Date().toISOString(),
-                                note: 'Milestone restored from import'
-                            });
-                        }
-
-                        // Determine status
-                        let status = importedGoal.status;
-                        if (progress >= 100) {
-                            status = 'completed';
-                        }
-
-                        // Create new XP goal
-                        const newGoal = {
-                            id: generateId(),
-                            goalType: 'xp',
-                            targetXP: importedGoal.targetXP,
-                            xpMilestoneInterval: importedGoal.xpMilestoneInterval,
-                            status: status,
-                            hidden: importedGoal.hidden || false,
-                            startXP: startXP,
-                            currentXP: currentTotalXP,
-                            xpGained: xpGained,
-                            progress: progress,
-                            currentMilestone: currentMilestone,
-                            nextMilestone: nextMilestone,
-                            milestonesCompleted: milestonesCompleted,
-                            bossBreakdown: importedGoal.bossBreakdown || {},
-                            history: [{
-                                date: new Date().toISOString(),
-                                totalXP: currentTotalXP,
-                                note: 'XP goal imported'
-                            }],
-                            createdAt: importedGoal.createdAt || new Date().toISOString()
-                        };
-
-                        currentGoals.push(newGoal);
-                        importedCount++;
-                    }
-
                 } else {
-                    // KC Goal Import - preserve exact progress from export
+                    // New goal - validate and import with preserved progress
+                    const currentKC = currentBosses[importedGoal.boss]?.kills || 0;
+                    const startKills = importedGoal.startKills || 0;
 
-                    // Validate boss exists in bossPoints
-                    if (!bossPointsData[importedGoal.boss]) {
+                    // Abuse check: if current KC is significantly less than when goal was started, reject it
+                    // This prevents someone from creating a goal at 1000 KC, then importing it on an account with only 50 KC
+                    if (currentKC < startKills - 10) { // Allow 10 KC tolerance for API delays/inconsistencies
                         preventedAbuse++;
                         continue;
                     }
 
-                    const currentKC = currentBosses[importedGoal.boss]?.kills || 0;
-                    const startKills = importedGoal.startKills || 0;
+                    // Calculate current progress based on actual KC
+                    const killsGained = Math.max(0, currentKC - startKills);
+                    const progress = importedGoal.targetKills > 0 ? (killsGained / importedGoal.targetKills) * 100 : 0;
 
-                    // For completed goals, validate against actual API data to prevent cheating
-                    if (importedGoal.status === 'completed') {
-                        // Abuse check: User must have AT LEAST the kills claimed in the completed goal
-                        // If they claim to have completed 1000 KC but only have 50 KC, reject it
-                        const completedKC = startKills + (importedGoal.killsGained || 0);
-                        if (currentKC < completedKC - 10) { // Allow 10 KC tolerance
-                            preventedAbuse++;
-                            continue;
-                        }
+                    // Calculate milestones
+                    const currentMilestone = Math.floor(killsGained / importedGoal.milestoneInterval) * importedGoal.milestoneInterval;
+                    const nextMilestone = currentMilestone + importedGoal.milestoneInterval;
 
-                        // Use imported values for completed goals (validated above)
-                        const newGoal = {
-                            id: generateId(),
-                            goalType: 'kc',
-                            boss: importedGoal.boss,
-                            bossName: importedGoal.bossName,
-                            targetKills: importedGoal.targetKills,
-                            milestoneInterval: importedGoal.milestoneInterval,
-                            status: 'completed',
-                            hidden: importedGoal.hidden || false,
-                            startKills: importedGoal.startKills || 0,
-                            killsGained: importedGoal.killsGained || 0,
-                            progress: importedGoal.progress || 100,
-                            currentMilestone: importedGoal.currentMilestone || 0,
-                            nextMilestone: importedGoal.nextMilestone || 0,
-                            milestonesCompleted: importedGoal.milestonesCompleted || [],
-                            history: importedGoal.history || [],
-                            createdAt: importedGoal.createdAt || new Date().toISOString(),
-                            completedAt: importedGoal.completedAt
-                        };
-                        currentGoals.push(newGoal);
-                        importedCount++;
-                    } else {
-                        // For active/paused goals, validate and recalculate based on current data
-                        // Abuse check: if current KC is significantly less than when goal was started, reject it
-                        // This prevents someone from creating a goal at 1000 KC, then importing it on an account with only 50 KC
-                        if (currentKC < startKills - 10) { // Allow 10 KC tolerance for API delays/inconsistencies
-                            preventedAbuse++;
-                            continue;
-                        }
-
-                        // Calculate current progress based on actual KC
-                        const killsGained = Math.max(0, currentKC - startKills);
-                        const progress = importedGoal.targetKills > 0 ? (killsGained / importedGoal.targetKills) * 100 : 0;
-
-                        // Calculate milestones
-                        const currentMilestone = Math.floor(killsGained / importedGoal.milestoneInterval) * importedGoal.milestoneInterval;
-                        const nextMilestone = currentMilestone + importedGoal.milestoneInterval;
-
-                        // Recreate milestones array
-                        const milestonesCompleted = [];
-                        for (let i = importedGoal.milestoneInterval; i <= currentMilestone; i += importedGoal.milestoneInterval) {
-                            milestonesCompleted.push({
-                                kills: i,
-                                date: new Date().toISOString(),
-                                note: 'Milestone restored from import'
-                            });
-                        }
-
-                        // Determine status
-                        let status = importedGoal.status;
-                        if (progress >= 100) {
-                            status = 'completed';
-                        }
-
-                        // Create new KC goal with preserved progress
-                        const newGoal = {
-                            id: generateId(),
-                            goalType: 'kc',
-                            boss: importedGoal.boss,
-                            bossName: importedGoal.bossName,
-                            targetKills: importedGoal.targetKills,
-                            milestoneInterval: importedGoal.milestoneInterval,
-                            status: status,
-                            hidden: importedGoal.hidden || false,
-                            startKills: startKills, // Preserve original start KC
-                            killsGained: killsGained, // Calculate based on current KC
-                            progress: progress,
-                            currentMilestone: currentMilestone,
-                            nextMilestone: nextMilestone,
-                            milestonesCompleted: milestonesCompleted,
-                            history: [{
-                                date: new Date().toISOString(),
-                                kills: currentKC,
-                                note: 'Goal imported'
-                            }],
-                            createdAt: importedGoal.createdAt || new Date().toISOString()
-                        };
-
-                        currentGoals.push(newGoal);
-                        importedCount++;
+                    // Recreate milestones array
+                    const milestonesCompleted = [];
+                    for (let i = importedGoal.milestoneInterval; i <= currentMilestone; i += importedGoal.milestoneInterval) {
+                        milestonesCompleted.push({
+                            kills: i,
+                            date: new Date().toISOString(),
+                            note: 'Milestone restored from import'
+                        });
                     }
+
+                    // Determine status
+                    let status = importedGoal.status;
+                    if (progress >= 100) {
+                        status = 'completed';
+                    }
+
+                    // Create new goal with preserved progress
+                    const newGoal = {
+                        id: generateId(),
+                        boss: importedGoal.boss,
+                        bossName: importedGoal.bossName,
+                        targetKills: importedGoal.targetKills,
+                        milestoneInterval: importedGoal.milestoneInterval,
+                        status: status,
+                        hidden: importedGoal.hidden || false,
+                        startKills: startKills, // Preserve original start KC
+                        killsGained: killsGained, // Calculate based on current KC
+                        progress: progress,
+                        currentMilestone: currentMilestone,
+                        nextMilestone: nextMilestone,
+                        milestonesCompleted: milestonesCompleted,
+                        history: [{
+                            date: new Date().toISOString(),
+                            kills: currentKC,
+                            note: 'Goal imported'
+                        }],
+                        createdAt: importedGoal.createdAt || new Date().toISOString()
+                    };
+
+                    currentGoals.push(newGoal);
+                    importedCount++;
                 }
             }
 
@@ -3068,7 +2892,6 @@ function handleImportFile(event) {
         } catch (error) {
             console.error('Import error:', error);
             showError('Failed to import goals. Invalid file format!');
-            showLoading(false);
         }
 
         // Reset file input
