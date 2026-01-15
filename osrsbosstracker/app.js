@@ -2568,6 +2568,15 @@ function renderBossKC() {
         const newSearchInput = searchInput.cloneNode(true);
         searchInput.parentNode.replaceChild(newSearchInput, searchInput);
 
+        // Apply existing search filter if present
+        const currentSearchValue = newSearchInput.value.toLowerCase();
+        if (currentSearchValue) {
+            const filteredBosses = bossKCData.filter(boss =>
+                boss.name.toLowerCase().includes(currentSearchValue)
+            );
+            displayBossKC(filteredBosses);
+        }
+
         newSearchInput.addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase();
             const filteredBosses = bossKCData.filter(boss =>
