@@ -808,6 +808,21 @@ async function handleManualUpdate() {
         currentPlayerData = playerData;
         currentPlayerType = playerData.type || 'regular';
 
+        // Save XP history for XP gains tracking
+        const totalXP = calculateTotalXP(playerData);
+        const bosses = playerData.latestSnapshot.data.bosses;
+        const bossXP = {};
+        for (const [bossKey, bossData] of Object.entries(bosses)) {
+            const kills = bossData.kills || 0;
+            const pointsPerKC = bossPointsData[bossKey]?.points_per_kc || 0;
+            bossXP[bossKey] = kills * pointsPerKC;
+        }
+        saveXPHistory(currentUsername, { totalXP, bosses: bossXP });
+
+        // Update level display with new XP data
+        const levelProgress = getLevelProgress(totalXP);
+        renderLevelDisplay(levelProgress, totalXP);
+
         // Update goals with new data
         updateGoalsProgress();
 
@@ -904,8 +919,13 @@ function updateGoalsProgress() {
             // Calculate progress
             goal.currentXP = currentXP;
             goal.currentKills = currentKills;
-            goal.startXP = goal.startXP || currentXP;
-            goal.startKills = goal.startKills || currentKills;
+            // Use nullish coalescing to preserve 0 as a valid startXP value
+            if (goal.startXP === undefined || goal.startXP === null) {
+                goal.startXP = currentXP;
+            }
+            if (goal.startKills === undefined || goal.startKills === null) {
+                goal.startKills = currentKills;
+            }
 
             // Cap XP gained at target XP for completed goals
             const actualXPGained = goal.currentXP - goal.startXP;
@@ -955,7 +975,10 @@ function updateGoalsProgress() {
 
             // Calculate progress
             goal.currentKills = currentKills;
-            goal.startKills = goal.startKills || currentKills;
+            // Use explicit check to preserve 0 as a valid startKills value
+            if (goal.startKills === undefined || goal.startKills === null) {
+                goal.startKills = currentKills;
+            }
 
             // Cap kills gained at target kills for completed goals
             const actualKillsGained = goal.currentKills - goal.startKills;
