@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HySkills Builder</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #1a1a2e; color: #eaeaea; min-height: 100vh; }
+    label, .form-label, .form-check-label, p, span, div, h1, h2, h3, h4, h5, h6, strong, small { color: #eaeaea; }
+    .text-muted { color: #9ca3af !important; }
+    .modal-content { background: #16213e !important; color: #eaeaea; }
+    .modal-header, .modal-body, .modal-footer { color: #eaeaea; }
+    option { background: #1a1a2e; color: #eaeaea; }
+    .card { background: #16213e; border: 1px solid #0f3460; }
+    .card-header { background: #0f3460; border-bottom: 1px solid #c44569; }
+    .form-control, .form-select { background: #1a1a2e; border-color: #0f3460; color: #eaeaea !important; }
+    .form-control:focus, .form-select:focus { background: #1a1a2e; border-color: #c44569; color: #eaeaea !important; box-shadow: 0 0 0 0.2rem rgba(233,69,96,0.25); }
+    .form-control::placeholder { color: #6c757d; }
+    .form-check-input { background-color: #1a1a2e; border-color: #0f3460; }
+    .form-check-input:checked { background-color: #c44569; border-color: #c44569; }
+    .btn-primary { background: #c44569; border-color: #c44569; }
+    .btn-primary:hover { background: #a33d5a; border-color: #a33d5a; }
+    .btn-outline-primary { color: #c44569; border-color: #c44569; }
+    .btn-outline-primary:hover { background: #c44569; color: #fff; }
+    .btn-success { background: #00b894; border-color: #00b894; color: #fff; }
+    .btn-danger { background: #b33939; border-color: #b33939; color: #fff; }
+    .btn-secondary { background: #4a5568; border-color: #4a5568; color: #fff; }
+    .btn-outline-secondary { color: #9ca3af; border-color: #4a5568; }
+    .btn-outline-secondary:hover { background: #4a5568; color: #fff; }
+    .badge { color: #fff !important; }
+    .badge-trigger { background: #00cec9; color: #1a1a2e !important; font-weight: 600; }
+    .badge-requirement { background: #a29bfe; color: #1a1a2e !important; font-weight: 600; }
+    .badge-locked { background: #e17055; color: #1a1a2e !important; font-weight: 600; }
+    .skill-item { background: #0f3460; border: 1px solid #c44569; cursor: pointer; transition: all 0.2s; }
+    .skill-item:hover { background: #1a3a5c; transform: translateX(5px); }
+    .skill-item.active { background: #c44569; }
+    .badge-unlock { background: #fdcb6e; color: #1a1a2e !important; font-weight: 600; }
+    .section-header { border-left: 4px solid #c44569; padding-left: 10px; margin-bottom: 15px; }
+    .trigger-card, .unlock-card, .requirement-card, .locked-card { background: #1a1a2e; border: 1px solid #0f3460; margin-bottom: 10px; }
+    .list-tag { display: inline-block; background: #0f3460; padding: 2px 8px; margin: 2px; border-radius: 4px; font-size: 0.85em; }
+    .list-tag .remove-tag { cursor: pointer; margin-left: 5px; color: #c44569; }
+    #json-preview { background: #0d1117; color: #c9d1d9; font-family: monospace; font-size: 0.85em; max-height: 400px; overflow-y: auto; }
+    .nav-tabs .nav-link { color: #eaeaea; }
+    .nav-tabs .nav-link.active { background: #0f3460; color: #c44569; border-color: #0f3460 #0f3460 #16213e; }
+    .toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; }
+    .alert { color: #fff !important; }
+    .alert-success { background: #00b894; border-color: #00b894; }
+    .alert-danger { background: #b33939; border-color: #b33939; }
+    .btn-close { filter: brightness(0) invert(1); }
+    /* Autocomplete styles */
+    .autocomplete-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: #16213e; border: 1px solid #0f3460; border-radius: 4px; max-height: 200px; overflow-y: auto; z-index: 1000; display: none; }
+    .autocomplete-item { padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #0f3460; color: #eaeaea !important; }
+    .autocomplete-item:hover { background: #0f3460; }
+    .autocomplete-item:last-child { border-bottom: none; }
+    .autocomplete-item strong { color: #c44569 !important; }
+    /* Category browser */
+    .category-browser { max-height: 250px; overflow-y: auto; background: #1a1a2e; border: 1px solid #0f3460; border-radius: 4px; padding: 5px; margin-top: 5px; }
+    .category-title { font-size: 0.75em; color: #c44569 !important; text-transform: uppercase; margin-top: 5px; margin-bottom: 3px; }
+    .category-header { text-transform: uppercase; font-weight: 600; padding: 2px 4px; border-radius: 3px; transition: all 0.2s; }
+    .category-header:hover { background: rgba(255,255,255,0.1); }
+    .category-header small { opacity: 0.7; }
+    .category-item { display: inline-block; background: #0f3460; padding: 2px 6px; margin: 2px; border-radius: 3px; font-size: 0.8em; cursor: pointer; color: #eaeaea !important; transition: all 0.15s; }
+    .category-item:hover { background: #c44569; color: #fff !important; transform: scale(1.05); }
+    .list-tag { color: #eaeaea !important; }
+    /* Category tabs */
+    .category-tab { background: #0f3460; border: 1px solid #0f3460; color: #9ca3af; }
+    .category-tab:hover { background: #1a3a5c; color: #eaeaea; }
+    .category-tab.active { background: #00b894; border-color: #00b894; color: #fff; }
+    .category-tab.active.deny-mode { background: #b33939; border-color: #b33939; }
+  </style>
+</head>
+<body>
+  <div class="toast-container" id="toast-container"></div>
+
+  <div class="container-fluid py-4">
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <h1 class="mb-0">HySkills Builder</h1>
+          <div class="d-flex gap-2">
+            <button class="btn btn-outline-primary" onclick="importJSON()">Import JSON</button>
+            <button class="btn btn-primary" onclick="exportJSON()">Export JSON</button>
+            <input type="file" id="import-file" accept=".json" style="display:none" onchange="handleFileImport(event)">
+          </div>
+        </div>
+        <p class="text-muted mt-2">Create and manage custom RPG skills for Hytale servers</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- Skills List Sidebar -->
+      <div class="col-lg-3 mb-4">
+        <div class="card h-100">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Skills</h5>
+            <button class="btn btn-sm btn-primary" onclick="addNewSkill()">+ Add Skill</button>
+          </div>
+          <div class="card-body p-2" style="max-height: 70vh; overflow-y: auto;">
+            <div id="skills-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Skill Editor -->
+      <div class="col-lg-6 mb-4">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0" id="editor-title">Select or create a skill</h5>
+          </div>
+          <div class="card-body" id="skill-editor" style="max-height: 75vh; overflow-y: auto;">
+            <div class="text-center text-muted py-5">
+              <p>Select a skill from the list or create a new one to start editing</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- JSON Preview -->
+      <div class="col-lg-3 mb-4">
+        <div class="card h-100">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">JSON Preview</h5>
+            <button class="btn btn-sm btn-outline-primary" onclick="copyJSON()">Copy</button>
+          </div>
+          <div class="card-body p-0">
+            <pre id="json-preview" class="p-3 m-0">[]</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Trigger Modal -->
+  <div class="modal fade" id="triggerModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content bg-dark">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Trigger</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Trigger Type</label>
+              <select class="form-select" id="trigger-type">
+                <option value="NONE">NONE - No trigger</option>
+                <option value="BLOCK_BREAK">BLOCK_BREAK - Breaking blocks</option>
+                <option value="ENTITY_KILL">ENTITY_KILL - Killing mobs</option>
+                <option value="PLAYER_CHAT">PLAYER_CHAT - Sending messages</option>
+                <option value="SPRINT">SPRINT - Sprinting</option>
+                <option value="CRAFT_ITEM">CRAFT_ITEM - Crafting items</option>
+                <option value="PLACE_BLOCK">PLACE_BLOCK - Placing blocks</option>
+                <option value="GLIDE">GLIDE - Gliding</option>
+                <option value="SWIM">SWIM - Swimming</option>
+                <option value="CLIMB">CLIMB - Climbing</option>
+                <option value="JUMP">JUMP - Jumping</option>
+                <option value="ROLL">ROLL - Rolling</option>
+                <option value="SLIDE">SLIDE - Sliding</option>
+                <option value="CRITICAL_HIT">CRITICAL_HIT - Critical hits</option>
+                <option value="SPEND_MANA">SPEND_MANA - Spending mana</option>
+                <option value="PLAYER_DEATH">PLAYER_DEATH - Player death</option>
+                <option value="PLAYER_KILL">PLAYER_KILL - Killing players</option>
+                <option value="PARRY">PARRY - Blocking damage</option>
+                <option value="PROJECTILE_HIT">PROJECTILE_HIT - Projectile hits</option>
+                <option value="INTERACT">INTERACT - Interactions (F key)</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">XP Reward</label>
+              <input type="number" class="form-control" id="trigger-xp" value="100" min="0">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Cooldown (ms)</label>
+              <input type="number" class="form-control" id="trigger-cooldown" value="0" min="0">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Min Level</label>
+              <input type="number" class="form-control" id="trigger-min-level" value="0" min="0">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Max Level</label>
+              <input type="number" class="form-control" id="trigger-max-level" value="2147483647" min="0">
+            </div>
+            <div class="col-12">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="trigger-requires-movement">
+                <label class="form-check-label" for="trigger-requires-movement">Requires Movement</label>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="d-flex justify-content-between align-items-center">
+                <label class="form-label mb-0">Allow List <small class="text-muted">(items/entities that trigger XP)</small></label>
+                <button class="btn btn-sm btn-outline-danger" onclick="clearTriggerList('allow')" title="Remove all">Clear All</button>
+              </div>
+              <div class="input-group mb-2 mt-1" style="position: relative;">
+                <input type="text" class="form-control autocomplete-input" id="trigger-allow-input" data-autocomplete-type="all" placeholder="Type to search...">
+                <button class="btn btn-outline-primary" onclick="addToTriggerList('allow')">Add</button>
+              </div>
+              <div id="trigger-allow-list" class="d-flex flex-wrap" style="max-height: 100px; overflow-y: auto;"></div>
+            </div>
+            <div class="col-md-6">
+              <div class="d-flex justify-content-between align-items-center">
+                <label class="form-label mb-0">Deny List <small class="text-muted">(items/entities to exclude)</small></label>
+                <button class="btn btn-sm btn-outline-danger" onclick="clearTriggerList('deny')" title="Remove all">Clear All</button>
+              </div>
+              <div class="input-group mb-2 mt-1" style="position: relative;">
+                <input type="text" class="form-control autocomplete-input" id="trigger-deny-input" data-autocomplete-type="all" placeholder="Type to search...">
+                <button class="btn btn-outline-primary" onclick="addToTriggerList('deny')">Add</button>
+              </div>
+              <div id="trigger-deny-list" class="d-flex flex-wrap" style="max-height: 100px; overflow-y: auto;"></div>
+            </div>
+            <!-- Full-width Category Browser -->
+            <div class="col-12 mt-3">
+              <label class="form-label">Category Browser <small class="text-muted">(click category name to add all, or click individual items)</small></label>
+              <div class="d-flex gap-2 mb-2">
+                <button class="btn btn-sm category-tab active" id="tab-allow" onclick="switchCategoryTab('allow')">Allow List (0)</button>
+                <button class="btn btn-sm category-tab" id="tab-deny" onclick="switchCategoryTab('deny')">Deny List (0)</button>
+              </div>
+              <div class="input-group mb-2">
+                <span class="input-group-text" style="background: #0f3460; border-color: #0f3460; color: #eaeaea;">Filter</span>
+                <input type="text" class="form-control" id="category-search" placeholder="Type to filter items (e.g. 'skeleton', 'sword')..." oninput="filterCategories()">
+                <button class="btn btn-outline-secondary" onclick="document.getElementById('category-search').value=''; filterCategories();">Clear</button>
+              </div>
+              <div class="category-browser" id="trigger-categories" style="max-height: 300px;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="saveTrigger()">Add Trigger</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Unlock Modal -->
+  <div class="modal fade" id="unlockModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Unlock</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label">Unlock Type</label>
+              <select class="form-select" id="unlock-type" onchange="updateUnlockFields()">
+                <option value="ITEM">ITEM - Give item as reward</option>
+                <option value="STAT_HEALTH">STAT_HEALTH - Max health</option>
+                <option value="STAT_STAMINA">STAT_STAMINA - Max stamina</option>
+                <option value="STAT_MANA">STAT_MANA - Max mana</option>
+                <option value="STAT_OXYGEN">STAT_OXYGEN - Max oxygen</option>
+                <option value="STAT_STAMINA_REGEN">STAT_STAMINA_REGEN - Stamina regen</option>
+                <option value="STAT_BLOCKBREAK_SPEED">STAT_BLOCKBREAK_SPEED - Block break speed</option>
+                <option value="STAT_STRENGTH">STAT_STRENGTH - Damage dealt</option>
+                <option value="STAT_DEFENSE">STAT_DEFENSE - Damage reduction</option>
+                <option value="STAT_CRIT_CHANCE">STAT_CRIT_CHANCE - Crit chance</option>
+                <option value="STAT_CRIT_DAMAGE">STAT_CRIT_DAMAGE - Crit damage</option>
+                <option value="STAT_VAMPIRISM">STAT_VAMPIRISM - Health on hit</option>
+                <option value="STAT_CRAFTING_PROFICIENCY">STAT_CRAFTING_PROFICIENCY - Double craft chance</option>
+                <option value="STAT_MOVEMENT_SPEED">STAT_MOVEMENT_SPEED - Movement speed</option>
+                <option value="MAGNET">MAGNET - Item magnet</option>
+                <option value="STAT_DURABILITY_MODIFIER">STAT_DURABILITY_MODIFIER - Durability modifier</option>
+                <option value="STAT_BONUS_DROP_CHANCE">STAT_BONUS_DROP_CHANCE - Double drop chance</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Level Required</label>
+              <input type="number" class="form-control" id="unlock-level" value="1" min="1">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Amount</label>
+              <input type="number" class="form-control" id="unlock-amount" value="1" step="0.001">
+            </div>
+            <div class="col-12" id="unlock-target-group" style="position: relative;">
+              <label class="form-label">Target (Item ID)</label>
+              <input type="text" class="form-control autocomplete-input" id="unlock-target" data-autocomplete-type="items" placeholder="Type to search items...">
+            </div>
+            <div class="col-12">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="unlock-every-level">
+                <label class="form-check-label" for="unlock-every-level">Apply every level (starting from level specified)</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="saveUnlock()">Add Unlock</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Requirement Modal -->
+  <div class="modal fade" id="requirementModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Requirement</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label">Requirement Type</label>
+              <select class="form-select" id="requirement-type">
+                <option value="ITEM_IN_HAND">ITEM_IN_HAND - Must hold specific item</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Allow List <small class="text-muted">(items that satisfy requirement)</small></label>
+              <div class="input-group mb-2" style="position: relative;">
+                <input type="text" class="form-control autocomplete-input" id="requirement-allow-input" data-autocomplete-type="items" placeholder="Type to search items...">
+                <button class="btn btn-outline-primary" onclick="addToRequirementList('allow')">Add</button>
+              </div>
+              <div id="requirement-allow-list" class="d-flex flex-wrap"></div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Deny List <small class="text-muted">(items to exclude)</small></label>
+              <div class="input-group mb-2" style="position: relative;">
+                <input type="text" class="form-control autocomplete-input" id="requirement-deny-input" data-autocomplete-type="items" placeholder="Type to search items...">
+                <button class="btn btn-outline-primary" onclick="addToRequirementList('deny')">Add</button>
+              </div>
+              <div id="requirement-deny-list" class="d-flex flex-wrap"></div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="saveRequirement()">Add Requirement</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Locked Item Modal -->
+  <div class="modal fade" id="lockedItemModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Locked Item</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-12" style="position: relative;">
+              <label class="form-label">Item ID</label>
+              <input type="text" class="form-control autocomplete-input" id="locked-item-id" data-autocomplete-type="items" placeholder="Type to search items...">
+            </div>
+            <div class="col-12">
+              <label class="form-label">Level Required</label>
+              <input type="number" class="form-control" id="locked-item-level" value="1" min="1">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" onclick="saveLockedItem()">Add Locked Item</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Credit -->
+  <footer class="text-center py-4 mt-4" style="border-top: 1px solid #0f3460;">
+    <p class="mb-1 small">
+      Built for <a href="https://github.com/Chemica1/HySkills" target="_blank" style="color: #c44569; text-decoration: none;">HySkills</a> -
+      A custom skills mod for Hytale by <strong style="color: #00cec9;">Chemica1</strong>
+    </p>
+    <p class="text-muted small mb-0">Thank you for creating such an awesome mod!</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
