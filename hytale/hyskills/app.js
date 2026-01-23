@@ -15,6 +15,7 @@ let tempRequirementDenyList = [];
 
 // Game data for autocomplete
 let gameData = null;
+let modFunctions = null;
 let allEntities = [];
 let allItems = [];
 let allBlocks = [];
@@ -28,27 +29,157 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupAutocomplete();
 });
 
-// Load game data
+// Load game data from 3 separate files
 async function loadGameData() {
   try {
-    const response = await fetch('game_data.json');
-    gameData = await response.json();
+    // Load all 3 files in parallel
+    const [entitiesRes, objectsRes, modFunctionsRes] = await Promise.all([
+      fetch('entities.json'),
+      fetch('items_and_blocks.json'),
+      fetch('mod_functions.json')
+    ]);
 
-    // Flatten entities
+    const entities = await entitiesRes.json();
+    const objects = await objectsRes.json();
+    modFunctions = await modFunctionsRes.json();
+
+    // Build gameData structure for category browser
+    gameData = {
+      entities: entities,
+      items: {},
+      blocks: {}
+    };
+
+    // Auto-categorize items and blocks from flat array
+    const itemCategories = {
+      weapons: [],
+      tools: [],
+      armor: [],
+      consumables: [],
+      materials: [],
+      containers: [],
+      fish: [],
+      plants: [],
+      equipment: [],
+      misc: []
+    };
+
+    const blockCategories = {
+      terrain: [],
+      stone: [],
+      ores: [],
+      wood: [],
+      building: [],
+      furniture: [],
+      crafting_stations: [],
+      spawners: [],
+      misc: []
+    };
+
+    // Categorize each object by its ID prefix
+    objects.forEach(obj => {
+      const id = obj.id;
+
+      // Skip state variants (items with * prefix are usually states)
+      if (id.startsWith('*')) return;
+
+      // Weapons
+      if (id.startsWith('Weapon_')) {
+        itemCategories.weapons.push(id);
+      }
+      // Tools
+      else if (id.startsWith('Tool_')) {
+        itemCategories.tools.push(id);
+      }
+      // Armor
+      else if (id.startsWith('Armor_')) {
+        itemCategories.armor.push(id);
+      }
+      // Consumables
+      else if (id.startsWith('Food_') || id.startsWith('Potion_') || id.startsWith('Bandage_')) {
+        itemCategories.consumables.push(id);
+      }
+      // Materials
+      else if (id.startsWith('Ingredient_') || id.startsWith('Cloth_') || id.startsWith('Ore_')) {
+        itemCategories.materials.push(id);
+      }
+      // Fish
+      else if (id.startsWith('Fish_')) {
+        itemCategories.fish.push(id);
+      }
+      // Containers
+      else if (id.startsWith('Container_')) {
+        itemCategories.containers.push(id);
+      }
+      // Plants/Farming
+      else if (id.startsWith('Plant_') || id.startsWith('Farming_') || id.startsWith('Egg_') || id.startsWith('Tree_')) {
+        itemCategories.plants.push(id);
+      }
+      // Equipment (gliders, etc)
+      else if (id.startsWith('Glider_')) {
+        itemCategories.equipment.push(id);
+      }
+      // Blocks
+      else if (id.startsWith('Block_')) {
+        blockCategories.building.push(id);
+      }
+      // Furniture & Decoration
+      else if (id.startsWith('Furniture_') || id.startsWith('Deco_')) {
+        blockCategories.furniture.push(id);
+      }
+      // Terrain
+      else if (id.startsWith('Soil_') || id.startsWith('Rock_') || id.startsWith('Rubble_')) {
+        blockCategories.terrain.push(id);
+      }
+      // Crafting stations
+      else if (id.startsWith('Alchemy_') || id.startsWith('Bench_') || id.startsWith('Tinkering_')) {
+        blockCategories.crafting_stations.push(id);
+      }
+      // Spawners
+      else if (id.startsWith('Spawn_') || id.startsWith('Spawner_')) {
+        blockCategories.spawners.push(id);
+      }
+      // Wood/Trees
+      else if (id.startsWith('Wood_')) {
+        blockCategories.wood.push(id);
+      }
+      // Skip debug/test/editor items
+      else if (id.startsWith('Debug_') || id.startsWith('Test_') || id.startsWith('Editor_') ||
+               id.startsWith('Prototype_') || id.startsWith('Template_') || id.startsWith('Example_')) {
+        // Skip these
+      }
+      // Other items go to misc
+      else {
+        itemCategories.misc.push(id);
+      }
+    });
+
+    // Remove empty categories and assign to gameData
+    for (const [cat, items] of Object.entries(itemCategories)) {
+      if (items.length > 0) {
+        gameData.items[cat] = items.sort();
+      }
+    }
+
+    for (const [cat, blocks] of Object.entries(blockCategories)) {
+      if (blocks.length > 0) {
+        gameData.blocks[cat] = blocks.sort();
+      }
+    }
+
+    // Flatten for autocomplete
     allEntities = [];
     for (const category in gameData.entities) {
       allEntities.push(...gameData.entities[category]);
     }
     allEntities = [...new Set(allEntities)].sort();
 
-    // Flatten items
     allItems = [];
     for (const category in gameData.items) {
       allItems.push(...gameData.items[category]);
     }
     allItems = [...new Set(allItems)].sort();
 
-    // Flatten blocks
     allBlocks = [];
     for (const category in gameData.blocks) {
       allBlocks.push(...gameData.blocks[category]);
@@ -59,6 +190,7 @@ async function loadGameData() {
   } catch (err) {
     console.error('Failed to load game data:', err);
     gameData = { entities: {}, items: {}, blocks: {} };
+    modFunctions = { triggerTypes: [], unlockTypes: [], requirementTypes: [] };
   }
 }
 
@@ -104,6 +236,18 @@ function showAutocomplete(input) {
   }
   if (type === 'blocks' || type === 'all') {
     suggestions.push(...allBlocks.filter(b => b.toLowerCase().includes(value)));
+  }
+
+  // Filter out items already in the corresponding list
+  const inputId = input.id;
+  if (inputId === 'trigger-allow-input') {
+    suggestions = suggestions.filter(s => !tempTriggerAllowList.includes(s));
+  } else if (inputId === 'trigger-deny-input') {
+    suggestions = suggestions.filter(s => !tempTriggerDenyList.includes(s));
+  } else if (inputId === 'requirement-allow-input') {
+    suggestions = suggestions.filter(s => !tempRequirementAllowList.includes(s));
+  } else if (inputId === 'requirement-deny-input') {
+    suggestions = suggestions.filter(s => !tempRequirementDenyList.includes(s));
   }
 
   suggestions = [...new Set(suggestions)].slice(0, 15);
@@ -714,6 +858,53 @@ function copyTriggerToSkill(triggerIndex, targetSkillIndex) {
   showToast(`Trigger copied to "${skills[targetSkillIndex].displayName || skills[targetSkillIndex].id}"`);
 }
 
+// Generic dropdown helper for copying items to other skills
+function getSkillsDropdownFor(type, itemIndex) {
+  const otherSkills = skills.filter((s, i) => i !== currentSkillIndex);
+  if (otherSkills.length === 0) {
+    return '<li><span class="dropdown-item text-muted">No other skills</span></li>';
+  }
+  return skills.map((s, i) => {
+    if (i === currentSkillIndex) return '';
+    return `<li><a class="dropdown-item" href="#" onclick="copyItemToSkill('${type}', ${itemIndex}, ${i}); return false;">${s.displayName || s.id}</a></li>`;
+  }).join('');
+}
+
+function copyItemToSkill(type, itemIndex, targetSkillIndex) {
+  let source, targetArray, itemName;
+
+  switch (type) {
+    case 'requirement':
+      source = skills[currentSkillIndex].requirements[itemIndex];
+      if (!skills[targetSkillIndex].requirements) skills[targetSkillIndex].requirements = [];
+      targetArray = skills[targetSkillIndex].requirements;
+      itemName = 'Requirement';
+      break;
+    case 'unlock':
+      source = skills[currentSkillIndex].unlocks[itemIndex];
+      if (!skills[targetSkillIndex].unlocks) skills[targetSkillIndex].unlocks = [];
+      targetArray = skills[targetSkillIndex].unlocks;
+      itemName = 'Unlock';
+      break;
+    case 'lockedItem':
+      source = skills[currentSkillIndex].lockedItems[itemIndex];
+      if (!skills[targetSkillIndex].lockedItems) skills[targetSkillIndex].lockedItems = [];
+      targetArray = skills[targetSkillIndex].lockedItems;
+      itemName = 'Locked item';
+      break;
+    default:
+      return;
+  }
+
+  const copy = JSON.parse(JSON.stringify(source));
+  targetArray.push(copy);
+
+  saveToLocalStorage();
+  renderSkillsList();
+  updateJSONPreview();
+  showToast(`${itemName} copied to "${skills[targetSkillIndex].displayName || skills[targetSkillIndex].id}"`);
+}
+
 // Requirements
 function renderRequirements(requirements) {
   if (!requirements || requirements.length === 0) {
@@ -726,8 +917,14 @@ function renderRequirements(requirements) {
         <div>
           <span class="badge badge-requirement">${req.type}</span>
         </div>
-        <div>
-          <button class="btn btn-sm btn-outline-primary me-1" onclick="editRequirement(${index})">Edit</button>
+        <div class="d-flex gap-1">
+          <div class="dropdown d-inline-block">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" title="Copy to another skill">Copy</button>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              ${getSkillsDropdownFor('requirement', index)}
+            </ul>
+          </div>
+          <button class="btn btn-sm btn-outline-primary" onclick="editRequirement(${index})">Edit</button>
           <button class="btn btn-sm btn-danger" onclick="deleteRequirement(${index})">X</button>
         </div>
       </div>
@@ -831,22 +1028,32 @@ function renderUnlocks(unlocks) {
     return '<p class="text-muted small">No unlocks. Add rewards players get when leveling up.</p>';
   }
 
-  return unlocks.map((unlock, index) => `
+  return unlocks.map((unlock, index) => {
+    const valueTypeLabel = unlock.valueType === 'PERCENT_BASE' ? '% base' :
+                          unlock.valueType === 'PERCENT_TOTAL' ? '% total' : '';
+    return `
     <div class="unlock-card p-3 rounded">
       <div class="d-flex justify-content-between align-items-start">
         <div>
           <span class="badge badge-unlock">${unlock.type}</span>
           <span class="ms-2">Level ${unlock.level}${unlock.everyLevel ? '+' : ''}</span>
-          <span class="ms-2 text-muted">(+${unlock.amount})</span>
+          <span class="ms-2 text-muted">(+${unlock.amount}${valueTypeLabel})</span>
           ${unlock.target ? `<span class="ms-2 small">${unlock.target}</span>` : ''}
         </div>
-        <div>
-          <button class="btn btn-sm btn-outline-primary me-1" onclick="editUnlock(${index})">Edit</button>
+        <div class="d-flex gap-1">
+          <div class="dropdown d-inline-block">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" title="Copy to another skill">Copy</button>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              ${getSkillsDropdownFor('unlock', index)}
+            </ul>
+          </div>
+          <button class="btn btn-sm btn-outline-primary" onclick="editUnlock(${index})">Edit</button>
           <button class="btn btn-sm btn-danger" onclick="deleteUnlock(${index})">X</button>
         </div>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 function openUnlockModal(editIndex = null) {
@@ -857,6 +1064,7 @@ function openUnlockModal(editIndex = null) {
   document.getElementById('unlock-amount').value = 1;
   document.getElementById('unlock-target').value = '';
   document.getElementById('unlock-every-level').checked = false;
+  document.getElementById('unlock-valuetype').value = 'FLAT';
 
   if (editIndex !== null && currentSkillIndex !== null) {
     const unlock = skills[currentSkillIndex].unlocks[editIndex];
@@ -865,6 +1073,7 @@ function openUnlockModal(editIndex = null) {
     document.getElementById('unlock-amount').value = unlock.amount;
     document.getElementById('unlock-target').value = unlock.target || '';
     document.getElementById('unlock-every-level').checked = unlock.everyLevel || false;
+    document.getElementById('unlock-valuetype').value = unlock.valueType || 'FLAT';
   }
 
   updateUnlockFields();
@@ -874,6 +1083,7 @@ function openUnlockModal(editIndex = null) {
 function updateUnlockFields() {
   const type = document.getElementById('unlock-type').value;
   const targetGroup = document.getElementById('unlock-target-group');
+  const valueTypeGroup = document.getElementById('unlock-valuetype-group');
 
   // Show target field only for ITEM type
   if (type === 'ITEM') {
@@ -881,18 +1091,35 @@ function updateUnlockFields() {
   } else {
     targetGroup.style.display = 'none';
   }
+
+  // Show valueType field only for stat types (not ITEM or MAGNET)
+  if (type !== 'ITEM' && type !== 'MAGNET') {
+    valueTypeGroup.style.display = 'block';
+  } else {
+    valueTypeGroup.style.display = 'none';
+  }
 }
 
 function saveUnlock() {
   if (currentSkillIndex === null) return;
 
+  const type = document.getElementById('unlock-type').value;
+  const valueType = document.getElementById('unlock-valuetype').value;
+  const isStatType = type !== 'ITEM' && type !== 'MAGNET';
+
   const unlock = {
-    type: document.getElementById('unlock-type').value,
+    type: type,
     level: parseInt(document.getElementById('unlock-level').value) || 1,
     everyLevel: document.getElementById('unlock-every-level').checked,
     target: document.getElementById('unlock-target').value.trim(),
     amount: parseFloat(document.getElementById('unlock-amount').value) || 1
   };
+
+  // Add percentage and valueType only for stat types
+  if (isStatType) {
+    unlock.percentage = valueType !== 'FLAT';
+    unlock.valueType = valueType;
+  }
 
   if (editingUnlockIndex !== null) {
     skills[currentSkillIndex].unlocks[editingUnlockIndex] = unlock;
@@ -934,8 +1161,14 @@ function renderLockedItems(lockedItems) {
           <span class="badge badge-locked">Level ${item.level}</span>
           <span class="ms-2">${item.itemId}</span>
         </div>
-        <div>
-          <button class="btn btn-sm btn-outline-primary me-1" onclick="editLockedItem(${index})">Edit</button>
+        <div class="d-flex gap-1">
+          <div class="dropdown d-inline-block">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" title="Copy to another skill">Copy</button>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              ${getSkillsDropdownFor('lockedItem', index)}
+            </ul>
+          </div>
+          <button class="btn btn-sm btn-outline-primary" onclick="editLockedItem(${index})">Edit</button>
           <button class="btn btn-sm btn-danger" onclick="deleteLockedItem(${index})">X</button>
         </div>
       </div>

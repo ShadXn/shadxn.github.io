@@ -69,6 +69,9 @@
     .category-tab:hover { background: #1a3a5c; color: #eaeaea; }
     .category-tab.active { background: #00b894; border-color: #00b894; color: #fff; }
     .category-tab.active.deny-mode { background: #b33939; border-color: #b33939; }
+    /* Resizable list containers */
+    #trigger-allow-list, #trigger-deny-list { background: #1a1a2e; }
+    #trigger-allow-list::-webkit-resizer, #trigger-deny-list::-webkit-resizer { background: #c44569; border-radius: 2px; }
   </style>
 </head>
 <body>
@@ -198,7 +201,7 @@
                 <input type="text" class="form-control autocomplete-input" id="trigger-allow-input" data-autocomplete-type="all" placeholder="Type to search...">
                 <button class="btn btn-outline-primary" onclick="addToTriggerList('allow')">Add</button>
               </div>
-              <div id="trigger-allow-list" class="d-flex flex-wrap" style="max-height: 100px; overflow-y: auto;"></div>
+              <div id="trigger-allow-list" class="d-flex flex-wrap" style="min-height: 50px; height: 100px; overflow-y: auto; resize: vertical; border: 1px solid #0f3460; border-radius: 4px; padding: 5px;"></div>
             </div>
             <div class="col-md-6">
               <div class="d-flex justify-content-between align-items-center">
@@ -209,7 +212,7 @@
                 <input type="text" class="form-control autocomplete-input" id="trigger-deny-input" data-autocomplete-type="all" placeholder="Type to search...">
                 <button class="btn btn-outline-primary" onclick="addToTriggerList('deny')">Add</button>
               </div>
-              <div id="trigger-deny-list" class="d-flex flex-wrap" style="max-height: 100px; overflow-y: auto;"></div>
+              <div id="trigger-deny-list" class="d-flex flex-wrap" style="min-height: 50px; height: 100px; overflow-y: auto; resize: vertical; border: 1px solid #0f3460; border-radius: 4px; padding: 5px;"></div>
             </div>
             <!-- Full-width Category Browser -->
             <div class="col-12 mt-3">
@@ -274,6 +277,15 @@
             <div class="col-md-6">
               <label class="form-label">Amount</label>
               <input type="number" class="form-control" id="unlock-amount" value="1" step="0.001">
+            </div>
+            <div class="col-12" id="unlock-valuetype-group">
+              <label class="form-label">Value Type</label>
+              <select class="form-select" id="unlock-valuetype">
+                <option value="FLAT">FLAT - Flat value increase</option>
+                <option value="PERCENT_BASE">PERCENT_BASE - Percentage of base stat</option>
+                <option value="PERCENT_TOTAL">PERCENT_TOTAL - Percentage of total stat</option>
+              </select>
+              <small class="text-muted">FLAT adds fixed value, PERCENT adds % of base/total stat</small>
             </div>
             <div class="col-12" id="unlock-target-group" style="position: relative;">
               <label class="form-label">Target (Item ID)</label>
@@ -348,7 +360,7 @@
         <div class="modal-body">
           <div class="row g-3">
             <div class="col-12" style="position: relative;">
-              <label class="form-label">Item ID</label>
+              <label class="form-label">Item ID <small class="text-muted">(Only select one item)</small></label>
               <input type="text" class="form-control autocomplete-input" id="locked-item-id" data-autocomplete-type="items" placeholder="Type to search items...">
             </div>
             <div class="col-12">
