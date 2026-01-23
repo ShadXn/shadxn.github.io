@@ -493,25 +493,48 @@ function renderSkillsList() {
     return;
   }
 
+  const len = skills.length;
   container.innerHTML = skills.map((skill, index) => `
     <div class="skill-item p-3 rounded mb-2 ${currentSkillIndex === index ? 'active' : ''}" onclick="selectSkill(${index})">
       <div class="d-flex justify-content-between align-items-start">
         <div>
           <strong>${skill.displayName || 'Unnamed Skill'}</strong>
           <div class="small text-muted">ID: ${skill.id}</div>
-          <div class="small mt-1">
-            <span class="badge badge-trigger me-1">${skill.triggers?.length || 0} triggers</span>
-            <span class="badge badge-unlock me-1">${skill.unlocks?.length || 0} unlocks</span>
-            <span class="badge badge-locked me-1">${skill.lockedItems?.length || 0} locked</span>
-          </div>
         </div>
         <div class="d-flex gap-1">
+          <button class="btn btn-sm btn-outline-secondary ${index === 0 ? 'disabled' : ''}" onclick="event.stopPropagation(); moveSkill(${index}, -1)" title="Move up">↑</button>
+          <button class="btn btn-sm btn-outline-secondary ${index === len - 1 ? 'disabled' : ''}" onclick="event.stopPropagation(); moveSkill(${index}, 1)" title="Move down">↓</button>
           <button class="btn btn-sm btn-outline-secondary" onclick="event.stopPropagation(); duplicateSkill(${index})" title="Duplicate skill">Dup</button>
           <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); deleteSkill(${index})">X</button>
         </div>
       </div>
+      <div class="mt-2 pt-2" style="border-top: 1px solid rgba(255,255,255,0.1);">
+        <span class="badge badge-requirement me-1">${skill.requirements?.length || 0} req</span>
+        <span class="badge badge-trigger me-1">${skill.triggers?.length || 0} triggers</span>
+        <span class="badge badge-unlock me-1">${skill.unlocks?.length || 0} unlocks</span>
+        <span class="badge badge-locked me-1">${skill.lockedItems?.length || 0} locked</span>
+      </div>
     </div>
   `).join('');
+}
+
+function moveSkill(index, direction) {
+  const newIndex = index + direction;
+  if (newIndex < 0 || newIndex >= skills.length) return;
+
+  // Swap skills
+  [skills[index], skills[newIndex]] = [skills[newIndex], skills[index]];
+
+  // Update currentSkillIndex if needed
+  if (currentSkillIndex === index) {
+    currentSkillIndex = newIndex;
+  } else if (currentSkillIndex === newIndex) {
+    currentSkillIndex = index;
+  }
+
+  saveToLocalStorage();
+  renderSkillsList();
+  updateJSONPreview();
 }
 
 function addNewSkill() {
@@ -623,7 +646,15 @@ function renderSkillEditor() {
     <div class="mb-4">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h6 class="section-header mb-0">Requirements</h6>
-        <button class="btn btn-sm btn-primary" onclick="openRequirementModal()">+ Add Requirement</button>
+        <div class="d-flex gap-1">
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" title="Copy all requirements to another skill">Copy All</button>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              ${getCopyAllDropdown('requirement')}
+            </ul>
+          </div>
+          <button class="btn btn-sm btn-primary" onclick="openRequirementModal()">+ Add Requirement</button>
+        </div>
       </div>
       <div id="requirements-container">
         ${renderRequirements(skill.requirements)}
@@ -634,7 +665,15 @@ function renderSkillEditor() {
     <div class="mb-4">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h6 class="section-header mb-0">Triggers</h6>
-        <button class="btn btn-sm btn-primary" onclick="openTriggerModal()">+ Add Trigger</button>
+        <div class="d-flex gap-1">
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" title="Copy all triggers to another skill">Copy All</button>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              ${getCopyAllDropdown('trigger')}
+            </ul>
+          </div>
+          <button class="btn btn-sm btn-primary" onclick="openTriggerModal()">+ Add Trigger</button>
+        </div>
       </div>
       <div id="triggers-container">
         ${renderTriggers(skill.triggers)}
@@ -645,7 +684,15 @@ function renderSkillEditor() {
     <div class="mb-4">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h6 class="section-header mb-0">Unlocks</h6>
-        <button class="btn btn-sm btn-primary" onclick="openUnlockModal()">+ Add Unlock</button>
+        <div class="d-flex gap-1">
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" title="Copy all unlocks to another skill">Copy All</button>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              ${getCopyAllDropdown('unlock')}
+            </ul>
+          </div>
+          <button class="btn btn-sm btn-primary" onclick="openUnlockModal()">+ Add Unlock</button>
+        </div>
       </div>
       <div id="unlocks-container">
         ${renderUnlocks(skill.unlocks)}
@@ -656,7 +703,15 @@ function renderSkillEditor() {
     <div class="mb-4">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h6 class="section-header mb-0">Locked Items</h6>
-        <button class="btn btn-sm btn-primary" onclick="openLockedItemModal()">+ Add Locked Item</button>
+        <div class="d-flex gap-1">
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" title="Copy all locked items to another skill">Copy All</button>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              ${getCopyAllDropdown('lockedItem')}
+            </ul>
+          </div>
+          <button class="btn btn-sm btn-primary" onclick="openLockedItemModal()">+ Add Locked Item</button>
+        </div>
       </div>
       <div id="locked-items-container">
         ${renderLockedItems(skill.lockedItems)}
@@ -682,6 +737,7 @@ function renderTriggers(triggers) {
     return '<p class="text-muted small">No triggers. Add one to define how XP is gained.</p>';
   }
 
+  const len = triggers.length;
   return triggers.map((trigger, index) => `
     <div class="trigger-card p-3 rounded">
       <div class="d-flex justify-content-between align-items-start">
@@ -691,6 +747,8 @@ function renderTriggers(triggers) {
           ${trigger.cooldown > 0 ? `<span class="ms-2 text-muted small">(${trigger.cooldown}ms cooldown)</span>` : ''}
         </div>
         <div class="d-flex gap-1 flex-wrap">
+          <button class="btn btn-sm btn-outline-secondary ${index === 0 ? 'disabled' : ''}" onclick="moveItem('trigger', ${index}, -1)" title="Move up">↑</button>
+          <button class="btn btn-sm btn-outline-secondary ${index === len - 1 ? 'disabled' : ''}" onclick="moveItem('trigger', ${index}, 1)" title="Move down">↓</button>
           <button class="btn btn-sm btn-outline-secondary" onclick="duplicateTrigger(${index})" title="Duplicate in this skill">Dup</button>
           <div class="dropdown d-inline-block">
             <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" title="Copy to another skill">Copy</button>
@@ -905,12 +963,109 @@ function copyItemToSkill(type, itemIndex, targetSkillIndex) {
   showToast(`${itemName} copied to "${skills[targetSkillIndex].displayName || skills[targetSkillIndex].id}"`);
 }
 
+// Copy All dropdown helper
+function getCopyAllDropdown(type) {
+  const otherSkills = skills.filter((s, i) => i !== currentSkillIndex);
+  if (otherSkills.length === 0) {
+    return '<li><span class="dropdown-item text-muted">No other skills</span></li>';
+  }
+  return skills.map((s, i) => {
+    if (i === currentSkillIndex) return '';
+    return `<li><a class="dropdown-item" href="#" onclick="copyAllToSkill('${type}', ${i}); return false;">${s.displayName || s.id}</a></li>`;
+  }).join('');
+}
+
+function copyAllToSkill(type, targetSkillIndex) {
+  let sourceArray, targetArrayName, itemName;
+  const skill = skills[currentSkillIndex];
+
+  switch (type) {
+    case 'requirement':
+      sourceArray = skill.requirements || [];
+      targetArrayName = 'requirements';
+      itemName = 'requirements';
+      break;
+    case 'trigger':
+      sourceArray = skill.triggers || [];
+      targetArrayName = 'triggers';
+      itemName = 'triggers';
+      break;
+    case 'unlock':
+      sourceArray = skill.unlocks || [];
+      targetArrayName = 'unlocks';
+      itemName = 'unlocks';
+      break;
+    case 'lockedItem':
+      sourceArray = skill.lockedItems || [];
+      targetArrayName = 'lockedItems';
+      itemName = 'locked items';
+      break;
+    default:
+      return;
+  }
+
+  if (sourceArray.length === 0) {
+    showToast(`No ${itemName} to copy`, 'warning');
+    return;
+  }
+
+  if (!skills[targetSkillIndex][targetArrayName]) {
+    skills[targetSkillIndex][targetArrayName] = [];
+  }
+
+  sourceArray.forEach(item => {
+    const copy = JSON.parse(JSON.stringify(item));
+    skills[targetSkillIndex][targetArrayName].push(copy);
+  });
+
+  saveToLocalStorage();
+  renderSkillsList();
+  updateJSONPreview();
+  showToast(`${sourceArray.length} ${itemName} copied to "${skills[targetSkillIndex].displayName || skills[targetSkillIndex].id}"`);
+}
+
+// Move item up/down in list
+function moveItem(type, index, direction) {
+  if (currentSkillIndex === null) return;
+
+  let array;
+  switch (type) {
+    case 'trigger':
+      array = skills[currentSkillIndex].triggers;
+      break;
+    case 'requirement':
+      array = skills[currentSkillIndex].requirements;
+      break;
+    case 'unlock':
+      array = skills[currentSkillIndex].unlocks;
+      break;
+    case 'lockedItem':
+      array = skills[currentSkillIndex].lockedItems;
+      break;
+    default:
+      return;
+  }
+
+  if (!array) return;
+
+  const newIndex = index + direction;
+  if (newIndex < 0 || newIndex >= array.length) return;
+
+  // Swap items
+  [array[index], array[newIndex]] = [array[newIndex], array[index]];
+
+  saveToLocalStorage();
+  renderSkillEditor();
+  updateJSONPreview();
+}
+
 // Requirements
 function renderRequirements(requirements) {
   if (!requirements || requirements.length === 0) {
     return '<p class="text-muted small">No requirements. Add one to restrict when skill XP can be gained.</p>';
   }
 
+  const len = requirements.length;
   return requirements.map((req, index) => `
     <div class="requirement-card p-3 rounded">
       <div class="d-flex justify-content-between align-items-start">
@@ -918,6 +1073,8 @@ function renderRequirements(requirements) {
           <span class="badge badge-requirement">${req.type}</span>
         </div>
         <div class="d-flex gap-1">
+          <button class="btn btn-sm btn-outline-secondary ${index === 0 ? 'disabled' : ''}" onclick="moveItem('requirement', ${index}, -1)" title="Move up">↑</button>
+          <button class="btn btn-sm btn-outline-secondary ${index === len - 1 ? 'disabled' : ''}" onclick="moveItem('requirement', ${index}, 1)" title="Move down">↓</button>
           <div class="dropdown d-inline-block">
             <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" title="Copy to another skill">Copy</button>
             <ul class="dropdown-menu dropdown-menu-dark">
@@ -1028,6 +1185,7 @@ function renderUnlocks(unlocks) {
     return '<p class="text-muted small">No unlocks. Add rewards players get when leveling up.</p>';
   }
 
+  const len = unlocks.length;
   return unlocks.map((unlock, index) => {
     const valueTypeLabel = unlock.valueType === 'PERCENT_BASE' ? '% base' :
                           unlock.valueType === 'PERCENT_TOTAL' ? '% total' : '';
@@ -1041,6 +1199,8 @@ function renderUnlocks(unlocks) {
           ${unlock.target ? `<span class="ms-2 small">${unlock.target}</span>` : ''}
         </div>
         <div class="d-flex gap-1">
+          <button class="btn btn-sm btn-outline-secondary ${index === 0 ? 'disabled' : ''}" onclick="moveItem('unlock', ${index}, -1)" title="Move up">↑</button>
+          <button class="btn btn-sm btn-outline-secondary ${index === len - 1 ? 'disabled' : ''}" onclick="moveItem('unlock', ${index}, 1)" title="Move down">↓</button>
           <div class="dropdown d-inline-block">
             <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" title="Copy to another skill">Copy</button>
             <ul class="dropdown-menu dropdown-menu-dark">
@@ -1154,6 +1314,7 @@ function renderLockedItems(lockedItems) {
     return '<p class="text-muted small">No locked items. Add items that require skill levels to use.</p>';
   }
 
+  const len = lockedItems.length;
   return lockedItems.map((item, index) => `
     <div class="locked-card p-3 rounded">
       <div class="d-flex justify-content-between align-items-start">
@@ -1162,6 +1323,8 @@ function renderLockedItems(lockedItems) {
           <span class="ms-2">${item.itemId}</span>
         </div>
         <div class="d-flex gap-1">
+          <button class="btn btn-sm btn-outline-secondary ${index === 0 ? 'disabled' : ''}" onclick="moveItem('lockedItem', ${index}, -1)" title="Move up">↑</button>
+          <button class="btn btn-sm btn-outline-secondary ${index === len - 1 ? 'disabled' : ''}" onclick="moveItem('lockedItem', ${index}, 1)" title="Move down">↓</button>
           <div class="dropdown d-inline-block">
             <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" title="Copy to another skill">Copy</button>
             <ul class="dropdown-menu dropdown-menu-dark">
