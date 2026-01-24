@@ -520,6 +520,23 @@ function toggleSection(section) {
   }
 }
 
+// Loading overlay
+function showLoading(message = 'Loading JSON...') {
+  const overlay = document.getElementById('loading-overlay');
+  const text = document.getElementById('loading-text');
+  if (overlay) {
+    text.textContent = message;
+    overlay.style.display = 'flex';
+  }
+}
+
+function hideLoading() {
+  const overlay = document.getElementById('loading-overlay');
+  if (overlay) {
+    overlay.style.display = 'none';
+  }
+}
+
 // Toast notifications
 function showToast(message, type = 'success') {
   const toast = document.createElement('div');
@@ -1484,29 +1501,40 @@ function handleFileImport(event) {
   const file = event.target.files[0];
   if (!file) return;
 
+  showLoading(`Loading ${file.name}...`);
+
   const reader = new FileReader();
   reader.onload = (e) => {
-    try {
-      const imported = JSON.parse(e.target.result);
-      if (Array.isArray(imported)) {
-        skills = imported;
-      } else if (typeof imported === 'object') {
-        // Handle single skill object
-        skills = [imported];
-      } else {
-        throw new Error('Invalid format');
+    // Use setTimeout to allow the loading UI to render
+    setTimeout(() => {
+      try {
+        const imported = JSON.parse(e.target.result);
+        if (Array.isArray(imported)) {
+          skills = imported;
+        } else if (typeof imported === 'object') {
+          // Handle single skill object
+          skills = [imported];
+        } else {
+          throw new Error('Invalid format');
+        }
+        saveToLocalStorage();
+        currentSkillIndex = skills.length > 0 ? 0 : null;
+        renderSkillsList();
+        if (currentSkillIndex !== null) {
+          renderSkillEditor();
+        }
+        updateJSONPreview();
+        hideLoading();
+        showToast(`Imported ${skills.length} skill(s)!`);
+      } catch (err) {
+        hideLoading();
+        showToast('Invalid JSON file: ' + err.message, 'error');
       }
-      saveToLocalStorage();
-      currentSkillIndex = skills.length > 0 ? 0 : null;
-      renderSkillsList();
-      if (currentSkillIndex !== null) {
-        renderSkillEditor();
-      }
-      updateJSONPreview();
-      showToast(`Imported ${skills.length} skill(s)!`);
-    } catch (err) {
-      showToast('Invalid JSON file: ' + err.message, 'error');
-    }
+    }, 50);
+  };
+  reader.onerror = () => {
+    hideLoading();
+    showToast('Failed to read file', 'error');
   };
   reader.readAsText(file);
   event.target.value = ''; // Reset input
@@ -1561,28 +1589,38 @@ function handleMigrateFile(event, sourceNum) {
   const file = event.target.files[0];
   if (!file) return;
 
+  showLoading(`Loading ${file.name}...`);
+
   const reader = new FileReader();
   reader.onload = (e) => {
-    try {
-      let imported = JSON.parse(e.target.result);
-      if (!Array.isArray(imported)) {
-        if (typeof imported === 'object') {
-          imported = [imported];
-        } else {
-          throw new Error('Invalid format');
+    setTimeout(() => {
+      try {
+        let imported = JSON.parse(e.target.result);
+        if (!Array.isArray(imported)) {
+          if (typeof imported === 'object') {
+            imported = [imported];
+          } else {
+            throw new Error('Invalid format');
+          }
         }
-      }
 
-      if (sourceNum === 1) {
-        migrateSource1 = imported;
-      } else {
-        migrateSource2 = imported;
+        if (sourceNum === 1) {
+          migrateSource1 = imported;
+        } else {
+          migrateSource2 = imported;
+        }
+        updateMigratePreview(sourceNum);
+        hideLoading();
+        showToast(`Loaded ${imported.length} skills from file`);
+      } catch (err) {
+        hideLoading();
+        showToast('Invalid JSON file: ' + err.message, 'error');
       }
-      updateMigratePreview(sourceNum);
-      showToast(`Loaded ${imported.length} skills from file`);
-    } catch (err) {
-      showToast('Invalid JSON file: ' + err.message, 'error');
-    }
+    }, 50);
+  };
+  reader.onerror = () => {
+    hideLoading();
+    showToast('Failed to read file', 'error');
   };
   reader.readAsText(file);
   event.target.value = '';
@@ -1744,21 +1782,31 @@ function executeMerge() {
     return;
   }
 
-  const mode = document.getElementById('migrate-conflict-mode').value;
-  const merged = performMerge(migrateSource1, migrateSource2, mode);
+  showLoading('Merging skills...');
 
-  skills = merged;
-  currentSkillIndex = skills.length > 0 ? 0 : null;
+  setTimeout(() => {
+    try {
+      const mode = document.getElementById('migrate-conflict-mode').value;
+      const merged = performMerge(migrateSource1, migrateSource2, mode);
 
-  saveToLocalStorage();
-  renderSkillsList();
-  if (currentSkillIndex !== null) {
-    renderSkillEditor();
-  }
-  updateJSONPreview();
+      skills = merged;
+      currentSkillIndex = skills.length > 0 ? 0 : null;
 
-  bootstrap.Modal.getInstance(document.getElementById('migrateModal')).hide();
-  showToast(`Merged successfully! Now have ${skills.length} skills.`);
+      saveToLocalStorage();
+      renderSkillsList();
+      if (currentSkillIndex !== null) {
+        renderSkillEditor();
+      }
+      updateJSONPreview();
+
+      hideLoading();
+      bootstrap.Modal.getInstance(document.getElementById('migrateModal')).hide();
+      showToast(`Merged successfully! Now have ${skills.length} skills.`);
+    } catch (err) {
+      hideLoading();
+      showToast('Merge failed: ' + err.message, 'error');
+    }
+  }, 50);
 }
 
 // Handle Enter key in list inputs

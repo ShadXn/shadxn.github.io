@@ -40,7 +40,8 @@
         "maxLevel": 2147483647,
         "xpReward": 200,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -93,7 +94,8 @@
         "maxLevel": 2147483647,
         "xpReward": 300,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -144,7 +146,8 @@
         "maxLevel": 2147483647,
         "xpReward": 400,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -206,7 +209,8 @@
         "maxLevel": 2147483647,
         "xpReward": 1000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -240,7 +244,8 @@
         "maxLevel": 2147483647,
         "xpReward": 1500,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -269,7 +274,8 @@
         "maxLevel": 2147483647,
         "xpReward": 2000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -283,8 +289,8 @@
           "Outlander_Priest",
           "Outlander_Sorcerer",
           "Outlander_Stalker",
-          "Grizzly_Bear",
-          "Polar_Bear",
+          "Bear_Grizzly",
+          "Bear_Polar",
           "Crocodile",
           "Fen_Stalker",
           "Lizard_Sand",
@@ -304,7 +310,8 @@
         "maxLevel": 2147483647,
         "xpReward": 2400,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -321,7 +328,8 @@
         "maxLevel": 2147483647,
         "xpReward": 4400,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -340,7 +348,8 @@
         "maxLevel": 2147483647,
         "xpReward": 6000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -356,7 +365,8 @@
         "maxLevel": 2147483647,
         "xpReward": 12000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       }
     ],
     "requirements": [
@@ -495,8 +505,9 @@
   {
     "id": "skill_1768926677708",
     "displayName": "Excavation",
-    "baseXp": 50.0,
-    "multiplier": 1.0,
+    "description": "",
+    "baseXp": 300.0,
+    "multiplier": 1.1,
     "maxLevel": 100,
     "triggers": [
       {
@@ -517,7 +528,8 @@
         "maxLevel": 2147483647,
         "xpReward": 25,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       }
     ],
     "requirements": [
@@ -526,7 +538,8 @@
         "allowList": [
           "Tool_Shovel"
         ],
-        "denyList": []
+        "denyList": [],
+        "customData": {}
       }
     ],
     "unlocks": [
@@ -598,7 +611,8 @@
         "maxLevel": 2147483647,
         "xpReward": 200,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -651,7 +665,8 @@
         "maxLevel": 2147483647,
         "xpReward": 300,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -702,7 +717,8 @@
         "maxLevel": 2147483647,
         "xpReward": 400,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -764,7 +780,8 @@
         "maxLevel": 2147483647,
         "xpReward": 1000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -798,7 +815,8 @@
         "maxLevel": 2147483647,
         "xpReward": 1500,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -827,7 +845,8 @@
         "maxLevel": 2147483647,
         "xpReward": 2000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -841,8 +860,8 @@
           "Outlander_Priest",
           "Outlander_Sorcerer",
           "Outlander_Stalker",
-          "Grizzly_Bear",
-          "Polar_Bear",
+          "Bear_Grizzly",
+          "Bear_Polar",
           "Crocodile",
           "Fen_Stalker",
           "Lizard_Sand",
@@ -862,7 +881,8 @@
         "maxLevel": 2147483647,
         "xpReward": 2400,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -879,7 +899,8 @@
         "maxLevel": 2147483647,
         "xpReward": 4400,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -898,7 +919,8 @@
         "maxLevel": 2147483647,
         "xpReward": 6000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -914,7 +936,8 @@
         "maxLevel": 2147483647,
         "xpReward": 12000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       }
     ],
     "requirements": [
@@ -1081,7 +1104,8 @@
         "maxLevel": 2147483647,
         "xpReward": 200,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -1134,7 +1158,8 @@
         "maxLevel": 2147483647,
         "xpReward": 300,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -1185,7 +1210,8 @@
         "maxLevel": 2147483647,
         "xpReward": 400,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -1247,7 +1273,8 @@
         "maxLevel": 2147483647,
         "xpReward": 1000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -1281,7 +1308,8 @@
         "maxLevel": 2147483647,
         "xpReward": 1500,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -1310,7 +1338,8 @@
         "maxLevel": 2147483647,
         "xpReward": 2000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -1324,8 +1353,8 @@
           "Outlander_Priest",
           "Outlander_Sorcerer",
           "Outlander_Stalker",
-          "Grizzly_Bear",
-          "Polar_Bear",
+          "Bear_Grizzly",
+          "Bear_Polar",
           "Crocodile",
           "Fen_Stalker",
           "Lizard_Sand",
@@ -1345,7 +1374,8 @@
         "maxLevel": 2147483647,
         "xpReward": 2400,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -1362,7 +1392,8 @@
         "maxLevel": 2147483647,
         "xpReward": 4400,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -1381,7 +1412,8 @@
         "maxLevel": 2147483647,
         "xpReward": 6000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -1397,7 +1429,8 @@
         "maxLevel": 2147483647,
         "xpReward": 12000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       }
     ],
     "requirements": [
@@ -1534,7 +1567,8 @@
         "maxLevel": 2147483647,
         "xpReward": 200,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -1587,7 +1621,8 @@
         "maxLevel": 2147483647,
         "xpReward": 300,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -1638,7 +1673,8 @@
         "maxLevel": 2147483647,
         "xpReward": 400,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -1700,7 +1736,8 @@
         "maxLevel": 2147483647,
         "xpReward": 1000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -1734,7 +1771,8 @@
         "maxLevel": 2147483647,
         "xpReward": 1500,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -1763,7 +1801,8 @@
         "maxLevel": 2147483647,
         "xpReward": 2000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -1777,8 +1816,8 @@
           "Outlander_Priest",
           "Outlander_Sorcerer",
           "Outlander_Stalker",
-          "Grizzly_Bear",
-          "Polar_Bear",
+          "Bear_Grizzly",
+          "Bear_Polar",
           "Crocodile",
           "Fen_Stalker",
           "Lizard_Sand",
@@ -1798,7 +1837,8 @@
         "maxLevel": 2147483647,
         "xpReward": 2400,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -1815,7 +1855,8 @@
         "maxLevel": 2147483647,
         "xpReward": 4400,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -1834,7 +1875,8 @@
         "maxLevel": 2147483647,
         "xpReward": 6000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -1850,7 +1892,8 @@
         "maxLevel": 2147483647,
         "xpReward": 12000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       }
     ],
     "requirements": [
@@ -1945,8 +1988,8 @@
     "id": "mining",
     "displayName": "Mining",
     "description": "",
-    "baseXp": 50.0,
-    "multiplier": 1.5,
+    "baseXp": 300.0,
+    "multiplier": 1.1,
     "maxLevel": 100,
     "triggers": [
       {
@@ -1962,7 +2005,8 @@
         "maxLevel": 2147483647,
         "xpReward": 25,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "BLOCK_BREAK",
@@ -1975,7 +2019,8 @@
         "maxLevel": 2147483647,
         "xpReward": 200,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "BLOCK_BREAK",
@@ -1988,7 +2033,8 @@
         "maxLevel": 2147483647,
         "xpReward": 300,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "BLOCK_BREAK",
@@ -2002,7 +2048,8 @@
         "maxLevel": 2147483647,
         "xpReward": 500,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "BLOCK_BREAK",
@@ -2015,7 +2062,8 @@
         "maxLevel": 2147483647,
         "xpReward": 600,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "BLOCK_BREAK",
@@ -2028,7 +2076,8 @@
         "maxLevel": 2147483647,
         "xpReward": 750,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "BLOCK_BREAK",
@@ -2041,7 +2090,8 @@
         "maxLevel": 2147483647,
         "xpReward": 1000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "BLOCK_BREAK",
@@ -2054,7 +2104,8 @@
         "maxLevel": 2147483647,
         "xpReward": 1500,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "BLOCK_BREAK",
@@ -2067,7 +2118,8 @@
         "maxLevel": 2147483647,
         "xpReward": 2000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       }
     ],
     "requirements": [
@@ -2076,7 +2128,8 @@
         "allowList": [
           "Pickaxe"
         ],
-        "denyList": []
+        "denyList": [],
+        "customData": {}
       }
     ],
     "unlocks": [
@@ -2388,7 +2441,8 @@
         "maxLevel": 2147483647,
         "xpReward": 200,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -2441,7 +2495,8 @@
         "maxLevel": 2147483647,
         "xpReward": 300,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -2492,7 +2547,8 @@
         "maxLevel": 2147483647,
         "xpReward": 400,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -2554,7 +2610,8 @@
         "maxLevel": 2147483647,
         "xpReward": 1000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -2588,7 +2645,8 @@
         "maxLevel": 2147483647,
         "xpReward": 1500,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -2617,7 +2675,8 @@
         "maxLevel": 2147483647,
         "xpReward": 2000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -2631,8 +2690,8 @@
           "Outlander_Priest",
           "Outlander_Sorcerer",
           "Outlander_Stalker",
-          "Grizzly_Bear",
-          "Polar_Bear",
+          "Bear_Grizzly",
+          "Bear_Polar",
           "Crocodile",
           "Fen_Stalker",
           "Lizard_Sand",
@@ -2652,7 +2711,8 @@
         "maxLevel": 2147483647,
         "xpReward": 2400,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -2669,7 +2729,8 @@
         "maxLevel": 2147483647,
         "xpReward": 4400,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -2688,7 +2749,8 @@
         "maxLevel": 2147483647,
         "xpReward": 6000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -2704,7 +2766,8 @@
         "maxLevel": 2147483647,
         "xpReward": 12000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       }
     ],
     "requirements": [
@@ -2830,8 +2893,9 @@
   {
     "id": "skill_1768921088820",
     "displayName": "Combat",
-    "baseXp": 50.0,
-    "multiplier": 1.5,
+    "description": "",
+    "baseXp": 300.0,
+    "multiplier": 1.02,
     "maxLevel": 126,
     "triggers": [
       {
@@ -2868,7 +2932,8 @@
         "maxLevel": 2147483647,
         "xpReward": 50,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -2921,7 +2986,8 @@
         "maxLevel": 2147483647,
         "xpReward": 75,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -2972,7 +3038,8 @@
         "maxLevel": 2147483647,
         "xpReward": 100,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -3034,7 +3101,8 @@
         "maxLevel": 2147483647,
         "xpReward": 250,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -3068,7 +3136,8 @@
         "maxLevel": 2147483647,
         "xpReward": 375,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -3097,7 +3166,8 @@
         "maxLevel": 2147483647,
         "xpReward": 500,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -3111,8 +3181,8 @@
           "Outlander_Priest",
           "Outlander_Sorcerer",
           "Outlander_Stalker",
-          "Grizzly_Bear",
-          "Polar_Bear",
+          "Bear_Grizzly",
+          "Bear_Polar",
           "Crocodile",
           "Fen_Stalker",
           "Lizard_Sand",
@@ -3132,7 +3202,8 @@
         "maxLevel": 2147483647,
         "xpReward": 600,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -3149,7 +3220,8 @@
         "maxLevel": 2147483647,
         "xpReward": 1100,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -3168,7 +3240,8 @@
         "maxLevel": 2147483647,
         "xpReward": 1500,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -3184,7 +3257,8 @@
         "maxLevel": 2147483647,
         "xpReward": 3000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       }
     ],
     "requirements": [],
@@ -3278,8 +3352,9 @@
   {
     "id": "building",
     "displayName": "Building",
-    "baseXp": 50.0,
-    "multiplier": 1.0,
+    "description": "",
+    "baseXp": 300.0,
+    "multiplier": 1.1,
     "maxLevel": 100,
     "triggers": [
       {
@@ -3294,7 +3369,8 @@
         "maxLevel": 2147483647,
         "xpReward": 10,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       }
     ],
     "requirements": [],
@@ -3316,8 +3392,9 @@
   {
     "id": "swimming",
     "displayName": "Swimming",
-    "baseXp": 50.0,
-    "multiplier": 1.0,
+    "description": "",
+    "baseXp": 300.0,
+    "multiplier": 1.1,
     "maxLevel": 100,
     "triggers": [
       {
@@ -3327,9 +3404,10 @@
         "cooldown": 2,
         "minLevel": 0,
         "maxLevel": 2147483647,
-        "xpReward": 10,
+        "xpReward": 25,
         "requiresMovement": true,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       }
     ],
     "requirements": [],
@@ -3389,7 +3467,8 @@
         "maxLevel": 2147483647,
         "xpReward": 200,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -3442,7 +3521,8 @@
         "maxLevel": 2147483647,
         "xpReward": 300,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -3493,7 +3573,8 @@
         "maxLevel": 2147483647,
         "xpReward": 400,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -3555,7 +3636,8 @@
         "maxLevel": 2147483647,
         "xpReward": 1000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -3589,7 +3671,8 @@
         "maxLevel": 2147483647,
         "xpReward": 1500,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -3618,7 +3701,8 @@
         "maxLevel": 2147483647,
         "xpReward": 2000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -3632,8 +3716,8 @@
           "Outlander_Priest",
           "Outlander_Sorcerer",
           "Outlander_Stalker",
-          "Grizzly_Bear",
-          "Polar_Bear",
+          "Bear_Grizzly",
+          "Bear_Polar",
           "Crocodile",
           "Fen_Stalker",
           "Lizard_Sand",
@@ -3653,7 +3737,8 @@
         "maxLevel": 2147483647,
         "xpReward": 2400,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -3670,7 +3755,8 @@
         "maxLevel": 2147483647,
         "xpReward": 4400,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -3689,7 +3775,8 @@
         "maxLevel": 2147483647,
         "xpReward": 6000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -3705,7 +3792,8 @@
         "maxLevel": 2147483647,
         "xpReward": 12000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       }
     ],
     "requirements": [
@@ -3838,8 +3926,9 @@
   {
     "id": "woodcutting",
     "displayName": "Woodcutting",
-    "baseXp": 50.0,
-    "multiplier": 1.0,
+    "description": "",
+    "baseXp": 300.0,
+    "multiplier": 1.1,
     "maxLevel": 100,
     "triggers": [
       {
@@ -3853,7 +3942,8 @@
         "maxLevel": 2147483647,
         "xpReward": 150,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       }
     ],
     "requirements": [
@@ -3921,8 +4011,9 @@
   {
     "id": "skill_1769032442296",
     "displayName": "Block",
-    "baseXp": 100.0,
-    "multiplier": 1.0,
+    "description": "",
+    "baseXp": 300.0,
+    "multiplier": 1.02,
     "maxLevel": 100,
     "triggers": [
       {
@@ -3932,9 +4023,10 @@
         "cooldown": 0,
         "minLevel": 0,
         "maxLevel": 2147483647,
-        "xpReward": 50,
+        "xpReward": 100,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       }
     ],
     "requirements": [],
@@ -3984,139 +4076,249 @@
     "id": "skill_1768929499403",
     "displayName": "Farming",
     "description": "Harvesting verious plants",
-    "baseXp": 50.0,
-    "multiplier": 1.5,
+    "baseXp": 300.0,
+    "multiplier": 1.1,
     "maxLevel": 100,
     "triggers": [
       {
         "type": "INTERACT",
         "allowList": [
-          "Plant_Crop_Berry_Winter_Block",
-          "Plant_Crop_Berry_Block",
-          "Plant_Crop_Berry_Wet_Block",
-          "*Plant_Crop_Wheat_Block_State_Definitions_StageFinal"
+          "plant_flower"
         ],
         "denyList": [],
         "cooldown": 0,
         "minLevel": 0,
         "maxLevel": 2147483647,
-        "xpReward": 50,
+        "xpReward": 5,
         "requiresMovement": false,
-        "xpValues": {}
-      },
-      {
-        "type": "PLACE_BLOCK",
-        "allowList": [
-          "Wheat",
-          "Lettuce"
-        ],
-        "denyList": [],
-        "cooldown": 0,
-        "minLevel": 0,
-        "maxLevel": 2147483647,
-        "xpReward": 70,
-        "requiresMovement": false,
-        "xpValues": {}
-      },
-      {
-        "type": "PLACE_BLOCK",
-        "allowList": [
-          "Carrot",
-          "Corn"
-        ],
-        "denyList": [],
-        "cooldown": 0,
-        "minLevel": 0,
-        "maxLevel": 2147483647,
-        "xpReward": 185,
-        "requiresMovement": false,
-        "xpValues": {}
-      },
-      {
-        "type": "PLACE_BLOCK",
-        "allowList": [
-          "cauliflower",
-          "turnip"
-        ],
-        "denyList": [],
-        "cooldown": 0,
-        "minLevel": 0,
-        "maxLevel": 2147483647,
-        "xpReward": 275,
-        "requiresMovement": false,
-        "xpValues": {}
-      },
-      {
-        "type": "PLACE_BLOCK",
-        "allowList": [
-          "aubergine",
-          "pumpkin"
-        ],
-        "denyList": [],
-        "cooldown": 0,
-        "minLevel": 0,
-        "maxLevel": 2147483647,
-        "xpReward": 365,
-        "requiresMovement": false,
-        "xpValues": {}
-      },
-      {
-        "type": "PLACE_BLOCK",
-        "allowList": [
-          "tomato",
-          "chilli"
-        ],
-        "denyList": [],
-        "cooldown": 0,
-        "minLevel": 0,
-        "maxLevel": 2147483647,
-        "xpReward": 455,
-        "requiresMovement": false,
-        "xpValues": {}
-      },
-      {
-        "type": "PLACE_BLOCK",
-        "allowList": [
-          "cotton",
-          "rice"
-        ],
-        "denyList": [],
-        "cooldown": 0,
-        "minLevel": 0,
-        "maxLevel": 2147483647,
-        "xpReward": 545,
-        "requiresMovement": false,
-        "xpValues": {}
-      },
-      {
-        "type": "PLACE_BLOCK",
-        "allowList": [
-          "Plant_Seeds_Onion",
-          "potato_sprout"
-        ],
-        "denyList": [],
-        "cooldown": 0,
-        "minLevel": 0,
-        "maxLevel": 2147483647,
-        "xpReward": 725,
-        "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "INTERACT",
         "allowList": [
-          "Chilli",
-          "lettuce",
-          "rice",
-          "cotton"
+          "Plant_Crop_Berry_Winter_Block",
+          "Plant_Crop_Berry_Block",
+          "Plant_Crop_Berry_Wet_Block"
         ],
         "denyList": [],
         "cooldown": 0,
         "minLevel": 0,
         "maxLevel": 2147483647,
-        "xpReward": 50,
+        "xpReward": 10,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
+      },
+      {
+        "type": "INTERACT",
+        "allowList": [
+          "*Plant_Crop_Wheat_Block_State_Definitions_StageFinal",
+          "*Plant_Crop_Wheat_Block_Eternal_State_Definitions_StageFinal"
+        ],
+        "denyList": [],
+        "cooldown": 0,
+        "minLevel": 0,
+        "maxLevel": 2147483647,
+        "xpReward": 10,
+        "requiresMovement": false,
+        "xpValues": {},
+        "customData": {}
+      },
+      {
+        "type": "INTERACT",
+        "allowList": [
+          "*Plant_Crop_Lettuce_Block_Eternal_State_Definitions_StageFinal",
+          "*Plant_Crop_Lettuce_Block_State_Definitions_StageFinal"
+        ],
+        "denyList": [],
+        "cooldown": 0,
+        "minLevel": 5,
+        "maxLevel": 2147483647,
+        "xpReward": 15,
+        "requiresMovement": false,
+        "xpValues": {},
+        "customData": {}
+      },
+      {
+        "type": "INTERACT",
+        "allowList": [
+          "*Plant_Crop_Carrot_Block_State_Definitions_StageFinal",
+          "*Plant_Crop_Carrot_Block_Eternal_State_Definitions_StageFinal"
+        ],
+        "denyList": [],
+        "cooldown": 0,
+        "minLevel": 10,
+        "maxLevel": 2147483647,
+        "xpReward": 25,
+        "requiresMovement": false,
+        "xpValues": {},
+        "customData": {}
+      },
+      {
+        "type": "INTERACT",
+        "allowList": [
+          "*Plant_Crop_Corn_Block_State_Definitions_StageFinal",
+          "*Plant_Crop_Corn_Block_Eternal_State_Definitions_StageFinal"
+        ],
+        "denyList": [],
+        "cooldown": 0,
+        "minLevel": 15,
+        "maxLevel": 2147483647,
+        "xpReward": 35,
+        "requiresMovement": false,
+        "xpValues": {},
+        "customData": {}
+      },
+      {
+        "type": "INTERACT",
+        "allowList": [
+          "*Plant_Crop_Cauliflower_Block_State_Definitions_StageFinal",
+          "*Plant_Crop_Cauliflower_Block_Eternal_State_Definitions_StageFinal"
+        ],
+        "denyList": [],
+        "cooldown": 0,
+        "minLevel": 20,
+        "maxLevel": 2147483647,
+        "xpReward": 45,
+        "requiresMovement": false,
+        "xpValues": {},
+        "customData": {}
+      },
+      {
+        "type": "INTERACT",
+        "allowList": [
+          "*Plant_Crop_Turnip_Block_Eternal_State_Definitions_StageFinal",
+          "*Plant_Crop_Turnip_Block_State_Definitions_StageFinal"
+        ],
+        "denyList": [],
+        "cooldown": 0,
+        "minLevel": 25,
+        "maxLevel": 2147483647,
+        "xpReward": 55,
+        "requiresMovement": false,
+        "xpValues": {},
+        "customData": {}
+      },
+      {
+        "type": "INTERACT",
+        "allowList": [
+          "*Plant_Crop_Aubergine_Block_State_Definitions_StageFinal",
+          "*Plant_Crop_Aubergine_Block_Eternal_State_Definitions_StageFinal"
+        ],
+        "denyList": [],
+        "cooldown": 0,
+        "minLevel": 30,
+        "maxLevel": 2147483647,
+        "xpReward": 65,
+        "requiresMovement": false,
+        "xpValues": {},
+        "customData": {}
+      },
+      {
+        "type": "INTERACT",
+        "allowList": [
+          "*Plant_Crop_Pumpkin_Block_State_Definitions_StageFinal",
+          "*Plant_Crop_Pumpkin_Block_Eternal_State_Definitions_StageFinal"
+        ],
+        "denyList": [],
+        "cooldown": 0,
+        "minLevel": 35,
+        "maxLevel": 2147483647,
+        "xpReward": 75,
+        "requiresMovement": false,
+        "xpValues": {},
+        "customData": {}
+      },
+      {
+        "type": "INTERACT",
+        "allowList": [
+          "*Plant_Crop_Tomato_Block_State_Definitions_StageFinal",
+          "*Plant_Crop_Tomato_Block_Eternal_State_Definitions_StageFinal"
+        ],
+        "denyList": [],
+        "cooldown": 0,
+        "minLevel": 40,
+        "maxLevel": 2147483647,
+        "xpReward": 85,
+        "requiresMovement": false,
+        "xpValues": {},
+        "customData": {}
+      },
+      {
+        "type": "INTERACT",
+        "allowList": [
+          "*Plant_Crop_Chilli_Block_State_Definitions_StageFinal",
+          "*Plant_Crop_Chilli_Block_Eternal_State_Definitions_StageFinal"
+        ],
+        "denyList": [],
+        "cooldown": 0,
+        "minLevel": 45,
+        "maxLevel": 2147483647,
+        "xpReward": 95,
+        "requiresMovement": false,
+        "xpValues": {},
+        "customData": {}
+      },
+      {
+        "type": "INTERACT",
+        "allowList": [
+          "*Plant_Crop_Cotton_Block_State_Definitions_StageFinal",
+          "*Plant_Crop_Cotton_Block_Eternal_State_Definitions_StageFinal"
+        ],
+        "denyList": [],
+        "cooldown": 0,
+        "minLevel": 50,
+        "maxLevel": 2147483647,
+        "xpReward": 105,
+        "requiresMovement": false,
+        "xpValues": {},
+        "customData": {}
+      },
+      {
+        "type": "INTERACT",
+        "allowList": [
+          "*Plant_Crop_Rice_Block_State_Definitions_StageFinal",
+          "*Plant_Crop_Rice_Block_Eternal_State_Definitions_StageFinal"
+        ],
+        "denyList": [],
+        "cooldown": 0,
+        "minLevel": 55,
+        "maxLevel": 2147483647,
+        "xpReward": 115,
+        "requiresMovement": false,
+        "xpValues": {},
+        "customData": {}
+      },
+      {
+        "type": "INTERACT",
+        "allowList": [
+          "*Plant_Crop_Onion_Block_State_Definitions_StageFinal",
+          "*Plant_Crop_Onion_Block_Eternal_State_Definitions_StageFinal"
+        ],
+        "denyList": [],
+        "cooldown": 0,
+        "minLevel": 60,
+        "maxLevel": 2147483647,
+        "xpReward": 125,
+        "requiresMovement": false,
+        "xpValues": {},
+        "customData": {}
+      },
+      {
+        "type": "INTERACT",
+        "allowList": [
+          "*Plant_Crop_Potato_Block_Eternal_State_Definitions_StageFinal",
+          "*Plant_Crop_Potato_Block_State_Definitions_StageFinal"
+        ],
+        "denyList": [],
+        "cooldown": 0,
+        "minLevel": 65,
+        "maxLevel": 2147483647,
+        "xpReward": 135,
+        "requiresMovement": false,
+        "xpValues": {},
+        "customData": {}
       }
     ],
     "requirements": [],
@@ -4133,12 +4335,16 @@
     ],
     "lockedItems": [
       {
-        "itemId": "Plant_Seeds_Corn",
-        "level": 10
+        "itemId": "Plant_Seeds_Lettuce",
+        "level": 5
       },
       {
         "itemId": "Plant_Seeds_Carrot",
         "level": 10
+      },
+      {
+        "itemId": "Plant_Seeds_Corn",
+        "level": 15
       },
       {
         "itemId": "Plant_Seeds_Cauliflower",
@@ -4146,39 +4352,39 @@
       },
       {
         "itemId": "Plant_Seeds_Turnip",
-        "level": 20
-      },
-      {
-        "itemId": "Plant_Seeds_Pumpkin",
-        "level": 30
+        "level": 25
       },
       {
         "itemId": "Plant_Seeds_Aubergine",
         "level": 30
       },
       {
-        "itemId": "Plant_Seeds_Chilli",
-        "level": 40
+        "itemId": "Plant_Seeds_Pumpkin",
+        "level": 35
       },
       {
         "itemId": "Plant_Seeds_Tomato",
         "level": 40
       },
       {
-        "itemId": "Plant_Seeds_Rice",
-        "level": 50
+        "itemId": "Plant_Seeds_Chilli",
+        "level": 45
       },
       {
         "itemId": "Plant_Seeds_Cotton",
         "level": 50
       },
       {
-        "itemId": "Plant_Seeds_Potato",
-        "level": 60
+        "itemId": "Plant_Seeds_Rice",
+        "level": 55
       },
       {
         "itemId": "Plant_Seeds_Onion",
         "level": 60
+      },
+      {
+        "itemId": "Plant_Seeds_Potato",
+        "level": 65
       }
     ],
     "statScaling": {},
@@ -4187,8 +4393,9 @@
   {
     "id": "crafting",
     "displayName": "Crafting",
-    "baseXp": 50.0,
-    "multiplier": 1.0,
+    "description": "",
+    "baseXp": 300.0,
+    "multiplier": 1.1,
     "maxLevel": 100,
     "triggers": [
       {
@@ -4200,7 +4407,8 @@
         "maxLevel": 2147483647,
         "xpReward": 25,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       }
     ],
     "requirements": [],
@@ -4222,75 +4430,82 @@
   {
     "id": "agility",
     "displayName": "Agility",
-    "baseXp": 50.0,
-    "multiplier": 1.0,
+    "description": "",
+    "baseXp": 300.0,
+    "multiplier": 1.1,
     "maxLevel": 100,
     "triggers": [
       {
         "type": "SPRINT",
         "allowList": [],
         "denyList": [],
-        "cooldown": 1,
+        "cooldown": 2,
         "minLevel": 0,
         "maxLevel": 2147483647,
-        "xpReward": 10,
+        "xpReward": 25,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "JUMP",
         "allowList": [],
         "denyList": [],
         "cooldown": 1,
-        "minLevel": 0,
+        "minLevel": 10,
         "maxLevel": 2147483647,
-        "xpReward": 5,
+        "xpReward": 20,
         "requiresMovement": false,
-        "xpValues": {}
-      },
-      {
-        "type": "ROLL",
-        "allowList": [],
-        "denyList": [],
-        "cooldown": 0,
-        "minLevel": 0,
-        "maxLevel": 2147483647,
-        "xpReward": 15,
-        "requiresMovement": false,
-        "xpValues": {}
-      },
-      {
-        "type": "SLIDE",
-        "allowList": [],
-        "denyList": [],
-        "cooldown": 1,
-        "minLevel": 0,
-        "maxLevel": 2147483647,
-        "xpReward": 10,
-        "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "CLIMB",
         "allowList": [],
         "denyList": [],
         "cooldown": 1,
-        "minLevel": 0,
+        "minLevel": 20,
         "maxLevel": 2147483647,
-        "xpReward": 10,
+        "xpReward": 30,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
+      },
+      {
+        "type": "ROLL",
+        "allowList": [],
+        "denyList": [],
+        "cooldown": 0,
+        "minLevel": 30,
+        "maxLevel": 2147483647,
+        "xpReward": 125,
+        "requiresMovement": false,
+        "xpValues": {},
+        "customData": {}
+      },
+      {
+        "type": "SLIDE",
+        "allowList": [],
+        "denyList": [],
+        "cooldown": 1,
+        "minLevel": 40,
+        "maxLevel": 2147483647,
+        "xpReward": 75,
+        "requiresMovement": false,
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "GLIDE",
         "allowList": [],
         "denyList": [],
         "cooldown": 2,
-        "minLevel": 0,
+        "minLevel": 50,
         "maxLevel": 2147483647,
-        "xpReward": 15,
+        "xpReward": 150,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       }
     ],
     "requirements": [],
@@ -4350,7 +4565,8 @@
         "maxLevel": 2147483647,
         "xpReward": 200,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -4403,7 +4619,8 @@
         "maxLevel": 2147483647,
         "xpReward": 300,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -4454,7 +4671,8 @@
         "maxLevel": 2147483647,
         "xpReward": 400,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -4516,7 +4734,8 @@
         "maxLevel": 2147483647,
         "xpReward": 1000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -4550,7 +4769,8 @@
         "maxLevel": 2147483647,
         "xpReward": 1500,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -4579,7 +4799,8 @@
         "maxLevel": 2147483647,
         "xpReward": 2000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -4593,8 +4814,8 @@
           "Outlander_Priest",
           "Outlander_Sorcerer",
           "Outlander_Stalker",
-          "Grizzly_Bear",
-          "Polar_Bear",
+          "Bear_Grizzly",
+          "Bear_Polar",
           "Crocodile",
           "Fen_Stalker",
           "Lizard_Sand",
@@ -4614,7 +4835,8 @@
         "maxLevel": 2147483647,
         "xpReward": 2400,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -4631,7 +4853,8 @@
         "maxLevel": 2147483647,
         "xpReward": 4400,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -4650,7 +4873,8 @@
         "maxLevel": 2147483647,
         "xpReward": 6000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       },
       {
         "type": "ENTITY_KILL",
@@ -4666,7 +4890,8 @@
         "maxLevel": 2147483647,
         "xpReward": 12000,
         "requiresMovement": false,
-        "xpValues": {}
+        "xpValues": {},
+        "customData": {}
       }
     ],
     "requirements": [
