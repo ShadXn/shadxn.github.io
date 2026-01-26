@@ -932,7 +932,8 @@ function saveTrigger() {
     maxLevel: parseInt(document.getElementById('trigger-max-level').value) || 2147483647,
     xpReward: parseInt(document.getElementById('trigger-xp').value) || 100,
     requiresMovement: document.getElementById('trigger-requires-movement').checked,
-    xpValues: {}
+    xpValues: {},
+    customData: {}
   };
 
   if (editingTriggerIndex !== null) {
@@ -1827,3 +1828,214 @@ document.addEventListener('keypress', (e) => {
     }
   }
 });
+
+// ============================================
+// Page Navigation
+// ============================================
+let currentPage = 'builder';
+
+function switchPage(pageName, clickedElement) {
+  currentPage = pageName;
+
+  // Hide all pages
+  document.querySelectorAll('.page-content').forEach(page => {
+    page.style.display = 'none';
+  });
+
+  // Show selected page
+  const targetPage = document.getElementById(`page-${pageName}`);
+  if (targetPage) {
+    targetPage.style.display = 'block';
+  }
+
+  // Update nav buttons
+  document.querySelectorAll('#main-nav .btn').forEach(btn => {
+    btn.classList.remove('active', 'btn-secondary');
+    btn.classList.add('btn-outline-secondary');
+  });
+  if (clickedElement) {
+    clickedElement.classList.remove('btn-outline-secondary');
+    clickedElement.classList.add('active', 'btn-secondary');
+  }
+
+  // Show/hide builder actions
+  const builderActions = document.getElementById('builder-actions');
+  if (builderActions) {
+    builderActions.style.display = pageName === 'builder' ? 'flex' : 'none';
+  }
+
+  // Initialize statistics page if switching to it
+  if (pageName === 'statistics') {
+    updateStatistics();
+  }
+}
+
+// ============================================
+// Statistics Page Functions
+// ============================================
+function updateStatistics() {
+  const baseXP = parseInt(document.getElementById('stat-base-xp')?.value) || 1000;
+  const multiplier = parseFloat(document.getElementById('stat-xp-multiplier')?.value) || 1.5;
+  const fromLevel = parseInt(document.getElementById('stat-from-level')?.value) || 1;
+  const toLevel = parseInt(document.getElementById('stat-to-level')?.value) || 50;
+  const xpPerAction = parseInt(document.getElementById('stat-xp-per-action')?.value) || 100;
+  const targetLevel = parseInt(document.getElementById('stat-target-level')?.value) || 10;
+
+  // Calculate XP requirements for each level
+  // Formula: if multiplier ≈ 1: baseXP * level, else: round(baseXP * (level ^ multiplier))
+  const xpRequirements = [];
+  let totalXP = 0;
+
+  // Calculate total XP for levels before fromLevel (for cumulative total)
+  for (let level = 1; level < fromLevel; level++) {
+    const xpForLevel = Math.abs(multiplier - 1) < 0.0000001
+      ? baseXP * level
+      : Math.floor(baseXP * Math.pow(level, multiplier));
+    totalXP += xpForLevel;
+  }
+
+  for (let level = fromLevel; level <= toLevel; level++) {
+    // XP per level: round(baseXP * (level ^ multiplier))
+    const xpForLevel = Math.abs(multiplier - 1) < 0.0000001
+      ? baseXP * level
+      : Math.round(baseXP * Math.pow(level, multiplier));
+    totalXP += xpForLevel;
+    const actionsNeeded = Math.ceil(xpForLevel / xpPerAction);
+    xpRequirements.push({
+      level: level,
+      xpRequired: xpForLevel,
+      totalXP: totalXP,
+      actions: actionsNeeded
+    });
+  }
+
+  // Update XP table
+  const tableBody = document.getElementById('xp-table-body');
+  if (tableBody) {
+    tableBody.innerHTML = xpRequirements.map((req, idx) => {
+      const isTarget = req.level === targetLevel;
+      const rowClass = isTarget ? 'style="background: #2d6a8a !important;"' : '';
+      return `<tr ${rowClass}>
+        <td>${req.level}</td>
+        <td>${formatNumber(req.xpRequired)}</td>
+        <td>${formatNumber(req.totalXP)}</td>
+        <td>${formatNumber(req.actions)}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Update summary
+  const summary = document.getElementById('stat-summary');
+  if (summary) {
+    const targetData = xpRequirements.find(r => r.level === targetLevel) || xpRequirements[0];
+    const maxData = xpRequirements[xpRequirements.length - 1];
+
+    summary.innerHTML = `
+      <div class="row text-center mb-3">
+        <div class="col-6">
+          <div class="p-2 rounded" style="background: #0f3460;">
+            <div class="small text-muted">XP to Level ${targetLevel}</div>
+            <div class="h5 mb-0" style="color: #4ea8de;">${formatNumber(targetData?.totalXP || 0)}</div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="p-2 rounded" style="background: #0f3460;">
+            <div class="small text-muted">Actions to Level ${targetLevel}</div>
+            <div class="h5 mb-0" style="color: #00b894;">${formatNumber(Math.ceil((targetData?.totalXP || 0) / xpPerAction))}</div>
+          </div>
+        </div>
+      </div>
+      <div class="row text-center">
+        <div class="col-6">
+          <div class="p-2 rounded" style="background: #0f3460;">
+            <div class="small text-muted">Total XP to Max (${toLevel})</div>
+            <div class="h5 mb-0" style="color: #fdcb6e;">${formatNumber(maxData.totalXP)}</div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="p-2 rounded" style="background: #0f3460;">
+            <div class="small text-muted">Actions to Max Level</div>
+            <div class="h5 mb-0" style="color: #e17055;">${formatNumber(Math.ceil(maxData.totalXP / xpPerAction))}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Update chart
+  renderXPChart(xpRequirements, toLevel);
+
+  // Update chart labels
+  const chartMinLabel = document.getElementById('chart-min-level');
+  if (chartMinLabel) {
+    chartMinLabel.textContent = `Level ${fromLevel}`;
+  }
+  const chartMaxLabel = document.getElementById('chart-max-level');
+  if (chartMaxLabel) {
+    chartMaxLabel.textContent = `Level ${toLevel}`;
+  }
+
+  // Update action estimates
+  updateActionEstimates(xpRequirements, targetLevel, xpPerAction);
+}
+
+function renderXPChart(xpRequirements, maxLevel) {
+  const chart = document.getElementById('xp-chart');
+  if (!chart) return;
+
+  const maxXP = xpRequirements[xpRequirements.length - 1]?.xpRequired || 1;
+  const width = chart.offsetWidth;
+  const height = chart.offsetHeight;
+
+  // Create SVG bars
+  let barsHtml = '';
+  const barWidth = Math.max(2, (width / xpRequirements.length) - 1);
+
+  xpRequirements.forEach((req, idx) => {
+    const barHeight = (req.xpRequired / maxXP) * (height - 10);
+    const x = (idx / xpRequirements.length) * width;
+    const y = height - barHeight;
+    const color = idx < 10 ? '#00b894' : idx < 25 ? '#fdcb6e' : '#e17055';
+
+    barsHtml += `<div style="position: absolute; left: ${x}px; bottom: 0; width: ${barWidth}px; height: ${barHeight}px; background: ${color}; opacity: 0.8;"></div>`;
+  });
+
+  chart.innerHTML = barsHtml;
+}
+
+function updateActionEstimates(xpRequirements, targetLevel, xpPerAction) {
+  const container = document.getElementById('action-estimates');
+  if (!container) return;
+
+  const targetData = xpRequirements.find(r => r.level === targetLevel);
+  if (!targetData) return;
+
+  const totalXPNeeded = targetData.totalXP;
+
+  // Common trigger XP values
+  const triggerEstimates = [
+    { name: 'Block Break', xp: 50, icon: '⛏️' },
+    { name: 'Mob Kill', xp: 100, icon: '⚔️' },
+    { name: 'Crafting', xp: 75, icon: '🔨' },
+    { name: 'Boss Kill', xp: 500, icon: '👹' },
+  ];
+
+  container.innerHTML = triggerEstimates.map(trigger => {
+    const actions = Math.ceil(totalXPNeeded / trigger.xp);
+    return `
+      <div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded" style="background: #0f3460;">
+        <span>${trigger.icon} ${trigger.name} (${trigger.xp} XP)</span>
+        <strong style="color: #4ea8de;">${formatNumber(actions)}</strong>
+      </div>
+    `;
+  }).join('');
+}
+
+function formatNumber(num) {
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(1) + 'M';
+  } else if (num >= 1000) {
+    return (num / 1000).toFixed(1) + 'K';
+  }
+  return num.toLocaleString();
+}

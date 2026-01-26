@@ -95,23 +95,35 @@
   </div>
 
   <div class="container-fluid py-4">
-    <div class="row mb-4">
+    <!-- Header with Navigation -->
+    <div class="row mb-3">
       <div class="col-12">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
           <h1 class="mb-0">HySkills Builder</h1>
-          <div class="d-flex gap-2">
-            <button class="btn btn-outline-primary" onclick="importJSON()">Import JSON</button>
-            <button class="btn btn-outline-success" onclick="openMigrateModal()">Merge JSONs</button>
-            <button class="btn btn-primary" onclick="exportJSON()">Export JSON</button>
+          <div class="d-flex gap-2 flex-wrap">
+            <!-- Page Navigation Buttons -->
+            <div class="btn-group" id="main-nav">
+              <button class="btn btn-secondary active" onclick="switchPage('builder', this)">Builder</button>
+              <button class="btn btn-outline-secondary" onclick="switchPage('statistics', this)">Statistics</button>
+              <button class="btn btn-outline-secondary" onclick="switchPage('info', this)">Info & Help</button>
+            </div>
+            <!-- Action Buttons -->
+            <div class="d-flex gap-2" id="builder-actions">
+              <button class="btn btn-outline-primary" onclick="importJSON()">Import JSON</button>
+              <button class="btn btn-outline-success" onclick="openMigrateModal()">Merge JSONs</button>
+              <button class="btn btn-primary" onclick="exportJSON()">Export JSON</button>
+            </div>
             <input type="file" id="import-file" accept=".json" style="display:none" onchange="handleFileImport(event)">
             <input type="file" id="migrate-file-1" accept=".json" style="display:none" onchange="handleMigrateFile(event, 1)">
             <input type="file" id="migrate-file-2" accept=".json" style="display:none" onchange="handleMigrateFile(event, 2)">
           </div>
         </div>
-        <p class="text-muted mt-2">Create and manage custom RPG skills for Hytale servers</p>
+        <p class="text-muted mt-2 mb-3">Create and manage custom RPG skills for Hytale servers</p>
       </div>
     </div>
 
+    <!-- Builder Page -->
+    <div id="page-builder" class="page-content">
     <div class="row">
       <!-- Skills List Sidebar -->
       <div class="col-lg-3 mb-4">
@@ -153,6 +165,277 @@
         </div>
       </div>
     </div>
+    </div><!-- End Builder Page -->
+
+    <!-- Statistics Page -->
+    <div id="page-statistics" class="page-content" style="display: none;">
+      <div class="alert alert-warning d-flex align-items-center mb-3" role="alert" style="background: #856404; border-color: #856404;">
+        <strong class="me-2">Note:</strong> This page is still in development. Some calculations or information may be incorrect.
+      </div>
+      <div class="row">
+        <div class="col-lg-4 mb-4">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">XP Calculator</h5>
+            </div>
+            <div class="card-body">
+              <div class="mb-3">
+                <label class="form-label">Base XP (Level 1 → 2)</label>
+                <input type="number" class="form-control" id="stat-base-xp" value="1000" min="1" onchange="updateStatistics()">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">XP Multiplier (Exponent)</label>
+                <input type="number" class="form-control" id="stat-xp-multiplier" value="1.5" min="1" step="0.1" onchange="updateStatistics()">
+                <small class="text-muted">Formula: baseXP × level^multiplier</small>
+              </div>
+              <div class="row g-2 mb-3">
+                <div class="col-6">
+                  <label class="form-label">From Level</label>
+                  <input type="number" class="form-control" id="stat-from-level" value="1" min="1" max="100" onchange="updateStatistics()">
+                </div>
+                <div class="col-6">
+                  <label class="form-label">To Level</label>
+                  <input type="number" class="form-control" id="stat-to-level" value="50" min="1" max="100" onchange="updateStatistics()">
+                </div>
+              </div>
+              <hr>
+              <div class="mb-3">
+                <label class="form-label">XP per Action</label>
+                <input type="number" class="form-control" id="stat-xp-per-action" value="100" min="1" onchange="updateStatistics()">
+                <small class="text-muted">XP gained per trigger (kill, mine, etc.)</small>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Target Level</label>
+                <input type="number" class="form-control" id="stat-target-level" value="10" min="2" onchange="updateStatistics()">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 mb-4">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">XP Requirements Table</h5>
+            </div>
+            <div class="card-body p-0" style="max-height: 60vh; overflow-y: auto;">
+              <table class="table table-dark table-striped table-sm mb-0">
+                <thead style="position: sticky; top: 0; background: #0f3460;">
+                  <tr>
+                    <th>Level</th>
+                    <th>XP Required</th>
+                    <th>Total XP</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="xp-table-body">
+                  <!-- Generated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 mb-4">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">Progression Summary</h5>
+            </div>
+            <div class="card-body">
+              <div id="stat-summary">
+                <!-- Generated by JS -->
+              </div>
+              <hr>
+              <h6 class="mb-3">XP Curve Visualization</h6>
+              <div id="xp-chart" style="height: 200px; background: #0d1117; border-radius: 4px; position: relative; overflow: hidden;">
+                <!-- Generated by JS -->
+              </div>
+              <div class="d-flex justify-content-between mt-2 small text-muted">
+                <span id="chart-min-level">Level 1</span>
+                <span id="chart-max-level">Level 50</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mt-4">
+            <div class="card-header">
+              <h5 class="mb-0">Action Estimator</h5>
+            </div>
+            <div class="card-body">
+              <p class="text-muted small">Estimated actions needed to reach target level:</p>
+              <div id="action-estimates">
+                <!-- Generated by JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- End Statistics Page -->
+
+    <!-- Info Page -->
+    <div id="page-info" class="page-content" style="display: none;">
+      <div class="alert alert-warning d-flex align-items-center mb-3" role="alert" style="background: #856404; border-color: #856404;">
+        <strong class="me-2">Note:</strong> This page is still in development. Some information may be incorrect or incomplete.
+      </div>
+      <div class="row">
+        <div class="col-lg-8 mb-4">
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">How to Use HySkills Builder</h5>
+            </div>
+            <div class="card-body">
+              <h6 style="color: #4ea8de;">Getting Started</h6>
+              <ol>
+                <li class="mb-2"><strong>Create a Skill:</strong> Click "+ Add Skill" to create a new skill. Give it an ID (used internally) and a Display Name (shown to players).</li>
+                <li class="mb-2"><strong>Set Max Level:</strong> Define how many levels this skill can have. Players will progress from level 1 to this maximum.</li>
+                <li class="mb-2"><strong>Add Triggers:</strong> Define how players earn XP. Each trigger specifies an action (like killing mobs or mining blocks) and how much XP it rewards.</li>
+                <li class="mb-2"><strong>Add Unlocks:</strong> Define rewards players get at specific levels - stat boosts, items, or special abilities.</li>
+                <li class="mb-2"><strong>Export:</strong> Click "Export JSON" to download your skills configuration file.</li>
+              </ol>
+
+              <hr>
+              <h6 style="color: #4ea8de;">Understanding Triggers</h6>
+              <p>Triggers define how players earn experience in a skill. Each trigger has:</p>
+              <ul>
+                <li><strong>Trigger Type:</strong> The action that grants XP (see table below)</li>
+                <li><strong>XP Reward:</strong> How much XP is granted per action</li>
+                <li><strong>Cooldown:</strong> Minimum time (in ms) between XP gains from this trigger</li>
+                <li><strong>Allow/Deny Lists:</strong> Filter which items, blocks, or entities count for this trigger</li>
+              </ul>
+
+              <hr>
+              <h6 style="color: #4ea8de;">Understanding Unlocks</h6>
+              <p>Unlocks are rewards granted when reaching specific levels:</p>
+              <ul>
+                <li><strong>ITEM:</strong> Give players an item as a reward</li>
+                <li><strong>STAT_* types:</strong> Modify player statistics permanently</li>
+                <li><strong>Value Types:</strong>
+                  <ul>
+                    <li><code>FLAT</code> - Adds a fixed value (e.g., +10 health)</li>
+                    <li><code>PERCENT_BASE</code> - Percentage of the base stat</li>
+                    <li><code>PERCENT_TOTAL</code> - Percentage of the total (base + bonuses)</li>
+                  </ul>
+                </li>
+                <li><strong>Every Level:</strong> If checked, the reward applies at every level starting from the specified level</li>
+              </ul>
+
+              <hr>
+              <h6 style="color: #4ea8de;">Requirements</h6>
+              <p>Requirements restrict when a skill can gain XP:</p>
+              <ul>
+                <li><strong>ITEM_IN_HAND:</strong> Player must be holding a specific item to gain XP</li>
+              </ul>
+
+              <hr>
+              <h6 style="color: #4ea8de;">Locked Items</h6>
+              <p>Locked items cannot be used until the player reaches a specific level in this skill. This allows for progression-gated equipment.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 mb-4">
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">Trigger Types Reference</h5>
+            </div>
+            <div class="card-body p-0" style="max-height: 40vh; overflow-y: auto;">
+              <table class="table table-dark table-striped table-sm mb-0">
+                <thead style="position: sticky; top: 0; background: #0f3460;">
+                  <tr><th>Type</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td><code>BLOCK_BREAK</code></td><td>Mining/breaking blocks</td></tr>
+                  <tr><td><code>PLACE_BLOCK</code></td><td>Placing blocks</td></tr>
+                  <tr><td><code>ENTITY_KILL</code></td><td>Killing mobs/entities</td></tr>
+                  <tr><td><code>PLAYER_KILL</code></td><td>Killing other players</td></tr>
+                  <tr><td><code>CRAFT_ITEM</code></td><td>Crafting items</td></tr>
+                  <tr><td><code>CRITICAL_HIT</code></td><td>Landing critical hits</td></tr>
+                  <tr><td><code>PROJECTILE_HIT</code></td><td>Hitting with projectiles</td></tr>
+                  <tr><td><code>PARRY</code></td><td>Successfully blocking</td></tr>
+                  <tr><td><code>SPRINT</code></td><td>Sprinting movement</td></tr>
+                  <tr><td><code>JUMP</code></td><td>Jumping</td></tr>
+                  <tr><td><code>SWIM</code></td><td>Swimming</td></tr>
+                  <tr><td><code>CLIMB</code></td><td>Climbing</td></tr>
+                  <tr><td><code>GLIDE</code></td><td>Gliding with elytra</td></tr>
+                  <tr><td><code>ROLL</code></td><td>Rolling/dodging</td></tr>
+                  <tr><td><code>SLIDE</code></td><td>Sliding movement</td></tr>
+                  <tr><td><code>SPEND_MANA</code></td><td>Using mana abilities</td></tr>
+                  <tr><td><code>PLAYER_DEATH</code></td><td>Player dying</td></tr>
+                  <tr><td><code>INTERACT</code></td><td>Interacting (F key)</td></tr>
+                  <tr><td><code>PLAYER_CHAT</code></td><td>Sending chat messages</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">Stat Types Reference</h5>
+            </div>
+            <div class="card-body p-0" style="max-height: 50vh; overflow-y: auto;">
+              <table class="table table-dark table-striped table-sm mb-0">
+                <thead style="position: sticky; top: 0; background: #0f3460;">
+                  <tr><th>Stat</th><th>Effect</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td colspan="2" style="background: #1a3a5c; color: #4ea8de;"><strong>Base Stats</strong></td></tr>
+                  <tr><td><code>HEALTH</code></td><td>Max health points</td></tr>
+                  <tr><td><code>STAMINA</code></td><td>Max stamina</td></tr>
+                  <tr><td><code>MANA</code></td><td>Max mana</td></tr>
+                  <tr><td><code>OXYGEN</code></td><td>Max breath underwater</td></tr>
+                  <tr><td><code>STAMINA_REGEN</code></td><td>Stamina recovery rate</td></tr>
+                  <tr><td><code>MOVEMENT_SPEED</code></td><td>Walk/run speed</td></tr>
+                  <tr><td colspan="2" style="background: #1a3a5c; color: #e17055;"><strong>Combat Stats</strong></td></tr>
+                  <tr><td><code>DEFENSE</code></td><td>Damage reduction</td></tr>
+                  <tr><td><code>CRIT_CHANCE</code></td><td>Critical hit chance %</td></tr>
+                  <tr><td><code>CRIT_DAMAGE</code></td><td>Critical hit damage %</td></tr>
+                  <tr><td><code>VAMPIRISM</code></td><td>Life steal on hit</td></tr>
+                  <tr><td colspan="2" style="background: #1a3a5c; color: #fdcb6e;"><strong>Damage Types</strong></td></tr>
+                  <tr><td><code>DAMAGE_MELEE</code></td><td>Melee weapon damage</td></tr>
+                  <tr><td><code>DAMAGE_RANGED</code></td><td>Ranged weapon damage</td></tr>
+                  <tr><td><code>DAMAGE_MAGIC</code></td><td>Magic attack damage</td></tr>
+                  <tr><td><code>DAMAGE_FIRE</code></td><td>Fire damage</td></tr>
+                  <tr><td><code>DAMAGE_LIGHT</code></td><td>Light attack damage</td></tr>
+                  <tr><td><code>DAMAGE_CHARGED</code></td><td>Charged attack damage</td></tr>
+                  <tr><td><code>DAMAGE_SIGNATURE</code></td><td>Signature attack damage</td></tr>
+                  <tr><td colspan="2" style="background: #1a3a5c; color: #00b894;"><strong>Resistances</strong></td></tr>
+                  <tr><td><code>REDUCE_DAMAGE</code></td><td>General damage reduction</td></tr>
+                  <tr><td><code>RESISTANCE_MELEE</code></td><td>Melee damage resistance</td></tr>
+                  <tr><td><code>RESISTANCE_PROJECTILE</code></td><td>Projectile damage resistance</td></tr>
+                  <tr><td><code>RESISTANCE_MAGIC</code></td><td>Magic damage resistance</td></tr>
+                  <tr><td><code>RESISTANCE_FIRE</code></td><td>Fire damage resistance</td></tr>
+                  <tr><td><code>RESISTANCE_FALL</code></td><td>Fall damage resistance</td></tr>
+                  <tr><td><code>RESISTANCE_DROWNING</code></td><td>Drowning damage resistance</td></tr>
+                  <tr><td><code>RESISTANCE_SUFFOCATION</code></td><td>Suffocation resistance</td></tr>
+                  <tr><td><code>RESISTANCE_VOID</code></td><td>Void damage resistance</td></tr>
+                  <tr><td><code>RESISTANCE_EXPLOSION</code></td><td>Explosion resistance</td></tr>
+                  <tr><td colspan="2" style="background: #1a3a5c; color: #a29bfe;"><strong>Utility</strong></td></tr>
+                  <tr><td><code>BLOCKBREAK_SPEED</code></td><td>Mining speed</td></tr>
+                  <tr><td><code>CRAFTING_PROFICIENCY</code></td><td>Double craft chance</td></tr>
+                  <tr><td><code>DURABILITY_MODIFIER</code></td><td>Tool durability</td></tr>
+                  <tr><td><code>BONUS_DROP_CHANCE</code></td><td>Extra drop chance</td></tr>
+                  <tr><td><code>SIGNATURE_ENERGY</code></td><td>Signature energy gain/loss</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h5 class="mb-0">Tips & Best Practices</h5>
+            </div>
+            <div class="card-body">
+              <ul class="mb-0">
+                <li class="mb-2">Use the <strong>Statistics</strong> tab to balance XP progression</li>
+                <li class="mb-2">Add cooldowns to prevent XP farming exploits</li>
+                <li class="mb-2">Use deny lists to exclude specific items/mobs</li>
+                <li class="mb-2">Start with small stat bonuses and increase with level</li>
+                <li class="mb-2">Test your skills in-game to fine-tune values</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- End Info Page -->
   </div>
 
   <!-- Add Trigger Modal -->
@@ -271,23 +554,52 @@
             <div class="col-12">
               <label class="form-label">Unlock Type</label>
               <select class="form-select" id="unlock-type" onchange="updateUnlockFields()">
-                <option value="ITEM">ITEM - Give item as reward</option>
-                <option value="STAT_HEALTH">STAT_HEALTH - Max health</option>
-                <option value="STAT_STAMINA">STAT_STAMINA - Max stamina</option>
-                <option value="STAT_MANA">STAT_MANA - Max mana</option>
-                <option value="STAT_OXYGEN">STAT_OXYGEN - Max oxygen</option>
-                <option value="STAT_STAMINA_REGEN">STAT_STAMINA_REGEN - Stamina regen</option>
-                <option value="STAT_BLOCKBREAK_SPEED">STAT_BLOCKBREAK_SPEED - Block break speed</option>
-                <option value="STAT_STRENGTH">STAT_STRENGTH - Damage dealt</option>
-                <option value="STAT_DEFENSE">STAT_DEFENSE - Damage reduction</option>
-                <option value="STAT_CRIT_CHANCE">STAT_CRIT_CHANCE - Crit chance</option>
-                <option value="STAT_CRIT_DAMAGE">STAT_CRIT_DAMAGE - Crit damage</option>
-                <option value="STAT_VAMPIRISM">STAT_VAMPIRISM - Health on hit</option>
-                <option value="STAT_CRAFTING_PROFICIENCY">STAT_CRAFTING_PROFICIENCY - Double craft chance</option>
-                <option value="STAT_MOVEMENT_SPEED">STAT_MOVEMENT_SPEED - Movement speed</option>
-                <option value="MAGNET">MAGNET - Item magnet</option>
-                <option value="STAT_DURABILITY_MODIFIER">STAT_DURABILITY_MODIFIER - Durability modifier</option>
-                <option value="STAT_BONUS_DROP_CHANCE">STAT_BONUS_DROP_CHANCE - Double drop chance</option>
+                <optgroup label="Rewards">
+                  <option value="ITEM">ITEM - Give item as reward</option>
+                  <option value="MAGNET">MAGNET - Item magnet</option>
+                </optgroup>
+                <optgroup label="Base Stats">
+                  <option value="STAT_HEALTH">STAT_HEALTH - Max health</option>
+                  <option value="STAT_STAMINA">STAT_STAMINA - Max stamina</option>
+                  <option value="STAT_MANA">STAT_MANA - Max mana</option>
+                  <option value="STAT_OXYGEN">STAT_OXYGEN - Max oxygen</option>
+                  <option value="STAT_STAMINA_REGEN">STAT_STAMINA_REGEN - Stamina regen</option>
+                  <option value="STAT_MOVEMENT_SPEED">STAT_MOVEMENT_SPEED - Movement speed</option>
+                </optgroup>
+                <optgroup label="Combat Stats">
+                  <option value="STAT_DEFENSE">STAT_DEFENSE - Damage reduction</option>
+                  <option value="STAT_CRIT_CHANCE">STAT_CRIT_CHANCE - Crit chance</option>
+                  <option value="STAT_CRIT_DAMAGE">STAT_CRIT_DAMAGE - Crit damage</option>
+                  <option value="STAT_VAMPIRISM">STAT_VAMPIRISM - Health on hit</option>
+                </optgroup>
+                <optgroup label="Damage Types">
+                  <option value="STAT_DAMAGE_MELEE">STAT_DAMAGE_MELEE - Melee damage</option>
+                  <option value="STAT_DAMAGE_RANGED">STAT_DAMAGE_RANGED - Ranged damage</option>
+                  <option value="STAT_DAMAGE_MAGIC">STAT_DAMAGE_MAGIC - Magic damage</option>
+                  <option value="STAT_DAMAGE_FIRE">STAT_DAMAGE_FIRE - Fire damage</option>
+                  <option value="STAT_DAMAGE_LIGHT">STAT_DAMAGE_LIGHT - Light attack damage</option>
+                  <option value="STAT_DAMAGE_CHARGED">STAT_DAMAGE_CHARGED - Charged attack damage</option>
+                  <option value="STAT_DAMAGE_SIGNATURE">STAT_DAMAGE_SIGNATURE - Signature damage</option>
+                </optgroup>
+                <optgroup label="Resistances">
+                  <option value="STAT_REDUCE_DAMAGE">STAT_REDUCE_DAMAGE - General damage reduction</option>
+                  <option value="STAT_RESISTANCE_MELEE">STAT_RESISTANCE_MELEE - Melee resistance</option>
+                  <option value="STAT_RESISTANCE_PROJECTILE">STAT_RESISTANCE_PROJECTILE - Projectile resistance</option>
+                  <option value="STAT_RESISTANCE_MAGIC">STAT_RESISTANCE_MAGIC - Magic resistance</option>
+                  <option value="STAT_RESISTANCE_FIRE">STAT_RESISTANCE_FIRE - Fire resistance</option>
+                  <option value="STAT_RESISTANCE_FALL">STAT_RESISTANCE_FALL - Fall damage resistance</option>
+                  <option value="STAT_RESISTANCE_DROWNING">STAT_RESISTANCE_DROWNING - Drowning resistance</option>
+                  <option value="STAT_RESISTANCE_SUFFOCATION">STAT_RESISTANCE_SUFFOCATION - Suffocation resistance</option>
+                  <option value="STAT_RESISTANCE_VOID">STAT_RESISTANCE_VOID - Void resistance</option>
+                  <option value="STAT_RESISTANCE_EXPLOSION">STAT_RESISTANCE_EXPLOSION - Explosion resistance</option>
+                </optgroup>
+                <optgroup label="Utility">
+                  <option value="STAT_BLOCKBREAK_SPEED">STAT_BLOCKBREAK_SPEED - Block break speed</option>
+                  <option value="STAT_CRAFTING_PROFICIENCY">STAT_CRAFTING_PROFICIENCY - Crafting proficiency</option>
+                  <option value="STAT_DURABILITY_MODIFIER">STAT_DURABILITY_MODIFIER - Durability modifier</option>
+                  <option value="STAT_BONUS_DROP_CHANCE">STAT_BONUS_DROP_CHANCE - Bonus drop chance</option>
+                  <option value="STAT_SIGNATURE_ENERGY">STAT_SIGNATURE_ENERGY - Signature energy</option>
+                </optgroup>
               </select>
             </div>
             <div class="col-md-6">

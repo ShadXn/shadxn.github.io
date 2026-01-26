@@ -417,7 +417,7 @@
         "amount": 0.05
       },
       {
-        "type": "STAT_STRENGTH",
+        "type": "ITEM",
         "level": 2,
         "everyLevel": true,
         "percentage": false,
@@ -426,7 +426,7 @@
         "amount": 0.15
       },
       {
-        "type": "STAT_DEFENSE",
+        "type": "ITEM",
         "level": 2,
         "everyLevel": true,
         "percentage": false,
@@ -986,7 +986,7 @@
         "amount": 0.05
       },
       {
-        "type": "STAT_STRENGTH",
+        "type": "ITEM",
         "level": 2,
         "everyLevel": true,
         "percentage": false,
@@ -995,7 +995,7 @@
         "amount": 0.15
       },
       {
-        "type": "STAT_DEFENSE",
+        "type": "ITEM",
         "level": 2,
         "everyLevel": true,
         "percentage": false,
@@ -1473,7 +1473,7 @@
         "amount": 0.05
       },
       {
-        "type": "STAT_STRENGTH",
+        "type": "ITEM",
         "level": 2,
         "everyLevel": true,
         "percentage": false,
@@ -1482,7 +1482,7 @@
         "amount": 0.15
       },
       {
-        "type": "STAT_DEFENSE",
+        "type": "ITEM",
         "level": 2,
         "everyLevel": true,
         "percentage": false,
@@ -1935,7 +1935,7 @@
         "amount": 0.05
       },
       {
-        "type": "STAT_STRENGTH",
+        "type": "ITEM",
         "level": 2,
         "everyLevel": true,
         "percentage": false,
@@ -1944,7 +1944,7 @@
         "amount": 0.15
       },
       {
-        "type": "STAT_DEFENSE",
+        "type": "ITEM",
         "level": 2,
         "everyLevel": true,
         "percentage": false,
@@ -2809,7 +2809,7 @@
         "amount": 0.05
       },
       {
-        "type": "STAT_STRENGTH",
+        "type": "ITEM",
         "level": 2,
         "everyLevel": true,
         "percentage": false,
@@ -2818,7 +2818,7 @@
         "amount": 0.15
       },
       {
-        "type": "STAT_DEFENSE",
+        "type": "ITEM",
         "level": 2,
         "everyLevel": true,
         "percentage": false,
@@ -3300,7 +3300,7 @@
         "amount": 0.001
       },
       {
-        "type": "STAT_STRENGTH",
+        "type": "ITEM",
         "level": 2,
         "everyLevel": true,
         "percentage": false,
@@ -3309,7 +3309,7 @@
         "amount": 0.25
       },
       {
-        "type": "STAT_DEFENSE",
+        "type": "ITEM",
         "level": 2,
         "everyLevel": true,
         "percentage": false,
@@ -3834,7 +3834,7 @@
         "amount": 0.05
       },
       {
-        "type": "STAT_STRENGTH",
+        "type": "ITEM",
         "level": 2,
         "everyLevel": true,
         "percentage": false,
@@ -3843,7 +3843,7 @@
         "amount": 0.15
       },
       {
-        "type": "STAT_DEFENSE",
+        "type": "ITEM",
         "level": 2,
         "everyLevel": true,
         "percentage": false,
@@ -4032,7 +4032,7 @@
     "requirements": [],
     "unlocks": [
       {
-        "type": "STAT_DEFENSE",
+        "type": "ITEM",
         "level": 2,
         "everyLevel": true,
         "percentage": false,
@@ -4933,7 +4933,7 @@
         "amount": 0.05
       },
       {
-        "type": "STAT_STRENGTH",
+        "type": "ITEM",
         "level": 2,
         "everyLevel": true,
         "percentage": false,
@@ -4942,7 +4942,7 @@
         "amount": 0.15
       },
       {
-        "type": "STAT_DEFENSE",
+        "type": "ITEM",
         "level": 2,
         "everyLevel": true,
         "percentage": false,
