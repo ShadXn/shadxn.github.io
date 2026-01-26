@@ -1495,7 +1495,46 @@ function copyJSON() {
 
 // Import/Export
 function importJSON() {
+  // Show the import modal
+  const modal = new bootstrap.Modal(document.getElementById('importModal'));
+  modal.show();
+}
+
+function importOwnJSON() {
+  // Close the import modal and trigger file input
+  bootstrap.Modal.getInstance(document.getElementById('importModal'))?.hide();
   document.getElementById('import-file').click();
+}
+
+async function loadDefaultSkills() {
+  // Close the import modal
+  bootstrap.Modal.getInstance(document.getElementById('importModal'))?.hide();
+
+  showLoading('Loading default skills...');
+
+  try {
+    const response = await fetch('skills.json');
+    if (!response.ok) {
+      throw new Error('Failed to fetch default skills');
+    }
+    const data = await response.json();
+
+    if (Array.isArray(data)) {
+      skills = data;
+      currentSkillIndex = skills.length > 0 ? 0 : null;
+      saveToLocalStorage();
+      renderSkillsList();
+      renderSkillEditor();
+      updateJSONPreview();
+      hideLoading();
+      showToast(`Loaded ${skills.length} default skills`, 'success');
+    } else {
+      throw new Error('Invalid JSON format');
+    }
+  } catch (error) {
+    hideLoading();
+    showToast('Failed to load default skills: ' + error.message, 'danger');
+  }
 }
 
 function handleFileImport(event) {
