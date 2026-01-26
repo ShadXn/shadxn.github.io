@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>XP Table Generator</title>
+  <style>
+    :root { color-scheme: dark light; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; padding: 20px; }
+    .wrap { max-width: 1100px; margin: 0 auto; }
+    h1 { margin: 0 0 12px; font-size: 22px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+      align-items: end;
+    }
+    label { font-size: 12px; opacity: .85; display:block; margin-bottom: 6px; }
+    input, select, button, textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(127,127,127,.35);
+      background: rgba(127,127,127,.08);
+      color: inherit;
+      box-sizing: border-box;
+    }
+    button { cursor: pointer; font-weight: 600; }
+    .btnrow { display:flex; gap:10px; flex-wrap: wrap; margin: 10px 0 14px; }
+    .btnrow > button { width: auto; }
+    .note { font-size: 12px; opacity: .85; margin: 6px 0 12px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 8px 10px; border-bottom: 1px solid rgba(127,127,127,.25); text-align: right; }
+    th { position: sticky; top: 0; background: rgba(30,30,30,.95); }
+    td:first-child, th:first-child { text-align: left; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .card { border: 1px solid rgba(127,127,127,.25); border-radius: 14px; padding: 14px; background: rgba(127,127,127,.06); }
+    .row { display:flex; gap:12px; align-items:center; flex-wrap: wrap; }
+    .row > * { flex: 1 1 auto; }
+    .small { font-size: 12px; opacity: .85; }
+    .hidden { display:none; }
+    @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>XP Table Generator</h1>
+
+    <div class="card">
+      <div class="grid">
+        <div>
+          <label for="baseXp">Base XP</label>
+          <input id="baseXp" type="number" step="0.01" value="50" />
+        </div>
+
+        <div>
+          <label for="multiplier">Multiplier</label>
+          <input id="multiplier" type="number" step="0.0001" value="1.0" />
+        </div>
+
+        <div>
+          <label for="maxLevel">Max level</label>
+          <input id="maxLevel" type="number" min="2" step="1" value="100" />
+        </div>
+
+        <div>
+          <label for="mode">Curve</label>
+          <select id="mode">
+            <option value="quadratic" selected>Quadratic: base × L² × mult (matches your 10→11=5000)</option>
+            <option value="linear">Linear: base × L × mult</option>
+            <option value="exponential">Exponential: base × mult^(L−1)</option>
+            <option value="power">Power: base × L^p × mult</option>
+          </select>
+        </div>
+
+        <div id="powerWrap" class="hidden">
+          <label for="powerP">Power p</label>
+          <input id="powerP" type="number" step="0.01" value="2.0" />
+        </div>
+
+        <div>
+          <label for="numberFmt">Number format</label>
+          <select id="numberFmt">
+            <option value="plain" selected>Plain</option>
+            <option value="comma">With commas</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="note">
+        Columns shown:
+        <span class="mono">XP_to_next(L)</span> = XP required to go from level <span class="mono">L → L+1</span>,
+        and <span class="mono">Total_XP_to_reach_(L+1)</span> = cumulative total from level 1 up to that point.
+      </div>
+
+      <div class="btnrow">
+        <button id="regen">Generate</button>
+        <button id="copyTsv">Copy as TSV (Sheets paste)</button>
+        <button id="copyCsv">Copy as CSV</button>
+        <button id="downloadCsv">Download CSV</button>
+      </div>
+
+      <div class="small" id="status"></div>
+    </div>
+
+    <div style="height:12px"></div>
+
+    <div class="card">
+      <div style="overflow:auto; max-height: 70vh;">
+        <table id="xpTable">
+          <thead>
+                <tr>
+                    <th>Level (L)</th>
+                    <th>XP to next (L→L+1)</th>
+                    <th>Total XP at level (L)</th>
+                </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div style="height:12px"></div>
+
+    <div class="card">
+      <div class="row">
+        <div>
+          <div class="small">Quick sanity check (optional)</div>
+          <div class="small">
+            If using Quadratic with base=50, mult=1.0:
+            <span class="mono">L=10 → XP_to_next=5000</span> and
+            <span class="mono">Total to reach 11 = 19250</span>.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const els = {
+      baseXp: document.getElementById("baseXp"),
+      multiplier: document.getElementById("multiplier"),
+      maxLevel: document.getElementById("maxLevel"),
+      mode: document.getElementById("mode"),
+      powerWrap: document.getElementById("powerWrap"),
+      powerP: document.getElementById("powerP"),
+      numberFmt: document.getElementById("numberFmt"),
+      regen: document.getElementById("regen"),
+      copyTsv: document.getElementById("copyTsv"),
+      copyCsv: document.getElementById("copyCsv"),
+      downloadCsv: document.getElementById("downloadCsv"),
+      tableBody: document.querySelector("#xpTable tbody"),
+      status: document.getElementById("status"),
+    };
+
+    function clampInt(n, min, max) {
+      n = Math.floor(Number(n));
+      if (!Number.isFinite(n)) return min;
+      return Math.max(min, Math.min(max, n));
+    }
+
+    function fmtNumber(n, mode) {
+      // Avoid scientific notation for big numbers where possible.
+      // Use BigInt when we can (integers) otherwise use JS number.
+      if (typeof n === "bigint") {
+        const s = n.toString();
+        if (mode === "comma") return s.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return s;
+      }
+      if (!Number.isFinite(n)) return "NaN";
+      if (mode === "comma") return n.toLocaleString(undefined, { maximumFractionDigits: 6 });
+      return String(n);
+    }
+
+    function xpToNext(level, baseXp, multiplier) {
+        const isOne = Math.abs(multiplier - 1.0) < 1e-9;
+
+        if (isOne) {
+            return Math.floor(baseXp * level);
+        }
+
+        return Math.floor(baseXp * (level ** multiplier));
+    }
+
+
+    function generateRows() {
+        const baseXp = Number(els.baseXp.value);
+        const multiplier = Number(els.multiplier.value);
+        const maxLevel = clampInt(els.maxLevel.value, 2, 100000);
+
+        if (!Number.isFinite(baseXp) || baseXp <= 0) throw new Error("Base XP must be a positive number.");
+        if (!Number.isFinite(multiplier) || multiplier <= 0) throw new Error("Multiplier must be a positive number.");
+
+        const rows = [];
+        let totalAtLevel = 0; // total XP to be current level L (starts at 0 for level 1)
+
+        for (let L = 1; L <= maxLevel; L++) {
+            const xpNext = (L < maxLevel) ? xpToNext(L, baseXp, multiplier) : 0;
+
+            rows.push({
+            level: L,
+            xpToNext: xpNext,
+            totalAtLevel: totalAtLevel,                 // total XP to be level L
+            totalToReachNext: totalAtLevel + xpNext     // total XP to reach level L+1
+            });
+
+            totalAtLevel += xpNext;
+        }
+
+        return { rows, meta: { baseXp, multiplier, maxLevel } };
+    }
+
+
+    function render() {
+      els.status.textContent = "";
+      els.tableBody.innerHTML = "";
+
+      let data;
+      try {
+        data = generateRows();
+      } catch (e) {
+        els.status.textContent = "Error: " + e.message;
+        return;
+      }
+
+      const fmtMode = els.numberFmt.value;
+      const { rows, meta } = data;
+
+      // Render
+      const frag = document.createDocumentFragment();
+      for (const r of rows) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="mono">${r.level}</td>
+          <td class="mono">${fmtNumber(r.xpToNext, fmtMode)}</td>
+          <td class="mono">${fmtNumber(r.totalAtLevel, fmtMode)}</td>
+        `;
+        frag.appendChild(tr);
+      }
+      els.tableBody.appendChild(frag);
+
+      const curveLabel = ({
+        quadratic: "Quadratic (base×L²×mult)",
+        linear: "Linear (base×L×mult)",
+        exponential: "Exponential (base×mult^(L−1))",
+        power: `Power (base×L^${meta.p}×mult)`,
+      })[meta.mode];
+
+      els.status.textContent =
+        `Generated levels 1→${meta.maxLevel} | Curve: ${curveLabel} | baseXp=${meta.baseXp} | multiplier=${meta.multiplier}`;
+    }
+
+    function toDelimited(rows, delim) {
+      const lines = [];
+      lines.push(["Level", "XP_to_next", "Total_XP_at_level"].join(delim));
+      for (const r of rows) {
+        lines.push([r.level, r.xpToNext, r.totalAtLevel].join(delim));
+      }
+      return lines.join("\n");
+    }
+
+    async function copy(text) {
+      await navigator.clipboard.writeText(text);
+      els.status.textContent = "Copied to clipboard.";
+      setTimeout(() => { els.status.textContent = ""; }, 1200);
+    }
+
+    function download(filename, text) {
+      const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(a.href);
+    }
+
+    // UI wiring
+    els.mode.addEventListener("change", () => {
+      els.powerWrap.classList.toggle("hidden", els.mode.value !== "power");
+      render();
+    });
+
+    els.regen.addEventListener("click", render);
+
+    els.copyTsv.addEventListener("click", async () => {
+      const { rows } = generateRows();
+      await copy(toDelimited(rows, "\t"));
+    });
+
+    els.copyCsv.addEventListener("click", async () => {
+      const { rows } = generateRows();
+      await copy(toDelimited(rows, ","));
+    });
+
+    els.downloadCsv.addEventListener("click", () => {
+      const { rows, meta } = generateRows();
+      const csv = toDelimited(rows, ",");
+      download(`xp_table_L1-${meta.maxLevel}_${meta.mode}.csv`, csv);
+    });
+
+    // Live update on input changes
+    for (const id of ["baseXp","multiplier","maxLevel","powerP","numberFmt"]) {
+      els[id].addEventListener("input", () => render());
+      els[id].addEventListener("change", () => render());
+    }
+
+    // Initial render
+    render();
+  </script>
+</body>
+</html>
