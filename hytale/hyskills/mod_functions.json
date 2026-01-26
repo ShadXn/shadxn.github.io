@@ -29,7 +29,6 @@
     {"id": "STAT_OXYGEN", "name": "Oxygen", "description": "Increase max oxygen"},
     {"id": "STAT_STAMINA_REGEN", "name": "Stamina Regen", "description": "Increase stamina regen rate"},
     {"id": "STAT_BLOCKBREAK_SPEED", "name": "Block Break Speed", "description": "Increase mining speed"},
-    {"id": "STAT_DEFENSE", "name": "Defense", "description": "Reduce damage taken"},
     {"id": "STAT_CRIT_CHANCE", "name": "Crit Chance", "description": "Increase critical hit chance"},
     {"id": "STAT_CRIT_DAMAGE", "name": "Crit Damage", "description": "Increase critical hit damage"},
     {"id": "STAT_VAMPIRISM", "name": "Vampirism", "description": "Gain health on hit"},

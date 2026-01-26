@@ -8,7 +8,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Inter', sans-serif; background: #1a1a2e; color: #eaeaea; min-height: 100vh; }
-    label, .form-label, .form-check-label, p, span, div, h1, h2, h3, h4, h5, h6, strong, small { color: #eaeaea; }
+    label, .form-label, .form-check-label, p, span, div, h1, h2, h3, h4, h5, h6, strong, small, li, ol, ul { color: #eaeaea; }
+    code { color: #4ea8de; background: #0d1117; padding: 2px 6px; border-radius: 3px; }
     .text-muted { color: #9ca3af !important; }
     .modal-content { background: #16213e !important; color: #eaeaea; }
     .modal-header, .modal-body, .modal-footer { color: #eaeaea; }
@@ -285,45 +286,60 @@
             <div class="card-body">
               <h6 style="color: #4ea8de;">Getting Started</h6>
               <ol>
-                <li class="mb-2"><strong>Create a Skill:</strong> Click "+ Add Skill" to create a new skill. Give it an ID (used internally) and a Display Name (shown to players).</li>
-                <li class="mb-2"><strong>Set Max Level:</strong> Define how many levels this skill can have. Players will progress from level 1 to this maximum.</li>
-                <li class="mb-2"><strong>Add Triggers:</strong> Define how players earn XP. Each trigger specifies an action (like killing mobs or mining blocks) and how much XP it rewards.</li>
-                <li class="mb-2"><strong>Add Unlocks:</strong> Define rewards players get at specific levels - stat boosts, items, or special abilities.</li>
-                <li class="mb-2"><strong>Export:</strong> Click "Export JSON" to download your skills configuration file.</li>
+                <li class="mb-2">
+                  <strong>Create a Skill:</strong> 
+                  <span class="text-muted">Click "+ Add Skill" to create a new skill. Give it an ID (used internally) and a Display Name (shown to players).</span>
+                </li>
+                <li class="mb-2">
+                  <strong>Set Max Level:</strong> 
+                  <span class="text-muted">Define how many levels this skill can have. Players will progress from level 1 to this maximum.</span>
+                </li>
+                <li class="mb-2">
+                  <strong>Add Triggers:</strong> 
+                  <span class="text-muted">Define how players earn XP. Each trigger specifies an action (like killing mobs or mining blocks) and how much XP it rewards.</span>
+                </li>
+                <li class="mb-2">
+                  <strong>Add Unlocks:</strong> 
+                  <span class="text-muted">Define rewards players get at specific levels - stat boosts, items, or special abilities.</span>
+                </li>
+                <li class="mb-2">
+                  <strong>Export:</strong> 
+                  <span class="text-muted">Click "Export JSON" to download your skills configuration file.</span>
+                </li>
               </ol>
 
               <hr>
               <h6 style="color: #4ea8de;">Understanding Triggers</h6>
               <p>Triggers define how players earn experience in a skill. Each trigger has:</p>
-              <ul>
-                <li><strong>Trigger Type:</strong> The action that grants XP (see table below)</li>
-                <li><strong>XP Reward:</strong> How much XP is granted per action</li>
-                <li><strong>Cooldown:</strong> Minimum time (in ms) between XP gains from this trigger</li>
-                <li><strong>Allow/Deny Lists:</strong> Filter which items, blocks, or entities count for this trigger</li>
-              </ul>
+                <ul>
+                  <li><strong>Trigger Type:</strong> <span class="text-muted">The action that grants XP (see table below)</span></li>
+                  <li><strong>XP Reward:</strong> <span class="text-muted">How much XP is granted per action</span></li>
+                  <li><strong>Cooldown:</strong> <span class="text-muted">Minimum time (in ms) between XP gains from this trigger</span></li>
+                  <li><strong>Allow/Deny Lists:</strong> <span class="text-muted">Filter which items, blocks, or entities count for this trigger</span></li>
+                </ul>
 
               <hr>
               <h6 style="color: #4ea8de;">Understanding Unlocks</h6>
               <p>Unlocks are rewards granted when reaching specific levels:</p>
-              <ul>
-                <li><strong>ITEM:</strong> Give players an item as a reward</li>
-                <li><strong>STAT_* types:</strong> Modify player statistics permanently</li>
-                <li><strong>Value Types:</strong>
-                  <ul>
-                    <li><code>FLAT</code> - Adds a fixed value (e.g., +10 health)</li>
-                    <li><code>PERCENT_BASE</code> - Percentage of the base stat</li>
-                    <li><code>PERCENT_TOTAL</code> - Percentage of the total (base + bonuses)</li>
-                  </ul>
-                </li>
-                <li><strong>Every Level:</strong> If checked, the reward applies at every level starting from the specified level</li>
-              </ul>
+                <ul>
+                  <li><strong>ITEM:</strong> <span class="text-muted">Give players an item as a reward</span></li>
+                  <li><strong>STAT_* types:</strong> <span class="text-muted">Modify player statistics permanently</span></li>
+                  <li><strong>Value Types:</strong>
+                    <ul>
+                      <li><code>FLAT</code> - <span class="text-muted">Adds a fixed value (e.g., +10 health)</span></li>
+                      <li><code>PERCENT_BASE</code> - <span class="text-muted">Percentage of the base stat</span></li>
+                      <li><code>PERCENT_TOTAL</code> - <span class="text-muted">Percentage of the total (base + bonuses)</span></li>
+                    </ul>
+                  </li>
+                  <li><strong>Every Level:</strong> <span class="text-muted">If checked, the reward applies at every level starting from the specified level</span></li>
+                </ul>
 
               <hr>
               <h6 style="color: #4ea8de;">Requirements</h6>
               <p>Requirements restrict when a skill can gain XP:</p>
-              <ul>
-                <li><strong>ITEM_IN_HAND:</strong> Player must be holding a specific item to gain XP</li>
-              </ul>
+                <ul>
+                  <li><strong>ITEM_IN_HAND:</strong> <span class="text-muted">Player must be holding a specific item to gain XP</span></li>
+                </ul>
 
               <hr>
               <h6 style="color: #4ea8de;">Locked Items</h6>
@@ -385,7 +401,6 @@
                   <tr><td><code>STAMINA_REGEN</code></td><td>Stamina recovery rate</td></tr>
                   <tr><td><code>MOVEMENT_SPEED</code></td><td>Walk/run speed</td></tr>
                   <tr><td colspan="2" style="background: #1a3a5c; color: #e17055;"><strong>Combat Stats</strong></td></tr>
-                  <tr><td><code>DEFENSE</code></td><td>Damage reduction</td></tr>
                   <tr><td><code>CRIT_CHANCE</code></td><td>Critical hit chance %</td></tr>
                   <tr><td><code>CRIT_DAMAGE</code></td><td>Critical hit damage %</td></tr>
                   <tr><td><code>VAMPIRISM</code></td><td>Life steal on hit</td></tr>
@@ -567,7 +582,6 @@
                   <option value="STAT_MOVEMENT_SPEED">STAT_MOVEMENT_SPEED - Movement speed</option>
                 </optgroup>
                 <optgroup label="Combat Stats">
-                  <option value="STAT_DEFENSE">STAT_DEFENSE - Damage reduction</option>
                   <option value="STAT_CRIT_CHANCE">STAT_CRIT_CHANCE - Crit chance</option>
                   <option value="STAT_CRIT_DAMAGE">STAT_CRIT_DAMAGE - Crit damage</option>
                   <option value="STAT_VAMPIRISM">STAT_VAMPIRISM - Health on hit</option>
