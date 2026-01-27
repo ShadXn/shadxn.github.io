@@ -4630,44 +4630,19 @@
     "description": "[TMP] Can be smelted into an \u003citem is\u003d\"Ingredient_Bar_Adamantite\"/\u003e at a \u003citem is\u003d\"Bench_Furnace\"/\u003e."
   },
   {
-    "id": "Ore_Adamantite_Basalt",
-    "name": "Adamantite Ore - Basalt",
+    "id": "Ore_Adamantite_Magma",
+    "name": "Adamantite Ore - Magma",
     "description": ""
   },
   {
-    "id": "Ore_Adamantite_Shale",
-    "name": "Adamantite Ore - Shale",
-    "description": ""
-  },
-  {
-    "id": "Ore_Adamantite_Slate",
-    "name": "Adamantite Ore - Slate",
-    "description": ""
-  },
-  {
-    "id": "Ore_Adamantite_Stone",
-    "name": "Adamantite Ore - Stone",
-    "description": ""
-  },
-  {
-    "id": "Ore_Adamantite_Volcanic",
-    "name": "Adamantite Ore - Volcanic",
+    "id": "Ore_Adamantite_Magma_Cracked",
+    "name": "Adamantite Ore - Magma Cracked",
     "description": ""
   },
   {
     "id": "Ore_Cobalt",
     "name": "Cobalt Ore",
     "description": "[TMP] Can be smelted into a \u003citem is\u003d\"Ingredient_Bar_Cobalt\"/\u003e at a \u003citem is\u003d\"Bench_Furnace\"/\u003e."
-  },
-  {
-    "id": "Ore_Cobalt_Basalt",
-    "name": "Cobalt Ore - Basalt",
-    "description": ""
-  },
-  {
-    "id": "Ore_Cobalt_Sandstone",
-    "name": "Cobalt Ore - Sandstone",
-    "description": ""
   },
   {
     "id": "Ore_Cobalt_Shale",
@@ -4680,24 +4655,14 @@
     "description": ""
   },
   {
-    "id": "Ore_Cobalt_Stone",
-    "name": "Cobalt Ore - Stone",
-    "description": ""
-  },
-  {
-    "id": "Ore_Cobalt_Volcanic",
-    "name": "Cobalt Ore - Volcanic",
+    "id": "Ore_Cobalt_Slate_Cracked",
+    "name": "Cobalt Ore - Slate Cracked",
     "description": ""
   },
   {
     "id": "Ore_Copper",
     "name": "Copper Ore",
     "description": "[TMP] Can be smelted into a \u003citem is\u003d\"Ingredient_Bar_Copper\"/\u003e at a \u003citem is\u003d\"Bench_Furnace\"/\u003e."
-  },
-  {
-    "id": "Ore_Copper_Basalt",
-    "name": "Copper Ore - Basalt",
-    "description": ""
   },
   {
     "id": "Ore_Copper_Sandstone",
@@ -4715,14 +4680,14 @@
     "description": ""
   },
   {
-    "id": "Ore_Copper_Volcanic",
-    "name": "Copper Ore - Volcanic",
-    "description": ""
-  },
-  {
     "id": "Ore_Gold",
     "name": "Gold Ore",
     "description": "[TMP] Can be smelted into a \u003citem is\u003d\"Ingredient_Bar_Gold\"/\u003e at a \u003citem is\u003d\"Bench_Furnace\"/\u003e."
+  },
+  {
+    "id": "Ore_Gold_Stone",
+    "name": "Gold Ore - Stone",
+    "description": ""
   },
   {
     "id": "Ore_Gold_Basalt",
@@ -4790,59 +4755,14 @@
     "description": "[TMP] Can be smelted into a \u003citem is\u003d\"Ingredient_Bar_Mithril\"/\u003e at a \u003citem is\u003d\"Bench_Furnace\"/\u003e."
   },
   {
-    "id": "Ore_Mithril_Basalt",
-    "name": "Mithril Ore - Basalt",
-    "description": ""
-  },
-  {
-    "id": "Ore_Mithril_Magma",
-    "name": "Mithril Ore - Magma",
-    "description": ""
-  },
-  {
-    "id": "Ore_Mithril_Slate",
-    "name": "Mithril Ore - Slate",
-    "description": ""
-  },
-  {
     "id": "Ore_Mithril_Stone",
     "name": "Mithril Ore - Stone",
-    "description": ""
-  },
-  {
-    "id": "Ore_Mithril_Volcanic",
-    "name": "Mithril Ore - Volcanic",
     "description": ""
   },
   {
     "id": "Ore_Onyxium",
     "name": "Onyxium Ore",
     "description": "[TMP] Can be smelted into an \u003citem is\u003d\"Ingredient_Bar_Onyxium\"/\u003e at a \u003citem is\u003d\"Bench_Furnace\"/\u003e."
-  },
-  {
-    "id": "Ore_Onyxium_Basalt",
-    "name": "Onyxium Ore - Basalt",
-    "description": ""
-  },
-  {
-    "id": "Ore_Onyxium_Sandstone",
-    "name": "Onyxium Ore - Sandstone",
-    "description": ""
-  },
-  {
-    "id": "Ore_Onyxium_Shale",
-    "name": "Onyxium Ore - Shale",
-    "description": ""
-  },
-  {
-    "id": "Ore_Onyxium_Stone",
-    "name": "Onyxium Ore - Stone",
-    "description": ""
-  },
-  {
-    "id": "Ore_Onyxium_Volcanic",
-    "name": "Onyxium Ore - Volcanic",
-    "description": ""
   },
   {
     "id": "Ore_Prisma",
@@ -4890,28 +4810,13 @@
     "description": "[TMP] Can be smelted into a \u003citem is\u003d\"Ingredient_Bar_Thorium\"/\u003e at a \u003citem is\u003d\"Bench_Furnace\"/\u003e."
   },
   {
-    "id": "Ore_Thorium_Basalt",
-    "name": "Thorium Ore - Basalt",
+    "id": "Ore_Thorium_Mud",
+    "name": "Thorium Ore - Mud",
     "description": ""
   },
   {
     "id": "Ore_Thorium_Sandstone",
     "name": "Thorium Ore - Sandstone",
-    "description": ""
-  },
-  {
-    "id": "Ore_Thorium_Shale",
-    "name": "Thorium Ore - Shale",
-    "description": ""
-  },
-  {
-    "id": "Ore_Thorium_Stone",
-    "name": "Thorium Ore - Stone",
-    "description": ""
-  },
-  {
-    "id": "Ore_Thorium_Volcanic",
-    "name": "Thorium Ore - Volcanic",
     "description": ""
   },
   {
