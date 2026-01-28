@@ -198,8 +198,38 @@ async function loadGameData() {
   } catch (err) {
     console.error('Failed to load game data:', err);
     gameData = { entities: {}, items: {}, blocks: {} };
-    modFunctions = { triggerTypes: [], unlockTypes: [], requirementTypes: [] };
+    modFunctions = { triggerTypes: [], unlockTypes: [], requirementTypes: [], deprecated: { triggerTypes: [], unlockTypes: [], requirementTypes: [] } };
   }
+}
+
+// Deprecated type checking functions
+function isDeprecatedTriggerType(type) {
+  if (!modFunctions?.deprecated?.triggerTypes) return false;
+  return modFunctions.deprecated.triggerTypes.some(t => t.id === type);
+}
+
+function isDeprecatedUnlockType(type) {
+  if (!modFunctions?.deprecated?.unlockTypes) return false;
+  return modFunctions.deprecated.unlockTypes.some(t => t.id === type);
+}
+
+function isDeprecatedRequirementType(type) {
+  if (!modFunctions?.deprecated?.requirementTypes) return false;
+  return modFunctions.deprecated.requirementTypes.some(t => t.id === type);
+}
+
+function getDeprecatedInfo(category, type) {
+  if (!modFunctions?.deprecated?.[category]) return null;
+  return modFunctions.deprecated[category].find(t => t.id === type);
+}
+
+function hasDeprecatedTypes(skill) {
+  if (!skill) return { triggers: false, unlocks: false, requirements: false };
+  return {
+    triggers: skill.triggers?.some(t => isDeprecatedTriggerType(t.type)) || false,
+    unlocks: skill.unlocks?.some(u => isDeprecatedUnlockType(u.type)) || false,
+    requirements: skill.requirements?.some(r => isDeprecatedRequirementType(r.type)) || false
+  };
 }
 
 // Autocomplete functionality
@@ -560,11 +590,15 @@ function renderSkillsList() {
   }
 
   const len = skills.length;
-  container.innerHTML = skills.map((skill, index) => `
+  container.innerHTML = skills.map((skill, index) => {
+    const deprecated = hasDeprecatedTypes(skill);
+    const hasAnyDeprecated = deprecated.triggers || deprecated.unlocks || deprecated.requirements;
+    return `
     <div class="skill-item p-3 rounded mb-2 ${currentSkillIndex === index ? 'active' : ''}" onclick="selectSkill(${index})">
       <div class="d-flex justify-content-between align-items-start">
         <div>
           <strong>${skill.displayName || 'Unnamed Skill'}</strong>
+          ${hasAnyDeprecated ? '<span class="deprecated-indicator ms-2" title="Contains deprecated types">⚠</span>' : ''}
           <div class="small text-muted">ID: ${skill.id}</div>
         </div>
         <div class="d-flex gap-1">
@@ -575,13 +609,14 @@ function renderSkillsList() {
         </div>
       </div>
       <div class="mt-2 pt-2" style="border-top: 1px solid rgba(255,255,255,0.1);">
-        <span class="badge badge-requirement me-1">${skill.requirements?.length || 0} req</span>
-        <span class="badge badge-trigger me-1">${skill.triggers?.length || 0} triggers</span>
-        <span class="badge badge-unlock me-1">${skill.unlocks?.length || 0} unlocks</span>
+        <span class="badge badge-requirement me-1">${skill.requirements?.length || 0} req${deprecated.requirements ? ' ⚠' : ''}</span>
+        <span class="badge badge-trigger me-1">${skill.triggers?.length || 0} triggers${deprecated.triggers ? ' ⚠' : ''}</span>
+        <span class="badge badge-unlock me-1">${skill.unlocks?.length || 0} unlocks${deprecated.unlocks ? ' ⚠' : ''}</span>
         <span class="badge badge-locked me-1">${skill.lockedItems?.length || 0} locked</span>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 function moveSkill(index, direction) {
@@ -657,8 +692,8 @@ function duplicateSkill(index) {
   const copy = JSON.parse(JSON.stringify(skill));
   copy.id = generateId();
   copy.displayName = (skill.displayName || 'Skill') + ' (Copy)';
-  skills.push(copy);
-  currentSkillIndex = skills.length - 1;
+  skills.splice(index + 1, 0, copy);
+  currentSkillIndex = index + 1;
   saveToLocalStorage();
   renderSkillsList();
   renderSkillEditor();
@@ -820,11 +855,15 @@ function renderTriggers(triggers) {
   }
 
   const len = triggers.length;
-  return triggers.map((trigger, index) => `
-    <div class="trigger-card p-3 rounded">
+  return triggers.map((trigger, index) => {
+    const isDeprecated = isDeprecatedTriggerType(trigger.type);
+    const deprecatedInfo = isDeprecated ? getDeprecatedInfo('triggerTypes', trigger.type) : null;
+    return `
+    <div class="trigger-card p-3 rounded ${isDeprecated ? 'deprecated-card' : ''}">
       <div class="d-flex justify-content-between align-items-start">
         <div>
-          <span class="badge badge-trigger">${trigger.type}</span>
+          <span class="badge badge-trigger ${isDeprecated ? 'badge-deprecated' : ''}">${trigger.type}${isDeprecated ? ' ⚠' : ''}</span>
+          ${isDeprecated ? `<span class="deprecated-warning ms-2" title="${deprecatedInfo?.description || 'Deprecated type'}">Removed in ${deprecatedInfo?.removedIn || '?'}</span>` : ''}
           <span class="ms-2">+${trigger.xpReward} XP</span>
           ${trigger.cooldown > 0 ? `<span class="ms-2 text-muted small">(${trigger.cooldown}ms cooldown)</span>` : ''}
         </div>
@@ -845,7 +884,8 @@ function renderTriggers(triggers) {
       ${trigger.allowList?.length > 0 ? `<div class="mt-2 small"><strong>Allow:</strong> ${trigger.allowList.slice(0, 5).map(i => `<span class="list-tag">${i}</span>`).join('')}${trigger.allowList.length > 5 ? `<span class="text-muted">+${trigger.allowList.length - 5} more</span>` : ''}</div>` : ''}
       ${trigger.denyList?.length > 0 ? `<div class="mt-1 small"><strong>Deny:</strong> ${trigger.denyList.slice(0, 5).map(i => `<span class="list-tag">${i}</span>`).join('')}${trigger.denyList.length > 5 ? `<span class="text-muted">+${trigger.denyList.length - 5} more</span>` : ''}</div>` : ''}
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 function openTriggerModal(editIndex = null) {
@@ -977,7 +1017,7 @@ function getOtherSkillsDropdown(triggerIndex) {
 function duplicateTrigger(index) {
   const trigger = skills[currentSkillIndex].triggers[index];
   const copy = JSON.parse(JSON.stringify(trigger));
-  skills[currentSkillIndex].triggers.push(copy);
+  skills[currentSkillIndex].triggers.splice(index + 1, 0, copy);
   saveToLocalStorage();
   renderSkillEditor();
   updateJSONPreview();
@@ -1149,11 +1189,15 @@ function renderRequirements(requirements) {
   }
 
   const len = requirements.length;
-  return requirements.map((req, index) => `
-    <div class="requirement-card p-3 rounded">
+  return requirements.map((req, index) => {
+    const isDeprecated = isDeprecatedRequirementType(req.type);
+    const deprecatedInfo = isDeprecated ? getDeprecatedInfo('requirementTypes', req.type) : null;
+    return `
+    <div class="requirement-card p-3 rounded ${isDeprecated ? 'deprecated-card' : ''}">
       <div class="d-flex justify-content-between align-items-start">
         <div>
-          <span class="badge badge-requirement">${req.type}</span>
+          <span class="badge badge-requirement ${isDeprecated ? 'badge-deprecated' : ''}">${req.type}${isDeprecated ? ' ⚠' : ''}</span>
+          ${isDeprecated ? `<span class="deprecated-warning ms-2" title="${deprecatedInfo?.description || 'Deprecated type'}">Removed in ${deprecatedInfo?.removedIn || '?'}</span>` : ''}
         </div>
         <div class="d-flex gap-1">
           <button class="btn btn-sm btn-outline-secondary ${index === 0 ? 'disabled' : ''}" onclick="moveItem('requirement', ${index}, -1)" title="Move up">↑</button>
@@ -1171,7 +1215,8 @@ function renderRequirements(requirements) {
       ${req.allowList?.length > 0 ? `<div class="mt-2 small"><strong>Allow:</strong> ${req.allowList.slice(0, 5).map(i => `<span class="list-tag">${i}</span>`).join('')}${req.allowList.length > 5 ? `<span class="text-muted">+${req.allowList.length - 5} more</span>` : ''}</div>` : ''}
       ${req.denyList?.length > 0 ? `<div class="mt-1 small"><strong>Deny:</strong> ${req.denyList.slice(0, 5).map(i => `<span class="list-tag">${i}</span>`).join('')}${req.denyList.length > 5 ? `<span class="text-muted">+${req.denyList.length - 5} more</span>` : ''}</div>` : ''}
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 function openRequirementModal(editIndex = null) {
@@ -1272,11 +1317,14 @@ function renderUnlocks(unlocks) {
   return unlocks.map((unlock, index) => {
     const valueTypeLabel = unlock.valueType === 'PERCENT_BASE' ? '% base' :
                           unlock.valueType === 'PERCENT_TOTAL' ? '% total' : '';
+    const isDeprecated = isDeprecatedUnlockType(unlock.type);
+    const deprecatedInfo = isDeprecated ? getDeprecatedInfo('unlockTypes', unlock.type) : null;
     return `
-    <div class="unlock-card p-3 rounded">
+    <div class="unlock-card p-3 rounded ${isDeprecated ? 'deprecated-card' : ''}">
       <div class="d-flex justify-content-between align-items-start">
         <div>
-          <span class="badge badge-unlock">${unlock.type}</span>
+          <span class="badge badge-unlock ${isDeprecated ? 'badge-deprecated' : ''}">${unlock.type}${isDeprecated ? ' ⚠' : ''}</span>
+          ${isDeprecated ? `<span class="deprecated-warning ms-2" title="${deprecatedInfo?.description || 'Deprecated type'}">Removed in ${deprecatedInfo?.removedIn || '?'}</span>` : ''}
           <span class="ms-2">Level ${unlock.level}${unlock.everyLevel ? '+' : ''}</span>
           <span class="ms-2 text-muted">(+${unlock.amount}${valueTypeLabel})</span>
           ${unlock.target ? `<span class="ms-2 small">${unlock.target}</span>` : ''}

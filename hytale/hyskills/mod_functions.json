@@ -58,5 +58,13 @@
   ],
   "requirementTypes": [
     {"id": "ITEM_IN_HAND", "name": "Item in Hand", "description": "Must hold specific item"}
-  ]
+  ],
+  "deprecated": {
+    "triggerTypes": [],
+    "unlockTypes": [
+      {"id": "STAT_STRENGTH", "name": "Strength", "description": "Removed - was attack damage bonus", "removedIn": "1.2.4"},
+      {"id": "STAT_DEFENCE", "name": "Defence", "description": "Removed - was damage reduction", "removedIn": "1.2.4"}
+    ],
+    "requirementTypes": []
+  }
 }

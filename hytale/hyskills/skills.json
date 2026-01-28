@@ -3941,10 +3941,10 @@
       {
         "type": "BLOCK_BREAK",
         "allowList": [
-          "Rock_Stone"
+          "Rock_"
         ],
         "denyList": [
-          "Brick, Cobble, Beam, Half, Slab, Roof"
+          "Brick, Cobble, Beam, Half, Slab, Roof, Basalt, Sandstone, Shale, Slate, Volcanic"
         ],
         "cooldown": 0,
         "minLevel": 0,
