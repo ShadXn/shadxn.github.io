@@ -54,6 +54,20 @@ body {
     border-left: 4px solid #4ea8de;
 }
 
+/* Archived category styling */
+.category-archived .category-title {
+    color: #6b7280;
+    border-left-color: #6b7280;
+}
+
+.category-archived .project-card {
+    opacity: 0.7;
+}
+
+.category-archived .project-card:hover {
+    opacity: 1;
+}
+
 /* Cards Grid */
 .cards {
     display: grid;
