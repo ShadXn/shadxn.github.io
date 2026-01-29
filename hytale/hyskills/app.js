@@ -15,7 +15,8 @@ let tempRequirementDenyList = [];
 
 // Game data for autocomplete
 let gameData = null;
-let modFunctions = null;
+let versionsConfig = null;
+let selectedVersion = null;
 let allEntities = [];
 let allItems = [];
 let allBlocks = [];
@@ -37,19 +38,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupAutocomplete();
 });
 
-// Load game data from 3 separate files
+// Load game data from JSON files
 async function loadGameData() {
   try {
-    // Load all 3 files in parallel
-    const [entitiesRes, objectsRes, modFunctionsRes] = await Promise.all([
+    // Load all files in parallel
+    const [entitiesRes, objectsRes, versionsRes] = await Promise.all([
       fetch('entities.json'),
       fetch('items_and_blocks.json'),
-      fetch('mod_functions.json')
+      fetch('versions.json')
     ]);
 
     const entities = await entitiesRes.json();
     const objects = await objectsRes.json();
-    modFunctions = await modFunctionsRes.json();
+    versionsConfig = await versionsRes.json();
+
+    // Initialize version selector and set default version
+    initializeVersionSelector();
 
     // Build gameData structure for category browser
     gameData = {
@@ -198,29 +202,35 @@ async function loadGameData() {
   } catch (err) {
     console.error('Failed to load game data:', err);
     gameData = { entities: {}, items: {}, blocks: {} };
-    modFunctions = { triggerTypes: [], unlockTypes: [], requirementTypes: [], deprecated: { triggerTypes: [], unlockTypes: [], requirementTypes: [] } };
+    versionsConfig = { versions: [{ id: '1.2.4', label: '1.2.4', isLatest: true }], triggerTypes: [], unlockTypes: [], requirementTypes: [] };
   }
 }
 
-// Deprecated type checking functions
+// Deprecated type checking functions (version-aware using versionsConfig)
 function isDeprecatedTriggerType(type) {
-  if (!modFunctions?.deprecated?.triggerTypes) return false;
-  return modFunctions.deprecated.triggerTypes.some(t => t.id === type);
+  const typeInfo = versionsConfig?.triggerTypes?.find(t => t.id === type);
+  if (!typeInfo) return false;
+  return isTypeDeprecatedInVersion(typeInfo);
 }
 
 function isDeprecatedUnlockType(type) {
-  if (!modFunctions?.deprecated?.unlockTypes) return false;
-  return modFunctions.deprecated.unlockTypes.some(t => t.id === type);
+  const typeInfo = versionsConfig?.unlockTypes?.find(t => t.id === type);
+  if (!typeInfo) return false;
+  return isTypeDeprecatedInVersion(typeInfo);
 }
 
 function isDeprecatedRequirementType(type) {
-  if (!modFunctions?.deprecated?.requirementTypes) return false;
-  return modFunctions.deprecated.requirementTypes.some(t => t.id === type);
+  const typeInfo = versionsConfig?.requirementTypes?.find(t => t.id === type);
+  if (!typeInfo) return false;
+  return isTypeDeprecatedInVersion(typeInfo);
 }
 
 function getDeprecatedInfo(category, type) {
-  if (!modFunctions?.deprecated?.[category]) return null;
-  return modFunctions.deprecated[category].find(t => t.id === type);
+  const typeInfo = versionsConfig?.[category]?.find(t => t.id === type);
+  if (typeInfo && typeInfo.removedIn) {
+    return typeInfo;
+  }
+  return null;
 }
 
 function hasDeprecatedTypes(skill) {
@@ -230,6 +240,423 @@ function hasDeprecatedTypes(skill) {
     unlocks: skill.unlocks?.some(u => isDeprecatedUnlockType(u.type)) || false,
     requirements: skill.requirements?.some(r => isDeprecatedRequirementType(r.type)) || false
   };
+}
+
+// ============================================
+// Version Management Functions
+// ============================================
+
+function initializeVersionSelector() {
+  const selector = document.getElementById('version-selector');
+  if (!selector || !versionsConfig?.versions) return;
+
+  // Clear existing options
+  selector.innerHTML = '';
+
+  // Add version options
+  versionsConfig.versions.forEach(version => {
+    const option = document.createElement('option');
+    option.value = version.id;
+    option.textContent = version.label;
+    if (version.isLatest) {
+      option.selected = true;
+    }
+    selector.appendChild(option);
+  });
+
+  // Load saved version from localStorage or use latest
+  const savedVersion = localStorage.getItem('hyskills_selected_version');
+  if (savedVersion && versionsConfig.versions.some(v => v.id === savedVersion)) {
+    selector.value = savedVersion;
+    selectedVersion = savedVersion;
+  } else {
+    const latestVersion = versionsConfig.versions.find(v => v.isLatest);
+    selectedVersion = latestVersion ? latestVersion.id : versionsConfig.versions[0]?.id;
+  }
+
+  // Populate Info & Help page tables
+  populateInfoTriggerTypes();
+  populateInfoUnlockTypes();
+
+  console.log(`Version initialized: ${selectedVersion}`);
+}
+
+function onVersionChange() {
+  const selector = document.getElementById('version-selector');
+  if (!selector) return;
+
+  selectedVersion = selector.value;
+  localStorage.setItem('hyskills_selected_version', selectedVersion);
+
+  // Re-render to update deprecated indicators
+  renderSkillsList();
+  if (currentSkillIndex !== null) {
+    renderSkillEditor();
+  }
+  updateJSONPreview();
+
+  // Update Info & Help page tables
+  populateInfoTriggerTypes();
+  populateInfoUnlockTypes();
+
+  showToast(`Switched to version ${selectedVersion}`, 'success');
+}
+
+// Compare two version strings (e.g., "1.2.3" vs "1.2.4")
+// Returns: -1 if v1 < v2, 0 if equal, 1 if v1 > v2
+function compareVersions(v1, v2) {
+  if (!v1 || !v2) return 0;
+
+  const parts1 = v1.split('.').map(Number);
+  const parts2 = v2.split('.').map(Number);
+
+  for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
+    const p1 = parts1[i] || 0;
+    const p2 = parts2[i] || 0;
+    if (p1 < p2) return -1;
+    if (p1 > p2) return 1;
+  }
+  return 0;
+}
+
+// Check if a type is available in the currently selected version
+function isTypeAvailableInVersion(typeInfo) {
+  if (!typeInfo || !selectedVersion) return true;
+
+  // Check if type was added after current version
+  if (typeInfo.addedIn && compareVersions(selectedVersion, typeInfo.addedIn) < 0) {
+    return false;
+  }
+
+  // Check if type was removed before or at current version
+  if (typeInfo.removedIn && compareVersions(selectedVersion, typeInfo.removedIn) >= 0) {
+    return false;
+  }
+
+  return true;
+}
+
+// Check if a type is deprecated (removed) in the current version
+function isTypeDeprecatedInVersion(typeInfo) {
+  if (!typeInfo || !selectedVersion) return false;
+
+  // Type is deprecated if it was removed in current or earlier version
+  if (typeInfo.removedIn && compareVersions(selectedVersion, typeInfo.removedIn) >= 0) {
+    return true;
+  }
+
+  return false;
+}
+
+// Check if a type will be added in a future version
+function isTypeFutureInVersion(typeInfo) {
+  if (!typeInfo || !selectedVersion) return false;
+
+  // Type is future if it was added after current version
+  if (typeInfo.addedIn && compareVersions(selectedVersion, typeInfo.addedIn) < 0) {
+    return true;
+  }
+
+  return false;
+}
+
+// Get all available types for the current version (for a specific category)
+function getAvailableTypesForVersion(category) {
+  if (!versionsConfig?.[category]) return [];
+
+  return versionsConfig[category].filter(typeInfo => isTypeAvailableInVersion(typeInfo));
+}
+
+// Get type info from versionsConfig
+function getTypeInfo(category, typeId) {
+  if (!versionsConfig?.[category]) return null;
+  return versionsConfig[category].find(t => t.id === typeId);
+}
+
+// Check if a type used in the skill is incompatible with current version
+function isTypeIncompatibleWithVersion(category, typeId) {
+  const typeInfo = getTypeInfo(category, typeId);
+  if (!typeInfo) return false; // Unknown types are allowed (might be from mods)
+
+  return !isTypeAvailableInVersion(typeInfo);
+}
+
+// Check if skill has any version incompatibilities
+function hasVersionIncompatibilities(skill) {
+  if (!skill) return { triggers: false, unlocks: false, requirements: false };
+
+  return {
+    triggers: skill.triggers?.some(t => isTypeIncompatibleWithVersion('triggerTypes', t.type)) || false,
+    unlocks: skill.unlocks?.some(u => isTypeIncompatibleWithVersion('unlockTypes', u.type)) || false,
+    requirements: skill.requirements?.some(r => isTypeIncompatibleWithVersion('requirementTypes', r.type)) || false
+  };
+}
+
+// ============================================
+// Dynamic Dropdown Population
+// ============================================
+
+function populateTriggerTypeDropdown(selectedValue = 'BLOCK_BREAK') {
+  const select = document.getElementById('trigger-type');
+  if (!select) return;
+
+  select.innerHTML = '';
+
+  // Get trigger types from versionsConfig
+  const types = versionsConfig?.triggerTypes || [];
+
+  types.forEach(typeInfo => {
+    const isAvailable = isTypeAvailableInVersion(typeInfo);
+    const isDeprecated = isTypeDeprecatedInVersion(typeInfo);
+    const isSelected = typeInfo.id === selectedValue;
+
+    // Only show types that are available in current version
+    // OR show deprecated types if they're the currently selected value (for editing existing triggers)
+    if (!isAvailable && !(isDeprecated && isSelected)) return;
+
+    const option = document.createElement('option');
+    option.value = typeInfo.id;
+
+    let label = `${typeInfo.id} - ${typeInfo.description}`;
+    if (isDeprecated) {
+      label += ` [REMOVED in ${typeInfo.removedIn}]`;
+      option.style.color = '#e17055';
+    }
+
+    option.textContent = label;
+    option.selected = isSelected;
+    select.appendChild(option);
+  });
+}
+
+function populateUnlockTypeDropdown(selectedValue = 'STAT_HEALTH') {
+  const select = document.getElementById('unlock-type');
+  if (!select) return;
+
+  select.innerHTML = '';
+
+  // Get unlock types from versionsConfig
+  const types = versionsConfig?.unlockTypes || [];
+
+  // Get groups from versionsConfig (dynamic)
+  const groups = versionsConfig?.unlockTypeGroups || [];
+
+  for (const group of groups) {
+    const groupTypeIds = group.types || [];
+    const groupTypes = types.filter(t => groupTypeIds.includes(t.id));
+    const availableInGroup = groupTypes.filter(t => {
+      const isAvailable = isTypeAvailableInVersion(t);
+      const isDeprecated = isTypeDeprecatedInVersion(t);
+      const isSelected = t.id === selectedValue;
+      // Show if available OR if deprecated and currently selected (for editing)
+      return isAvailable || (isDeprecated && isSelected);
+    });
+
+    if (availableInGroup.length === 0) continue;
+
+    const optgroup = document.createElement('optgroup');
+    optgroup.label = group.name;
+
+    availableInGroup.forEach(typeInfo => {
+      const isDeprecated = isTypeDeprecatedInVersion(typeInfo);
+      const isSelected = typeInfo.id === selectedValue;
+
+      const option = document.createElement('option');
+      option.value = typeInfo.id;
+
+      let label = `${typeInfo.id} - ${typeInfo.description}`;
+      if (isDeprecated) {
+        label += ` [REMOVED in ${typeInfo.removedIn}]`;
+        option.style.color = '#e17055';
+      }
+
+      option.textContent = label;
+      option.selected = isSelected;
+      optgroup.appendChild(option);
+    });
+
+    select.appendChild(optgroup);
+  }
+}
+
+function populateRequirementTypeDropdown(selectedValue = 'ITEM_IN_HAND') {
+  const select = document.getElementById('requirement-type');
+  if (!select) return;
+
+  select.innerHTML = '';
+
+  // Get requirement types from versionsConfig
+  const types = versionsConfig?.requirementTypes || [];
+
+  types.forEach(typeInfo => {
+    const isAvailable = isTypeAvailableInVersion(typeInfo);
+    const isDeprecated = isTypeDeprecatedInVersion(typeInfo);
+    const isSelected = typeInfo.id === selectedValue;
+
+    // Only show types that are available in current version
+    // OR show deprecated types if they're the currently selected value (for editing)
+    if (!isAvailable && !(isDeprecated && isSelected)) return;
+
+    const option = document.createElement('option');
+    option.value = typeInfo.id;
+
+    let label = `${typeInfo.id} - ${typeInfo.description}`;
+    if (isDeprecated) {
+      label += ` [REMOVED in ${typeInfo.removedIn}]`;
+      option.style.color = '#e17055';
+    }
+
+    option.textContent = label;
+    option.selected = isSelected;
+    select.appendChild(option);
+  });
+}
+
+// Populate Info & Help page tables
+function populateInfoTriggerTypes() {
+  const tbody = document.getElementById('info-trigger-types');
+  if (!tbody) return;
+
+  tbody.innerHTML = '';
+
+  const types = versionsConfig?.triggerTypes || [];
+
+  types.forEach(typeInfo => {
+    // Skip NONE type in the info table
+    if (typeInfo.id === 'NONE') return;
+
+    const isAvailable = isTypeAvailableInVersion(typeInfo);
+    const isDeprecated = isTypeDeprecatedInVersion(typeInfo);
+
+    const tr = document.createElement('tr');
+
+    // Style deprecated/removed types
+    if (isDeprecated) {
+      tr.style.opacity = '0.6';
+      tr.style.background = 'rgba(225, 112, 85, 0.1)';
+    } else if (!isAvailable) {
+      // Not yet added in this version
+      tr.style.opacity = '0.5';
+    }
+
+    const tdType = document.createElement('td');
+    const code = document.createElement('code');
+    code.textContent = typeInfo.id;
+    tdType.appendChild(code);
+
+    // Add version badge
+    if (typeInfo.addedIn && typeInfo.addedIn !== '1.0.0') {
+      const badge = document.createElement('span');
+      badge.className = 'version-badge version-badge-new ms-1';
+      badge.textContent = `+${typeInfo.addedIn}`;
+      badge.title = `Added in version ${typeInfo.addedIn}`;
+      tdType.appendChild(badge);
+    }
+    if (isDeprecated) {
+      const badge = document.createElement('span');
+      badge.className = 'version-badge version-badge-removed ms-1';
+      badge.textContent = `-${typeInfo.removedIn}`;
+      badge.title = `Removed in version ${typeInfo.removedIn}`;
+      tdType.appendChild(badge);
+    }
+
+    const tdDesc = document.createElement('td');
+    tdDesc.textContent = typeInfo.description;
+
+    tr.appendChild(tdType);
+    tr.appendChild(tdDesc);
+    tbody.appendChild(tr);
+  });
+}
+
+function populateInfoUnlockTypes() {
+  const tbody = document.getElementById('info-unlock-types');
+  if (!tbody) return;
+
+  tbody.innerHTML = '';
+
+  const types = versionsConfig?.unlockTypes || [];
+  const groups = versionsConfig?.unlockTypeGroups || [];
+
+  // Group colors for headers
+  const groupColors = {
+    'Rewards': '#fdcb6e',
+    'Base Stats': '#4ea8de',
+    'Combat Stats': '#e17055',
+    'Damage Types': '#fdcb6e',
+    'Resistances': '#00b894',
+    'Utility': '#a29bfe'
+  };
+
+  groups.forEach(group => {
+    const groupTypes = types.filter(t => group.types.includes(t.id));
+
+    // Check if any types in this group are available
+    const hasVisibleTypes = groupTypes.some(t => {
+      const isAvailable = isTypeAvailableInVersion(t);
+      const isDeprecated = isTypeDeprecatedInVersion(t);
+      return isAvailable || isDeprecated;
+    });
+
+    if (!hasVisibleTypes) return;
+
+    // Add group header
+    const headerTr = document.createElement('tr');
+    const headerTd = document.createElement('td');
+    headerTd.colSpan = 2;
+    headerTd.style.background = '#1a3a5c';
+    headerTd.style.color = groupColors[group.name] || '#4ea8de';
+    headerTd.innerHTML = `<strong>${group.name}</strong>`;
+    headerTr.appendChild(headerTd);
+    tbody.appendChild(headerTr);
+
+    // Add types in this group
+    groupTypes.forEach(typeInfo => {
+      const isAvailable = isTypeAvailableInVersion(typeInfo);
+      const isDeprecated = isTypeDeprecatedInVersion(typeInfo);
+
+      // Skip if not available and not deprecated
+      if (!isAvailable && !isDeprecated) return;
+
+      const tr = document.createElement('tr');
+
+      // Style deprecated/removed types
+      if (isDeprecated) {
+        tr.style.opacity = '0.6';
+        tr.style.background = 'rgba(225, 112, 85, 0.1)';
+      }
+
+      const tdType = document.createElement('td');
+      const code = document.createElement('code');
+      // Display without STAT_ prefix for cleaner look
+      const displayId = typeInfo.id.replace('STAT_', '');
+      code.textContent = displayId;
+      tdType.appendChild(code);
+
+      // Add version badge
+      if (typeInfo.addedIn && typeInfo.addedIn !== '1.0.0') {
+        const badge = document.createElement('span');
+        badge.className = 'version-badge version-badge-new ms-1';
+        badge.textContent = `+${typeInfo.addedIn}`;
+        badge.title = `Added in version ${typeInfo.addedIn}`;
+        tdType.appendChild(badge);
+      }
+      if (isDeprecated) {
+        const badge = document.createElement('span');
+        badge.className = 'version-badge version-badge-removed ms-1';
+        badge.textContent = `-${typeInfo.removedIn}`;
+        badge.title = `Removed in version ${typeInfo.removedIn}`;
+        tdType.appendChild(badge);
+      }
+
+      const tdDesc = document.createElement('td');
+      tdDesc.textContent = typeInfo.description;
+
+      tr.appendChild(tdType);
+      tr.appendChild(tdDesc);
+      tbody.appendChild(tr);
+    });
+  });
 }
 
 // Autocomplete functionality
@@ -893,8 +1320,13 @@ function openTriggerModal(editIndex = null) {
   tempTriggerAllowList = [];
   tempTriggerDenyList = [];
 
+  // Populate dropdown based on selected version
+  const existingType = (editIndex !== null && currentSkillIndex !== null)
+    ? skills[currentSkillIndex].triggers[editIndex]?.type
+    : 'BLOCK_BREAK';
+  populateTriggerTypeDropdown(existingType);
+
   // Reset form
-  document.getElementById('trigger-type').value = 'BLOCK_BREAK';
   document.getElementById('trigger-xp').value = 100;
   document.getElementById('trigger-cooldown').value = 0;
   document.getElementById('trigger-min-level').value = 0;
@@ -904,7 +1336,6 @@ function openTriggerModal(editIndex = null) {
   // If editing, populate with existing data
   if (editIndex !== null && currentSkillIndex !== null) {
     const trigger = skills[currentSkillIndex].triggers[editIndex];
-    document.getElementById('trigger-type').value = trigger.type;
     document.getElementById('trigger-xp').value = trigger.xpReward;
     document.getElementById('trigger-cooldown').value = trigger.cooldown || 0;
     document.getElementById('trigger-min-level').value = trigger.minLevel || 0;
@@ -1224,11 +1655,14 @@ function openRequirementModal(editIndex = null) {
   tempRequirementAllowList = [];
   tempRequirementDenyList = [];
 
-  document.getElementById('requirement-type').value = 'ITEM_IN_HAND';
+  // Populate dropdown based on selected version
+  const existingType = (editIndex !== null && currentSkillIndex !== null)
+    ? skills[currentSkillIndex].requirements[editIndex]?.type
+    : 'ITEM_IN_HAND';
+  populateRequirementTypeDropdown(existingType);
 
   if (editIndex !== null && currentSkillIndex !== null) {
     const req = skills[currentSkillIndex].requirements[editIndex];
-    document.getElementById('requirement-type').value = req.type;
     tempRequirementAllowList = [...(req.allowList || [])];
     tempRequirementDenyList = [...(req.denyList || [])];
   }
@@ -1350,7 +1784,12 @@ function renderUnlocks(unlocks) {
 function openUnlockModal(editIndex = null) {
   editingUnlockIndex = editIndex;
 
-  document.getElementById('unlock-type').value = 'STAT_HEALTH';
+  // Populate dropdown based on selected version
+  const existingType = (editIndex !== null && currentSkillIndex !== null)
+    ? skills[currentSkillIndex].unlocks[editIndex]?.type
+    : 'STAT_HEALTH';
+  populateUnlockTypeDropdown(existingType);
+
   document.getElementById('unlock-level').value = 1;
   document.getElementById('unlock-amount').value = 1;
   document.getElementById('unlock-target').value = '';
@@ -1359,7 +1798,6 @@ function openUnlockModal(editIndex = null) {
 
   if (editIndex !== null && currentSkillIndex !== null) {
     const unlock = skills[currentSkillIndex].unlocks[editIndex];
-    document.getElementById('unlock-type').value = unlock.type;
     document.getElementById('unlock-level').value = unlock.level;
     document.getElementById('unlock-amount').value = unlock.amount;
     document.getElementById('unlock-target').value = unlock.target || '';
@@ -1561,9 +1999,13 @@ async function loadDefaultSkills() {
   showLoading('Loading default skills...');
 
   try {
-    const response = await fetch('skills.json');
+    // Get the default skills file for the current version
+    const currentVersionInfo = versionsConfig?.versions?.find(v => v.id === selectedVersion);
+    const defaultFile = currentVersionInfo?.defaultSkillsFile || 'skills.json';
+
+    const response = await fetch(defaultFile);
     if (!response.ok) {
-      throw new Error('Failed to fetch default skills');
+      throw new Error(`Failed to fetch default skills for version ${selectedVersion}`);
     }
     const data = await response.json();
 
@@ -1575,7 +2017,7 @@ async function loadDefaultSkills() {
       renderSkillEditor();
       updateJSONPreview();
       hideLoading();
-      showToast(`Loaded ${skills.length} default skills`, 'success');
+      showToast(`Loaded ${skills.length} default skills for v${selectedVersion}`, 'success');
     } else {
       throw new Error('Invalid JSON format');
     }
