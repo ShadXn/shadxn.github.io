@@ -1,722 +1,405 @@
-/* Training Game - simple local web app
-   - Loads activities from data/activities.json
-   - Prompts for username and persists to localStorage
-   - Tracks XP, Gold, Level
-   - Allows completing activities up to maxPerDay per activity (per day resets)
-   - Simple shop demo to spend gold for XP boosts
-*/
-
-const STORAGE_KEY = 'training_game_state_v1';
-const USER_KEY = 'training_game_user_v1';
-const ACTIVITIES_PATH = 'data/activities.json';
-
-// Investment definitions for the Game tab.
-// requiredPlayerLevel: player must be at or above this level to invest
-// rate: XP per gold per cycle (8 hours)
-// xpPerLevel: how much investment-XP is required to raise investment level
-const INVESTMENT_DEFS = [
-  { id: 'grocery', name: 'Grocery Store', requiredPlayerLevel: 2, baseCost: 10, rate: 0.02, moneyRate: 0.05, xpPerLevel: 100, upgrades: [
-      { id: 'g1', name: 'Increased Variety', baseCost: 20, costMultiplier: 1.5, maxLevel: 5, moneyMultiplierPerRank: 0.12, xpMultiplierPerRank: 0.08, levelReqBase: 2, description: 'Increase money and XP gain per cycle.' },
-      { id: 'g2', name: 'Faster Service', baseCost: 40, costMultiplier: 1.6, maxLevel: 5, moneyMultiplierPerRank: 0.18, xpMultiplierPerRank: 0.12, levelReqBase: 3, description: 'Further boost yields.' },
-      { id: 'g3', name: 'Local Partnerships', baseCost: 80, costMultiplier: 1.7, maxLevel: 5, moneyMultiplierPerRank: 0.25, xpMultiplierPerRank: 0.18, levelReqBase: 4, description: 'Unlock bigger customers.' }
-    ] },
-  { id: 'coffee', name: 'Coffee Shop', requiredPlayerLevel: 4, baseCost: 25, rate: 0.03, moneyRate: 0.06, xpPerLevel: 150, upgrades: [
-      { id: 'c1', name: 'Better Beans', baseCost: 30, costMultiplier: 1.5, maxLevel: 5, moneyMultiplierPerRank: 0.10, xpMultiplierPerRank: 0.10, levelReqBase: 4, description: 'Improve product quality for more returns.' },
-      { id: 'c2', name: 'Loyalty Program', baseCost: 60, costMultiplier: 1.6, maxLevel: 5, moneyMultiplierPerRank: 0.20, xpMultiplierPerRank: 0.15, levelReqBase: 5, description: 'Customers return more often.' }
-    ] },
-  { id: 'local_shop', name: 'Local Shop', requiredPlayerLevel: 6, baseCost: 50, rate: 0.04, moneyRate: 0.07, xpPerLevel: 200, upgrades: [
-      { id: 'l1', name: 'Expanded Shelf', baseCost: 60, costMultiplier: 1.5, maxLevel: 5, moneyMultiplierPerRank: 0.15, xpMultiplierPerRank: 0.12, levelReqBase: 6, description: 'More products, more sales.' },
-      { id: 'l2', name: 'Staff Training', baseCost: 120, costMultiplier: 1.6, maxLevel: 5, moneyMultiplierPerRank: 0.25, xpMultiplierPerRank: 0.2, levelReqBase: 7, description: 'Better service increases yields.' }
-    ] }
-];
-
-let activitiesData = null;
-let state = null; // { xp, gold, counts: {key: {date:string,count:number}}, lastDate }
-let user = null;
-let countdownInterval = null;
-
-// ----------------- helpers -----------------
-function todayStr(){
-  const d = new Date();
-  return d.toISOString().slice(0,10); // YYYY-MM-DD
-}
-
-function loadUser(){
-  const u = localStorage.getItem(USER_KEY);
-  if(u) return JSON.parse(u);
-  return null;
-}
-
-function saveUser(u){
-  localStorage.setItem(USER_KEY, JSON.stringify(u));
-}
-
-function loadState(){
-  const s = localStorage.getItem(STORAGE_KEY);
-  if(s) return JSON.parse(s);
-  // default state
-  return { xp:0, gold:0, counts:{}, lastDate: todayStr(), investments: [] };
-}
-
-function saveState(){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-}
-
-// We store counts aggregated per-category (keyed by category id) with a date and count.
-// This enforces the "maxPerDay per category" rule (e.g., any walking durations share the same 3/day limit).
-function getCategoryCount(catId){
-  const entry = state.counts[catId];
-  if(!entry) return 0;
-  if(entry.date !== todayStr()) return 0; // different day
-  return entry.count || 0;
-}
-
-function incrementCategoryCount(catId){
-  const today = todayStr();
-  if(!state.counts[catId] || state.counts[catId].date !== today){
-    state.counts[catId] = { date: today, count: 1 };
-  } else {
-    state.counts[catId].count = (state.counts[catId].count || 0) + 1;
-  }
-  saveState();
-}
-
-function migrateCountsLegacy(){
-  // If old data used keys like "catId::minutes", convert to aggregated per-category counts.
-  const today = todayStr();
-  const newCounts = {};
-  for(const key in state.counts){
-    if(!Object.prototype.hasOwnProperty.call(state.counts, key)) continue;
-    const entry = state.counts[key];
-    if(!entry || entry.date !== today) continue; // ignore old-day entries
-
-    if(key.includes('::')){
-      const parts = key.split('::');
-      const catId = parts[0];
-      const c = entry.count || 0;
-      if(!newCounts[catId]) newCounts[catId] = { date: today, count: 0 };
-      newCounts[catId].count += c;
-    } else {
-      // already a category-keyed entry
-      const catId = key;
-      const c = entry.count || 0;
-      if(!newCounts[catId]) newCounts[catId] = { date: today, count: 0 };
-      newCounts[catId].count += c;
-    }
-  }
-  state.counts = newCounts;
-}
-
-function resetDailyCounts(){
-  state.counts = {};
-  state.lastDate = todayStr();
-  saveState();
-}
-
-function xpToLevel(xp){
-  // Simple level curve: level increases every 100 xp
-  return Math.floor(xp / 100);
-}
-
-function xpToNextLevel(xp){
-  const lvl = xpToLevel(xp);
-  const next = (lvl + 1) * 100;
-  return next - xp;
-}
-
-function grantRewards(xpGain, goldGain){
-  state.xp = (state.xp || 0) + Math.round(xpGain);
-  state.gold = (state.gold || 0) + Math.round(goldGain);
-  saveState();
-}
-
-// ----------------- render -----------------
-function renderStats(){
-  document.getElementById('display-username').textContent = user || 'Guest';
-  document.getElementById('display-xp').textContent = `XP: ${state.xp}`;
-  document.getElementById('display-gold').textContent = `Gold: ${state.gold}`;
-  document.getElementById('display-level').textContent = `Level: ${xpToLevel(state.xp)}`;
-  const bizTotal = computeTotalBusinessMoney();
-  const bizEl = document.getElementById('display-business-money');
-  if(bizEl) bizEl.textContent = `Business $: ${bizTotal}`;
-}
-
-function computeTotalBusinessMoney(){
-  if(!state.investments) return 0;
-  return (state.investments || []).reduce((s,i)=>s + (i.money || 0), 0);
-}
-
-function startCountdownUpdater(){
-  if(countdownInterval) return; // already running
-  countdownInterval = setInterval(()=>{
-    document.querySelectorAll('.next-cycle').forEach(el=>{
-      const maxed = el.dataset.maxed === '1';
-      if(maxed){ el.textContent = 'Ready (5)'; return; }
-      const nextTs = Number(el.dataset.next);
-      if(!nextTs || isNaN(nextTs)){ el.textContent = ''; return; }
-      const now = Date.now();
-      let diff = nextTs - now;
-      if(diff <= 0){ el.textContent = 'Ready'; return; }
-      const hrs = Math.floor(diff / 3600000); diff %= 3600000;
-      const mins = Math.floor(diff / 60000); diff %= 60000;
-      const secs = Math.floor(diff / 1000);
-      el.textContent = `${hrs}h ${mins}m ${secs}s`;
-    });
-  }, 1000);
-}
-
-function renderCategories(){
-  const container = document.getElementById('categories');
-  container.innerHTML = '';
-  activitiesData.categories.forEach(cat=>{
-    const card = document.createElement('div');
-    card.className = 'card';
-    const title = document.createElement('h3');
-    title.textContent = cat.name;
-    // visible per-category counter badge
-    const categoryCount = getCategoryCount(cat.id);
-    const countBadge = document.createElement('span');
-    countBadge.className = 'category-count';
-    countBadge.textContent = `${categoryCount} / ${cat.maxPerDay} today`;
-    title.appendChild(countBadge);
-    card.appendChild(title);
-    const durations = document.createElement('div');
-    durations.className = 'durations';
-
-    cat.durations.forEach(amount=>{
-      const btn = document.createElement('button');
-      btn.className = 'duration-btn';
-      // show unit-aware label
-      if(cat.unit && cat.unit === 'reps'){
-        btn.textContent = `${amount} reps`;
-      } else {
-        btn.textContent = `${amount} m`;
-      }
-
-      // compute reward preview for this option
-      const xpPreview = Math.round(amount * (cat.xpMultiplier || 1));
-      const goldPreview = Math.max(1, Math.floor(amount * (cat.goldMultiplier || 0)));
-
-      if(categoryCount >= cat.maxPerDay){
-        btn.disabled = true;
-        btn.title = `Reached ${cat.maxPerDay} / day for ${cat.name} — rewards: +${xpPreview} XP, +${goldPreview} gold`;
-      } else {
-        const slotsLeft = cat.maxPerDay - categoryCount;
-        btn.title = `+${xpPreview} XP, +${goldPreview} gold — ${slotsLeft} ${slotsLeft === 1 ? 'slot' : 'slots'} left today`;
-      }
-
-      btn.addEventListener('click', ()=>{
-        onCompleteActivity(cat, amount, btn);
-      });
-
-      durations.appendChild(btn);
-    });
-
-    const meta = document.createElement('div');
-    meta.className = 'duration-meta';
-    meta.textContent = `Max per day: ${cat.maxPerDay} — XP multiplier ${cat.xpMultiplier}`;
-    card.appendChild(durations);
-    card.appendChild(meta);
-    container.appendChild(card);
-  });
-}
-
-// ----------------- tabs & shop rendering -----------------
-function switchToTab(tabId){
-  document.querySelectorAll('.tab').forEach(t=>{
-    if(t.id === tabId) t.classList.remove('hidden'); else t.classList.add('hidden');
-  });
-  document.querySelectorAll('.tab-btn').forEach(b=>{
-    if(b.dataset.tab === tabId) b.classList.add('active'); else b.classList.remove('active');
-  });
-  if(tabId === 'game-tab') renderGameTab();
-  if(tabId === 'shop-tab') renderShopTab();
-  if(tabId === 'training-tab') renderCategories();
-}
-
-function renderShopTab(){
-  const container = document.getElementById('shop-content');
-  container.innerHTML = '';
-  SHOP_ITEMS.forEach(it=>{
-    const row = document.createElement('div');
-    row.style.display = 'flex';
-    row.style.justifyContent = 'space-between';
-    row.style.alignItems = 'center';
-    row.style.padding = '8px 0';
-
-    const label = document.createElement('div');
-    label.textContent = `${it.name} — ${it.cost} gold`;
-    const btn = document.createElement('button');
-    btn.textContent = 'Buy';
-    btn.addEventListener('click', ()=>{
-      if(state.gold < it.cost){
-        alert('Not enough gold');
-        return;
-      }
-      state.gold -= it.cost;
-      it.apply();
-      saveState();
-      renderStats();
-      alert(`Purchased ${it.name}`);
-      renderShopTab();
-    });
-
-    row.appendChild(label);
-    row.appendChild(btn);
-    container.appendChild(row);
-  });
-}
-
-// ----------------- activity handling -----------------
-function onCompleteActivity(cat, amount, buttonEl){
-  const currentCount = getCategoryCount(cat.id);
-  if(currentCount >= cat.maxPerDay){
-    alert('You already completed this activity the maximum times today.');
-    return;
-  }
-
-  // Reward formula (works for minutes or reps)
-  const xpGain = Math.round(amount * (cat.xpMultiplier || 1));
-  const goldGain = Math.max(1, Math.floor(amount * (cat.goldMultiplier || 0)));
-
-  // Confirm (show unit-aware message with reward preview)
-  const unitLabel = (cat.unit && cat.unit === 'reps') ? 'reps' : 'minutes';
-  const ok = confirm(`Complete ${cat.name} ${amount} ${unitLabel}?\nRewards: +${xpGain} XP, +${goldGain} gold`);
-  if(!ok) return;
-
-  incrementCategoryCount(cat.id);
-  grantRewards(xpGain, goldGain);
-  renderStats();
-  renderCategories();
-  alert(`+${Math.round(xpGain)} XP, +${Math.round(goldGain)} gold`);
-}
-
-// ----------------- shop -----------------
-// Keep shop empty for now (no purchasable XP/gold items). Gold should only come from training activities.
-const SHOP_ITEMS = [];
-
-function openShop(){
-  const modal = document.getElementById('shop-modal');
-  const itemsDiv = document.getElementById('shop-items');
-  itemsDiv.innerHTML = '';
-  SHOP_ITEMS.forEach(it=>{
-    const row = document.createElement('div');
-    row.style.display = 'flex';
-    row.style.justifyContent = 'space-between';
-    row.style.alignItems = 'center';
-    row.style.padding = '8px 0';
-
-    const label = document.createElement('div');
-    label.textContent = `${it.name} — ${it.cost} gold`;
-    const btn = document.createElement('button');
-    btn.textContent = 'Buy';
-    btn.addEventListener('click', ()=>{
-      if(state.gold < it.cost){
-        alert('Not enough gold');
-        return;
-      }
-      state.gold -= it.cost;
-      it.apply();
-      saveState();
-      renderStats();
-      alert(`Purchased ${it.name}`);
-      openShop();
-    });
-
-    row.appendChild(label);
-    row.appendChild(btn);
-    itemsDiv.appendChild(row);
-  });
-  modal.classList.remove('hidden');
-}
-
-function generateId(prefix='id'){
-  return prefix + '_' + Math.random().toString(36).slice(2,9);
-}
-
-// ----------------- investments (game) -----------------
-function perCycleXPFor(amount, def){
-  const rate = def.rate || 0.02;
-  // apply upgrade multipliers (if any) - handled by instance when calling
-  return Math.max(1, Math.floor(amount * rate));
-}
-
-function perCycleMoneyFor(amount, def){
-  const rate = def.moneyRate || 0.05;
-  return Math.max(1, Math.floor(amount * rate));
-}
-
-function applyUpgradeMultipliers(inst, def, baseXP, baseMoney){
-  // sum up multipliers from purchased upgrades on the instance
-  let xpMult = 0;
-  let moneyMult = 0;
-  // inst.upgrades is a map { upgradeId: count }
-  const purchasedMap = inst.upgrades || {};
-  Object.keys(purchasedMap).forEach(uid => {
-    const count = purchasedMap[uid] || 0;
-    if(count <= 0) return;
-    const up = (def.upgrades || []).find(u=>u.id === uid);
-    if(up){ xpMult += (up.xpMultiplierPerRank || up.xpMultiplier || 0) * count; moneyMult += (up.moneyMultiplierPerRank || up.moneyMultiplier || 0) * count; }
-  });
-  const finalXP = Math.max(0, Math.floor(baseXP * (1 + xpMult)));
-  const finalMoney = Math.max(0, Math.floor(baseMoney * (1 + moneyMult)));
-  return { xp: finalXP, money: finalMoney };
-}
-
-function getUpgradeCount(inst, upId){
-  if(!inst || !inst.upgrades) return 0;
-  // support legacy array form
-  if(Array.isArray(inst.upgrades)){
-    return inst.upgrades.filter(x=>x===upId).length;
-  }
-  return inst.upgrades[upId] || 0;
-}
-
-function getUpgradeNextCost(up, currentCount){
-  const base = up.baseCost || up.cost || up.costBase || 10;
-  const mult = up.costMultiplier || up.costMult || 1.5;
-  return Math.ceil(base * Math.pow(mult, currentCount));
-}
-
-function migrateInstanceUpgrades(){
-  // convert legacy inst.upgrades arrays into maps {id:count}
-  if(!state.investments) return;
-  state.investments.forEach(inst=>{
-    if(!inst.upgrades) inst.upgrades = {};
-    if(Array.isArray(inst.upgrades)){
-      const map = {};
-      inst.upgrades.forEach(id=>{ map[id] = (map[id]||0) + 1; });
-      inst.upgrades = map;
-    }
-  });
-  saveState();
-}
-
-function renderGameTab(){
-  const container = document.getElementById('game-content');
-  container.innerHTML = '';
-
-  const lvl = xpToLevel(state.xp);
-
-  INVESTMENT_DEFS.forEach(def=>{
-    const card = document.createElement('div');
-    card.className = 'card';
-    const title = document.createElement('h3');
-    title.textContent = def.name;
-    const req = document.createElement('div');
-    req.className = 'duration-meta';
-    req.textContent = `Requires player level: ${def.requiredPlayerLevel} — base cost: ${def.baseCost} gold`;
-    card.appendChild(title);
-    card.appendChild(req);
-
-    // show active investment instances of this def
-    const list = document.createElement('div');
-    const instances = (state.investments || []).filter(i=>i.defId === def.id);
-    if(instances.length === 0){
-      const none = document.createElement('div');
-      none.textContent = 'No active investments of this type.';
-      list.appendChild(none);
-    } else {
-      instances.forEach(inst=>{
-        const row = document.createElement('div');
-        row.style.display = 'flex';
-        row.style.justifyContent = 'space-between';
-        row.style.alignItems = 'center';
-        row.style.padding = '8px 0';
-
-        const left = document.createElement('div');
-        const level = Math.floor((inst.xp || 0) / (def.xpPerLevel || 100));
-        left.innerHTML = `<strong>Invested:</strong> ${inst.investedAmount} gold — <strong>Investment XP:</strong> ${inst.xp || 0} — <strong>Level</strong>: ${level}`;
-
-        // compute cycles available since lastClaimAt
-        const now = Date.now();
-        const elapsed = now - (inst.lastClaimAt || inst.investedAt || now);
-        const HOURS8 = 8*3600*1000;
-        const cycles = Math.min(5, Math.floor(elapsed / HOURS8));
-  const basePerCycleXP = perCycleXPFor(inst.investedAmount, def);
-  const basePerCycleMoney = perCycleMoneyFor(inst.investedAmount, def);
-  const yields = applyUpgradeMultipliers(inst, def, basePerCycleXP, basePerCycleMoney);
-        const badge = document.createElement('div');
-        badge.className = 'next-cycle';
-        // compute next cycle timestamp if cycles < 5
-        if(cycles >= 5){
-          badge.dataset.maxed = '1';
-          badge.dataset.next = '';
-          badge.textContent = `Cycles ready: ${cycles} / 5 — +${yields.xp} XP, +${yields.money} $ per cycle`;
-        } else {
-          const last = inst.lastClaimAt || inst.investedAt || Date.now();
-          const HOURS8 = 8*3600*1000;
-          const nextTs = (last) + ((Math.floor((Date.now() - last) / HOURS8) + 1) * HOURS8);
-          badge.dataset.maxed = '0';
-          badge.dataset.next = String(nextTs);
-          badge.textContent = `Cycles ready: ${cycles} / 5 — +${yields.xp} XP, +${yields.money} $ per cycle`;
-        }
-
-        const actions = document.createElement('div');
-        actions.style.display = 'flex';
-        actions.style.gap = '8px';
-
-        const claimBtn = document.createElement('button');
-        claimBtn.textContent = 'Claim';
-        claimBtn.disabled = (cycles === 0);
-        claimBtn.addEventListener('click', ()=>{
-          const toClaim = cycles;
-          if(toClaim <= 0){ alert('No cycles to claim yet.'); return; }
-          const gainedXP = toClaim * yields.xp;
-          const gainedMoney = toClaim * yields.money;
-          inst.xp = (inst.xp || 0) + gainedXP;
-          inst.money = (inst.money || 0) + gainedMoney;
-          inst.lastClaimAt = Date.now();
-          saveState();
-          alert(`Claimed ${gainedXP} investment XP and ${gainedMoney} $ for ${def.name}.`);
-          renderGameTab();
-        });
-
-        const cancelBtn = document.createElement('button');
-        cancelBtn.textContent = 'Remove';
-        cancelBtn.addEventListener('click', ()=>{
-          if(!confirm('Remove this business? (no refunds)')) return;
-          state.investments = state.investments.filter(x=>x.instanceId !== inst.instanceId);
-          saveState();
-          renderGameTab();
-        });
-
-        // upgrades: show next 2 available across all upgrade types (repeatable up to maxLevel)
-        const upgradesDiv = document.createElement('div');
-        const availableList = [];
-        (def.upgrades || []).forEach(u=>{
-          const count = getUpgradeCount(inst, u.id);
-          const maxLevel = u.maxLevel || 5;
-          if(count < maxLevel){
-            const nextCost = getUpgradeNextCost(u, count);
-            availableList.push({ upgrade: u, count, nextCost });
-          }
-        });
-        // sort by nextCost ascending to show cheaper upgrades first
-        availableList.sort((a,b)=>a.nextCost - b.nextCost);
-        if(availableList.length === 0){
-          const noneUp = document.createElement('div');
-          noneUp.textContent = 'All upgrades purchased.';
-          upgradesDiv.appendChild(noneUp);
-        } else {
-          const nextTwo = availableList.slice(0,2);
-          nextTwo.forEach(entry => {
-            const u = entry.upgrade;
-            const count = entry.count;
-            const cost = entry.nextCost;
-
-            // compute hover preview: yields per cycle after buying this rank
-            const simulatedUpgrades = Object.assign({}, inst.upgrades || {});
-            simulatedUpgrades[u.id] = (simulatedUpgrades[u.id] || 0) + 1;
-            const simInst = Object.assign({}, inst, { upgrades: simulatedUpgrades });
-            const baseXPsim = perCycleXPFor(inst.investedAmount, def);
-            const baseMonSim = perCycleMoneyFor(inst.investedAmount, def);
-            const yieldsAfter = applyUpgradeMultipliers(simInst, def, baseXPsim, baseMonSim);
-
-            // create a single full-width button to represent the upgrade (text contains name, cost and level)
-            const upBtn = document.createElement('button');
-            upBtn.textContent = `${u.name} ${cost}$ (${count}/${u.maxLevel || 5})`;
-            upBtn.style.display = 'block';
-            upBtn.style.width = '100%';
-            upBtn.style.textAlign = 'left';
-
-            // determine player level req for this rank
-            const playerLvl = xpToLevel(state.xp);
-            const playerReqBase = (u.levelReqBase || def.requiredPlayerLevel || 0);
-            const requiredPlayerLevelForRank = playerReqBase + (count + 1);
-            const buyDisabled = (inst.money || 0) < cost || playerLvl < requiredPlayerLevelForRank;
-            if(buyDisabled){
-              let reason = '';
-              if(playerLvl < requiredPlayerLevelForRank) reason = `Requires player level ${requiredPlayerLevelForRank}`;
-              else if((inst.money || 0) < cost) reason = `Requires ${cost} $ business money`;
-              upBtn.disabled = true;
-              upBtn.title = `${reason} — After purchase: +${yieldsAfter.xp} XP, +${yieldsAfter.money} $ per cycle`;
-            } else {
-              upBtn.title = `After purchase: +${yieldsAfter.xp} XP, +${yieldsAfter.money} $ per cycle`;
-            }
-
-            upBtn.addEventListener('click', ()=>{
-              const money = inst.money || 0;
-              if(xpToLevel(state.xp) < requiredPlayerLevelForRank){ alert(`Player level ${requiredPlayerLevelForRank} required to buy this rank.`); return; }
-              if(money < cost){ alert('Not enough business money to buy this upgrade.'); return; }
-              if(!confirm(`Buy ${u.name} rank ${count+1} for ${cost} $?`)) return;
-              inst.money = money - cost;
-              inst.upgrades = inst.upgrades || {};
-              inst.upgrades[u.id] = (inst.upgrades[u.id] || 0) + 1;
-              saveState();
-              alert(`Purchased ${u.name} rank ${inst.upgrades[u.id]} for ${def.name}.`);
-              renderGameTab();
-            });
-
-            const upRow = document.createElement('div');
-            upRow.style.padding = '4px 0';
-            upRow.appendChild(upBtn);
-            upgradesDiv.appendChild(upRow);
-          });
-        }
-
-        actions.appendChild(claimBtn);
-        actions.appendChild(cancelBtn);
-
-        row.appendChild(left);
-        row.appendChild(badge);
-        row.appendChild(actions);
-        list.appendChild(row);
-
-  // show money balance and per-cycle yields under the row
-  const infoRow = document.createElement('div');
-  infoRow.style.padding = '6px 0 12px 0';
-  infoRow.innerHTML = `<div><strong>Business money:</strong> ${inst.money || 0} $</div><div><strong>Per cycle:</strong> +${yields.xp} XP, +${yields.money} $</div>`;
-  list.appendChild(infoRow);
-
-  const upHeader = document.createElement('div');
-  upHeader.textContent = 'Upgrades:';
-  list.appendChild(upHeader);
-  list.appendChild(upgradesDiv);
-      });
+/* ===== app.js — Main entry, routing, init ===== */
+const App = (() => {
+  let _state = null;
+  let _user = null;
+  let _activitiesData = null;
+  let _businessesData = null;
+  let _currentView = 'view-today';
+
+  /* ===== INIT ===== */
+  async function init() {
+    // Try migrating from v1
+    if (!Storage.loadUser()) {
+      Storage.migrateV1();
     }
 
-    card.appendChild(list);
-
-    // invest button (only if player level allowed)
-    const footer = document.createElement('div');
-    footer.className = 'modal-actions';
-    if(lvl < def.requiredPlayerLevel){
-      const locked = document.createElement('div');
-      locked.textContent = `Locked — reach level ${def.requiredPlayerLevel} to unlock.`;
-      footer.appendChild(locked);
-    } else {
-      const investBtn = document.createElement('button');
-      investBtn.textContent = 'Invest';
-      investBtn.addEventListener('click', ()=>{
-        const amtStr = prompt(`Enter gold amount to invest into ${def.name} (you have ${state.gold}):`, String(def.baseCost));
-        if(!amtStr) return;
-        const amt = Math.floor(Number(amtStr));
-        if(Number.isNaN(amt) || amt <= 0){ alert('Invalid amount'); return; }
-        if(amt > state.gold){ alert('Not enough gold'); return; }
-        // spend gold and create instance
-        state.gold -= amt;
-  const inst = { instanceId: generateId('inv'), defId: def.id, investedAmount: amt, investedAt: Date.now(), lastClaimAt: Date.now(), xp: 0, money: 0, upgrades: {} };
-        state.investments = state.investments || [];
-        state.investments.push(inst);
-        saveState();
-        renderStats();
-        renderGameTab();
-        alert(`Invested ${amt} gold into ${def.name}.`);
-      });
-      footer.appendChild(investBtn);
-    }
-    card.appendChild(footer);
-
-    container.appendChild(card);
-  });
-}
-
-// ----------------- init -----------------
-async function init(){
-  // load activity definitions
-  try{
-    const res = await fetch(ACTIVITIES_PATH);
-    activitiesData = await res.json();
-  }catch(e){
-    console.error('Failed to load activities.json', e);
-    activitiesData = { categories: [] };
-  }
-
-  user = loadUser();
-  state = loadState();
-
-  // daily reset if needed
-  if(state.lastDate !== todayStr()){
-    resetDailyCounts();
-  } else {
-    // Migrate any legacy per-duration counts to aggregated per-category counts (only if state is for today)
-    migrateCountsLegacy();
-    // Migrate legacy instance upgrades (arrays) to maps
-    migrateInstanceUpgrades();
-  }
-
-  // if no user, show modal
-  if(!user){
-    document.getElementById('username-modal').classList.remove('hidden');
-  }
-
-  renderStats();
-  renderCategories();
-
-  // event bindings
-  document.getElementById('save-username').addEventListener('click', ()=>{
-    const input = document.getElementById('username-input');
-    const name = (input.value || '').trim();
-    if(!name){
-      alert('Please enter a username');
+    // Load data files
+    try {
+      const [activitiesRes, businessesRes] = await Promise.all([
+        fetch('data/activities.json'),
+        fetch('data/businesses.json')
+      ]);
+      _activitiesData = await activitiesRes.json();
+      _businessesData = await businessesRes.json();
+    } catch (e) {
+      console.error('Failed to load data files:', e);
       return;
     }
-    user = name;
-    saveUser(user);
-    document.getElementById('username-modal').classList.add('hidden');
-    renderStats();
-  });
 
-  // Info modal bindings
-  const infoModal = document.getElementById('info-modal');
-  const infoContent = document.getElementById('info-content');
-  function buildInfoContent(){
-    infoContent.innerHTML = '';
-    const p1 = document.createElement('p');
-    p1.textContent = 'Welcome — enter a username to start. The app gamifies everyday activities and saves progress locally in your browser.';
-    const p2 = document.createElement('p');
-    p2.textContent = 'Each category (Run, Walk, Push-ups, etc.) has a max number of completions per day. Completing any option in a category consumes one of those slots.';
-    const p3 = document.createElement('p');
-    p3.textContent = 'Hover an option to see the XP and gold you will receive. Confirming the action will grant the rewards and increment the category counter.';
-  const p4 = document.createElement('p');
-  p4.textContent = 'XP increases your player level (level = floor(XP / 100)). Gold comes only from training activities and can be spent in the Shop tab (currently empty). Use the Reset Day button to clear daily counts for testing.';
-  const p5 = document.createElement('p');
-  p5.textContent = 'Businesses (Game tab) are separate: when you invest gold into a business, it creates a business instance that accrues business-specific money and investment XP every 8 hours (up to 5 unclaimed cycles). Claiming gives the business XP and business money.';
-  const p6 = document.createElement('p');
-  p6.textContent = 'Business money is used only inside that business to buy upgrades (shown as the next 2 available upgrades). Upgrades increase money and XP yields for that business. This keeps training gold as the core scarce currency.';
-  const p7 = document.createElement('p');
-  p7.textContent = 'All data is stored locally (no cloud sync). Open this page on your phone to use it like an app.';
-  [p1,p2,p3,p4,p5,p6,p7].forEach(n=>infoContent.appendChild(n));
+    // Load user and state
+    _user = Storage.loadUser();
+    _state = Storage.loadState();
+
+    // Init modules
+    Training.init(_activitiesData, _state);
+    Game.init(_businessesData, _state);
+
+    // Check day reset
+    checkDayReset();
+
+    // Setup navigation
+    setupNavigation();
+
+    // Setup modals
+    setupModals();
+
+    // Setup settings
+    setupSettings();
+
+    // Check if first visit
+    if (!_user || !_user.username) {
+      showModal('modal-username');
+      document.getElementById('input-username').focus();
+    } else {
+      renderTopbar();
+    }
+
+    // Render initial view
+    switchView('view-today');
+
+    // Init notifications
+    if (_user && _user.settings) {
+      Notifications.init(_user.settings);
+    }
+
+    // Register service worker
+    registerServiceWorker();
+
+    // Periodic day reset check
+    setInterval(checkDayReset, 60000);
   }
 
-  document.getElementById('open-info').addEventListener('click', ()=>{
-    buildInfoContent();
-    infoModal.classList.remove('hidden');
-  });
-  document.getElementById('close-info').addEventListener('click', ()=>{
-    infoModal.classList.add('hidden');
-  });
-
-  const openShopBtn = document.getElementById('open-shop');
-  if(openShopBtn) openShopBtn.addEventListener('click', openShop);
-  const closeShopBtn = document.getElementById('close-shop');
-  if(closeShopBtn) closeShopBtn.addEventListener('click', ()=>{
-    document.getElementById('shop-modal').classList.add('hidden');
-  });
-
-  // tab buttons
-  document.querySelectorAll('.tab-btn').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      switchToTab(btn.dataset.tab);
+  /* ===== NAVIGATION ===== */
+  function setupNavigation() {
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        switchView(btn.dataset.view);
+      });
     });
-  });
 
-  // render initial shop tab content
-  renderShopTab();
+    // "Create Training Plan" button in empty today view
+    document.getElementById('btn-create-plan-prompt').addEventListener('click', () => {
+      switchView('view-plan');
+    });
+  }
 
-  // start countdown updater for next-cycle ETAs
-  startCountdownUpdater();
+  function switchView(viewId) {
+    _currentView = viewId;
 
-  document.getElementById('reset-day').addEventListener('click', ()=>{
-    if(confirm('Reset daily counts for testing?')){
-      resetDailyCounts();
-      renderCategories();
-      alert('Daily counts reset');
+    document.querySelectorAll('.view').forEach(v => {
+      v.classList.toggle('hidden', v.id !== viewId);
+      v.classList.toggle('active', v.id === viewId);
+    });
+
+    document.querySelectorAll('.nav-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.view === viewId);
+    });
+
+    // Render the active view
+    if (viewId === 'view-today') Training.renderTodayView();
+    if (viewId === 'view-plan') Training.renderPlanView();
+    if (viewId === 'view-game') Game.renderGameView();
+  }
+
+  /* ===== TOPBAR ===== */
+  function renderTopbar() {
+    if (!_user) return;
+    document.getElementById('display-username').textContent = _user.username || 'Guest';
+    document.getElementById('display-level').textContent = getPlayerLevel(_state.xp);
+    document.getElementById('display-xp').textContent = _state.xp;
+    document.getElementById('display-gold').textContent = _state.gold;
+    document.getElementById('display-biz-money').textContent = Game.getTotalBusinessMoney();
+    updateXpBar();
+  }
+
+  function updateXpBar() {
+    const progress = getXpProgress(_state.xp);
+    document.getElementById('xp-progress-fill').style.width = progress + '%';
+  }
+
+  /* ===== LEVEL UP ===== */
+  function checkLevelUp(prevXp, newXp) {
+    const prevLevel = getPlayerLevel(prevXp);
+    const newLevel = getPlayerLevel(newXp);
+    if (newLevel > prevLevel) {
+      showLevelUpModal(newLevel);
     }
-  });
+  }
 
-  renderStats();
-}
+  function showLevelUpModal(level) {
+    const details = document.getElementById('levelup-details');
+    let html = `<div class="levelup-new-level">${level}</div>`;
 
-window.addEventListener('load', init);
+    // Check for new unlocks
+    const unlocks = Game.checkUnlocks(level);
+    if (unlocks.length > 0) {
+      html += '<div class="levelup-unlock">';
+      for (const biz of unlocks) {
+        html += `<div>${biz.icon} ${biz.name} unlocked!</div>`;
+      }
+      html += '</div>';
+    }
+
+    details.innerHTML = html;
+    showModal('modal-levelup');
+  }
+
+  /* ===== MODALS ===== */
+  function setupModals() {
+    // Username save
+    document.getElementById('btn-save-username').addEventListener('click', saveUsername);
+    document.getElementById('input-username').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') saveUsername();
+    });
+
+    // Add activity button
+    document.getElementById('btn-add-activity').addEventListener('click', () => {
+      Training.openActivityPicker();
+    });
+
+    // Confirm plan item
+    document.getElementById('btn-confirm-plan-item').addEventListener('click', () => {
+      Training.confirmPlanItem();
+    });
+
+    // Cancel plan item
+    document.getElementById('btn-cancel-plan-item').addEventListener('click', () => {
+      hideModal('modal-plan-item');
+    });
+
+    // Level up close
+    document.getElementById('btn-close-levelup').addEventListener('click', () => {
+      hideModal('modal-levelup');
+    });
+
+    // Info modal
+    document.getElementById('btn-open-info').addEventListener('click', () => {
+      showModal('modal-info');
+    });
+
+    // Close buttons (data-close attribute)
+    document.querySelectorAll('[data-close]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        hideModal(btn.dataset.close);
+      });
+    });
+
+    // Click backdrop to close
+    document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+      backdrop.addEventListener('click', () => {
+        const modal = backdrop.closest('.modal');
+        if (modal && modal.id !== 'modal-username') {
+          hideModal(modal.id);
+        }
+      });
+    });
+  }
+
+  function saveUsername() {
+    const input = document.getElementById('input-username');
+    const name = input.value.trim();
+    if (!name) {
+      input.style.borderColor = 'var(--accent-red)';
+      return;
+    }
+
+    if (!_user) {
+      _user = Storage.defaultUser();
+    }
+    _user.username = name;
+    Storage.saveUser(_user);
+
+    hideModal('modal-username');
+    renderTopbar();
+    showToast(`Welcome, ${name}!`, 'success');
+  }
+
+  function showModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) {
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  function hideModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) {
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+  }
+
+  /* ===== SETTINGS ===== */
+  function setupSettings() {
+    // Notification toggle
+    const notifToggle = document.getElementById('setting-notif-enabled');
+    const notifTime = document.getElementById('setting-notif-time');
+    const notifTimeRow = document.getElementById('notif-time-row');
+
+    // Show progressive toggle
+    const progToggle = document.getElementById('setting-show-progressive');
+
+    if (_user && _user.settings) {
+      notifToggle.checked = _user.settings.notificationsEnabled;
+      notifTime.value = _user.settings.notificationTime || '08:00';
+      progToggle.checked = _user.settings.showProgressive !== false;
+    }
+
+    progToggle.addEventListener('change', () => {
+      if (!_user) _user = Storage.defaultUser();
+      _user.settings.showProgressive = progToggle.checked;
+      Storage.saveUser(_user);
+      Training.renderTodayView();
+      Training.renderPlanView();
+    });
+
+    notifToggle.addEventListener('change', async () => {
+      if (notifToggle.checked) {
+        const granted = await Notifications.requestPermission();
+        if (!granted) {
+          notifToggle.checked = false;
+          showToast('Notifications permission denied', 'error');
+          return;
+        }
+      }
+
+      if (!_user) _user = Storage.defaultUser();
+      _user.settings.notificationsEnabled = notifToggle.checked;
+      Storage.saveUser(_user);
+      Notifications.updateSettings(_user.settings);
+      showToast(notifToggle.checked ? 'Reminders enabled' : 'Reminders disabled', 'info');
+    });
+
+    notifTime.addEventListener('change', () => {
+      if (!_user) _user = Storage.defaultUser();
+      _user.settings.notificationTime = notifTime.value;
+      Storage.saveUser(_user);
+      if (_user.settings.notificationsEnabled) {
+        Notifications.updateSettings(_user.settings);
+      }
+    });
+
+    // Change username
+    document.getElementById('btn-change-username').addEventListener('click', () => {
+      document.getElementById('input-username').value = _user ? _user.username : '';
+      showModal('modal-username');
+    });
+
+    // Export data
+    document.getElementById('btn-export-data').addEventListener('click', () => {
+      const data = Storage.exportAll();
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `training-game-backup-${todayStr()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Data exported', 'success');
+    });
+
+    // Import data
+    const importInput = document.getElementById('import-file-input');
+    document.getElementById('btn-import-data').addEventListener('click', () => {
+      importInput.click();
+    });
+
+    importInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (Storage.importAll(reader.result)) {
+          showToast('Data imported! Reloading...', 'success');
+          setTimeout(() => location.reload(), 1000);
+        } else {
+          showToast('Import failed — invalid file', 'error');
+        }
+      };
+      reader.readAsText(file);
+      importInput.value = '';
+    });
+
+    // Reset data
+    document.getElementById('btn-reset-data').addEventListener('click', () => {
+      if (!confirm('Are you sure you want to reset all data? This cannot be undone.')) return;
+      if (!confirm('Really? All progress will be lost forever.')) return;
+      Storage.resetAll();
+      location.reload();
+    });
+  }
+
+  /* ===== DAY RESET ===== */
+  function checkDayReset() {
+    const today = todayStr();
+    if (_state && _state.lastDate !== today) {
+      // Check if yesterday had completions for streak
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayStr = yesterday.toISOString().slice(0, 10);
+
+      if (_state.completions[yesterdayStr] && _state.completions[yesterdayStr].length > 0) {
+        _state.stats.currentStreak++;
+        _state.stats.longestStreak = Math.max(_state.stats.longestStreak, _state.stats.currentStreak);
+      } else {
+        // Check if the gap is more than 1 day
+        if (_state.lastDate !== yesterdayStr) {
+          _state.stats.currentStreak = 0;
+        }
+      }
+
+      _state.lastDate = today;
+      Storage.saveState(_state);
+
+      // Re-render if active
+      if (_currentView === 'view-today') {
+        Training.renderTodayView();
+      }
+    }
+  }
+
+  /* ===== TOAST ===== */
+  function showToast(message, type) {
+    type = type || 'success';
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+    requestAnimationFrame(() => {
+      toast.classList.add('show');
+    });
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 300);
+    }, 2500);
+  }
+
+  /* ===== SERVICE WORKER ===== */
+  function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(() => {
+        // Service worker registration failed — not critical
+      });
+    }
+  }
+
+  function showProgressiveOnCards() {
+    return !_user || !_user.settings || _user.settings.showProgressive !== false;
+  }
+
+  return {
+    init,
+    switchView,
+    renderTopbar,
+    checkLevelUp,
+    showModal,
+    hideModal,
+    showToast,
+    showProgressiveOnCards
+  };
+})();
+
+// Boot
+window.addEventListener('DOMContentLoaded', () => App.init());
