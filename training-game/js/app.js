@@ -65,6 +65,9 @@ const App = (() => {
     // Register service worker
     registerServiceWorker();
 
+    // Install prompt
+    setupInstallPrompt();
+
     // Periodic day reset check
     setInterval(checkDayReset, 60000);
   }
@@ -383,6 +386,74 @@ const App = (() => {
         // Service worker registration failed — not critical
       });
     }
+  }
+
+  /* ===== INSTALL PROMPT ===== */
+  let _deferredInstallPrompt = null;
+
+  function setupInstallPrompt() {
+    const banner = document.getElementById('install-banner');
+    const btnInstall = document.getElementById('btn-install-app');
+    const btnDismiss = document.getElementById('btn-install-dismiss');
+    const hint = document.getElementById('install-banner-hint');
+
+    // Don't show if already installed as standalone
+    if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) {
+      return;
+    }
+
+    // Don't show if user previously dismissed
+    if (localStorage.getItem('tg_install_dismissed')) return;
+
+    // Android / Chrome — capture the native beforeinstallprompt
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      _deferredInstallPrompt = e;
+      banner.classList.remove('hidden');
+      hint.textContent = 'Add to your home screen for the best experience';
+      btnInstall.textContent = 'Install';
+    });
+
+    // iOS Safari — no beforeinstallprompt, detect and show manual hint
+    const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const isSafari = /safari/i.test(navigator.userAgent) && !/crios|fxios|chrome/i.test(navigator.userAgent);
+    if (isIos && isSafari && !navigator.standalone) {
+      // Show after a short delay so it doesn't flash immediately
+      setTimeout(() => {
+        if (localStorage.getItem('tg_install_dismissed')) return;
+        hint.textContent = 'Tap the share button, then "Add to Home Screen"';
+        btnInstall.textContent = 'Got it';
+        btnInstall.onclick = () => {
+          banner.classList.add('hidden');
+        };
+        banner.classList.remove('hidden');
+      }, 2000);
+    }
+
+    // Install button (Android)
+    btnInstall.addEventListener('click', async () => {
+      if (_deferredInstallPrompt) {
+        _deferredInstallPrompt.prompt();
+        const result = await _deferredInstallPrompt.userChoice;
+        _deferredInstallPrompt = null;
+        banner.classList.add('hidden');
+        if (result.outcome === 'accepted') {
+          showToast('App installed!', 'success');
+        }
+      }
+    });
+
+    // Dismiss button
+    btnDismiss.addEventListener('click', () => {
+      banner.classList.add('hidden');
+      localStorage.setItem('tg_install_dismissed', '1');
+    });
+
+    // Hide banner if app gets installed while page is open
+    window.addEventListener('appinstalled', () => {
+      banner.classList.add('hidden');
+      _deferredInstallPrompt = null;
+    });
   }
 
   function showProgressiveOnCards() {
