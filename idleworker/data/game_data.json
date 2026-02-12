@@ -245,7 +245,7 @@
           "produce_multiplier": 1.0,
           "cost": { "ingot": 100, "logs": 200, "recipe_bronze": 1 }
           },
-          "flint": {
+          "tinderbox": {
           "used_for": "firemaking",
           "action_speed_multiplier": 0.9,
           "produce_multiplier": 1.0,
@@ -296,11 +296,11 @@
           "produce_multiplier": 1.0,
           "cost": { "bronze_saw": 1, "ingot": 200, "logs": 400, "recipe_iron": 1 }
           },
-          "flint": {
+          "tinderbox": {
           "used_for": "firemaking",
           "action_speed_multiplier": 0.8,
           "produce_multiplier": 1.0,
-          "cost": { "bronze_flint": 1, "logs": 400, "recipe_iron": 1 }
+          "cost": { "bronze_tinderbox": 1, "logs": 400, "recipe_iron": 1 }
           },
           "gloves": {
           "used_for": "cooking",
@@ -347,11 +347,11 @@
           "produce_multiplier": 1.0,
           "cost": { "iron_saw": 1, "ingot": 20, "logs": 10, "recipe_steel": 1 }
           },
-          "flint": {
+          "tinderbox": {
           "used_for": "firemaking",
           "action_speed_multiplier": 0.7,
           "produce_multiplier": 1.0,
-          "cost": { "iron_flint": 1, "logs": 6, "recipe_steel": 1 }
+          "cost": { "iron_tinderbox": 1, "logs": 6, "recipe_steel": 1 }
           },
           "gloves": {
           "used_for": "cooking",
@@ -398,11 +398,11 @@
           "produce_multiplier": 1.0,
           "cost": { "steel_saw": 1, "ingot": 25, "logs": 12, "recipe_black": 1 }
           },
-          "flint": {
+          "tinderbox": {
           "used_for": "firemaking",
           "action_speed_multiplier": 0.6,
           "produce_multiplier": 1.0,
-          "cost": { "steel_flint": 1, "logs": 6, "recipe_black": 1 }
+          "cost": { "steel_tinderbox": 1, "logs": 6, "recipe_black": 1 }
           },
           "gloves": {
           "used_for": "cooking",
@@ -449,11 +449,11 @@
           "produce_multiplier": 1.0,
           "cost": { "black_saw": 1, "ingot": 30, "logs": 15, "recipe_mithril": 1 }
           },
-          "flint": {
+          "tinderbox": {
           "used_for": "firemaking",
           "action_speed_multiplier": 0.5,
           "produce_multiplier": 1.0,
-          "cost": { "black_flint": 1, "logs": 6, "recipe_mithril": 1 }
+          "cost": { "black_tinderbox": 1, "logs": 6, "recipe_mithril": 1 }
           },
           "gloves": {
           "used_for": "cooking",
@@ -500,11 +500,11 @@
           "produce_multiplier": 1.0,
           "cost": { "mithril_saw": 1, "ingot": 35, "logs": 18, "recipe_adamant": 1 }
           },
-          "flint": {
+          "tinderbox": {
           "used_for": "firemaking",
           "action_speed_multiplier": 0.4,
           "produce_multiplier": 1.0,
-          "cost": { "mithril_flint": 1, "logs": 6, "recipe_adamant": 1 }
+          "cost": { "mithril_tinderbox": 1, "logs": 6, "recipe_adamant": 1 }
           },
           "gloves": {
           "used_for": "cooking",
@@ -551,11 +551,11 @@
           "produce_multiplier": 1.0,
           "cost": { "adamant_saw": 1, "ingot": 40, "logs": 20, "recipe_rune": 1 }
           },
-          "flint": {
+          "tinderbox": {
           "used_for": "firemaking",
           "action_speed_multiplier": 0.3,
           "produce_multiplier": 1.0,
-          "cost": { "adamant_flint": 1, "logs": 6, "recipe_rune": 1 }
+          "cost": { "adamant_tinderbox": 1, "logs": 6, "recipe_rune": 1 }
           },
           "gloves": {
           "used_for": "cooking",
@@ -602,11 +602,11 @@
           "produce_multiplier": 1.0,
           "cost": { "rune_saw": 1, "ingot": 45, "logs": 25, "recipe_dragon": 1 }
           },
-          "flint": {
+          "tinderbox": {
           "used_for": "firemaking",
           "action_speed_multiplier": 0.2,
           "produce_multiplier": 1.0,
-          "cost": { "rune_flint": 1, "logs": 6, "recipe_dragon": 1 }
+          "cost": { "rune_tinderbox": 1, "logs": 6, "recipe_dragon": 1 }
           },
           "gloves": {
           "used_for": "cooking",
@@ -653,11 +653,11 @@
               "produce_multiplier": 1.0,
               "cost": { "dragon_saw": 1, "ingot": 50, "logs": 30, "recipe_god": 1 }
           },
-          "flint": {
+          "tinderbox": {
               "used_for": "firemaking",
               "action_speed_multiplier": 0.1,
               "produce_multiplier": 1.0,
-              "cost": { "dragon_flint": 1, "logs": 30, "recipe_god": 1 }
+              "cost": { "dragon_tinderbox": 1, "logs": 30, "recipe_god": 1 }
           },
           "gloves": {
               "used_for": "cooking",
@@ -676,13 +676,17 @@
     }
   },
   "worker_template": {
-    "level": 1,
-    "experience": 0,
-    "experience_required": 100,
+    "skilling_level": 1,
+    "skilling_experience": 0,
+    "skilling_experience_required": 100,
+    "skilling_jobs_completed": 0,
+    "fighting_level": 1,
+    "fighting_experience": 0,
+    "fighting_experience_required": 100,
+    "fighting_jobs_completed": 0,
     "cost": 100,
     "assign_to": null,
     "timer": 0,
-    "jobs_completed": 0,
     "gear": {
       "sword": null,
       "armor": null,
@@ -694,7 +698,7 @@
       "rod": null,
       "hammer": null,
       "saw": null,
-      "flint": null,
+      "tinderbox": null,
       "gloves": null,
       "boots": null
     }
@@ -789,7 +793,7 @@
       "job_type": "skilling",
       "job_action_time": 10.0,
       "required_gear": "none",
-      "job_equipment": "flint",
+      "job_equipment": "tinderbox",
       "skill_experience": 1,
       "worker_experience": 1,
       "action_speed_multiplier": 0.9,
@@ -871,6 +875,7 @@
       }
     },
     "fighting_tier_1": {
+      "monster": "goblin",
       "job_type": "combat",
       "job_action_time": 10.0,
       "required_gear": "none",
@@ -888,6 +893,7 @@
       }
     },
     "fighting_tier_2": {
+      "monster": "skeleton",
       "job_type": "combat",
       "job_action_time": 10.0,
       "required_gear": "bronze_sword, bronze_armor, bronze_shield",
@@ -905,6 +911,7 @@
       }
     },
     "fighting_tier_3": {
+      "monster": "spider",
       "job_type": "combat",
       "job_action_time": 10.0,
       "required_gear": "iron_sword, iron_armor, iron_shield",
@@ -922,6 +929,7 @@
       }
     },
     "fighting_tier_4": {
+      "monster": "black_wizard",
       "job_type": "combat",
       "job_action_time": 10.0,
       "required_gear": "steel_sword, steel_armor, steel_shield",
@@ -939,6 +947,7 @@
       }
     },
     "fighting_tier_5": {
+      "monster": "black_knight",
       "job_type": "combat",
       "job_action_time": 10.0,
       "required_gear": "black_sword, black_armor, black_shield",
@@ -956,6 +965,7 @@
       }
     },
     "fighting_tier_6": {
+      "monster": "ghost",
       "job_type": "combat",
       "job_action_time": 10.0,
       "required_gear": "mithril_sword, mithril_armor, mithril_shield",
@@ -973,6 +983,7 @@
       }
     },
     "fighting_tier_7": {
+      "monster": "gargoyle",
       "job_type": "combat",
       "job_action_time": 15.0,
       "required_gear": "adamant_sword, adamant_armor, adamant_shield",
@@ -990,6 +1001,7 @@
       }
     },
     "fighting_tier_8": {
+      "monster": "demon",
       "job_type": "combat",
       "job_action_time": 15.0,
       "required_gear": "rune_sword, rune_armor, rune_shield",
@@ -1007,6 +1019,7 @@
       }
     },
     "fighting_tier_9": {
+      "monster": "dragon",
       "job_type": "combat",
       "job_action_time": 15.0,
       "required_gear": "dragon_sword, dragon_armor, dragon_shield",
@@ -1024,6 +1037,7 @@
       }
     },
     "fighting_tier_10": {
+      "monster": "hydra",
       "job_type": "combat",
       "job_action_time": 20.0,
       "required_gear": "god_sword, god_armor, god_shield",
@@ -1043,7 +1057,7 @@
   },
   "equipment": {
     "gear_parts": ["sword", "armor", "shield"],
-    "tools_parts": ["pickaxe", "axe", "rod", "hammer", "saw", "flint", "gloves", "boots"]
+    "tools_parts": ["pickaxe", "axe", "rod", "hammer", "saw", "tinderbox", "gloves", "boots"]
   },
   "tiers": {
     "bronze": 1,
