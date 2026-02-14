@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casino Minigames</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Top Bar -->
+        <header id="top-bar">
+            <h1 class="logo">MINI<span>CASINO</span></h1>
+            <div id="coin-display">
+                <div class="coin-icon">&#x1FA99;</div>
+                <span id="coin-count">0</span>
+            </div>
+        </header>
+
+        <!-- Main Menu -->
+        <div id="menu-screen" class="screen active">
+            <div class="menu-section">
+                <h2>Earn Coins</h2>
+                <div id="clicker-area">
+                    <button id="click-btn">
+                        <span class="btn-icon">&#x1FA99;</span>
+                        <span class="btn-text">CLICK ME!</span>
+                    </button>
+                    <div id="click-particles"></div>
+                </div>
+                <p class="hint">Spam click to earn coins!</p>
+            </div>
+
+            <div class="menu-section">
+                <h2>Games</h2>
+                <div class="game-grid">
+                    <button class="game-card" data-game="plinko">
+                        <div class="game-card-icon">&#127919;</div>
+                        <div class="game-card-title">Plinko</div>
+                        <div class="game-card-desc">Drop a ball &amp; win big!</div>
+                    </button>
+                    <button class="game-card locked" disabled>
+                        <div class="game-card-icon">&#127922;</div>
+                        <div class="game-card-title">???</div>
+                        <div class="game-card-desc">Coming Soon</div>
+                    </button>
+                    <button class="game-card locked" disabled>
+                        <div class="game-card-icon">&#127183;</div>
+                        <div class="game-card-title">???</div>
+                        <div class="game-card-desc">Coming Soon</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Plinko Game Screen -->
+        <div id="plinko-screen" class="screen">
+            <div class="game-header">
+                <button id="back-btn" class="btn-back">&larr; Menu</button>
+                <h2>Plinko</h2>
+                <div class="bet-controls">
+                    <label>Bet:</label>
+                    <button class="bet-adj" id="bet-down">-</button>
+                    <span id="bet-amount">10</span>
+                    <button class="bet-adj" id="bet-up">+</button>
+                    <button id="drop-btn" class="btn-drop">DROP!</button>
+                </div>
+            </div>
+            <canvas id="plinko-canvas"></canvas>
+            <div id="plinko-result" class="result-popup hidden"></div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
