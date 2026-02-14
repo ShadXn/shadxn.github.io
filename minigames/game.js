@@ -8,7 +8,8 @@
     let bet = 10;
     const BET_STEPS = [5, 10, 25, 50, 100, 250, 500];
     let betIndex = 1;
-    let ballDropping = false;
+    const activeBalls = [];
+    let animationRunning = false;
 
     // ---- DOM refs ----
     const coinCountEl = document.getElementById('coin-count');
@@ -163,6 +164,12 @@
         };
     }
 
+    function getBucketX(bucketIndex) {
+        const totalWidth = (BUCKET_COUNT - 1) * pegSpacingX;
+        const offsetX = (W - totalWidth) / 2;
+        return offsetX + bucketIndex * pegSpacingX;
+    }
+
     function drawBoard(balls) {
         ctx.clearRect(0, 0, W, H);
 
@@ -191,21 +198,7 @@
         const bucketHeight = 40;
 
         for (let i = 0; i < BUCKET_COUNT; i++) {
-            // Bucket center X: align with possible landing positions
-            const pegsInLastRow = ROWS + 1; // row ROWS-1 has ROWS+1 pegs
-            const totalWidth = ROWS * pegSpacingX; // ROWS pegs spacing for ROWS+1 pegs
-            const offsetX = (W - totalWidth) / 2;
-            // Landing positions are between pegs and at edges
-            // Actually for plinko, after the last row of pegs, the ball lands in one of ROWS+1 slots
-            // The slots align with the spaces between pegs of the last row
-            // Last row (row = ROWS-1) has ROWS+1 pegs
-            // Slots are at the midpoints and edges? No — the ball bounces left or right at each peg.
-            // After ROWS rows, there are ROWS+1 possible positions.
-            // These map to x-positions that line up with a row that would have ROWS+2 pegs.
-            const finalRowPegs = ROWS + 2; // virtual row
-            const finalTotalWidth = (finalRowPegs - 1) * pegSpacingX;
-            const finalOffsetX = (W - finalTotalWidth) / 2;
-            const bx = finalOffsetX + i * pegSpacingX;
+            const bx = getBucketX(i);
             const mult = BUCKET_MULTIPLIERS[i];
             const col = multColor(mult);
 
@@ -229,10 +222,9 @@
 
         // Draw divider lines between buckets
         for (let i = 0; i <= BUCKET_COUNT; i++) {
-            const finalRowPegs = ROWS + 2;
-            const finalTotalWidth = (finalRowPegs - 1) * pegSpacingX;
-            const finalOffsetX = (W - finalTotalWidth) / 2;
-            const dx = finalOffsetX + (i - 0.5) * pegSpacingX;
+            const bkTotalWidth = (BUCKET_COUNT - 1) * pegSpacingX;
+            const bkOffsetX = (W - bkTotalWidth) / 2;
+            const dx = bkOffsetX + (i - 0.5) * pegSpacingX;
             ctx.beginPath();
             ctx.moveTo(dx, bucketY);
             ctx.lineTo(dx, bucketY + bucketHeight);
@@ -289,119 +281,103 @@
         return { finalBucket: position, decisions };
     }
 
-    function animateBall(decisions, finalBucket) {
-        return new Promise(resolve => {
-            // Build the path as x,y coordinates through peg positions
-            const path = [];
+    function buildBallPath(decisions, finalBucket) {
+        const path = [];
+        path.push({ x: W / 2, y: startY - ballRadius * 2 });
 
-            // Start position — top center
-            const startX = W / 2;
-            path.push({ x: startX, y: startY - ballRadius * 2 });
+        let col = 0;
+        for (let row = 0; row < ROWS; row++) {
+            const peg = getPegPosition(row, col);
+            path.push({ x: peg.x, y: peg.y - pegRadius - ballRadius });
+            col += decisions[row];
+            const bounceX = peg.x + (decisions[row] ? 1 : -1) * pegSpacingX * 0.3;
+            const bounceY = peg.y + pegSpacingY * 0.3;
+            path.push({ x: bounceX, y: bounceY });
+        }
 
-            // Track column index at each row
-            let col = 0;
-            for (let row = 0; row < ROWS; row++) {
-                // Peg the ball hits this row
-                const peg = getPegPosition(row, col);
-                // Ball arrives at peg
-                path.push({ x: peg.x, y: peg.y - pegRadius - ballRadius });
+        const bucketY = startY + (ROWS + 1) * pegSpacingY + 20;
+        path.push({ x: getBucketX(finalBucket), y: bucketY });
+        return path;
+    }
 
-                // Bounce left or right
-                col += decisions[row];
-                const nextX = (row < ROWS - 1)
-                    ? getPegPosition(row + 1, col).x
-                    : (() => {
-                        // Final landing position (virtual row for bucket centers)
-                        const finalRowPegs = ROWS + 2;
-                        const finalTotalWidth = (finalRowPegs - 1) * pegSpacingX;
-                        const finalOffsetX = (W - finalTotalWidth) / 2;
-                        return finalOffsetX + finalBucket * pegSpacingX;
-                    })();
-
-                // Bounce point slightly below peg
-                const bounceX = peg.x + (decisions[row] ? 1 : -1) * pegSpacingX * 0.3;
-                const bounceY = peg.y + pegSpacingY * 0.3;
-                path.push({ x: bounceX, y: bounceY });
-            }
-
-            // Final landing
-            const bucketY = startY + (ROWS + 1) * pegSpacingY + 20;
-            const finalRowPegs = ROWS + 2;
-            const finalTotalWidth = (finalRowPegs - 1) * pegSpacingX;
-            const finalOffsetX = (W - finalTotalWidth) / 2;
-            const finalX = finalOffsetX + finalBucket * pegSpacingX;
-            path.push({ x: finalX, y: bucketY });
-
-            // Animate along path
-            let segmentIndex = 0;
-            let segmentProgress = 0;
-            const baseSpeed = 0.06; // progress per frame at normal speed
-
-            const ball = { x: path[0].x, y: path[0].y };
-
-            function frame() {
-                if (segmentIndex >= path.length - 1) {
-                    drawBoard([ball]);
-                    resolve(finalBucket);
-                    return;
-                }
-
-                const from = path[segmentIndex];
-                const to = path[segmentIndex + 1];
-                const dx = to.x - from.x;
-                const dy = to.y - from.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                const speed = baseSpeed * (200 / Math.max(dist, 50));
-
-                segmentProgress += speed;
-
-                if (segmentProgress >= 1) {
-                    segmentIndex++;
-                    segmentProgress = 0;
-                    ball.x = to.x;
-                    ball.y = to.y;
-                } else {
-                    // Ease
-                    const t = segmentProgress;
-                    const ease = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-                    ball.x = from.x + dx * ease;
-                    ball.y = from.y + dy * ease;
-                }
-
-                drawBoard([ball]);
-                requestAnimationFrame(frame);
-            }
-
-            requestAnimationFrame(frame);
+    function startBall(decisions, finalBucket, betAmount) {
+        const path = buildBallPath(decisions, finalBucket);
+        activeBalls.push({
+            path,
+            segmentIndex: 0,
+            segmentProgress: 0,
+            x: path[0].x,
+            y: path[0].y,
+            finalBucket,
+            bet: betAmount,
+            done: false
         });
+        if (!animationRunning) {
+            animationRunning = true;
+            requestAnimationFrame(animate);
+        }
+    }
+
+    function animate() {
+        for (const ball of activeBalls) {
+            if (ball.done) continue;
+            if (ball.segmentIndex >= ball.path.length - 1) {
+                ball.done = true;
+                const mult = BUCKET_MULTIPLIERS[ball.finalBucket];
+                const winnings = Math.floor(ball.bet * mult);
+                addCoins(winnings);
+                showResult(mult, winnings - ball.bet);
+                continue;
+            }
+
+            const from = ball.path[ball.segmentIndex];
+            const to = ball.path[ball.segmentIndex + 1];
+            const dx = to.x - from.x;
+            const dy = to.y - from.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const speed = 0.06 * (200 / Math.max(dist, 50));
+
+            ball.segmentProgress += speed;
+            if (ball.segmentProgress >= 1) {
+                ball.segmentIndex++;
+                ball.segmentProgress = 0;
+                ball.x = to.x;
+                ball.y = to.y;
+            } else {
+                const t = ball.segmentProgress;
+                const ease = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+                ball.x = from.x + dx * ease;
+                ball.y = from.y + dy * ease;
+            }
+        }
+
+        const visibleBalls = activeBalls.filter(b => !b.done);
+        drawBoard(visibleBalls);
+
+        for (let i = activeBalls.length - 1; i >= 0; i--) {
+            if (activeBalls[i].done) activeBalls.splice(i, 1);
+        }
+
+        if (activeBalls.length > 0) {
+            requestAnimationFrame(animate);
+        } else {
+            animationRunning = false;
+        }
     }
 
     // ---- Drop Button ----
-    dropBtn.addEventListener('click', async () => {
-        if (ballDropping) return;
+    dropBtn.addEventListener('click', () => {
         if (coins < bet) {
             showResult(0, 0, true);
             return;
         }
 
-        ballDropping = true;
-        dropBtn.disabled = true;
         addCoins(-bet);
-
         const { decisions, finalBucket } = simulateBallPath();
-        await animateBall(decisions, finalBucket);
-
-        const mult = BUCKET_MULTIPLIERS[finalBucket];
-        const winnings = Math.floor(bet * mult);
-
-        addCoins(winnings);
-        showResult(mult, winnings);
-
-        ballDropping = false;
-        dropBtn.disabled = false;
+        startBall(decisions, finalBucket, bet);
     });
 
-    function showResult(mult, amount, insufficientFunds) {
+    function showResult(mult, net, insufficientFunds) {
         resultPopup.classList.remove('hidden');
 
         if (insufficientFunds) {
@@ -410,7 +386,6 @@
                 <div class="result-amount loss">You need ${bet} coins to play</div>
             `;
         } else {
-            const net = amount - bet;
             const isWin = net > 0;
             resultPopup.innerHTML = `
                 <div class="result-mult" style="color:${multColor(mult)}">${mult}x</div>
@@ -420,31 +395,19 @@
             `;
         }
 
-        // Create overlay
-        let overlay = document.querySelector('.overlay');
-        if (!overlay) {
-            overlay = document.createElement('div');
-            overlay.className = 'overlay';
-            document.body.appendChild(overlay);
-        }
-
         requestAnimationFrame(() => {
-            overlay.classList.add('show');
             resultPopup.classList.add('show');
         });
 
+        if (resultPopup._dismissTimer) clearTimeout(resultPopup._dismissTimer);
+
         const dismiss = () => {
-            overlay.classList.remove('show');
             resultPopup.classList.remove('show');
-            setTimeout(() => {
-                resultPopup.classList.add('hidden');
-                overlay.remove();
-            }, 300);
+            setTimeout(() => resultPopup.classList.add('hidden'), 300);
         };
 
-        overlay.onclick = dismiss;
         resultPopup.onclick = dismiss;
-        setTimeout(dismiss, 2500);
+        resultPopup._dismissTimer = setTimeout(dismiss, 1500);
     }
 
     // ---- roundRect polyfill ----
