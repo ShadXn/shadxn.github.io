@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wc -c \"C:\\\\Users\\\\ShadXn\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\d--Documents-GitHub-shadxn-github-io-osrs-leagues-vi\\\\tasks\\\\a303370275816cadd.output\")",
+      "Bash(curl -s https://oldschool.runescape.wiki/w/Raging_Echoes_League -A \"Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36\" -H 'Accept: text/html' --max-time 15)",
+      "Bash(curl -s https://oldschool.runescape.wiki/w/Raging_Echoes_League -A \"Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36\" --max-time 15)"
+    ]
+  }
+}
