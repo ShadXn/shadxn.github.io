@@ -64,15 +64,15 @@ const REGIONS = [
       { name:'Perilous Moons (Blood / Eclipse / Blue)', icon:'🌙', wikiUrl:`${WIKI}Moons_of_Peril`,
         drops:['Eclipse moon helm','Eclipse moon chestplate','Eclipse moon tassets','Blood moon helm','Blood moon chestplate','Blood moon tassets','Blue moon helm','Blue moon chestplate','Blue moon tassets','Eclipse atlatl','Dual macuahuitl','Lunar chest key'] },
       { name:'Hueycoatl', icon:'🦎', wikiUrl:`${WIKI}Hueycoatl`,
-        drops:['Tonalztics of ralos','Quetzal feathers'] },
+        drops:['Tonalztics of ralos','Hueycoatl hide','Tome of earth','Dragon hunter wand'] },
       { name:'Amoxliatl', icon:'🦕', wikiUrl:`${WIKI}Amoxliatl`,
-        drops:['Unique rewards — TBC'] },
+        drops:['Glacial temotli','Pendant of ates','Tooth half key'] },
       { name:'Gemstone Crab', icon:'🦀', wikiUrl:`${WIKI}Gemstone_Crab`,
         drops:['Unique rewards — TBC'] },
       { name:'Doom of Mokhaiotl', icon:'🌑', wikiUrl:`${WIKI}Doom_of_Mokhaiotl`,
-        drops:['Unique rewards — TBC'] },
+        drops:['Avernic treads','Mokhaiotl cloth','Eye of ayak'] },
       { name:'Vardorvis', icon:'🪓', wikiUrl:`${WIKI}Vardorvis`,
-        drops:["Executioner's axe head",'Ultor ring','Chromium ingot'] },
+        drops:["Soulreaper axe pieces (all)",'Ultor ring','Virtus mask','Virtus robe top','Virtus robe bottoms','Chromium ingot'] },
     ],
 
     raids: [],
@@ -129,7 +129,7 @@ const REGIONS = [
       'Tecu Salamander',
       'Antler guard from Custodian slayer creatures',
     ],
-    overview: "Spawn in Yama's Lair with exit to Civitas illa Fortis. Agility training available from level 1 via lava stepping stones in Yama's Lair. A Dramen staff, spade, Impling jar and two Strange devices are provided at the start. The above quests are auto-completed globally at league start (no XP awarded). Dizana's Quiver has ammo saving enabled by default — no Ava's device or Misthalin access required. Runecraft has no conventional early-game method in Varlamore; talismans are obtainable via the Abyss, and most other region unlocks provide better RC options.",
+    overview: "Spawn in Yama's Lair with exit to Civitas illa Fortis. Agility training available from level 1 via lava stepping stones in Yama's Lair. A Dramen staff, spade, Impling jar and two Strange devices are provided at the start. The above quests are auto-completed globally at league start (no XP awarded). Dizana's Quiver has ammo saving enabled by default — no Ava's device or Misthalin access required. Runecraft has no conventional early-game method in Varlamore; talismans are obtainable via the Abyss, and most other region unlocks provide better RC options. Player-owned houses are located in Aldarin. Zanaris and the Abyss are accessible regardless of region unlocks. Global league changes: Zulrah has no damage cap or melee immunity; Twisted bow, Scythe of vitur and Tumeken's shadow are obtainable from all three raids; all Soulreaper axe pieces can drop from every Desert Treasure II boss; Forestry events are 3x more likely; impling spawn rates are increased; multi-region component items (e.g. Ferocious gloves) drop as finished products.",
   },
 
   // ─── KARAMJA (free unlock) ────────────────
@@ -141,14 +141,20 @@ const REGIONS = [
       { skill:'Agility', rating:RATINGS.EXCELLENT, summary:'Brimhaven Agility Arena — best early/mid XP',
         methods:['Brimhaven Agility Arena (viable 1–99, gives tickets)','Brimhaven Dungeon obstacles (passive Agility XP)'],
         notes:['Tickets can be exchanged for XP or cosmetics'] },
-      { skill:'Fishing', rating:RATINGS.GOOD, summary:'Karambwans (best 1-tick fishing)',
-        methods:['Karambwan fishing (1-tick method — best Fishing XP)','Lobster / Tuna / Swordfish at Karamja docks'],
-        notes:['Karambwans are also excellent food for bossing'] },
+      { skill:'Fishing', rating:RATINGS.GOOD, summary:'Karambwans (best 1-tick fishing) + Infernal eels',
+        methods:['Karambwan fishing (1-tick method — best Fishing XP)','Infernal eel fishing at Mor Ul Rek (Fishing XP + Firemaking XP on break)','Lobster / Tuna / Swordfish at Karamja docks'],
+        notes:['Karambwans are also excellent food for bossing','Tai Bwo Wannai Trio quest is NOT auto-completed — must be done manually to unlock Karambwan fishing'] },
       { skill:'Cooking', rating:RATINGS.GOOD, summary:'Cooking Karambwans + Cooking gauntlets',
         methods:['Cooking Karambwans (no burns with Cooking gauntlets)'],
         notes:['Cooking gauntlets from Family Crest quest'] },
-      { skill:'Slayer', rating:RATINGS.DECENT, summary:'Duradel access after Shilo Village quest',
-        methods:['Duradel (Shilo Village) — best Slayer master (req. 100 combat + Shilo quest)','TzHaar tasks in Fight Cave'],
+      { skill:'Woodcutting', rating:RATINGS.DECENT, summary:'Teak and Mahogany trees',
+        methods:['Teak trees (Tai Bwo Wannai — good XP, plank use)','Mahogany trees (Tai Bwo Wannai — best Woodcutting XP per log)'],
+        notes:['Mahogany logs useful for Construction training'] },
+      { skill:'Thieving', rating:RATINGS.DECENT, summary:'TzHaar pickpocketing + gem stall',
+        methods:['Pickpocketing TzHaar-Hur in Mor Ul Rek','Gem stall thieving in Mor Ul Rek'],
+        notes:['TzHaar pickpocketing requires high Thieving level'] },
+      { skill:'Slayer', rating:RATINGS.DECENT, summary:'Duradel — best Slayer master',
+        methods:['Duradel (Shilo Village) — best Slayer master (req. 100 combat; Shilo Village auto-completed)','TzHaar tasks in Fight Cave'],
         notes:[] },
     ],
 
@@ -176,7 +182,7 @@ const REGIONS = [
       { name:'Tai Bwo Wannai Trio', icon:'📜', desc:'Required for Karambwan fishing.' },
       { name:'Shilo Village', icon:'📜', desc:'Unlocks Duradel — best Slayer master.' },
     ],
-    autoQuests: ['Shilo Village'],
+    autoQuests: ['Jungle Potion', 'Shilo Village'],
     autoDiary: [
       { diary: 'Karamja', tasks: [
         'Easy: Travel to Port Sarim via the dock east of Musa Point',
@@ -198,7 +204,7 @@ const REGIONS = [
       'All unique rewards from Superior Slayer Creatures',
       'Gout Tuber',
     ],
-    overview: 'House Portal placed in Brimhaven so Construction can be trained from level 1. Tzhaar-Ket-Rak will let you do all of his challenges immediately.',
+    overview: 'Player-owned houses are located in Aldarin (Varlamore) — not Brimhaven. Construction can still be trained from level 1. Tzhaar-Ket-Rak will let you do all of his challenges immediately.',
   },
 
   // ─── ASGARNIA ─────────────────────────────
@@ -211,7 +217,7 @@ const REGIONS = [
         methods:['Motherlode Mine (mid-level AFK, gold bag + coal)','Mining Guild extension — Amethyst at 72+ (best AFK)','Gem rocks (Mining Guild extension)'],
         notes:['Mining Guild gives invisible +7 Mining boost inside'] },
       { skill:'Smithing', rating:RATINGS.EXCELLENT, summary:"Artisans Workshop — best Smithing XP method",
-        methods:["Artisans Workshop (Falador) — ~3x XP vs regular smithing",'Gold bars at Blast Furnace (requires Kandarin for best setup)'],
+        methods:["Artisans Workshop (Falador) — ~3x XP vs regular smithing",'Gold bars at Blast Furnace (Blast Furnace is in Keldagrim — requires Fremennik unlock)'],
         notes:['Artisans Workshop is the go-to Smithing training method'] },
       { skill:'Crafting', rating:RATINGS.GOOD, summary:'Crafting Guild (gems, gold/silver rocks)',
         methods:['Crafting Guild — gem cutting, gold/silver jewellery','Dragonhide crafting from GWD drops'], notes:[] },
@@ -242,6 +248,10 @@ const REGIONS = [
         drops:['Torva full helm','Torva platebody','Torva platelegs','Zaryte vambraces','Nihil horn','Nihil shard'] },
       { name:'Giant Mole', icon:'🐭', wikiUrl:`${WIKI}Giant_Mole`,
         drops:['Mole skin','Mole claw'] },
+      { name:'Royal Titans', icon:'👑', wikiUrl:`${WIKI}Royal_Titans`,
+        drops:['Giantsoul amulet','Prayer scrolls','Element staff crowns'] },
+      { name:'The Whisperer', icon:'👁️', wikiUrl:`${WIKI}The_Whisperer`,
+        drops:['Bellator ring','Soulreaper axe pieces (all)','Virtus robes','Awakener\'s orb'] },
     ],
 
     raids: [],
@@ -265,15 +275,20 @@ const REGIONS = [
       { name:"The Knight's Sword", icon:'📜', desc:'Good Smithing XP for early game.' },
       { name:"Doric's Quest", icon:'📜', desc:'Quick Mining XP boost.' },
     ],
-    autoQuests: ["Merlin's Crystal", "My Arm's Big Adventure", 'Below Ice Mountain', 'Dwarf Cannon'],
+    autoQuests: [
+      "Merlin's Crystal", "Shield of Arrav", "Heroes' Quest",
+      'Death Plateau', 'Troll Stronghold', "Eadgar's Ruse", 'The Feud',
+      "My Arm's Big Adventure", 'Below Ice Mountain', 'Dwarf Cannon', 'The Frozen Door',
+    ],
     autoDiary: [
       { diary: 'Falador', tasks: [
+        'Easy: Smith blurite sword limbs on Doric\'s anvil',
         'Medium: Visit the Port Sarim Rat Pits',
         'Hard: Recharge your Prayer in Port Sarim church while wearing full Proselyte',
         'Elite: Purchase a white 2-handed sword from Sir Vyvin',
       ]},
     ],
-    autoCombatAchievements: ['The Whisperer Combat Achievements (fixed — now auto-completed with Asgarnia)'],
+    autoCombatAchievements: ['Tentacular', 'The Worst Ranged Weapon', 'The Bane of Demons'],
     keyDrops: [
       'All Defenders from Cyclops',
       'All unique rewards from Cerberus',
@@ -287,13 +302,13 @@ const REGIONS = [
       'Dragon Boots from Spiritual Mages',
       'Smouldering Stone from Hellhounds',
     ],
-    overview: "Eligible to complete The Frozen Door if not already done (not auto-completed). Access to Catherby from White Wolf Mountain is restricted by magical barriers. Whisperer combat achievements previously required Kourend or the Grimoire relic — now fixed and auto-completed with Asgarnia. Beginner clue scrolls have no tasks this league but are completable for players with Asgarnia.",
+    overview: "The Frozen Door is auto-completed on unlock. Access to Catherby from White Wolf Mountain is restricted — that side belongs to Kandarin. Private instances available for Giant Mole and all GWD bosses. Royal Titans is a new boss accessible in Asgarnia. The Whisperer (DT2 boss) is accessible via Asgarnia. Beginner clue scrolls have no tasks this league.",
   },
 
   // ─── KHARIDIAN DESERT ────────────────────
   {
     id:'desert', name:'Kharidian Desert', icon:'🏜️', type:'choice',
-    description:'Best Thieving via Pyramid Plunder, Ancient Magicks, and the Tombs of Amascut raid. Home to Phantom Muspah and The Whisperer.',
+    description:'Best Thieving via Pyramid Plunder, Ancient Magicks, and the Tombs of Amascut raid. Home to Kalphite Queen, The Leviathan, The Whisperer, and Tempoross.',
 
     skills: [
       { skill:'Thieving', rating:RATINGS.EXCELLENT, summary:'Pyramid Plunder — best Thieving XP in game',
@@ -315,9 +330,9 @@ const REGIONS = [
       { name:'Kalphite Queen', icon:'🐛', wikiUrl:`${WIKI}Kalphite_Queen`,
         drops:['Dragon chainbody','Dragon 2h sword','Jar of sand','Kq head'] },
       { name:'The Leviathan', icon:'🐋', wikiUrl:`${WIKI}The_Leviathan`,
-        drops:['Venator ring','Chromium ingot'] },
+        drops:['Venator ring','Soulreaper axe pieces (all)','Virtus robes','Awakener\'s orb','Chromium ingot'] },
       { name:'The Whisperer', icon:'🌊', wikiUrl:`${WIKI}The_Whisperer`,
-        drops:['Bellator ring','Ancient icon','Chromium ingot'] },
+        drops:['Bellator ring','Soulreaper axe pieces (all)','Virtus robes','Awakener\'s orb','Chromium ingot'] },
       { name:'Thermonuclear Smoke Devil', icon:'💨', wikiUrl:`${WIKI}Thermonuclear_Smoke_Devil`,
         drops:['Occult necklace','Smoke battlestaff','Jar of smoke'] },
     ],
@@ -346,7 +361,16 @@ const REGIONS = [
       { name:"Icthlarin's Little Helper", icon:'📜', desc:'Required for Sophanem + Pyramid Plunder.' },
       { name:'Contact!', icon:'📜', desc:'Full Sophanem access.' },
     ],
-    autoQuests: ['Desert Treasure II – The Fallen Empire', 'Prince Ali Rescue', "Icthlarin's Little Helper", 'Temple of the Eye'],
+    autoQuests: [
+      'Prince Ali Rescue', 'The Golem', "Icthlarin's Little Helper",
+      'The Dig Site', 'Temple of Ikov', 'The Tourist Trap',
+      'Troll Stronghold', 'Death Plateau', 'Priest in Peril', 'Waterfall Quest',
+      'Desert Treasure I',
+      'Temple of the Eye', 'Enakhra\'s Lament', 'Hazeel Cult',
+      'Cold War', 'The Garden of Death', 'His Faithful Servants',
+      'Devious Minds', "The General's Shadow", "Romeo & Juliet",
+      'Making Friends with My Arm', 'Desert Treasure II',
+    ],
     autoDiary: [
       { diary: 'Desert', tasks: [
         'Medium: Travel to the Desert via the Eagle transport system',
@@ -395,6 +419,9 @@ const REGIONS = [
         methods:['Tan Leather (from Fremennik drops)','Crafting Dagannoth hides'], notes:[] },
       { skill:'Prayer', rating:RATINGS.DECENT, summary:'Dagannoth bones from DKs',
         methods:['Dagannoth bones from DKs'], notes:[] },
+      { skill:'Agility', rating:RATINGS.DECENT, summary:'Rellekka Rooftop + Penguin course at Weiss',
+        methods:['Rellekka Rooftop Course (40–60)','Penguin Agility Course at Weiss (requires Making Friends with My Arm)'],
+        notes:[] },
       { skill:'Woodcutting', rating:RATINGS.DECENT, summary:'Miscellania Kingdom passive income',
         methods:['Miscellania Kingdom (passive logs/fish/herbs)','Arctic Pine Logs on Neitiznot'], notes:[] },
     ],
@@ -437,9 +464,11 @@ const REGIONS = [
       { name:'The Fremennik Exiles', icon:'📜', desc:'Required for Neitiznot Faceguard.' },
     ],
     autoQuests: [
-      'Secrets of the North (does not complete DT1 pre-reqs)',
-      'Horror from the Deep', 'Dragon Slayer II', 'Mountain Daughter',
-      'Fremennik Trials', 'Fremennik Isles', "Olaf's Quest",
+      'Secrets of the North (excluding DT1 prerequisites)',
+      'Horror from the Deep',
+      'Lunar Diplomacy', 'Dream Mentor', 'Animal Magnetism', 'Bone Voyage',
+      "Legends' Quest", 'Dragon Slayer II',
+      'Mountain Daughter', 'The Fremennik Trials', 'The Fremennik Isles', "Olaf's Quest",
     ],
     autoDiary: [
       { diary: 'Fremennik', tasks: [
@@ -532,10 +561,21 @@ const REGIONS = [
       { name:"Legends' Quest", icon:'📜', desc:'Cape of Legends, Legends Guild.' },
       { name:'Barbarian Training', icon:'📜', desc:'Unlocks Barbarian Fishing and Firemaking methods.' },
     ],
-    autoQuests: ['Monkey Madness II', 'Swan Song', "King's Ransom", 'Dragon Slayer II'],
+    autoQuests: [
+      'Tree Gnome Village', 'The Grand Tree', 'Monkey Madness I', 'Monkey Madness II',
+      "King's Ransom", 'Murder Mystery', 'Holy Grail', 'Black Knights\' Fortress',
+      'Swan Song', 'Dragon Slayer II', 'The Hand in the Sand',
+      'Waterfall Quest', 'Family Crest', 'One Small Favour',
+      'Enlightened Journey', 'The Eyes of Glouphrie', 'Watchtower',
+      'Underground Pass', 'Biohazard', 'Plague City',
+      'Garden of Tranquillity', 'Creature of Fenkenstrain',
+      'A Tail of Two Cats', "Gertrude's Cat", 'Ernest the Chicken',
+      'The Dig Site', 'Client of Kourend',
+    ],
     autoDiary: [
       { diary: 'Kandarin', tasks: [
         'Medium: Use the Grapple Shortcut from the Water Obelisk to Catherby beach',
+        'Medium: Create a mind helmet',
         'Hard: Charge a water orb',
         'Hard: Kill a shadow hound in the Shadow Dungeon',
         'Elite: Fish and cook 5 sharks in Catherby using the Cooking Gauntlets',
@@ -553,7 +593,6 @@ const REGIONS = [
         'Easy: Enter the combat training camp north of West Ardougne',
         'Easy: Use the Ardougne lever to teleport to the Wilderness',
         'Medium: Travel to Castle Wars by hot air balloon',
-        'Medium: Claim buckets of sand from Bert in Yanille',
         "Medium: Equip an Iban's Upgraded Staff or upgrade an Iban's Staff",
         "Hard: Recharge some jewellery at the totem pole in the Legends' Guild",
         'Hard: Smith a Dragon Square Shield in West Ardougne',
@@ -576,7 +615,7 @@ const REGIONS = [
       'All unique rewards from Superior Slayer Creatures',
       'Smouldering Stone from Hellhounds',
     ],
-    overview: "Access to the Nightmare Zone is restricted — purchase NMZ points from Dominic Onion for 1 GP each. Wrath Talisman added to the East Ardougne General Store. Alfred Grimhand's Barcrawl auto-completed for The Rising Sun (Falador) and The Rusty Anchor (Port Sarim). White Wolf Mountain and Fremennik Province bridge blocked by magical barriers.",
+    overview: "Access to the Nightmare Zone is restricted — purchase NMZ points from Dominic Onion for 1 GP each. Wrath Talisman added to the East Ardougne General Store. Alfred Grimhand's Barcrawl auto-completed for all 4 inns: The Rising Sun (Falador), The Rusty Anchor (Port Sarim), Blue Moon Inn, and Jolly Boar Inn. White Wolf Mountain and Fremennik Province bridge blocked by magical barriers.",
   },
 
   // ─── KOUREND ─────────────────────────────
@@ -609,11 +648,11 @@ const REGIONS = [
 
     bosses: [
       { name:'Alchemical Hydra', icon:'🐲', wikiUrl:`${WIKI}Alchemical_Hydra`,
-        drops:["Hydra's claw",'Hydra leather','Hydra tail','Dragon thrownaxe',"Hydra's eye","Hydra's fang","Hydra's heart"] },
+        drops:["Hydra's claw",'Ferocious gloves (from Hydra leather)','Dragon hunter lance','Bonecrusher necklace','Dragon thrownaxe',"Hydra's eye","Hydra's fang","Hydra's heart"] },
       { name:'Yama', icon:'🔱', wikiUrl:`${WIKI}Yama`,
-        drops:['TBC'] },
+        drops:['Oathplate armour','Soulflame horn'] },
       { name:'Skotizo', icon:'👁️', wikiUrl:`${WIKI}Skotizo`,
-        drops:['Dexterous prayer scroll','Arcane prayer scroll'] },
+        drops:['Dexterous prayer scroll','Arcane prayer scroll','Uncut onyx'] },
       { name:'Sarachnis', icon:'🕷️', wikiUrl:`${WIKI}Sarachnis`,
         drops:['Sarachnis cudgel','Jar of eyes','Giant egg sac'] },
     ],
@@ -644,7 +683,12 @@ const REGIONS = [
       { name:'A Kingdom Divided', icon:'📜', desc:'Major Kourend quest. Kharedst memoirs + diary access.' },
       { name:'Architectural Alliance', icon:'📜', desc:"Unlocks Xeric's Talisman Kourend teleport." },
     ],
-    autoQuests: ['A Kingdom Divided'],
+    autoQuests: [
+      'X Marks the Spot', 'Client of Kourend',
+      'The Depths of Despair', 'The Queen of Thieves', 'The Ascent of Arceuus',
+      'The Forsaken Tower', 'Tale of the Righteous',
+      'A Kingdom Divided',
+    ],
     autoDiary: [
       { diary: 'Kourend & Kebos', tasks: [
         'Hard: Cast Monster Examine on a mountain troll south of Mount Quidamortem',
@@ -652,7 +696,7 @@ const REGIONS = [
     ],
     autoCombatAchievements: [
       'Chambers of Xeric Veteran', 'Chambers of Xeric Master', 'Chambers of Xeric Grandmaster',
-      'Chambers of Xeric: CM Master', 'Chambers of Xeric: CM GrandMaster',
+      'Chambers of Xeric: CM Master', 'Chambers of Xeric: CM Grandmaster',
       'Demonbane Weaponry', 'No Pressure',
     ],
     keyDrops: [
@@ -691,6 +735,9 @@ const REGIONS = [
       { skill:'Slayer', rating:RATINGS.GOOD, summary:'Slayer Tower + Araxyte Hive — strong monster variety',
         methods:['Bloodvelds (Slayer Tower — great XP, Mutated variant at level 50 Slayer)','Gargoyles (Slayer Tower — 75 Slayer)','Abyssal Demons (Slayer Tower — 85 Slayer, best melee XP)','Araxytes (Araxyte Hive — requires Araxxor fight + high Slayer)','Nechryael (Slayer Tower — 80 Slayer, good drops)','Cave Horrors (Mos Le\'Harmless — 58 Slayer, Black mask)'],
         notes:['Slayer Master: Mazchna (Canifis) — assigns mid-level tasks in Morytania','Vannaka also assigns Morytania tasks (found in Edgeville Dungeon)'] },
+      { skill:'Runecrafting', rating:RATINGS.DECENT, summary:'True Blood Altar — AFK blood rune crafting',
+        methods:['True Blood Altar in Ver Sinhaza (requires Sins of the Father)','Daeyalt essence from Meiyerditch mines — gives bonus Runecrafting XP'],
+        notes:['Blood runes are always in demand — good passive income'] },
       { skill:'Firemaking', rating:RATINGS.DECENT, summary:"Shades of Mort'ton pyres",
         methods:["Shades of Mort'ton (Pyre logs — Firemaking + Prayer keys)"], notes:[] },
     ],
@@ -732,7 +779,14 @@ const REGIONS = [
       { name:'Sins of the Father', icon:'📜', desc:'Blisterwood weapons, Vyrewatch Sentinel access.' },
       { name:'A Taste of Hope', icon:'📜', desc:'Ivandis Flail — required for Vampyre combat.' },
     ],
-    autoQuests: ['Taste of Hope', 'The Great Brain Robbery', 'Ghosts Ahoy'],
+    autoQuests: [
+      'Ghosts Ahoy', 'Vampyre Slayer',
+      'In Search of the Myreque', 'In Aid of the Myreque', 'Darkness of Hallowvale',
+      'A Taste of Hope',
+      'Pirate\'s Treasure', 'Rum Deal', 'Zogre Flesh Eaters',
+      'Big Chompy Bird Hunting', 'Cabin Fever', 'Creature of Fenkenstrain',
+      'The Great Brain Robbery',
+    ],
     autoDiary: [
       { diary: 'Morytania', tasks: [
         'Medium: Make a batch of Cannonballs at the Port Phasmatys furnace',
@@ -791,7 +845,13 @@ const REGIONS = [
         methods:['Prifddinas Agility Course (75 Agility — good XP + crystal shards)'],
         notes:['Crystal shards from Prifddinas Agility are valuable for Gauntlet prep'] },
       { skill:'Slayer', rating:RATINGS.GOOD, summary:'Iorwerth Dungeon, Dark Beasts',
-        methods:['Iorwerth Dungeon (Elves, superior encounters)','Dark Beasts (require MED II)'], notes:[] },
+        methods:['Iorwerth Dungeon (Elves, superior encounters)','Dark Beasts (require Mourning\'s End Part II)'], notes:[] },
+      { skill:'Hunter', rating:RATINGS.GOOD, summary:"Gwenith Hunter area + Crystal implings",
+        methods:["Gwenith Hunter area (high-level — red chinchompas, carnivorous chinchompas)",'Crystal impling hunting in Prifddinas (Elven signet at 1/128)'],
+        notes:['Crystal implings give enhanced crystal teleport seeds and other valuables'] },
+      { skill:'Fishing', rating:RATINGS.DECENT, summary:'Sacred eels at Zul-Andra',
+        methods:['Sacred eel fishing at Zul-Andra (Fishing + Cooking/Herblore XP via Zulrah scales)'],
+        notes:['Sacred eels dissected with knife give Zulrah scales — useful for blowpipe ammo'] },
     ],
 
     bosses: [
@@ -827,7 +887,11 @@ const REGIONS = [
       { name:"Mourning's Ends II", icon:'📜', desc:'Temple of Light — required for Prifddinas.' },
       { name:'Song of the Elves', icon:'📜', desc:'Grand Master quest. Unlocks full Prifddinas.' },
     ],
-    autoQuests: ['Song of the Elves'],
+    autoQuests: [
+      'Plague City', 'Biohazard', 'Underground Pass', 'Regicide',
+      'Roving Elves', "Mourning's End Part I", "Mourning's End Part II",
+      'Song of the Elves',
+    ],
     autoDiary: [],
     autoCombatAchievements: ['Snake Rebound'],
     keyDrops: [
@@ -861,8 +925,8 @@ const REGIONS = [
         methods:['Abyss (bypass walking to any altar — best RC XP)','Blood/Death/Nature Runes via Abyss (GP + XP)'],
         notes:['In Leagues PvP risk is reduced — Abyss is very safe'] },
       { skill:'Slayer', rating:RATINGS.GOOD, summary:'Krystilia — highest Slayer point rate',
-        methods:['Krystilia (Wilderness Slayer only) — highest Slayer points per task','Wilderness Slayer Cave (safe from PvP)','Revenants as Slayer task'],
-        notes:['Krystilia gives far more Slayer points than any other master — fastest imbues'] },
+        methods:['Krystilia (Ferox Enclave) — assigns standard tasks, highest Slayer points per task','Wilderness Slayer Cave (safe from PvP, Slayer targets drop Larran\'s keys)','Revenants as Slayer task'],
+        notes:['Krystilia assigns standard tasks (not Wilderness-only) — still gives the most points per task'] },
       { skill:'Magic', rating:RATINGS.DECENT, summary:'Mage Arena I & II — Imbued God Cape',
         methods:['Mage Arena I: God Cape + God spells','Mage Arena II: Imbued God Cape'],
         notes:['Imbued God Cape is the BIS Magic cape'] },
@@ -874,11 +938,11 @@ const REGIONS = [
 
     bosses: [
       { name:'Callisto / Artio', icon:'🐻', wikiUrl:`${WIKI}Callisto`,
-        drops:['Dragon pickaxe','Tyrannical ring'] },
+        drops:['Dragon pickaxe','Tyrannical ring','Voidwaker piece','Callisto cub'] },
       { name:'Venenatis / Spindel', icon:'🕷️', wikiUrl:`${WIKI}Venenatis`,
-        drops:['Dragon pickaxe','Treasonous ring'] },
+        drops:['Dragon pickaxe','Treasonous ring','Voidwaker piece','Venenatis spiderling'] },
       { name:"Vet'ion / Calvar'ion", icon:'💀', wikiUrl:`${WIKI}Vet%27ion`,
-        drops:['Dragon pickaxe','Ring of the gods'] },
+        drops:["Dragon pickaxe",'Ring of the gods','Voidwaker piece','Vet\'ion jr.'] },
       { name:'Scorpia', icon:'🦂', wikiUrl:`${WIKI}Scorpia`,
         drops:['Odium shard 1','Odium shard 2','Odium shard 3','Malediction shard 1','Malediction shard 2','Malediction shard 3'] },
       { name:'Chaos Elemental', icon:'🌀', wikiUrl:`${WIKI}Chaos_Elemental`,
@@ -917,9 +981,14 @@ const REGIONS = [
     autoQuests: ['Enter the Abyss (miniquest)'],
     autoDiary: [
       { diary: 'Wilderness', tasks: [
+        'Easy: Enter the Wilderness via the Ardougne or Edgeville lever',
+        'Easy: Kill an earth warrior in the Wilderness',
         'Medium: Smith a Gold Helmet in the resource area',
+        'Medium: Talk to the Emblem Trader in the Wilderness',
+        'Medium: Charge an earth orb',
         'Hard: Take the Agility shortcut from Trollheim to the Wilderness',
         'Hard: Fish a raw lava eel in the Wilderness',
+        'Hard: Charge an air orb',
         'Elite: Teleport to Ghorrock',
       ]},
     ],
@@ -943,7 +1012,7 @@ const REGIONS = [
       "Dagon'hai robes from Larran's Big Chest",
       'Smouldering Stone from Hellhounds',
     ],
-    overview: "PvP deaths are treated like PvM deaths — items move to a gravestone at your respawn location. Revenant Caves entrance is free (no 100,000 coin fee). Wilderness Agility Course is free (no 150,000 coins). Dying does not reset your lap counter in the Wilderness Agility Course. Krystilia assigns tasks like any other Slayer Master. Last Man Standing and Bounty Hunter are not accessible. Edgeville dungeon is not accessible this league. Ancient Warrior Equipment from Revenants is not usable outside the Wilderness. Smouldering Stone drop from Hellhounds in the Wilderness Slayer Cave is confirmed boosted.",
+    overview: "PvP deaths are treated like PvM deaths — items move to a gravestone at your respawn location. Loot keys are disabled. Revenant Caves entrance is free (no 100,000 coin fee). Wilderness Agility Course is free (no 150,000 coins). Dying does not reset your lap counter in the Wilderness Agility Course. Krystilia assigns standard Slayer tasks (not Wilderness-only) from Ferox Enclave. The Lesser Fanatic has been moved to the Ferox Enclave. Last Man Standing and Bounty Hunter are not accessible. Edgeville dungeon is not accessible this league. Ancient Warrior Equipment from Revenants is not usable outside the Wilderness.",
   },
 ];
 
@@ -1031,7 +1100,20 @@ const RELIC_TIERS = [
       'Slayer points are <strong>5x</strong> from tasks; no prerequisite tasks required',
       'Slayer Superior spawn rate increased to <strong>1/50</strong>',
     ],
-    relics: [],
+    relics: [
+      {
+        id: 'evil-eye',
+        name: 'Evil Eye',
+        icon: 'images/relices/relic_evil_eye_t1_icon.png',
+        image: 'images/relices/relic_evil_eye_t1.png',
+        gift: null,
+        toggleable: null,
+        effects: [
+          'Grants a <strong>teleportation device</strong> that can teleport you directly to any boss or raid entrance.',
+          'The teleportation device <strong>ignores Wilderness level restrictions</strong>.',
+        ],
+      },
+    ],
   },
   {
     tier: 4,
@@ -1091,9 +1173,10 @@ const RELIC_TIERS = [
         gift: null,
         toggleable: null,
         effects: [
-          'Summons a <strong>Minion</strong> that automatically attacks your target.',
-          'The Minion can be <strong>upgraded from level 1–5</strong> as you progress.',
-          'At higher levels the Minion gains additional abilities.',
+          'Summon a powerful <strong>Minion</strong> that fights alongside you for <strong>30 minutes</strong>.',
+          'The Minion <strong>auto-loots your drops</strong> for you.',
+          'The Minion can consume <strong>Zamorakian items to boost its damage</strong>.',
+          'The Minion will <strong>not fight in PvP</strong> or against <strong>Yama</strong>.',
         ],
       },
     ],

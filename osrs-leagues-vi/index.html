@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OSRS Leagues VI - Region Picker</title>
-  <link rel="stylesheet" href="style.css?v=20260326">
+  <link rel="stylesheet" href="style.css?v=20260326c">
 </head>
 <body>
   <div class="page-wrapper">
@@ -12,7 +12,7 @@
     <!-- Header -->
     <header class="site-header">
       <div class="header-inner">
-        <h1 class="site-title">⚔️ OSRS Leagues VI</h1>
+        <h1 class="site-title"><a href="https://oldschool.runescape.wiki/w/Demonic_Pacts_League" target="_blank" rel="noopener">⚔️ OSRS - Demonic Pacts League VI</a></h1>
         <p class="site-subtitle">Region Picker &amp; Task Tracker</p>
       </div>
       <!-- Tab Nav -->
@@ -135,6 +135,11 @@
               <option value="complete">Completed</option>
             </select>
 
+            <label class="filter-label">Skill Requirement</label>
+            <select class="filter-input" id="filter-skill">
+              <option value="">Any Skill</option>
+            </select>
+
             <button class="btn-secondary" id="btn-clear-filters">Clear Filters</button>
             <button class="btn-danger" id="btn-clear-tasks">Clear All Tasks</button>
           </div>
@@ -170,7 +175,7 @@
                 <td colspan="6">
                   <div class="task-empty">
                     <p>No tasks yet. Paste wiki tasks in the import box to get started.</p>
-                    <p class="task-empty-hint">Go to <a href="https://oldschool.runescape.wiki/w/Raging_Echoes_League/Tasks" target="_blank" rel="noopener">wiki tasks</a>, select & copy the table rows, then paste here.</p>
+                    <p class="task-empty-hint">Go to <a href="https://oldschool.runescape.wiki/w/Demonic_Pacts_League/Tasks" target="_blank" rel="noopener">wiki tasks</a>, select & copy the table rows, then paste here.</p>
                   </div>
                 </td>
               </tr>
@@ -205,6 +210,37 @@
     </div>
   </div>
 
+  <!-- Task right-click context menu -->
+  <div id="task-context-menu" class="task-context-menu" hidden>
+    <div class="ctx-close-row"><button class="ctx-close-btn" id="ctx-close">✕</button></div>
+    <div class="ctx-divider"></div>
+    <button class="ctx-item" id="ctx-toggle">Mark complete</button>
+    <button class="ctx-item" id="ctx-edit">Edit</button>
+    <button class="ctx-item ctx-danger" id="ctx-remove">Remove</button>
+  </div>
+
+  <!-- Task edit modal -->
+  <div id="task-edit-overlay" class="task-edit-overlay" hidden>
+    <div class="task-edit-modal">
+      <div class="task-edit-header">
+        <span>Edit Task</span>
+        <button class="task-edit-close" id="task-edit-close">✕</button>
+      </div>
+      <label class="filter-label">Name</label>
+      <input type="text" class="filter-input" id="edit-name">
+      <label class="filter-label">Task Description</label>
+      <input type="text" class="filter-input" id="edit-task-desc">
+      <label class="filter-label">Requirements</label>
+      <input type="text" class="filter-input" id="edit-reqs">
+      <label class="filter-label">Points</label>
+      <input type="number" class="filter-input" id="edit-pts" min="0">
+      <div class="task-edit-footer">
+        <button class="btn-primary" id="task-edit-save">Save</button>
+        <button class="btn-secondary" id="task-edit-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Relic image lightbox -->
   <div class="relic-lightbox" id="relic-lightbox" hidden>
     <div class="relic-lightbox-backdrop" id="relic-lightbox-backdrop"></div>
@@ -214,7 +250,7 @@
     </div>
   </div>
 
-  <script src="data.js?v=20260326"></script>
-  <script src="app.js?v=20260326"></script>
+  <script src="data.js?v=20260326b"></script>
+  <script src="app.js?v=20260326d"></script>
 </body>
 </html>

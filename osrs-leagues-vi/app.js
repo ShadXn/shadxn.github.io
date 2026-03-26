@@ -12,9 +12,10 @@ const state = {
   selectedRegion:  null,        // id of region showing in single view
   chosenRegions:   new Set(),   // user's picked region ids
   tasks:           [],          // { id, area, name, task, reqs, pts, comp, done }
-  taskFilter: { search: '', area: '', pts: '', status: '' },
+  taskFilter: { search: '', area: '', pts: '', status: '', skill: '' },
   taskSort: 'default',
   selectedRelics:  {},          // { [tier]: relicId }
+  colWidths:       {},          // { [cls]: px } for task table columns
 };
 
 // ─── Init ─────────────────────────────────────
@@ -47,6 +48,24 @@ function init() {
   document.getElementById('filter-area').addEventListener('change', applyFilters);
   document.getElementById('filter-pts').addEventListener('change', applyFilters);
   document.getElementById('filter-status').addEventListener('change', applyFilters);
+  document.getElementById('filter-skill').addEventListener('change', applyFilters);
+  populateSkillFilter();
+
+  // Context menu — stop propagation inside menu so document click doesn't fire on item clicks
+  const ctxMenu = document.getElementById('task-context-menu');
+  ctxMenu.addEventListener('click', e => e.stopPropagation());
+  document.getElementById('ctx-close').addEventListener('click', e => { e.stopPropagation(); hideContextMenu(); });
+  document.getElementById('ctx-toggle').addEventListener('click', () => { if (contextTaskId) toggleTask(contextTaskId); hideContextMenu(); });
+  document.getElementById('ctx-edit').addEventListener('click', () => { if (contextTaskId) openEditModal(contextTaskId); hideContextMenu(); });
+  document.getElementById('ctx-remove').addEventListener('click', () => { if (contextTaskId) removeTask(contextTaskId); hideContextMenu(); });
+  document.addEventListener('click', hideContextMenu);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') hideContextMenu(); });
+
+  // Edit modal
+  document.getElementById('task-edit-close').addEventListener('click', closeEditModal);
+  document.getElementById('task-edit-cancel').addEventListener('click', closeEditModal);
+  document.getElementById('task-edit-save').addEventListener('click', saveEditTask);
+  document.getElementById('task-edit-overlay').addEventListener('click', e => { if (e.target === document.getElementById('task-edit-overlay')) closeEditModal(); });
 
   // Sort buttons
   document.querySelectorAll('.sort-btn').forEach(btn => {
@@ -62,6 +81,8 @@ function init() {
   document.getElementById('relic-lightbox-close').addEventListener('click', closeRelicLightbox);
   document.getElementById('relic-lightbox-backdrop').addEventListener('click', closeRelicLightbox);
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeRelicLightbox(); });
+
+  initColumnResize();
 
   // Auto-open Varlamore
   openRegion('varlamore');
@@ -731,6 +752,7 @@ function loadFromStorage() {
       } else {
         state.tasks = parsed.tasks || [];
         state.selectedRelics = parsed.selectedRelics || {};
+        state.colWidths = parsed.colWidths || {};
       }
     }
   } catch (e) {
@@ -746,6 +768,7 @@ function saveToStorage() {
     localStorage.setItem(LS_KEY, JSON.stringify({
       tasks: state.tasks,
       selectedRelics: state.selectedRelics,
+      colWidths: state.colWidths,
     }));
   } catch (e) {}
 }
@@ -869,6 +892,75 @@ function renderRelics() {
   });
 }
 
+function populateSkillFilter() {
+  const sel = document.getElementById('filter-skill');
+  ALL_SKILLS.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s;
+    opt.textContent = s;
+    sel.appendChild(opt);
+  });
+}
+
+// ─── Context menu ─────────────────────────
+let contextTaskId = null;
+
+function showContextMenu(e, taskId) {
+  e.preventDefault();
+  contextTaskId = taskId;
+  const menu = document.getElementById('task-context-menu');
+  const task = state.tasks.find(t => String(t.id) === String(taskId));
+  document.getElementById('ctx-toggle').textContent = task?.done ? 'Mark incomplete' : 'Mark complete';
+  menu.style.left = Math.min(e.clientX, window.innerWidth - 170) + 'px';
+  menu.style.top  = Math.min(e.clientY, window.innerHeight - 110) + 'px';
+  menu.removeAttribute('hidden');
+}
+
+function hideContextMenu() {
+  document.getElementById('task-context-menu').setAttribute('hidden', '');
+  contextTaskId = null;
+}
+
+function removeTask(id) {
+  state.tasks = state.tasks.filter(t => String(t.id) !== String(id));
+  saveToStorage();
+  populateAreaFilter();
+  renderTaskTable();
+  renderTaskStats();
+}
+
+// ─── Edit modal ───────────────────────────
+let editingTaskId = null;
+
+function openEditModal(id) {
+  const task = state.tasks.find(t => String(t.id) === String(id));
+  if (!task) return;
+  editingTaskId = id;
+  document.getElementById('edit-name').value      = task.name;
+  document.getElementById('edit-task-desc').value = task.task;
+  document.getElementById('edit-reqs').value      = task.reqs;
+  document.getElementById('edit-pts').value       = task.pts;
+  document.getElementById('task-edit-overlay').removeAttribute('hidden');
+}
+
+function closeEditModal() {
+  document.getElementById('task-edit-overlay').setAttribute('hidden', '');
+  editingTaskId = null;
+}
+
+function saveEditTask() {
+  const task = state.tasks.find(t => String(t.id) === String(editingTaskId));
+  if (!task) { closeEditModal(); return; }
+  task.name = document.getElementById('edit-name').value.trim() || task.name;
+  task.task = document.getElementById('edit-task-desc').value.trim();
+  task.reqs = document.getElementById('edit-reqs').value.trim();
+  task.pts  = parseInt(document.getElementById('edit-pts').value, 10) || 0;
+  saveToStorage();
+  renderTaskTable();
+  renderTaskStats();
+  closeEditModal();
+}
+
 // Parse pasted wiki task text (tab-separated rows)
 function importTasks() {
   const raw = document.getElementById('task-paste').value.trim();
@@ -880,12 +972,28 @@ function importTasks() {
     return;
   }
 
-  const lines = raw.split('\n').filter(l => l.trim());
+  // Pre-merge continuation lines: wiki cells can contain newlines, which splits
+  // one row across multiple lines. A continuation line has < 3 tab characters.
+  const rawLines = raw.split('\n').filter(l => l.trim());
+  const lines = [];
+  for (const line of rawLines) {
+    const tabCount = (line.match(/\t/g) || []).length;
+    if (tabCount < 3 && lines.length > 0) {
+      lines[lines.length - 1] += ' ' + line.trim();
+    } else {
+      lines.push(line);
+    }
+  }
+
   let added = 0;
   let skipped = 0;
 
   lines.forEach(line => {
     const cols = line.split('\t').map(c => c.trim());
+
+    // Skip the wiki table header row: Area | Name | Task | Requirements | Pts | Comp%
+    const colsLower = cols.map(c => c.toLowerCase());
+    if (colsLower[0] === 'area' && colsLower.includes('requirements') && colsLower.includes('pts')) { skipped++; return; }
 
     // Wiki format: Area | Name | Task | Requirements | Pts | Comp%
     // Some rows may be missing the Area column (general tasks start with empty)
@@ -973,6 +1081,7 @@ function applyFilters() {
     area:   document.getElementById('filter-area').value,
     pts:    document.getElementById('filter-pts').value,
     status: document.getElementById('filter-status').value,
+    skill:  document.getElementById('filter-skill').value,
   };
   renderTaskTable();
 }
@@ -982,7 +1091,8 @@ function clearFilters() {
   document.getElementById('filter-area').value = '';
   document.getElementById('filter-pts').value = '';
   document.getElementById('filter-status').value = '';
-  state.taskFilter = { search: '', area: '', pts: '', status: '' };
+  document.getElementById('filter-skill').value = '';
+  state.taskFilter = { search: '', area: '', pts: '', status: '', skill: '' };
   renderTaskTable();
 }
 
@@ -996,13 +1106,14 @@ function clearAllTasks() {
 }
 
 function getFilteredTasks() {
-  const { search, area, pts, status } = state.taskFilter;
+  const { search, area, pts, status, skill } = state.taskFilter;
 
   let tasks = state.tasks.filter(t => {
     if (area   && t.area !== area) return false;
     if (pts    && t.pts < parseInt(pts, 10)) return false;
     if (status === 'complete'   && !t.done) return false;
     if (status === 'incomplete' && t.done)  return false;
+    if (skill  && !t.reqs.toLowerCase().includes(skill.toLowerCase())) return false;
     if (search) {
       const haystack = `${t.name} ${t.task} ${t.area} ${t.reqs}`.toLowerCase();
       if (!haystack.includes(search)) return false;
@@ -1065,9 +1176,10 @@ function renderTaskTable() {
     `;
   }).join('');
 
-  // Attach check listeners
-  tbody.querySelectorAll('[data-check-id]').forEach(btn => {
-    btn.addEventListener('click', () => toggleTask(btn.dataset.checkId));
+  // Left-click row to toggle complete; right-click for context menu
+  tbody.querySelectorAll('tr[data-task-id]').forEach(row => {
+    row.addEventListener('click', () => toggleTask(row.dataset.taskId));
+    row.addEventListener('contextmenu', e => showContextMenu(e, row.dataset.taskId));
   });
 }
 
@@ -1091,6 +1203,105 @@ function renderTaskStats() {
   document.getElementById('stat-completed').textContent     = completed;
   document.getElementById('stat-points-earned').textContent = pointsEarned.toLocaleString();
   document.getElementById('stat-points-total').textContent  = pointsTotal.toLocaleString();
+}
+
+// ─── Column Resizing ──────────────────────────
+// flex: true = column auto-fills remaining width (no explicit col width, no handle)
+const COL_CONFIG = [
+  { cls: 'col-check', defaultW: 32,  resizable: false, flex: false },
+  { cls: 'col-area',  defaultW: 110, resizable: true,  flex: false },
+  { cls: 'col-name',  defaultW: 150, resizable: true,  flex: false },
+  { cls: 'col-task',  defaultW: null, resizable: false, flex: true  },
+  { cls: 'col-reqs',  defaultW: 200, resizable: true,  flex: false },
+  { cls: 'col-pts',   defaultW: 58,  resizable: false, flex: false },
+];
+
+function loadColWidths() {
+  return COL_CONFIG.map(c => ({
+    ...c,
+    w: c.flex ? null : (state.colWidths[c.cls] ?? c.defaultW),
+  }));
+}
+
+function saveColWidths(cols) {
+  cols.forEach(c => { if (!c.flex) state.colWidths[c.cls] = c.w; });
+  saveToStorage();
+}
+
+function initColumnResize() {
+  const table = document.getElementById('task-table');
+  if (!table || table.dataset.resizeInit) return;
+  table.dataset.resizeInit = '1';
+
+  const cols = loadColWidths();
+
+  // Inject <colgroup> — fixed-width columns get explicit px; flex column gets no width
+  const cg = document.createElement('colgroup');
+  cols.forEach(c => {
+    const col = document.createElement('col');
+    col.className = 'tcol-' + c.cls;
+    if (!c.flex) col.style.width = c.w + 'px';
+    cg.appendChild(col);
+  });
+  table.insertBefore(cg, table.firstChild);
+  table.style.tableLayout = 'fixed';
+  table.style.width = '100%';
+
+  // Add drag handles to header cells.
+  // For flex columns (col-task): the handle inversely resizes the next fixed column
+  // so dragging right makes the flex column visually grow and the next column shrink.
+  const thList = [...table.querySelectorAll('thead th')];
+  thList.forEach((th, idx) => {
+    const colDef = cols.find(c => th.classList.contains(c.cls));
+    if (!colDef) return;
+
+    let targetDef, inverse;
+    if (colDef.resizable && !colDef.flex) {
+      // Normal case: resize this column directly
+      targetDef = colDef;
+      inverse = false;
+    } else if (colDef.flex) {
+      // Flex column: find the next fixed+resizable column and resize it inversely
+      for (let i = idx + 1; i < thList.length; i++) {
+        const next = cols.find(c => thList[i].classList.contains(c.cls));
+        if (next && !next.flex && next.resizable) { targetDef = next; break; }
+      }
+      if (!targetDef) return;
+      inverse = true;
+    } else {
+      return; // not resizable, not flex — skip
+    }
+
+    const handle = document.createElement('div');
+    handle.className = 'col-resize-handle';
+    handle.title = 'Drag to resize column';
+    th.appendChild(handle);
+
+    handle.addEventListener('mousedown', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      const startX = e.clientX;
+      const startW = targetDef.w;
+      const colEl  = cg.querySelector('.tcol-' + targetDef.cls);
+
+      document.body.classList.add('table-resizing');
+
+      function onMove(ev) {
+        const delta = ev.clientX - startX;
+        const newW  = Math.max(50, startW + (inverse ? -delta : delta));
+        targetDef.w = newW;
+        colEl.style.width = newW + 'px';
+      }
+      function onUp() {
+        document.body.classList.remove('table-resizing');
+        saveColWidths(cols);
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      }
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
+  });
 }
 
 // ─── Helpers ──────────────────────────────────

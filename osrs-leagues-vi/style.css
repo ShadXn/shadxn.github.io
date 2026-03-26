@@ -81,6 +81,13 @@ body {
   text-shadow: 0 2px 8px rgba(232,195,90,0.4);
   letter-spacing: 0.04em;
 }
+.site-title a {
+  color: inherit;
+  text-decoration: none;
+}
+.site-title a:hover {
+  text-decoration: none;
+}
 
 .site-subtitle {
   color: var(--text-secondary);
@@ -872,8 +879,8 @@ body {
   background: var(--bg-panel);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  overflow: hidden;
   box-shadow: var(--shadow);
+  overflow-x: auto;
 }
 
 .task-table-header-row {
@@ -884,6 +891,10 @@ body {
   border-bottom: 1px solid var(--border);
   flex-wrap: wrap;
   gap: 0.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--bg-panel);
 }
 
 .task-count-info { font-size: 0.82rem; color: var(--text-muted); }
@@ -928,6 +939,33 @@ body {
   color: var(--text-muted);
   border-bottom: 1px solid var(--border);
   white-space: nowrap;
+  overflow: hidden;
+  position: sticky;
+  top: 43px;
+  z-index: 4;
+}
+
+/* Column resize handle */
+.col-resize-handle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 5px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 1;
+  border-right: 2px solid transparent;
+  transition: border-color 0.15s;
+}
+.col-resize-handle:hover {
+  border-right-color: var(--border-gold);
+}
+body.table-resizing {
+  cursor: col-resize !important;
+  user-select: none !important;
+}
+body.table-resizing .col-resize-handle {
+  border-right-color: var(--border-gold);
 }
 
 .task-table tbody tr {
@@ -935,7 +973,7 @@ body {
   transition: background 0.1s;
 }
 
-.task-table tbody tr:hover { background: var(--bg-card-hover); }
+.task-table tbody tr:hover { background: var(--bg-card-hover); cursor: pointer; }
 
 .task-table tbody tr.completed { opacity: 0.5; }
 .task-table tbody tr.completed .col-name-text { text-decoration: line-through; }
@@ -1657,4 +1695,112 @@ body {
   width: 40px;
   height: 40px;
   image-rendering: pixelated;
+}
+
+/* ─── Task Context Menu ───────────────────── */
+.task-context-menu {
+  position: fixed;
+  z-index: 9999;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  min-width: 160px;
+  padding: 0.25rem 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.task-context-menu[hidden] { display: none; }
+
+.ctx-close-row {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.15rem 0.4rem 0;
+}
+
+.ctx-close-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  line-height: 1;
+}
+.ctx-close-btn:hover { color: var(--text-secondary); background: var(--bg-card-hover); }
+
+.ctx-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0.2rem 0;
+}
+
+.ctx-item {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 0.45rem 1rem;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-family: 'Crimson Text', Georgia, serif;
+  transition: background 0.1s, color 0.1s;
+}
+
+.ctx-item:hover { background: var(--bg-card-hover); color: var(--text-gold); }
+.ctx-item.ctx-danger { color: #e07070; }
+.ctx-item.ctx-danger:hover { background: rgba(224,112,112,0.12); color: #f08080; }
+
+/* ─── Task Edit Modal ─────────────────────── */
+.task-edit-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.task-edit-overlay[hidden] { display: none; }
+
+.task-edit-modal {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  width: min(480px, 90vw);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+}
+
+.task-edit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-gold);
+}
+
+.task-edit-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+}
+.task-edit-close:hover { color: var(--text-secondary); background: var(--bg-card-hover); }
+
+.task-edit-footer {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
 }
