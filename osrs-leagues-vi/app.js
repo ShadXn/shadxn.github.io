@@ -4,6 +4,8 @@
 
 const MAX_CHOICES = 3;
 const LS_KEY = 'osrsl6_v1';
+// ↓ Swap this to 'Demonic_Pacts_League/Tasks' when League VI tasks go live
+const WIKI_TASKS_PAGE = 'Raging_Echoes_League/Tasks';
 
 // ─── State ────────────────────────────────────
 const state = {
@@ -16,7 +18,15 @@ const state = {
   taskSort: 'default',
   selectedRelics:  {},          // { [tier]: relicId }
   colWidths:       {},          // { [cls]: px } for task table columns
+  importCollapsed: false,       // whether the Import Tasks panel is collapsed
 };
+
+function applyImportCollapsed() {
+  const body    = document.getElementById('import-box-body');
+  const chevron = document.getElementById('import-box-chevron');
+  body.hidden   = state.importCollapsed;
+  chevron.textContent = state.importCollapsed ? '▸' : '▾';
+}
 
 // ─── Init ─────────────────────────────────────
 function init() {
@@ -42,6 +52,39 @@ function init() {
 
   // Task imports + filters
   document.getElementById('btn-import-tasks').addEventListener('click', importTasks);
+  document.getElementById('btn-fetch-wiki').addEventListener('click', fetchTasksFromWiki);
+
+  // Import box collapse (persisted)
+  applyImportCollapsed();
+  document.getElementById('import-box-toggle').addEventListener('click', () => {
+    state.importCollapsed = !state.importCollapsed;
+    applyImportCollapsed();
+    saveToStorage();
+  });
+
+  // Paste section collapse (not persisted — always starts collapsed)
+  document.getElementById('paste-section-toggle').addEventListener('click', () => {
+    const body    = document.getElementById('paste-section-body');
+    const btn     = document.getElementById('paste-section-toggle');
+    const open    = body.hidden;
+    body.hidden   = !open;
+    btn.textContent = (open ? '▾' : '▸') + ' Paste manually';
+  });
+
+  // "All" checkbox toggles every region checkbox
+  const allCb = document.getElementById('import-region-all');
+  allCb.addEventListener('change', () => {
+    document.querySelectorAll('.import-region-cb').forEach(cb => { cb.checked = allCb.checked; });
+  });
+  // Keep "All" in sync when individual boxes change
+  document.querySelectorAll('.import-region-cb').forEach(cb => {
+    cb.addEventListener('change', () => {
+      const all  = document.querySelectorAll('.import-region-cb');
+      const checked = document.querySelectorAll('.import-region-cb:checked');
+      allCb.checked = all.length === checked.length;
+      allCb.indeterminate = checked.length > 0 && checked.length < all.length;
+    });
+  });
   document.getElementById('btn-clear-filters').addEventListener('click', clearFilters);
   document.getElementById('btn-clear-tasks').addEventListener('click', clearAllTasks);
   document.getElementById('filter-search').addEventListener('input', applyFilters);
@@ -55,6 +98,7 @@ function init() {
   const ctxMenu = document.getElementById('task-context-menu');
   ctxMenu.addEventListener('click', e => e.stopPropagation());
   document.getElementById('ctx-close').addEventListener('click', e => { e.stopPropagation(); hideContextMenu(); });
+  document.getElementById('ctx-pin').addEventListener('click', () => { if (contextTaskId) togglePin(contextTaskId); hideContextMenu(); });
   document.getElementById('ctx-toggle').addEventListener('click', () => { if (contextTaskId) toggleTask(contextTaskId); hideContextMenu(); });
   document.getElementById('ctx-edit').addEventListener('click', () => { if (contextTaskId) openEditModal(contextTaskId); hideContextMenu(); });
   document.getElementById('ctx-remove').addEventListener('click', () => { if (contextTaskId) removeTask(contextTaskId); hideContextMenu(); });
@@ -753,6 +797,7 @@ function loadFromStorage() {
         state.tasks = parsed.tasks || [];
         state.selectedRelics = parsed.selectedRelics || {};
         state.colWidths = parsed.colWidths || {};
+        state.importCollapsed = parsed.importCollapsed ?? false;
       }
     }
   } catch (e) {
@@ -769,6 +814,7 @@ function saveToStorage() {
       tasks: state.tasks,
       selectedRelics: state.selectedRelics,
       colWidths: state.colWidths,
+      importCollapsed: state.importCollapsed,
     }));
   } catch (e) {}
 }
@@ -910,9 +956,10 @@ function showContextMenu(e, taskId) {
   contextTaskId = taskId;
   const menu = document.getElementById('task-context-menu');
   const task = state.tasks.find(t => String(t.id) === String(taskId));
-  document.getElementById('ctx-toggle').textContent = task?.done ? 'Mark incomplete' : 'Mark complete';
-  menu.style.left = Math.min(e.clientX, window.innerWidth - 170) + 'px';
-  menu.style.top  = Math.min(e.clientY, window.innerHeight - 110) + 'px';
+  document.getElementById('ctx-pin').textContent    = task?.pinned ? '📌 Unpin task' : '📌 Pin task';
+  document.getElementById('ctx-toggle').textContent = task?.done   ? 'Mark incomplete' : 'Mark complete';
+  menu.style.left = Math.min(e.clientX, window.innerWidth - 175) + 'px';
+  menu.style.top  = Math.min(e.clientY, window.innerHeight - 130) + 'px';
   menu.removeAttribute('hidden');
 }
 
@@ -927,6 +974,15 @@ function removeTask(id) {
   populateAreaFilter();
   renderTaskTable();
   renderTaskStats();
+}
+
+function togglePin(id) {
+  const task = state.tasks.find(t => String(t.id) === String(id));
+  if (task) {
+    task.pinned = !task.pinned;
+    saveToStorage();
+    renderTaskTable();
+  }
 }
 
 // ─── Edit modal ───────────────────────────
@@ -961,6 +1017,89 @@ function saveEditTask() {
   closeEditModal();
 }
 
+// Fetch task table directly from the OSRS wiki API
+async function fetchTasksFromWiki() {
+  const btn = document.getElementById('btn-fetch-wiki');
+  const feedback = document.getElementById('import-feedback');
+
+  btn.disabled = true;
+  btn.textContent = 'Fetching…';
+  feedback.textContent = '';
+  feedback.className = 'import-feedback';
+
+  try {
+    const apiUrl = `https://oldschool.runescape.wiki/api.php?action=parse&page=${encodeURIComponent(WIKI_TASKS_PAGE)}&prop=text&format=json&origin=*`;
+    const res = await fetch(apiUrl);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const html = data?.parse?.text?.['*'];
+    if (!html) throw new Error('No content returned from wiki');
+
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const tables = doc.querySelectorAll('table.wikitable');
+    if (!tables.length) throw new Error('No task tables found on wiki page');
+
+    // Collect selected regions (normalised)
+    const selectedRegions = new Set(
+      [...document.querySelectorAll('.import-region-cb:checked')].map(cb => cb.value)
+    );
+
+    let added = 0, updated = 0, skipped = 0;
+
+    tables.forEach(table => {
+      table.querySelectorAll('tr[data-lf-tier], tr[data-taskid]').forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length < 5) return;
+
+        // Area: td[0] has data-sort-value="Asgarnia" — most reliable source
+        const rawArea = cells[0].getAttribute('data-sort-value') || cells[0].textContent.trim();
+
+        const name  = cells[1].textContent.trim();
+        const task  = cells[2].textContent.trim();
+        const reqs  = cells[3].textContent.trim().replace(/\s+/g, ' ');
+        // Points: prefer data-lf-points on the row, fall back to cell text
+        const pts   = parseInt(row.getAttribute('data-lf-points') || (cells[4].textContent.trim()).replace(/\D/g, ''), 10) || 0;
+        const comp  = cells[5] ? cells[5].textContent.trim() : '';
+
+        if (!name) { skipped++; return; }
+
+        const area = normaliseArea(rawArea || 'General');
+
+        // Skip if this region isn't selected
+        if (selectedRegions.size && !selectedRegions.has(area)) { skipped++; return; }
+
+        const existing = state.tasks.find(t => t.name === name && t.area === area);
+        if (existing) {
+          existing.comp = comp; // update completion %
+          updated++;
+          return;
+        }
+
+        state.tasks.push({ id: Date.now() + Math.random(), area, name, task, reqs: reqs || 'N/A', pts, comp, done: false });
+        added++;
+      });
+    });
+
+    saveToStorage();
+    populateAreaFilter();
+    renderTaskTable();
+    renderTaskStats();
+
+    const parts = [];
+    if (added)   parts.push(`${added} imported`);
+    if (updated) parts.push(`${updated} updated`);
+    if (skipped) parts.push(`${skipped} skipped`);
+    feedback.textContent = parts.join(', ') + '.';
+    feedback.className = `import-feedback ${added > 0 || updated > 0 ? 'success' : 'error'}`;
+  } catch (err) {
+    feedback.textContent = `Could not fetch from wiki: ${err.message}`;
+    feedback.className = 'import-feedback error';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Import from Wiki';
+  }
+}
+
 // Parse pasted wiki task text (tab-separated rows)
 function importTasks() {
   const raw = document.getElementById('task-paste').value.trim();
@@ -985,8 +1124,7 @@ function importTasks() {
     }
   }
 
-  let added = 0;
-  let skipped = 0;
+  let added = 0, updated = 0, skipped = 0;
 
   lines.forEach(line => {
     const cols = line.split('\t').map(c => c.trim());
@@ -1011,8 +1149,8 @@ function importTasks() {
     if (isArea) {
       [area, name, task, reqs, pts, comp] = cols;
     } else {
-      // No area column — treat as general
-      area = 'General';
+      // No area column (wiki area is an image, copies as nothing) — use selected default area
+      area = document.getElementById('import-area').value || 'General';
       [name, task, reqs, pts, comp] = cols;
     }
 
@@ -1024,9 +1162,13 @@ function importTasks() {
     // Normalise area name
     const cleanArea = normaliseArea(area || 'General');
 
-    // Check if duplicate (same name + area)
-    const isDupe = state.tasks.some(t => t.name === name && t.area === cleanArea);
-    if (isDupe) { skipped++; return; }
+    // Update comp% if task already exists, otherwise add new
+    const existing = state.tasks.find(t => t.name === name && t.area === cleanArea);
+    if (existing) {
+      existing.comp = comp || '';
+      updated++;
+      return;
+    }
 
     state.tasks.push({
       id:   Date.now() + Math.random(),
@@ -1047,8 +1189,12 @@ function importTasks() {
   renderTaskStats();
 
   document.getElementById('task-paste').value = '';
-  feedback.textContent = `Imported ${added} task${added !== 1 ? 's' : ''}${skipped ? `, skipped ${skipped}` : ''}.`;
-  feedback.className = `import-feedback ${added > 0 ? 'success' : 'error'}`;
+  const parts = [];
+  if (added)   parts.push(`${added} imported`);
+  if (updated) parts.push(`${updated} updated`);
+  if (skipped) parts.push(`${skipped} skipped`);
+  feedback.textContent = parts.join(', ') + '.';
+  feedback.className = `import-feedback ${added > 0 || updated > 0 ? 'success' : 'error'}`;
 }
 
 function normaliseArea(raw) {
@@ -1111,8 +1257,9 @@ function getFilteredTasks() {
   let tasks = state.tasks.filter(t => {
     if (area   && t.area !== area) return false;
     if (pts    && t.pts < parseInt(pts, 10)) return false;
-    if (status === 'complete'   && !t.done) return false;
-    if (status === 'incomplete' && t.done)  return false;
+    if (status === 'complete'   && !t.done)    return false;
+    if (status === 'incomplete' && t.done)     return false;
+    if (status === 'pinned'     && !t.pinned)  return false;
     if (skill  && !t.reqs.toLowerCase().includes(skill.toLowerCase())) return false;
     if (search) {
       const haystack = `${t.name} ${t.task} ${t.area} ${t.reqs}`.toLowerCase();
@@ -1122,9 +1269,12 @@ function getFilteredTasks() {
   });
 
   switch (state.taskSort) {
-    case 'pts-desc': tasks.sort((a, b) => b.pts - a.pts); break;
-    case 'pts-asc':  tasks.sort((a, b) => a.pts - b.pts); break;
-    case 'area':     tasks.sort((a, b) => a.area.localeCompare(b.area)); break;
+    case 'pts-desc':  tasks.sort((a, b) => b.pts - a.pts); break;
+    case 'pts-asc':   tasks.sort((a, b) => a.pts - b.pts); break;
+    case 'comp-desc': tasks.sort((a, b) => parseFloat(b.comp) - parseFloat(a.comp)); break;
+    case 'comp-asc':  tasks.sort((a, b) => parseFloat(a.comp) - parseFloat(b.comp)); break;
+    case 'area':      tasks.sort((a, b) => a.area.localeCompare(b.area)); break;
+    case 'pinned':    tasks.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0)); break;
     // default: insertion order
   }
 
@@ -1139,7 +1289,7 @@ function renderTaskTable() {
   if (!state.tasks.length) {
     tbody.innerHTML = `
       <tr class="task-empty-row">
-        <td colspan="6">
+        <td colspan="7">
           <div class="task-empty">
             <p>No tasks yet. Paste wiki tasks in the import box to get started.</p>
             <p class="task-empty-hint">Go to the <a href="https://oldschool.runescape.wiki/w/Raging_Echoes_League/Tasks" target="_blank" rel="noopener">wiki tasks page</a>, copy table rows, then paste here.</p>
@@ -1151,7 +1301,7 @@ function renderTaskTable() {
   }
 
   if (!tasks.length) {
-    tbody.innerHTML = `<tr class="task-empty-row"><td colspan="6"><div class="task-empty"><p>No tasks match your filters.</p></div></td></tr>`;
+    tbody.innerHTML = `<tr class="task-empty-row"><td colspan="7"><div class="task-empty"><p>No tasks match your filters.</p></div></td></tr>`;
     info.textContent = `0 of ${state.tasks.length} tasks`;
     return;
   }
@@ -1161,8 +1311,9 @@ function renderTaskTable() {
   tbody.innerHTML = tasks.map(task => {
     const areaClass = task.area === 'General' ? 'area-general' : '';
     return `
-      <tr class="${task.done ? 'completed' : ''}" data-task-id="${task.id}">
+      <tr class="${task.done ? 'completed' : ''}${task.pinned ? ' pinned' : ''}" data-task-id="${task.id}">
         <td class="col-check">
+          ${task.pinned ? '<span class="pin-indicator" title="Pinned">📌</span>' : ''}
           <div class="task-check-btn ${task.done ? 'done' : ''}" data-check-id="${task.id}" title="Mark ${task.done ? 'incomplete' : 'complete'}">
             ${task.done ? '✓' : ''}
           </div>
@@ -1172,6 +1323,7 @@ function renderTaskTable() {
         <td class="col-task">${escapeHTML(task.task)}</td>
         <td class="col-reqs">${escapeHTML(task.reqs)}</td>
         <td class="col-pts"><span class="pts-badge">${task.pts}</span></td>
+        <td class="col-comp">${task.comp ? escapeHTML(task.comp) : ''}</td>
       </tr>
     `;
   }).join('');
@@ -1214,6 +1366,7 @@ const COL_CONFIG = [
   { cls: 'col-task',  defaultW: null, resizable: false, flex: true  },
   { cls: 'col-reqs',  defaultW: 200, resizable: true,  flex: false },
   { cls: 'col-pts',   defaultW: 58,  resizable: false, flex: false },
+  { cls: 'col-comp',  defaultW: 62,  resizable: false, flex: false },
 ];
 
 function loadColWidths() {
