@@ -782,6 +782,66 @@ body {
   padding: 1rem;
 }
 
+.panel-collapse-toggle {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+}
+.panel-collapse-toggle:hover { color: var(--text-gold); }
+.collapse-chevron { font-size: 0.85em; opacity: 0.7; }
+
+.paste-toggle-btn {
+  width: 100%;
+  margin-top: 0.75rem;
+  padding: 0.3rem 0.6rem;
+  background: none;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+  text-align: left;
+  font-family: 'Crimson Text', Georgia, serif;
+  transition: border-color 0.15s, color 0.15s;
+}
+.paste-toggle-btn:hover { border-color: var(--border-gold); color: var(--text-gold); }
+
+#paste-section-body { margin-top: 0.5rem; }
+#paste-section-body[hidden] { display: none; }
+
+.import-region-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.2rem 0.5rem;
+  margin-bottom: 0.75rem;
+}
+.import-region-all {
+  grid-column: 1 / -1;
+  font-weight: 600;
+  color: var(--text-gold);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.25rem;
+  margin-bottom: 0.1rem;
+}
+.import-region-check {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+.import-region-check input[type="checkbox"] {
+  accent-color: var(--text-gold);
+  width: 13px;
+  height: 13px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
 .import-hint {
   font-size: 0.82rem;
   color: var(--text-muted);
@@ -978,6 +1038,15 @@ body.table-resizing .col-resize-handle {
 .task-table tbody tr.completed { opacity: 0.5; }
 .task-table tbody tr.completed .col-name-text { text-decoration: line-through; }
 
+.task-table tbody tr.pinned { box-shadow: inset 3px 0 0 var(--text-gold); }
+
+.pin-indicator {
+  font-size: 0.75rem;
+  line-height: 1;
+  display: block;
+  margin-bottom: 1px;
+}
+
 .task-table td {
   padding: 0.45rem 0.75rem;
   vertical-align: top;
@@ -991,6 +1060,7 @@ body.table-resizing .col-resize-handle {
 .col-task  { }
 .col-reqs  { width: 180px; }
 .col-pts   { width: 50px; text-align: right; white-space: nowrap; }
+.col-comp  { width: 60px; text-align: right; white-space: nowrap; color: var(--text-muted); font-size: 0.82rem; }
 
 .task-check-btn {
   width: 20px; height: 20px;
