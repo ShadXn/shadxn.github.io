@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OSRS Leagues VI - Region Picker</title>
-  <link rel="stylesheet" href="style.css?v=20260326g">
+  <link rel="stylesheet" href="style.css?v=20260327b">
 </head>
 <body>
   <div class="page-wrapper">
@@ -20,6 +20,7 @@
         <button class="tab-btn active" data-tab="picker" role="tab" aria-selected="true">🗺️ Region Picker</button>
         <button class="tab-btn" data-tab="tasks" role="tab" aria-selected="false">📋 Task List</button>
         <button class="tab-btn" data-tab="relics" role="tab" aria-selected="false">🏆 Relics</button>
+        <button class="tab-btn" data-tab="skills" role="tab" aria-selected="false">⚗️ Skills</button>
       </nav>
     </header>
 
@@ -248,6 +249,28 @@
       </div>
     </div>
 
+    <!-- ═══════════════════════════════════════
+         TAB: SKILLS
+    ═══════════════════════════════════════ -->
+    <div id="tab-skills" class="tab-content" hidden>
+      <div class="skills-page">
+
+        <!-- Sidebar: skill list -->
+        <aside class="skills-sidebar">
+          <div class="panel-heading">All Skills</div>
+          <div class="skill-nav-list" id="skill-nav-list"></div>
+        </aside>
+
+        <!-- Skill detail -->
+        <section class="skill-detail-panel" id="skill-detail-panel">
+          <div class="detail-placeholder">
+            <p>← Select a skill to view training methods by region</p>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
   </div><!-- .page-wrapper -->
 
   <!-- Skill detail modal -->
@@ -299,7 +322,7 @@
     </div>
   </div>
 
-  <script src="data.js?v=20260326b"></script>
-  <script src="app.js?v=20260326m"></script>
+  <script src="data.js?v=20260328e"></script>
+  <script src="app.js?v=20260327b"></script>
 </body>
 </html>

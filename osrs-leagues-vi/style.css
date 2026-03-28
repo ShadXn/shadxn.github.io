@@ -1874,3 +1874,223 @@ body.table-resizing .col-resize-handle {
   gap: 0.5rem;
   margin-top: 0.75rem;
 }
+
+/* ─── Skills Tab ──────────────────────────── */
+.skills-page {
+  display: grid;
+  grid-template-columns: 210px 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.skills-sidebar {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  position: sticky;
+  top: 1rem;
+  box-shadow: var(--shadow);
+}
+
+.skill-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.skill-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: 100%;
+  padding: 0.38rem 0.6rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  font-family: 'Crimson Text', Georgia, serif;
+  font-size: 0.93rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.skill-nav-btn:hover { background: var(--bg-card-hover); color: var(--text-primary); border-color: var(--border-light); }
+.skill-nav-btn.active { background: var(--bg-selected); border-color: var(--border-gold); color: var(--text-gold); box-shadow: var(--shadow-gold); }
+
+.skill-nav-icon { font-size: 0.95rem; flex-shrink: 0; }
+.skill-nav-label { flex: 1; }
+.skill-nav-count {
+  font-size: 0.65rem;
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.05rem 0.35rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+.skill-nav-btn.active .skill-nav-count { border-color: var(--border-gold); color: var(--text-gold); }
+
+/* Skill detail panel */
+.skill-detail-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  min-height: 500px;
+  box-shadow: var(--shadow);
+}
+
+.skill-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 2px solid var(--border-gold);
+}
+.skill-detail-icon { font-size: 1.8rem; flex-shrink: 0; }
+.skill-detail-title { font-size: 1.6rem; font-weight: 600; color: var(--text-gold); flex: 1; }
+.skill-wiki-link {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.skill-wiki-link:hover { color: var(--text-gold); border-color: var(--border-gold); }
+
+/* Skill region blocks (shared by Skills tab + Region Picker) */
+.skills-expanded { display: flex; flex-direction: column; gap: 0.5rem; }
+.skill-region-list { display: flex; flex-direction: column; gap: 0.6rem; }
+
+.skill-region-block {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.7rem 0.9rem;
+}
+.skill-region-block:hover { border-color: var(--border-light); }
+
+/* In Skills tab, left-accent by region type */
+.skr-region-variant.type-starter { border-left: 3px solid var(--starter-color); }
+.skr-region-variant.type-free    { border-left: 3px solid var(--free-color); }
+.skr-region-variant.type-choice  { border-left: 3px solid var(--choice-color); }
+
+/* In Region Picker, gold left accent */
+.skills-expanded .skill-region-block { border-left: 3px solid var(--border-gold); }
+
+.skr-header {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.35rem;
+  flex-wrap: wrap;
+}
+.skr-icon { font-size: 1rem; flex-shrink: 0; }
+.skr-name { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); }
+
+.skr-type-tag {
+  font-size: 0.62rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.skr-type-tag.type-starter { background: rgba(155,89,182,0.2); color: var(--starter-color); border: 1px solid rgba(155,89,182,0.4); }
+.skr-type-tag.type-free    { background: rgba(39,174,96,0.2); color: var(--free-color);     border: 1px solid rgba(39,174,96,0.4); }
+.skr-type-tag.type-choice  { background: rgba(41,128,185,0.2); color: #5ba3d0;              border: 1px solid rgba(41,128,185,0.4); }
+
+.skr-rating-pill {
+  font-size: 0.62rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.skr-rating-pill.rating-excellent { background: rgba(76,175,80,0.2);  color: var(--rating-excellent); border: 1px solid rgba(76,175,80,0.35); }
+.skr-rating-pill.rating-good      { background: rgba(139,195,74,0.2); color: var(--rating-good);      border: 1px solid rgba(139,195,74,0.35); }
+.skr-rating-pill.rating-decent    { background: rgba(255,193,7,0.2);  color: var(--rating-decent);    border: 1px solid rgba(255,193,7,0.35); }
+.skr-rating-pill.rating-poor      { background: rgba(244,67,54,0.2);  color: var(--rating-poor);      border: 1px solid rgba(244,67,54,0.35); }
+
+.skr-view-all {
+  margin-left: auto;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  font-family: 'Crimson Text', Georgia, serif;
+  font-size: 0.72rem;
+  padding: 0.1rem 0.45rem;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.skr-view-all:hover { color: var(--text-gold); border-color: var(--border-gold); }
+
+.skr-summary {
+  font-size: 0.83rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  margin-bottom: 0.4rem;
+  line-height: 1.4;
+}
+
+.skr-methods {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+}
+.skr-methods li {
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  padding-left: 1rem;
+  position: relative;
+  line-height: 1.4;
+}
+.skr-methods li::before {
+  content: '•';
+  position: absolute;
+  left: 0.3rem;
+  color: var(--text-gold);
+}
+
+.skr-notes {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.skr-notes li {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  padding-left: 1.1rem;
+  position: relative;
+  font-style: italic;
+  line-height: 1.4;
+}
+.skr-notes li::before {
+  content: '⚠';
+  position: absolute;
+  left: 0.15rem;
+  font-size: 0.65rem;
+  color: var(--text-orange);
+  top: 0.2rem;
+}
+
+.skr-empty {
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 1rem 0;
+}

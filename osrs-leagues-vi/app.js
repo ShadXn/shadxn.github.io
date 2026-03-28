@@ -17,6 +17,7 @@ const state = {
   taskFilter: { search: '', area: '', pts: '', status: '', skill: '' },
   taskSort: 'default',
   selectedRelics:  {},          // { [tier]: relicId }
+  selectedSkill:   null,        // skill name currently shown in Skills tab
   colWidths:       {},          // { [cls]: px } for task table columns
   importCollapsed: false,       // whether the Import Tasks panel is collapsed
 };
@@ -158,6 +159,7 @@ function switchTab(tab) {
   });
   if (tab === 'tasks') renderTaskStats();
   if (tab === 'relics') renderRelics();
+  if (tab === 'skills') renderSkillsTab();
 }
 
 // ─── View mode (single / overview) ───────────
@@ -265,11 +267,12 @@ function openRegion(id) {
   const panel = document.getElementById('detail-panel');
   panel.innerHTML = buildDetailHTML(region);
 
-  // Skill click → modal
-  panel.querySelectorAll('.skill-card').forEach(card => {
-    card.addEventListener('click', () => {
-      const skill = region.skills.find(s => s.skill === card.dataset.skill);
-      if (skill) openSkillModal(skill);
+  // "All regions →" button in each skill block → jump to Skills tab
+  panel.querySelectorAll('.skr-view-all').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      switchTab('skills');
+      openSkill(btn.dataset.skill);
     });
   });
 }
@@ -320,7 +323,7 @@ function buildDetailHTML(region) {
     sections.push(`
       <div class="detail-section">
         <div class="detail-section-title">⚗️ Skills</div>
-        <div class="skills-grid">${region.skills.map(skillCardHTML).join('')}</div>
+        <div class="skills-expanded">${region.skills.map(buildRegionSkillBlock).join('')}</div>
       </div>
     `);
   }
@@ -466,18 +469,48 @@ function echoCardHTML(item) {
   `;
 }
 
-function skillCardHTML(skill) {
-  const icon = SKILL_ICONS[skill.skill] || '❓';
-  const hint = skill.summary.split('—')[0].trim();
+// ─── Shared skill block builders ──────────────
+
+// Used in Region Picker detail: skill header (name+rating) + methods + notes
+function buildRegionSkillBlock(skillEntry) {
+  const icon = SKILL_ICONS[skillEntry.skill] || '❓';
+  const methodsHTML = skillEntry.methods?.length
+    ? `<ul class="skr-methods">${skillEntry.methods.map(m => `<li>${m}</li>`).join('')}</ul>` : '';
+  const notesHTML = skillEntry.notes?.length
+    ? `<ul class="skr-notes">${skillEntry.notes.map(n => `<li>${n}</li>`).join('')}</ul>` : '';
   return `
-    <div class="skill-card rating-${skill.rating}" data-skill="${skill.skill}" title="Click for training methods">
-      <div class="skill-card-inner">
-        <span class="skill-icon">${icon}</span>
-        <span class="skill-name">${skill.skill}</span>
+    <div class="skill-region-block">
+      <div class="skr-header">
+        <span class="skr-icon">${icon}</span>
+        <span class="skr-name">${skillEntry.skill}</span>
+        <span class="skr-rating-pill rating-${skillEntry.rating}">${skillEntry.rating}</span>
+        <button class="skr-view-all" data-skill="${skillEntry.skill}">All regions ↗</button>
       </div>
-      <div class="skill-rating-bar"></div>
-      <div class="skill-rating-label">${skill.rating}</div>
-      <div class="skill-hint">${hint}</div>
+      <div class="skr-summary">${skillEntry.summary}</div>
+      ${methodsHTML}
+      ${notesHTML}
+    </div>
+  `;
+}
+
+// Used in Skills tab: region header (icon+name+type+rating) + methods + notes
+function buildSkillRegionBlock(skillEntry, region) {
+  const methodsHTML = skillEntry.methods?.length
+    ? `<ul class="skr-methods">${skillEntry.methods.map(m => `<li>${m}</li>`).join('')}</ul>` : '';
+  const notesHTML = skillEntry.notes?.length
+    ? `<ul class="skr-notes">${skillEntry.notes.map(n => `<li>${n}</li>`).join('')}</ul>` : '';
+  const typeLabel = { starter: '★ Starter', free: '✦ Free', choice: '◆ Choice' }[region.type] || region.type;
+  return `
+    <div class="skill-region-block skr-region-variant">
+      <div class="skr-header">
+        <span class="skr-icon">${region.icon}</span>
+        <span class="skr-name">${region.name}</span>
+        <span class="skr-type-tag type-${region.type}">${typeLabel}</span>
+        <span class="skr-rating-pill rating-${skillEntry.rating}">${skillEntry.rating}</span>
+      </div>
+      <div class="skr-summary">${skillEntry.summary}</div>
+      ${methodsHTML}
+      ${notesHTML}
     </div>
   `;
 }
@@ -491,33 +524,61 @@ function unlockCardHTML(unlock) {
   `;
 }
 
-// ─── Skill Modal ──────────────────────────────
-function openSkillModal(skill) {
-  const icon = SKILL_ICONS[skill.skill] || '❓';
-  const ratingColor = {
-    excellent: 'var(--rating-excellent)',
-    good:      'var(--rating-good)',
-    decent:    'var(--rating-decent)',
-    poor:      'var(--rating-poor)',
-  }[skill.rating] || '#fff';
+// ─── Skills Tab ───────────────────────────────
+function renderSkillsTab() {
+  const navEl = document.getElementById('skill-nav-list');
+  navEl.innerHTML = ALL_SKILLS.map(skillName => {
+    const icon  = SKILL_ICONS[skillName] || '❓';
+    const isActive = state.selectedSkill === skillName;
+    return `
+      <button class="skill-nav-btn ${isActive ? 'active' : ''}" data-skill="${skillName}">
+        <span class="skill-nav-icon">${icon}</span>
+        <span class="skill-nav-label">${skillName}</span>
+      </button>`;
+  }).join('');
 
-  document.getElementById('modal-content').innerHTML = `
-    <div class="modal-title">${icon} ${skill.skill}</div>
-    <div class="modal-rating" style="color:${ratingColor}">
-      ${skill.rating.toUpperCase()} — ${skill.summary}
+  navEl.querySelectorAll('.skill-nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => openSkill(btn.dataset.skill));
+  });
+
+  if (state.selectedSkill) {
+    renderSkillDetail();
+  } else {
+    document.getElementById('skill-detail-panel').innerHTML =
+      `<div class="detail-placeholder"><p>← Select a skill to view training methods by region</p></div>`;
+  }
+}
+
+function openSkill(skillName) {
+  state.selectedSkill = skillName;
+  // Update active nav state if the skill nav is visible
+  document.querySelectorAll('.skill-nav-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.skill === skillName);
+  });
+  renderSkillDetail();
+}
+
+function renderSkillDetail() {
+  const skillName = state.selectedSkill;
+  if (!skillName) return;
+  const icon     = SKILL_ICONS[skillName] || '❓';
+  const wikiUrl  = `${WIKI}${encodeURIComponent(skillName)}`;
+  const regions  = REGIONS.filter(r => r.skills?.some(s => s.skill === skillName));
+
+  const blocksHTML = regions.length
+    ? regions.map(r => buildSkillRegionBlock(r.skills.find(s => s.skill === skillName), r)).join('')
+    : `<p class="skr-empty">No region-specific training data for this skill yet.</p>`;
+
+  document.getElementById('skill-detail-panel').innerHTML = `
+    <div class="skill-detail-header">
+      <span class="skill-detail-icon">${icon}</span>
+      <span class="skill-detail-title">${skillName}</span>
+      <a class="skill-wiki-link" href="${wikiUrl}" target="_blank" rel="noopener">
+        Wiki page ↗
+      </a>
     </div>
-    ${skill.methods?.length ? `
-    <div class="modal-section">
-      <h4>Training Methods</h4>
-      <ul>${skill.methods.map(m => `<li>${m}</li>`).join('')}</ul>
-    </div>` : ''}
-    ${skill.notes?.length ? `
-    <div class="modal-section">
-      <h4>Notes</h4>
-      <ul>${skill.notes.map(n => `<li>${n}</li>`).join('')}</ul>
-    </div>` : ''}
+    <div class="skill-region-list">${blocksHTML}</div>
   `;
-  document.getElementById('modal-overlay').removeAttribute('hidden');
 }
 
 function closeModal() {
@@ -587,16 +648,11 @@ function renderOverview() {
     ${notesHTML}
   `;
 
-  // Skill hover tooltips
+  // Skill cards → jump to Skills tab
   panel.querySelectorAll('.ov-skill-card[data-skill]').forEach(card => {
     card.addEventListener('click', () => {
-      const skillId = card.dataset.skill;
-      const regionId = card.dataset.region;
-      const region = REGIONS.find(r => r.id === regionId);
-      if (region) {
-        const skill = region.skills.find(s => s.skill === skillId);
-        if (skill) openSkillModal(skill);
-      }
+      switchTab('skills');
+      openSkill(card.dataset.skill);
     });
   });
 }
