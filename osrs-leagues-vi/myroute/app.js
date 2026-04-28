@@ -506,7 +506,11 @@ const PACT_TASKS = [
   { region: 'global', task: 'Kill 3 unique Echo Bosses',        pts: 80,  extra: '+ Pact Reset' },
   { region: 'global', task: 'Kill 4 unique Echo Bosses',        pts: 200 },
   // Varlamore (always shown)
-  { region: 'varlamore', task: '1 Hueycoatl Kill',                           pts: 80 },
+  { region: 'varlamore', task: 'Defeat Hueycoatl 1 time',                     pts: 80,  extra: '+ Pact Reset' },
+  { region: 'varlamore', task: 'Equip an Obsidian Cape',                                          pts: 30 },
+  { region: 'varlamore', task: 'Equip any piece of armour from the Blood, Frost, or Eclipse moon set', pts: 30 },
+  { region: 'varlamore', task: 'Equip one unique echo item',                                     pts: 80 },
+  { region: 'varlamore', task: 'Defeat the Doom of Mokhaiotl at delve level 8',                  pts: 200 },
   { region: 'varlamore', task: 'Complete Wave 12 of Fortis Colosseum',        pts: 200 },
   { region: 'varlamore', task: 'Defeat Awakened Vardorvis',                   pts: 200 },
   { region: 'varlamore', task: 'Equip Avernic Treads',                        pts: 200 },
@@ -555,7 +559,7 @@ const PACT_TASKS = [
   { region: 'kourend', task: '1 Skotizo Kill',                    pts: 80 },
   { region: 'kourend', task: '25 Chambers of Xeric',              pts: 80 },
   { region: 'kourend', task: 'Equip a Dragon Hunter Lance',       pts: 200 },
-  { region: 'kourend', task: 'Equip a piece of Radiant Oathplate',pts: 200 },
+  { region: 'kourend', task: 'Equip an Oathplate helm, chest, and legs',pts: 200 },
   { region: 'kourend', task: 'Equip any Ancestral Piece',         pts: 200 },
   // Morytania
   { region: 'morytania', task: 'Defeat a Werewolf in Morytania',          pts: 10 },
