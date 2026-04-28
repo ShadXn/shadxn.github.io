@@ -2,641 +2,229 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OSRS Leagues VI - Region Picker</title>
-  <link rel="stylesheet" href="style.css?v=20260327b">
-  <link rel="stylesheet" href="early_game.css?v=20260410a">
-  <script>
-    /* Show the correct tab immediately before JS runs (prevents flash of empty content).
-       Runs synchronously in <head> (after CSS, before first paint). */
-    (function () {
-      var VALID = ['picker', 'skills', 'relics', 'tasks', 'early'];
-      try {
-        var raw = localStorage.getItem('osrsl6_v1');
-        var d   = raw ? JSON.parse(raw) : null;
-        var tab = (d && !Array.isArray(d)) ? d.activeTab : null;
-        if (!tab || VALID.indexOf(tab) === -1) tab = 'relics';
-        var s = document.createElement('style');
-        s.id  = 'init-tab-fix';
-        s.textContent =
-          /* make the target tab button look active */
-          '.tab-btn[data-tab="' + tab + '"]{background:var(--bg-dark)!important;color:var(--text-gold)!important;border-color:var(--border-gold)!important;border-bottom-color:var(--bg-dark)!important;z-index:1!important}' +
-          /* show legacy tab buttons if saved tab is picker or skills */
-          ((tab === 'picker' || tab === 'skills') ? '#tab-btn-picker,#tab-btn-skills{display:inline-flex!important}' : '') +
-          /* show target tab content */
-          '#tab-' + tab + '.tab-content{display:block!important}';
-        document.head.appendChild(s);
-      } catch (e) {}
-    })();
-  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Route Planner — League VI</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="page-wrapper">
 
-    <!-- Header -->
-    <header class="site-header">
-      <!--<div class="header-inner">
-        <h1 class="site-title"><a href="https://oldschool.runescape.wiki/w/Demonic_Pacts_League" target="_blank" rel="noopener">⚔️ OSRS - Demonic Pacts League VI</a></h1>
-      </div> -->
-      <!-- Tab Nav -->
-      <nav class="tab-nav" role="tablist">
-        <button class="tab-btn" data-tab="relics" role="tab" aria-selected="false">🏆 Relics</button>
-        <button class="tab-btn" data-tab="tasks"  role="tab" aria-selected="false">📋 Task List</button>
-        <button class="tab-btn" data-tab="early"  role="tab" aria-selected="false">🗺️ Early Game</button>
-        <button class="tab-legacy-toggle" id="btn-legacy-toggle" title="Show incomplete tabs">⚠ More</button>
-        <button class="tab-btn tab-btn-hidden" data-tab="picker" role="tab" aria-selected="false" id="tab-btn-picker">🗺️ Region Picker</button>
-        <button class="tab-btn tab-btn-hidden" data-tab="skills" role="tab" aria-selected="false" id="tab-btn-skills">⚗️ Skills</button>
-      </nav>
-    </header>
-
-    <!-- ═══════════════════════════════════════
-         TAB: REGION PICKER
-    ═══════════════════════════════════════ -->
-    <div id="tab-picker" class="tab-content">
-      <div class="incomplete-banner" id="incomplete-banner-picker">
-        <span>⚠ This tab is incomplete — it may contain missing, incorrect, or unfinished information. It will not be completed.</span>
-        <button class="incomplete-banner-close" data-banner="incomplete-banner-picker" aria-label="Dismiss">✕</button>
-      </div>
-      <div class="main-content">
-
-        <!-- Sidebar: region list -->
-        <aside class="region-panel">
-          <div class="panel-section">
-            <h2 class="panel-heading">Starter</h2>
-            <div class="region-list" id="starter-regions"></div>
-          </div>
-
-          <div class="panel-section">
-            <h2 class="panel-heading">Free Unlock</h2>
-            <div class="region-list" id="free-regions"></div>
-          </div>
-
-          <div class="panel-section">
-            <h2 class="panel-heading">Choose Regions
-              <span class="panel-counter" id="choice-counter">0 / 3</span>
-            </h2>
-            <div class="region-list" id="choice-regions"></div>
-          </div>
-
-          <!-- View mode switcher -->
-          <div class="view-switcher">
-            <button class="view-btn active" id="btn-single-view">Single Region</button>
-            <button class="view-btn" id="btn-overview">Overview</button>
-          </div>
-        </aside>
-
-        <!-- Detail panel -->
-        <section class="detail-panel" id="detail-panel">
-          <div class="detail-placeholder">
-            <p>← Select a region to view details</p>
-          </div>
-        </section>
-
-      </div>
+  <header class="rp-header">
+    <a href="../index.html" class="rp-back">← Back to main</a>
+    <h1>Route Planner <span class="rp-subtitle">Demonic Pacts League</span> <span class="rp-build-divider">—</span> <span id="rp-current-build-name">Build 1</span></h1>
+    <div class="rp-build-controls">
+      <select id="rp-build-select" class="rp-build-select" title="Switch build"></select>
+      <button id="rp-build-add"    class="rp-build-btn" title="Add new build">+</button>
+      <button id="rp-build-rename" class="rp-build-btn" title="Rename current build">✎</button>
+      <button id="rp-build-delete" class="rp-build-btn rp-build-btn-danger" title="Delete current build">🗑</button>
     </div>
+    <div class="rp-header-actions">
+      <button class="rp-action-btn" id="rp-export-btn" title="Export builds to JSON">⬇ Export</button>
+      <label  class="rp-action-btn" title="Import builds from JSON" style="cursor:pointer">
+        ⬆ Import
+        <input type="file" id="rp-import-file" accept=".json" style="position:absolute;width:0;height:0;opacity:0;pointer-events:none">
+      </label>
+    </div>
+  </header>
 
-    <!-- ═══════════════════════════════════════
-         TAB: TASK LIST
-    ═══════════════════════════════════════ -->
-    <div id="tab-tasks" class="tab-content" hidden>
+  <main class="rp-layout">
 
-      <!-- Task stats bar -->
-      <div class="task-stats-wrap">
-      <div class="task-stats-bar">
-        <div class="task-stat">
-          <span class="task-stat-value" id="stat-total">0</span>
-          <span class="task-stat-label">Total Tasks</span>
-        </div>
-        <div class="task-stat">
-          <span class="task-stat-value" id="stat-completed">0</span>
-          <span class="task-stat-label">Completed</span>
-        </div>
-        <div class="task-stat">
-          <span class="task-stat-value" id="stat-points-earned">0</span>
-          <span class="task-stat-label">Points Earned</span>
-        </div>
-        <div class="task-stat">
-          <span class="task-stat-value" id="stat-points-total">0</span>
-          <span class="task-stat-label">Total Points</span>
-        </div>
-      </div>
-      </div><!-- .task-stats-wrap -->
+    <!-- ─── LEFT SIDEBAR ─────────────────────── -->
+    <aside class="rp-sidebar">
 
-      <div class="task-layout">
+      <!-- Relics -->
+      <section class="rp-panel">
+        <div class="rp-panel-header">Relics <span class="rp-panel-sub">1 per tier</span></div>
+        <div id="relic-list"></div>
+      </section>
 
-        <!-- Task sidebar: import + filters -->
-        <aside class="task-sidebar">
+      <!-- Regions -->
+      <section class="rp-panel">
+        <div class="rp-panel-header">Regions <span class="rp-panel-sub">pick 3</span></div>
+        <div id="region-list"></div>
+      </section>
 
-          <!-- Import -->
-          <div class="task-import-box">
-            <h3 class="panel-heading panel-collapse-toggle" id="import-box-toggle">
-              Import Tasks <span class="collapse-chevron" id="import-box-chevron">▾</span>
-            </h3>
+    </aside>
 
-            <div id="import-box-body">
-              <label class="filter-label">Regions to import</label>
-              <div class="import-region-grid">
-                <label class="import-region-check import-region-all">
-                  <input type="checkbox" id="import-region-all" checked> All
-                </label>
-                <label class="import-region-check"><input type="checkbox" class="import-region-cb" value="General" checked> General</label>
-                <label class="import-region-check"><input type="checkbox" class="import-region-cb" value="Asgarnia" checked> Asgarnia</label>
-                <label class="import-region-check"><input type="checkbox" class="import-region-cb" value="Desert" checked> Desert</label>
-                <label class="import-region-check"><input type="checkbox" class="import-region-cb" value="Fremennik" checked> Fremennik</label>
-                <label class="import-region-check"><input type="checkbox" class="import-region-cb" value="Kandarin" checked> Kandarin</label>
-                <label class="import-region-check"><input type="checkbox" class="import-region-cb" value="Karamja" checked> Karamja</label>
-                <label class="import-region-check"><input type="checkbox" class="import-region-cb" value="Kourend" checked> Kourend</label>
-                <label class="import-region-check"><input type="checkbox" class="import-region-cb" value="Morytania" checked> Morytania</label>
-                <label class="import-region-check"><input type="checkbox" class="import-region-cb" value="Tirannwn" checked> Tirannwn</label>
-                <label class="import-region-check"><input type="checkbox" class="import-region-cb" value="Varlamore" checked> Varlamore</label>
-                <label class="import-region-check"><input type="checkbox" class="import-region-cb" value="Wilderness" checked> Wilderness</label>
-              </div>
+    <!-- ─── MAIN CONTENT ──────────────────────── -->
+    <div class="rp-main">
 
-              <button class="btn-primary" id="btn-fetch-wiki">Import from Wiki</button>
-              <div class="import-feedback" id="import-feedback"></div>
-
-              <!-- Paste section — collapsed by default -->
-              <button class="paste-toggle-btn" id="paste-section-toggle">▸ Paste manually</button>
-              <div id="paste-section-body" hidden>
-                <p class="import-hint">Select the area below if the wiki area column is missing from your paste.</p>
-                <label class="filter-label">Area (paste fallback)</label>
-                <select class="filter-input" id="import-area">
-                  <option value="General">General</option>
-                  <option value="Asgarnia">Asgarnia</option>
-                  <option value="Desert">Desert</option>
-                  <option value="Fremennik">Fremennik</option>
-                  <option value="Kandarin">Kandarin</option>
-                  <option value="Karamja">Karamja</option>
-                  <option value="Kourend">Kourend</option>
-                  <option value="Morytania">Morytania</option>
-                  <option value="Tirannwn">Tirannwn</option>
-                  <option value="Varlamore">Varlamore</option>
-                  <option value="Wilderness">Wilderness</option>
-                </select>
-                <textarea id="task-paste" placeholder="Paste wiki tasks here...&#10;&#10;Format: Area&#9;Name&#9;Task&#9;Requirements&#9;Pts&#9;Comp%&#10;&#10;You can paste multiple rows at once."></textarea>
-                <button class="btn-secondary" id="btn-import-tasks">Import Pasted Tasks</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Filters -->
-          <div class="task-filter-box">
-            <h3 class="panel-heading">Filters</h3>
-
-            <label class="filter-label">Search</label>
-            <input type="text" class="filter-input" id="filter-search" placeholder="Name or task description...">
-
-            <label class="filter-label">Area</label>
-            <select class="filter-input" id="filter-area">
-              <option value="">All Areas</option>
-            </select>
-
-            <label class="filter-label">Min Points</label>
-            <select class="filter-input" id="filter-pts">
-              <option value="">Any</option>
-              <option value="5">5+</option>
-              <option value="10">10+</option>
-              <option value="20">20+</option>
-              <option value="30">30+</option>
-              <option value="50">50+</option>
-              <option value="80">80+</option>
-              <option value="100">100+</option>
-            </select>
-
-            <label class="filter-label">Status</label>
-            <select class="filter-input" id="filter-status">
-              <option value="">All</option>
-              <option value="pinned">Pinned</option>
-              <option value="incomplete">Incomplete</option>
-              <option value="complete">Completed</option>
-            </select>
-
-            <label class="filter-label">Skill Requirement</label>
-            <select class="filter-input" id="filter-skill">
-              <option value="">Any Skill</option>
-            </select>
-
-            <button class="btn-secondary" id="btn-clear-filters">Clear Filters</button>
-            <button class="btn-danger" id="btn-clear-tasks">Clear All Tasks</button>
-          </div>
-
-        </aside>
-
-        <!-- Task table -->
-        <div class="task-table-wrap">
-          <div class="task-table-header-row">
-            <span class="task-count-info" id="task-count-info">No tasks imported yet</span>
-            <div class="task-sort-controls">
-              <span>Sort:</span>
-              <button class="sort-btn active" data-sort="default">Default</button>
-              <button class="sort-btn" data-sort="pinned">📌 Pinned first</button>
-              <button class="sort-btn" data-sort="pts-desc">Pts ↓</button>
-              <button class="sort-btn" data-sort="pts-asc">Pts ↑</button>
-              <button class="sort-btn" data-sort="comp-desc">Comp% ↓</button>
-              <button class="sort-btn" data-sort="comp-asc">Comp% ↑</button>
-              <button class="sort-btn" data-sort="area">Area</button>
-            </div>
-          </div>
-
-          <table class="task-table" id="task-table">
+      <!-- Skills -->
+      <section class="rp-panel">
+        <div class="rp-panel-header">Skills</div>
+        <div class="rp-table-scroll">
+          <table class="rp-table" id="skills-table">
             <thead>
               <tr>
-                <th class="col-check">✓</th>
-                <th class="col-area">Area</th>
-                <th class="col-name">Name</th>
-                <th class="col-task">Task</th>
-                <th class="col-reqs">Requirements</th>
-                <th class="col-pts">Pts</th>
-                <th class="col-comp">Comp%</th>
+                <th class="col-skill">Skill</th>
+                <th class="col-status">Status</th>
+                <th class="col-method">Primary Method</th>
+                <th class="col-xp">XP / hr</th>
+                <th class="col-xp16">×16 XP / hr</th>
+                <th class="col-note">Notes</th>
               </tr>
             </thead>
-            <tbody id="task-tbody">
-              <tr class="task-empty-row">
-                <td colspan="7">
-                  <div class="task-empty">
-                    <p>No tasks yet. Paste wiki tasks in the import box to get started.</p>
-                    <p class="task-empty-hint">Go to <a href="https://oldschool.runescape.wiki/w/Demonic_Pacts_League/Tasks" target="_blank" rel="noopener">wiki tasks</a>, select & copy the table rows, then paste here.</p>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
+            <tbody id="skills-tbody"></tbody>
           </table>
         </div>
+      </section>
 
-      </div>
+      <!-- Echo Bosses -->
+      <section class="rp-panel">
+        <div class="rp-panel-header">Echo Bosses <span class="rp-panel-sub">unique drops & notes</span></div>
+        <div id="echo-list"></div>
+      </section>
+
+      <!-- Pact Tasks -->
+      <section class="rp-panel">
+        <div class="rp-panel-header">
+          Pact Tasks
+          <span class="rp-panel-sub">tasks that give pact points</span>
+          <span id="pact-diff-summary" class="pact-diff-summary"></span>
+          <span class="pact-counter-badge"><span id="pact-counter">0 / 0</span> pact pts</span>
+        </div>
+        <div id="pact-list"></div>
+      </section>
+
     </div>
+  </main>
 
-    <!-- ═══════════════════════════════════════
-         TAB: RELICS
-    ═══════════════════════════════════════ -->
-    <div id="tab-relics" class="tab-content" hidden>
-      <div class="relics-page">
-        <div class="relics-intro">
-          <p>Choose <strong>1 relic per tier</strong>. Tier passives are unlocked automatically as you progress. Unrevealed relics will be added as Jagex reveals them before the April 15th launch.</p>
-        </div>
-        <div id="relic-summary-wrap" class="relic-summary-wrap"></div>
-        <div class="relics-content" id="relics-content">
-          <!-- rendered by JS -->
-        </div>
+  <!-- Skill detail popup -->
+  <div id="skill-popup" class="popup-overlay" hidden>
+    <div class="popup-box popup-box-skill">
+      <div class="popup-header">
+        <span id="skill-popup-title"></span>
+        <button class="popup-close" id="skill-popup-close">✕</button>
       </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════
-         TAB: SKILLS
-    ═══════════════════════════════════════ -->
-    <div id="tab-skills" class="tab-content" hidden>
-      <div class="incomplete-banner" id="incomplete-banner-skills">
-        <span>⚠ This tab is incomplete — it may contain missing, incorrect, or unfinished information. It will not be completed.</span>
-        <button class="incomplete-banner-close" data-banner="incomplete-banner-skills" aria-label="Dismiss">✕</button>
-      </div>
-      <div class="skills-page">
-
-        <!-- Sidebar: skill list -->
-        <aside class="skills-sidebar">
-          <div class="panel-heading">All Skills</div>
-          <div class="skill-nav-list" id="skill-nav-list"></div>
-        </aside>
-
-        <!-- Skill detail -->
-        <section class="skill-detail-panel" id="skill-detail-panel">
-          <div class="detail-placeholder">
-            <p>← Select a skill to view training methods by region</p>
+      <div class="skill-popup-body">
+        <div class="skill-popup-stats">
+          <div class="skill-popup-stat-row">
+            <span class="skill-popup-stat-label">Status</span>
+            <button id="skill-popup-status" class="status-btn status-unsolved">Unsolved</button>
           </div>
-        </section>
-
-      </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════
-         TAB: EARLY GAME
-    ═══════════════════════════════════════ -->
-    <div id="tab-early" class="tab-content" hidden>
-      <div class="eg-page">
-
-        <!-- Progress bar -->
-        <div class="eg-progress-section">
-          <div class="eg-progress-header">
-            <span>Route Progress</span>
-            <div class="eg-progress-stats">
-              <span>⭐ Pts: <span id="eg-stat-pts">—</span></span>
-              <span>Total: <span id="eg-stat-done">0/0</span></span>
-              <span>⚔️ League: <span id="eg-stat-league">0/0</span></span>
-              <span>🛒 Helper: <span id="eg-stat-helper">0/0</span></span>
-            </div>
-            <div class="eg-progress-actions">
-              <button class="eg-icon-btn" id="eg-info-btn" title="How early game routing works">ℹ</button>
-              <button class="eg-icon-btn" id="eg-export-btn" title="Export route to JSON">⬇</button>
-              <label class="eg-icon-btn" title="Import route (JSON or leaguesplanner TXT)" style="cursor:pointer;position:relative">⬆<input type="file" id="eg-import-file" accept=".json,.txt" style="position:absolute;width:0;height:0;opacity:0;pointer-events:none"></label>
-              <button class="eg-icon-btn" id="eg-import-myroute-btn" title="Load My Route preset">🗺</button>
-            </div>
+          <div class="skill-popup-stat-row">
+            <span class="skill-popup-stat-label">Method</span>
+            <input id="skill-popup-method" class="cell-input" type="text" placeholder="Primary method…">
           </div>
-          <div class="eg-progress-track">
-            <div class="eg-progress-fill-league" id="eg-fill-league" style="width:0%"></div>
-            <div class="eg-progress-fill-helper" id="eg-fill-helper" style="width:0%"></div>
+          <div class="skill-popup-stat-row">
+            <span class="skill-popup-stat-label">XP / hr</span>
+            <input id="skill-popup-xphr" class="cell-input xp-input" type="text" placeholder="e.g. 50k" style="width:90px">
+            <span class="skill-popup-xp16-label">×16:</span>
+            <span id="skill-popup-xp16" class="skill-popup-xp16-val">—</span>
+          </div>
+          <div class="skill-popup-stat-row">
+            <span class="skill-popup-stat-label">Notes</span>
+            <input id="skill-popup-note" class="cell-input" type="text" placeholder="Short note…">
           </div>
         </div>
-
-        <!-- Toolbar -->
-        <div class="eg-toolbar">
-          <div class="eg-toolbar-left">
-            <button class="btn-primary" id="eg-add-task">+ Task</button>
-            <button class="btn-secondary" id="eg-add-phase-btn">+ Phase</button>
-            <span class="eg-task-count-label" id="eg-task-count-label"></span>
-          </div>
-          <div class="eg-toolbar-right">
-            <div class="eg-filter-row">
-              <label>Region:</label>
-              <select id="eg-filter-region">
-                <option value="">All</option>
-                <option>General</option>
-                <option>Asgarnia</option>
-                <option>Desert</option>
-                <option>Fremennik</option>
-                <option>Kandarin</option>
-                <option>Karamja</option>
-                <option>Kourend</option>
-                <option>Morytania</option>
-                <option>Tirannwn</option>
-                <option>Varlamore</option>
-                <option>Wilderness</option>
-              </select>
-            </div>
-            <div class="eg-filter-row">
-              <label>Status:</label>
-              <select id="eg-filter-status">
-                <option value="">All</option>
-                <option value="incomplete">Incomplete</option>
-                <option value="complete">Complete</option>
-                <option value="skipped">Skipped</option>
-              </select>
-            </div>
-            <div class="eg-filter-row">
-              <label>Type:</label>
-              <select id="eg-filter-type">
-                <option value="">All</option>
-                <option value="league">⚔️ League</option>
-                <option value="helper">🛒 Helper</option>
-              </select>
-            </div>
-            <div class="eg-settings-row">
-              <label>On complete:</label>
-              <select id="eg-completed-display">
-                <option value="gray">Gray out</option>
-                <option value="hidden">Hide</option>
-              </select>
-            </div>
-            <div class="eg-settings-row">
-              <button class="eg-icon-btn" id="eg-color-settings-btn" title="Pin & line colors">🎨</button>
-            </div>
-          </div>
+        <div class="skill-popup-plan-area">
+          <div class="skill-popup-plan-label">Step-by-step training plan</div>
+          <textarea id="skill-popup-textarea" class="skill-detail-textarea" placeholder="Write your step-by-step training plan here…&#10;&#10;e.g.&#10;1. 1-30: Quests (Waterfall Quest etc.)&#10;2. 30-60: Crabs&#10;3. 60-99: Nmz"></textarea>
         </div>
-
-        <!-- Main content -->
-        <div class="eg-content">
-
-          <!-- Task list sidebar -->
-          <aside class="eg-task-sidebar">
-            <div class="eg-task-list" id="eg-task-list"></div>
-          </aside>
-
-          <!-- Interactive map -->
-          <div class="eg-map-area" id="eg-map-area">
-            <div id="eg-map-loader" class="eg-map-loader">
-              <div class="eg-map-loader-spinner"></div>
-              <span class="eg-map-loader-text">Loading map…</span>
-            </div>
-            <div class="eg-map-container" id="eg-map-container">
-              <div class="eg-map-viewport" id="eg-map-viewport">
-                <img src="images/other/Old_School_RuneScape_world_map_2026.png"
-                     id="eg-map-img" class="eg-map-img"
-                     alt="OSRS World Map" draggable="false">
-              </div>
-              <!-- Screen-space overlays — rendered as crisp vector at any zoom level -->
-              <svg  class="eg-map-lines-svg"   id="eg-map-lines-svg"></svg>
-              <div class="eg-map-pins-overlay" id="eg-map-pins-overlay"></div>
-            </div>
-
-            <!-- Placement mode banner -->
-            <div class="eg-placement-banner" id="eg-placement-banner" hidden>
-              📍 Click anywhere on the map to place the pin
-              <button class="btn-secondary" id="eg-cancel-placement"
-                      style="padding:0.2rem 0.6rem;font-size:0.8rem;pointer-events:all">Cancel</button>
-            </div>
-
-            <!-- Zoom controls -->
-            <div class="eg-map-controls">
-              <button class="eg-map-ctrl-btn" id="eg-zoom-in"         title="Zoom in">+</button>
-              <button class="eg-map-ctrl-btn" id="eg-zoom-out"        title="Zoom out">−</button>
-              <button class="eg-map-ctrl-btn" id="eg-zoom-fit"        title="Fit to screen"
-                      style="font-size:0.65rem;letter-spacing:-0.5px">FIT</button>
-              <button class="eg-map-ctrl-btn" id="eg-zoom-fullscreen" title="Expand to window"
-                      style="font-size:0.9rem">⛶</button>
-              <button class="eg-map-ctrl-btn eg-fs-only" id="eg-fs-toggle-sidebar" title="Toggle task list" style="font-size:0.75rem;letter-spacing:-0.5px">◫</button>
-              <button class="eg-map-ctrl-btn eg-fs-only" id="eg-fs-toggle-header"  title="Toggle top bar"   style="font-size:0.75rem">⊟</button>
-            </div>
-          </div>
-
-          <!-- Slide-in panel (absolute over .eg-content) -->
-          <div class="eg-panel" id="eg-panel">
-            <div class="eg-panel-header">
-              <span class="eg-panel-title" id="eg-panel-title">Add Task</span>
-              <button class="modal-close" id="eg-panel-close" aria-label="Close">✕</button>
-            </div>
-            <div class="eg-panel-body" id="eg-panel-body"></div>
-            <div class="eg-panel-footer">
-              <button class="btn-primary"   id="eg-save-task">Save Task</button>
-              <button class="btn-secondary" id="eg-cancel-task">Cancel</button>
-            </div>
-          </div>
-
-        </div><!-- .eg-content -->
-      </div><!-- .eg-page -->
-
-      <!-- Info overlay — inside #tab-early so it appears in fullscreen -->
-      <div id="eg-info-overlay" class="eg-info-overlay" hidden>
-        <div class="eg-info-box">
-          <div class="eg-info-header">
-            <span>How Early Game Routing Works</span>
-            <button id="eg-info-close" class="modal-close" aria-label="Close">✕</button>
-          </div>
-          <div class="eg-info-body">
-            <p><strong>1. Add tasks</strong> — Click <em>+ Task</em> in the toolbar or right-click anywhere on the map to place a task at that spot. Choose from imported league tasks or create custom helper tasks.</p>
-            <p><strong>2. Place map pins</strong> — Each task can have a pin on the map. The gold pulsing pin is your <em>next</em> task. Dashed lines connect tasks in route order.</p>
-            <p><strong>3. Order your route</strong> — Drag the ⠿ handle in the task list to reorder tasks. The map lines and pin numbers update live.</p>
-            <p><strong>4. Track progress</strong> — Click ✓ to complete or ⟳ to skip a task. You can also click pins on the map to complete/skip directly. The progress bar tracks league vs helper completion and total points earned.</p>
-            <p><strong>5. Navigate</strong> — Click 📍 in a task row to zoom the map to that pin.</p>
-            <p><strong>Pin colors:</strong> 🔵 Blue = League task · 🟣 Purple = Helper · 🟡 Gold = Next up · ⚫ Grey = Complete · 🟠 Orange = Skipped</p>
-            <p><strong>League tasks</strong> come from the <em>Task List</em> tab — import tasks there first, then they appear in the search when adding a task here. Already-added tasks are hidden from the search.</p>
-            <p><strong>Phases</strong> are collapsible groups (e.g. "Varlamore", "Karamja"). Click <em>+ Phase</em> to create one. Assign tasks to a phase when adding/editing, or drag a task row onto a phase header. Drag the ⠿ handle on a phase header to reorder phases.</p>
-            <p><strong>Export / Import</strong> — ⬇ saves your route as JSON, ⬆ reloads it. You can also import a <em>leaguesplanner.com</em> .txt export — phases and task names are preserved. Both buttons are in the progress bar row.</p>
-            <p><strong>My Route preset</strong> — 🗺 loads a pre-built starter route directly without needing a file. Great if you don't want to plan from scratch. It will ask before replacing any existing tasks.</p>
-            <p><strong>Customize</strong> pin and line colors via the 🎨 button in the toolbar. In fullscreen, use ◫ to toggle the task panel and ⊟ to toggle the top bar.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Color settings popup — inside #tab-early so it appears in fullscreen -->
-      <div id="eg-color-popup" class="eg-color-popup" hidden>
-        <div class="eg-color-popup-header">
-          <span>Pin &amp; Line Colors</span>
-          <button id="eg-color-popup-close" class="modal-close" aria-label="Close">✕</button>
-        </div>
-        <div class="eg-color-popup-body">
-          <div class="egc-section-title">Pin Colors</div>
-          <div class="egc-row"><label class="egc-label">League task</label>   <input type="color" class="egc-swatch" id="egc-pinLeague">   <div class="egc-preview-dot" id="egc-pdot-pinLeague"></div></div>
-          <div class="egc-row"><label class="egc-label">Helper task</label>   <input type="color" class="egc-swatch" id="egc-pinHelper">   <div class="egc-preview-dot" id="egc-pdot-pinHelper"></div></div>
-          <div class="egc-row"><label class="egc-label">Next task</label>     <input type="color" class="egc-swatch" id="egc-pinNext">     <div class="egc-preview-dot" id="egc-pdot-pinNext"></div></div>
-          <div class="egc-row egc-row-opacity">
-            <label class="egc-label">Complete</label>
-            <input type="color" class="egc-swatch" id="egc-pinComplete">
-            <div class="egc-preview-dot" id="egc-pdot-pinComplete"></div>
-            <label class="egc-opacity-lbl">Opacity</label>
-            <input type="range" class="egc-range" id="egc-pinCompleteOpacity" min="0" max="100">
-            <span class="egc-val" id="egc-pinCompleteOpacity-val">50%</span>
-          </div>
-          <div class="egc-row"><label class="egc-label">Skipped</label>       <input type="color" class="egc-swatch" id="egc-pinSkipped">  <div class="egc-preview-dot" id="egc-pdot-pinSkipped"></div></div>
-          <div class="egc-section-title" style="margin-top:0.75rem">Dashed Lines</div>
-          <div class="egc-row egc-row-opacity">
-            <label class="egc-label">Line color</label>
-            <input type="color" class="egc-swatch" id="egc-line">
-            <div class="egc-preview-dot" id="egc-pdot-line"></div>
-            <label class="egc-opacity-lbl">Opacity</label>
-            <input type="range" class="egc-range" id="egc-lineOpacity" min="0" max="100">
-            <span class="egc-val" id="egc-lineOpacity-val">65%</span>
-          </div>
-          <div class="egc-row egc-row-opacity">
-            <label class="egc-label">Completed line</label>
-            <input type="color" class="egc-swatch" id="egc-lineDone">
-            <div class="egc-preview-dot" id="egc-pdot-lineDone"></div>
-            <label class="egc-opacity-lbl">Opacity</label>
-            <input type="range" class="egc-range" id="egc-lineDoneOpacity" min="0" max="100">
-            <span class="egc-val" id="egc-lineDoneOpacity-val">35%</span>
-          </div>
-        </div>
-        <div class="eg-color-popup-footer">
-          <button class="btn-secondary" id="egc-reset" style="font-size:0.8rem">Reset defaults</button>
-        </div>
-      </div>
-
-      <!-- Phase name modal — inside #tab-early so it appears in fullscreen -->
-      <div id="eg-phase-modal" class="eg-confirm-overlay" hidden>
-        <div class="eg-confirm-box">
-          <div class="eg-confirm-header">
-            <span id="eg-phase-modal-title">New Phase</span>
-            <button class="modal-close" id="eg-phase-modal-x" aria-label="Close">✕</button>
-          </div>
-          <div class="eg-confirm-body">
-            <input type="text" id="eg-phase-modal-input" class="eg-form-input" placeholder="Phase name…" style="width:100%">
-          </div>
-          <div class="eg-confirm-footer">
-            <button class="btn-primary"   id="eg-phase-modal-ok">OK</button>
-            <button class="btn-secondary" id="eg-phase-modal-cancel">Cancel</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Confirm / alert dialog — inside #tab-early so it appears in fullscreen -->
-      <div id="eg-confirm-dialog" class="eg-confirm-overlay" hidden>
-        <div class="eg-confirm-box">
-          <div class="eg-confirm-header">
-            <span id="eg-confirm-title">Confirm</span>
-            <button class="modal-close" id="eg-confirm-x" aria-label="Close">✕</button>
-          </div>
-          <div class="eg-confirm-body">
-            <p id="eg-confirm-message"></p>
-          </div>
-          <div class="eg-confirm-footer">
-            <button class="btn-primary"   id="eg-confirm-ok">OK</button>
-            <button class="btn-secondary" id="eg-confirm-alt" hidden>Alt</button>
-            <button class="btn-secondary" id="eg-confirm-cancel">Cancel</button>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- #tab-early -->
-
-  </div><!-- .page-wrapper -->
-
-  <!-- Skill detail modal -->
-  <div class="modal-overlay" id="modal-overlay" hidden>
-    <div class="modal" id="modal">
-      <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
-      <div id="modal-content"></div>
-    </div>
-  </div>
-
-  <!-- Task right-click context menu -->
-  <div id="task-context-menu" class="task-context-menu" hidden>
-    <div class="ctx-close-row"><button class="ctx-close-btn" id="ctx-close">✕</button></div>
-    <div class="ctx-divider"></div>
-    <button class="ctx-item" id="ctx-pin">📌 Pin task</button>
-    <button class="ctx-item" id="ctx-toggle">Mark complete</button>
-    <button class="ctx-item" id="ctx-edit">Edit</button>
-    <button class="ctx-item ctx-danger" id="ctx-remove">Remove</button>
-  </div>
-
-  <!-- Task edit modal -->
-  <div id="task-edit-overlay" class="task-edit-overlay" hidden>
-    <div class="task-edit-modal">
-      <div class="task-edit-header">
-        <span>Edit Task</span>
-        <button class="task-edit-close" id="task-edit-close">✕</button>
-      </div>
-      <label class="filter-label">Name</label>
-      <input type="text" class="filter-input" id="edit-name">
-      <label class="filter-label">Task Description</label>
-      <input type="text" class="filter-input" id="edit-task-desc">
-      <label class="filter-label">Requirements</label>
-      <input type="text" class="filter-input" id="edit-reqs">
-      <label class="filter-label">Points</label>
-      <input type="number" class="filter-input" id="edit-pts" min="0">
-      <div class="task-edit-footer">
-        <button class="btn-primary" id="task-edit-save">Save</button>
-        <button class="btn-secondary" id="task-edit-cancel">Cancel</button>
       </div>
     </div>
   </div>
 
-  <!-- Reloaded relic picker -->
-  <div class="rp-overlay" id="reloaded-picker" hidden>
-    <div class="rp-backdrop" id="reloaded-picker-backdrop"></div>
-    <div class="rp-box">
-      <div class="rp-header">
-        <span>Choose your bonus relic (Reloaded)</span>
-        <button class="modal-close" id="reloaded-picker-close" aria-label="Close">✕</button>
+  <!-- Echo boss popup -->
+  <div id="echo-popup" class="popup-overlay" hidden>
+    <div class="popup-box">
+      <div class="popup-header">
+        <span id="echo-popup-title"></span>
+        <button class="popup-close" id="echo-popup-close">✕</button>
       </div>
-      <div class="rp-body" id="reloaded-picker-body"></div>
+      <div class="popup-body" id="echo-popup-body"></div>
     </div>
   </div>
 
-  <!-- Relic image lightbox -->
-  <div class="relic-lightbox" id="relic-lightbox" hidden>
-    <div class="relic-lightbox-backdrop" id="relic-lightbox-backdrop"></div>
-    <div class="relic-lightbox-inner">
-      <button class="relic-lightbox-close" id="relic-lightbox-close" aria-label="Close">✕</button>
-      <img class="relic-lightbox-img" id="relic-lightbox-img" src="" alt="">
+  <!-- Relic info popup -->
+  <div id="relic-popup" class="popup-overlay" hidden>
+    <div class="popup-box">
+      <div class="popup-header">
+        <span id="popup-title"></span>
+        <button class="popup-close" id="popup-close">✕</button>
+      </div>
+      <div class="popup-body" id="popup-body"></div>
     </div>
   </div>
 
-  <!-- Global confirm dialog (used by Task List tab etc.) -->
-  <div id="app-confirm-dialog" class="eg-confirm-overlay" hidden>
-    <div class="eg-confirm-box">
-      <div class="eg-confirm-header">
-        <span id="app-confirm-title">Confirm</span>
-        <button class="modal-close" id="app-confirm-x" aria-label="Close">✕</button>
+  <!-- ─── Build Delete Confirmation ─── -->
+  <div id="build-delete-popup" class="popup-overlay" hidden>
+    <div class="popup-box popup-box-sm">
+      <div class="popup-header">
+        <span>Delete Build</span>
+        <button class="popup-close" id="build-delete-close">✕</button>
       </div>
-      <div class="eg-confirm-body">
-        <p id="app-confirm-message"></p>
+      <div class="popup-body">
+        <p>Delete <strong id="build-delete-name"></strong>?</p>
+        <p style="margin-top:0.45rem;color:var(--text-muted);font-size:0.79rem;">All data in this build will be permanently lost.</p>
       </div>
-      <div class="eg-confirm-footer">
-        <button class="btn-primary"   id="app-confirm-ok">OK</button>
-        <button class="btn-secondary" id="app-confirm-cancel">Cancel</button>
+      <div class="popup-footer">
+        <button class="rp-action-btn" id="build-delete-cancel">Cancel</button>
+        <button class="rp-action-btn rp-btn-danger" id="build-delete-confirm">Delete</button>
       </div>
     </div>
   </div>
 
-  <script src="data.js?v=20260401d"></script>
-  <script src="app.js?v=20260401a"></script>
-  <script src="early_game.js?v=20260410a"></script>
+  <!-- ─── Export Popup ─── -->
+  <div id="export-popup" class="popup-overlay" hidden>
+    <div class="popup-box popup-box-sm">
+      <div class="popup-header">
+        <span>Export Builds</span>
+        <button class="popup-close" id="export-popup-close">✕</button>
+      </div>
+      <div class="popup-body">
+        <p style="margin-bottom:0.6rem;color:var(--text-dim);font-size:0.81rem;">Select builds to include in the export file:</p>
+        <div id="export-build-list"></div>
+      </div>
+      <div class="popup-footer">
+        <button class="rp-action-btn" id="export-popup-cancel">Cancel</button>
+        <button class="rp-action-btn rp-btn-primary" id="export-popup-confirm">⬇ Export Selected</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Import Popup ─── -->
+  <div id="import-popup" class="popup-overlay" hidden>
+    <div class="popup-box popup-box-import">
+      <div class="popup-header">
+        <span>Import Builds</span>
+        <button class="popup-close" id="import-popup-close">✕</button>
+      </div>
+      <div class="popup-body">
+        <p class="import-section-header">Found <strong id="import-build-count">0</strong> build(s) in file.</p>
+
+        <div class="import-replace-section">
+          <p class="import-desc"><strong>Replace All</strong> — deletes all your current builds and replaces with the imported ones.</p>
+          <p class="import-warns">Current builds that will be removed: <span id="import-delete-list"></span></p>
+          <button class="rp-action-btn rp-btn-danger" id="import-replace-all-btn">Replace All</button>
+        </div>
+
+        <div class="import-advanced-toggle-wrap">
+          <button class="import-advanced-toggle" id="import-advanced-toggle">&#9654; Advanced — choose how to import</button>
+        </div>
+
+        <div id="import-advanced-body" hidden class="import-advanced-body">
+          <div class="import-adv-grid">
+            <div class="import-adv-col">
+              <div class="import-adv-title">From file</div>
+              <div id="import-from-list"></div>
+            </div>
+            <div class="import-adv-col">
+              <div class="import-adv-title">Result preview</div>
+              <div id="import-to-list"></div>
+            </div>
+          </div>
+          <div class="import-adv-footer">
+            <button class="rp-action-btn rp-btn-primary" id="import-adv-confirm">Apply Import</button>
+          </div>
+        </div>
+      </div>
+      <div class="popup-footer">
+        <button class="rp-action-btn" id="import-popup-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../data.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
